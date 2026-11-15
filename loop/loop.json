@@ -1,0 +1,33 @@
+{
+  "_readme": "Model routing and limits for the loop driver. This is the ONE place models are chosen. Use aliases (fable, opus, sonnet, haiku) so nothing here goes stale when a new version ships. See MODEL-ROUTING.md.",
+
+  "min_claude_version": "2.1.302",
+  "claude_cmd": null,
+  "permission_mode": "auto",
+
+  "roles": {
+    "harness":  { "model": "fable", "effort": "xhigh" },
+    "tests":    { "model": "opus",  "effort": "high", "attempts": 2, "max_turns": 150, "max_budget_usd": 15 },
+    "review":   { "model": "fable", "effort": "high", "max_turns": 80,  "max_budget_usd": 10 },
+    "diagnose": { "model": "fable", "effort": "high", "max_turns": 40,  "max_budget_usd": 5 }
+  },
+
+  "tiers": {
+    "support": { "model": "haiku",  "effort": "medium", "attempts": 2, "max_turns": 60,  "max_budget_usd": 2 },
+    "routine": { "model": "sonnet", "effort": "medium", "attempts": 2, "max_turns": 100, "max_budget_usd": 6,  "advisor": null },
+    "complex": { "model": "opus",   "effort": "high",   "attempts": 3, "max_turns": 200, "max_budget_usd": 20, "advisor": null }
+  },
+  "ladder": ["support", "routine", "complex"],
+
+  "integration": { "tier": "complex" },
+  "diagnose_on_escalation": true,
+
+  "limits": {
+    "total_budget_usd": 150,
+    "run_timeout_min": 60,
+    "gate_timeout_sec": 300,
+    "tests_timeout_sec": 900,
+    "hook_gate_timeout_sec": 150,
+    "hook_gate_budget_sec": 20
+  }
+}

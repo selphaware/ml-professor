@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "deliverable": "app",
+  "tasks": [
+    {
+      "id": "T1",
+      "title": "Package skeleton and requirements",
+      "tier": "support",
+      "why_tier": "Boilerplate with one obvious right answer.",
+      "depends_on": [],
+      "writes": ["app/__init__.py", "app/report.py", "requirements.txt"],
+      "brief": "Create the app package. app/report.py must define load(path), total(rows) and weighted_total(rows) with the signatures in spec.md section 2; each raises NotImplementedError for now. Create an empty requirements.txt.",
+      "gate_checks": [],
+      "tests": ["tests/test_skeleton.py"]
+    },
+    {
+      "id": "T2",
+      "title": "CSV loader",
+      "tier": "routine",
+      "why_tier": "One function, clear contract, the data shape is given in spec.md.",
+      "depends_on": ["T1"],
+      "writes": ["app/report.py"],
+      "brief": "Implement load(path) per spec.md section 2.1: one dict per CSV data line, value_gbp as float. A row that cannot be parsed raises ValueError naming the line number; it is never skipped silently.",
+      "gate_checks": ["load.rows"],
+      "tests": ["tests/test_load.py"]
+    },
+    {
+      "id": "T3",
+      "title": "Totals and stage weighting",
+      "tier": "complex",
+      "why_tier": "Carries the reconciliation rule and the F2 failure mode; a wrong default here is silent.",
+      "depends_on": ["T2"],
+      "writes": ["app/report.py"],
+      "brief": "Implement total(rows) and weighted_total(rows) per spec.md section 2.2. Stage probabilities come from the table in section 2.2. An unknown stage raises KeyError; it never defaults.",
+      "gate_checks": ["total.reconciles", "weighted.differs"],
+      "tests": ["tests/test_totals.py"]
+    }
+  ]
+}

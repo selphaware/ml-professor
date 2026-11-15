@@ -1,0 +1,61 @@
+{
+  "permissions": {
+    "deny": [
+      "Bash(git *)",
+      "PowerShell(git *)",
+      "Edit(/loop/**)",
+      "Edit(/.claude/hooks/**)",
+      "Edit(/.claude/agents/**)",
+      "Edit(/.claude/settings.json)",
+      "Edit(/verify/gatekit.py)",
+      "Edit(/tests/pytest.ini)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit|NotebookEdit|Bash|PowerShell",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "E:\\CODE\\ml-professor\\mlprof_env\\Scripts\\python.exe",
+            "args": [
+              "${CLAUDE_PROJECT_DIR}/.claude/hooks/guard.py"
+            ],
+            "timeout": 20,
+            "onFailure": "block"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "E:\\CODE\\ml-professor\\mlprof_env\\Scripts\\python.exe",
+            "args": [
+              "${CLAUDE_PROJECT_DIR}/.claude/hooks/gate_hook.py"
+            ],
+            "timeout": 180
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "E:\\CODE\\ml-professor\\mlprof_env\\Scripts\\python.exe",
+            "args": [
+              "${CLAUDE_PROJECT_DIR}/.claude/hooks/stop_gate.py"
+            ],
+            "timeout": 1500
+          }
+        ]
+      }
+    ]
+  }
+}

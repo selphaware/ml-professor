@@ -122,30 +122,34 @@ function of `stages` here.
   (`unsupported_type`); a category-typed column with a few levels; boolean and
   nullable-integer columns (numeric features).
 - Not dates: `1,200`-style numbers, `May`, `09:30`, `2024Q1`, `1/2` (4.5).
-- The coercion rule: a numeric column with a few text cells is a numeric
-  feature and `n_coerced` equals the number of such cells; `n/a` cells in it
-  count in `n_missing`, not `n_coerced`; a column where half the cells are text
-  is not numeric (`test_f6_...`).
-- Numbers with thousands separators (step 5, D28), through role and reason
-  only: `column_roles` returns no warnings, and the two forms of the
-  `numeric_with_separators` warning are tested in `test_result_schema.py`.
-  - The pattern, matching: a text column written as `1,200`, `-3,450.75`,
-    `+12,345,678`, with its values below 1,000 written plain (`532.10`), is
-    excluded with the reason `numeric_with_separators` and `n_coerced` 0.
+- The coercion rule: a numeric column with a few text cells of the `abc` kind
+  (`abc`, `unknown`, `12 units`, `-`) is a numeric feature and `n_coerced`
+  equals the number of such cells; `n/a` cells in it count in `n_missing`, not
+  `n_coerced`; a column where half the cells are text is not numeric
+  (`test_f6_...`).
+- Numbers with thousands separators (step 5, rule 4a; D28, D34), through role
+  and reason only: `column_roles` returns no warnings, and the warning is
+  tested in `test_result_schema.py`. Two cases must both be excluded with the
+  reason `numeric_with_separators` and `n_coerced` 0:
+  - a column written with separators throughout: `1,200`, `-3,450.75`,
+    `+12,345,678`, with its values below 1,000 written plain (`532.10`);
+  - a column of plain numbers in which a few cells are written `1,200`, and
+    one in which a single cell is. Neither is a numeric feature with those
+    cells coerced (`test_f6_...`: the cells lost would be its largest values).
+- Around that rule:
   - The pattern, not matching: the same amounts written as `1.200,50`, and as
     `12,34`, never get that reason; they fall to the rules that follow (id-like
-    or free text, by their distinct values). So do `1,2345`, `1,200.`, `$1,200`
-    and `1,200 units`.
-  - Never parsed: a numeric column in which a few cells are written `1,200`
-    stays a numeric feature, and those cells count in `n_coerced`
-    (`test_f6_...`).
+    or free text, by their distinct values). A column of plain numbers with a
+    few cells written `$1,200`, `1,200.` or `1,200 units` is a numeric feature
+    with those cells in `n_coerced`.
   - The 90%: a column in which 85% of the values match or parse and the rest
     are words does not get the reason.
   - Precedence: a column written with separators in which about 60% of the
     values are distinct is `numeric_with_separators`, where the same shape in
     another form is `free_text`; one with every value distinct is
-    `numeric_with_separators`, not `id_like`; one written with separators but
-    holding a single value is `constant`.
+    `numeric_with_separators`, not `id_like`; one holding five distinct values
+    is `numeric_with_separators`, not a categorical feature; one holding a
+    single value, `1,200` in every row, is `constant`.
 - Infinite values are counted in `n_infinite`.
 - Counts are over every row of the frame, including rows with no target.
 - The id-like rule (D19): a consecutive id in order, the same shuffled, an id
@@ -288,11 +292,12 @@ Keep to the members listed in the table above.
 - Warnings that arise in steps 1 to 11 are in the output with their code and
   column: `values_coerced`, `infinite_values`, `blank_header`, `duplicate_rows`,
   `whole_number_regression_target`, `small_holdout`.
-- `numeric_with_separators`, both forms (D28). A column excluded with that
-  reason is named by one such warning. A numeric feature in which a few cells
-  are written `1,200` carries it beside `values_coerced`; a numeric feature
-  whose only coerced cells are words (`abc`, `12 units`) carries
-  `values_coerced` and not `numeric_with_separators`.
+- `numeric_with_separators`, which has one form (D34): each column excluded
+  with that reason is named by exactly one such warning, whether it is written
+  with separators throughout or is plain numbers with a few cells written
+  `1,200`, and that column carries no `values_coerced`. A numeric feature whose
+  coerced cells are words (`abc`, `12 units`) carries `values_coerced` and is
+  named by no `numeric_with_separators` warning.
 
 ### `tests/test_time_pipeline.py`: `profile()` with `time_col`
 - The time-ordered scheme is used when and only when `time_col` is given; the

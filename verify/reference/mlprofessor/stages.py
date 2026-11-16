@@ -39,8 +39,8 @@ def usable_rows(frame, target, time_col=None):
 def column_roles(frame, target, time_col=None):
     """Step 5. One record per column: the roles that need no target."""
     no_target, no_time = _usable(frame, target, time_col)
-    records, _, _ = core._roles(frame.reset_index(drop=True), ~no_target & ~no_time, target,
-                                time_col)
+    records, _ = core._roles(frame.reset_index(drop=True), ~no_target & ~no_time, target,
+                             time_col)
     return pd.DataFrame(records, columns=core.COLUMN_KEYS)
 
 

@@ -2,7 +2,7 @@
 
 This file is what the application is built from and what the tests are written
 against. It restates the owner's decisions (`docs/DECISIONS.md`, cited as D1 to
-D32) without changing them, pins every value they leave to this stage, and
+D35) without changing them, pins every value they leave to this stage, and
 defines the interface precisely enough to test without seeing the code.
 
 Words used throughout: **pinned** means part of the contract; **open** means
@@ -137,20 +137,20 @@ module only; they are always in the output.
 | `code` | `column` | Raised when |
 |---|---|---|
 | `suspected_leak` | the column | One per column excluded by the leak rule (D11). |
-| `strong_single_column` | the column | One per column that the leak screen keeps as a feature although its single-column skill is at least 0.90 (and below 0.98): step 8, rule 3 (D30). |
+| `strong_single_column` | the column | One per column that the leak screen keeps as a feature although its single-column skill is at least 0.90 (and below 0.98): step 8, rule 3 (D30, D33). |
 | `small_holdout` | `null` | Classification: fewer than 50 holdout rows of the rarer class. Regression: fewer than 50 holdout rows (D23). |
 | `date_column_undeclared` | the column | One per column excluded as `datetime` when `time_col` is `None` (D7). |
 | `autocorrelated_panel_target` | the target | Regression under time order with repeated timestamps, and the lag-1 autocorrelation of the per-timestamp mean of the target over the training rows is above 0.5 (D10, D23; section 10). |
 | `model_failed` | `null` | One per configuration with status `failed`. |
 | `values_coerced` | the column | One per numeric column in which text cells were turned into missing (D22). |
-| `numeric_with_separators` | the column | Two forms (D28). One per column excluded with the reason `numeric_with_separators` (step 5, rule 6a). And one per column that carries `values_coerced` in which at least one of the cells turned into missing is a number with thousands separators (step 5). |
+| `numeric_with_separators` | the column | One per column excluded with the reason `numeric_with_separators` (step 5, rule 4a; D28, D34). It has this one form: a column that is kept never carries it. |
 | `whole_number_regression_target` | the target | `task="auto"` picked regression and every target value is a whole number (D21). |
 | `blank_header` | pandas' name for it | One per CSV column whose header cell is blank (D22). |
 | `infinite_values` | the column | One per numeric feature holding infinite values. |
 | `duplicate_rows` | `null` | The loaded table holds exact duplicate rows. They are kept. |
 | `fold_not_scored` | `null` | Classification, and a fold's training or validation rows hold one class. |
 | `no_interval` | `null` | No interval could be computed; `headline.interval_reason` says why. |
-| `interval_approximate` | `null` | Exactly one whenever `headline.interval_method` is `bootstrap_blocks` (D27): that interval tends to be too narrow (10.3). Never under the random scheme, and never when there is no interval. |
+| `interval_approximate` | `null` | Exactly one whenever `headline.interval_method` is `bootstrap_blocks` (D27): that interval tends to be too narrow (10.3). Never under the random scheme, and never when there is no interval. It does not depend on how long the holdout is or how correlated the errors are, which the tool cannot know (D33). |
 
 ### 2.6 Seam for tests (D26)
 
@@ -296,12 +296,12 @@ rule that applies decides:
 | 2 | datetime type | excluded, `datetime` |
 | 3 | boolean, integer or float type (nullable or not) | numeric: go to rule 8 |
 | 4 | text, and at least 95% of the non-missing values match a date form of section 4.5 | excluded, `datetime` |
+| 4a | text with more than one distinct value, in which at least 90% of the non-missing values either parse as numbers or are numbers with thousands separators, and at least one is a number with thousands separators (D28, D34) | excluded, `numeric_with_separators` |
 | 5 | text, and at least 90% of the non-missing values parse as numbers | numeric with coercion: go to rule 8 |
 | 6 | text, one distinct value | excluded, `constant` |
-| 6a | text, and at least 90% of the non-missing values either parse as numbers or are numbers with thousands separators (D28) | excluded, `numeric_with_separators` |
-| 6b | text, distinct values number more than 95% of the usable rows | excluded, `id_like` |
-| 6c | text, distinct values number more than 50% of the non-missing values | excluded, `free_text` |
-| 6d | any other text | feature, kind `categorical` |
+| 6a | text, distinct values number more than 95% of the usable rows | excluded, `id_like` |
+| 6b | text, distinct values number more than 50% of the non-missing values | excluded, `free_text` |
+| 6c | any other text | feature, kind `categorical` |
 | 7 | any other type (mixed objects, complex numbers, durations, containers) | excluded, `unsupported_type` |
 | 8 | numeric, infinite values read as missing: no value left | excluded, `all_missing` |
 | 8a | numeric, one distinct value | excluded, `constant` |
@@ -326,27 +326,41 @@ followed by one or more digits. Digits are `0` to `9`. As a pattern:
 |---|---|
 | `1,200`, `-3,450.75`, `+12,345,678`, `0,123` | `1200` and `532.10` (plain numbers: they parse), `12,34`, `1,2345`, `1234,567`, `1.200,50`, `1,200.`, `1,200.5.1`, `$1,200`, `(1,200)`, `1 200`, `1,200 units` |
 
+Only this comma form is recognised (D33): `$1,200`, `1.200,50` and `1 200` are
+ordinary text to every rule.
+
 **Such a value is never parsed as a number**, because the same text means 1.2
 in some locales: the tool does not strip the commas, in any column, under any
-rule. Under rule 5 it is a cell that did not parse. Rule 6a is reached only by
-a column that failed rule 5, so fewer than 90% of its values parse; the rule
-then counts the values that parse together with those that match the pattern.
-It comes after rule 6, so a column holding `1,200` in every row is `constant`,
-and before rules 6b to 6d, so a column written this way is never `id_like`,
-`free_text` or a categorical feature, whether it has two distinct values or as
-many as it has rows.
+rule. **Nor is a column used with such cells left out** (D34): the cells lost
+would be the values of 1,000 and more, so the column would be missing its
+largest values. Rule 4a therefore comes before the coercion rule, and one such
+cell is enough:
+
+- a column written with separators throughout is excluded, however few of its
+  values parse and however many distinct values it has, so it is never
+  `id_like`, `free_text` or a categorical feature;
+- a column of plain numbers in which a single cell is written `1,200` is
+  excluded, not read as numeric with that cell coerced;
+- a column of plain numbers whose other cells are text of another kind (`abc`,
+  `12 units`, `$1,200`) holds no such value, so rule 4a does not apply: rule 5
+  reads it as numeric and counts those cells as coerced, as before;
+- a column in which fewer than 90% of the values parse or match (85% written
+  with separators and 15% words) is left to the rules that follow;
+- a column holding one distinct value, `1,200` in every row, is left to rule 6
+  and is `constant`.
+
+Like every rule of this step, rule 4a looks at the usable rows. A separator
+cell that sits only in a row with no target does not count: the column is read
+by rule 5, and that cell is one of its coerced cells.
+
+Rule 4a adds a `numeric_with_separators` warning naming the column it excludes
+(D34). That is the only form of the warning.
 
 Counts are kept per column over **every loaded row** (section 5.3): `n_missing`,
 `n_coerced` (rule 5: non-missing text cells that did not parse, which become
 missing, with a `values_coerced` warning), `n_infinite` (which become missing,
 with an `infinite_values` warning). `n_coerced` is 0 for a column that rule 5
-did not read as numeric, including one excluded by rule 6a.
-
-Two warnings carry the code `numeric_with_separators`, each naming its column
-(D28). Rule 6a adds one for the column it excludes. Rule 5 adds one, beside
-`values_coerced`, when at least one of the cells it coerced, among every loaded
-row, is a number with thousands separators; a column whose coerced cells are
-all of another kind (`abc`, `12 units`) carries `values_coerced` alone.
+did not read as numeric, including one excluded by rule 4a.
 
 **6. Apply the fast profile's row cap (D12, D20); count the rows left out.**
 Only under `profile="fast"` and only when there are more than 2,000 usable rows.
@@ -429,7 +443,10 @@ whichever of that and the previous value has the lower error.
 A column excluded by rule 1 or 2 gets role `excluded`, reason `suspected_leak`,
 its `leak_rule`, and a `suspected_leak` warning. It reaches no model. If no
 feature is left: `no_features`. A column kept by rule 3 has role `feature`, a
-null `reason` and a null `leak_rule`, and reaches the models like any other.
+null `reason` and a null `leak_rule`, and reaches the models like any other:
+it still drives the headline, because the tool cannot tell a near-leak from a
+very strong real feature (D33). The warning asks a question; it does not
+accuse.
 
 Known limit (D31): in a panel (repeated timestamps) the only baseline is the
 training mean, so a lagged level of a persistent target can be excluded by rule
@@ -581,7 +598,7 @@ exactly the grid arguments (`{}` for `tree-0`).
 | too small to profile | fewer than 100 usable rows; fewer than 10 of a class |
 | one-hot levels kept per column | 30 |
 
-### 4.3 Cut-offs (D23, D28, D30; measurements in section 10)
+### 4.3 Cut-offs (D23, D28, D30, D33, D34; measurements in section 10)
 
 | Cut-off | Value |
 |---|---|
@@ -592,7 +609,7 @@ exactly the grid arguments (`{}` for `tree-0`).
 | id-like, whole-number column | every value distinct, and consecutive or strictly ordered in file order |
 | free text | distinct values more than 50% of the non-missing values |
 | numeric coercion | at least 90% of the non-missing values parse as numbers |
-| numbers with separators | at least 90% of the non-missing values parse as numbers or are numbers with thousands separators (step 5) |
+| numbers with separators | at least 90% of the non-missing values parse as numbers or are numbers with thousands separators, and at least one is such a number: excluded (step 5, rule 4a) |
 | date-like | datetime type, or at least 95% of the non-missing values match a form of 4.5 |
 | small holdout warning | fewer than 50 holdout rows of the rarer class (classification) or in all (regression) |
 | no block-bootstrap interval | fewer than 30 distinct holdout timestamps |
@@ -828,14 +845,14 @@ other argument. Consequences, all measured on pandas 3.1.1 (section 9):
 - The missing-value spellings of 4.4 load as missing. The tool cannot see what
   was written, so they are counted in `n_missing`, never in `n_coerced`.
 - A cell such as `1,200` or `abc` in an otherwise numeric column makes the whole
-  column load as text. Rule 5 of step 5 then reads it as numeric and counts
-  those cells as coerced; a `1,200` among them adds the warning
-  `numeric_with_separators` (D28).
-- A column written with thousands separators throughout loads as text and is
-  never parsed: no `thousands` argument is passed, and the commas are not
-  stripped afterwards. Rule 6a of step 5 excludes it with the reason
-  `numeric_with_separators` and a warning (D28). A caller who wants the column
-  used parses it and passes a DataFrame.
+  column load as text. When the text cells are of the `abc` kind, rule 5 of
+  step 5 reads the column as numeric and counts those cells as coerced.
+- A number written with thousands separators is never parsed: no `thousands`
+  argument is passed, and the commas are not stripped afterwards. A column
+  holding such values, throughout or in a single cell among plain numbers, is
+  excluded by rule 4a of step 5 with the reason `numeric_with_separators` and
+  a warning (D28, D34). A caller who wants the column used parses it and
+  passes a DataFrame.
 - **Duplicate column names stop the run** with `duplicate_columns`. pandas
   renames them silently (`a`, `a.1`), so the tool reads the header line itself
   (the first non-blank line, UTF-8, an optional byte-order mark ignored) and
@@ -893,7 +910,8 @@ None is skipped silently: each raises a named error or is reported in the output
 | every configuration failing | `all_models_failed` |
 | infinite values in a feature | read as missing, counted in `n_infinite`, `infinite_values` warning |
 | a text column written mostly as numbers with thousands separators | never parsed; excluded with reason `numeric_with_separators`; `numeric_with_separators` warning |
-| a few cells written with thousands separators in a numeric column | read as missing, counted in `n_coerced`; `values_coerced` and `numeric_with_separators` warnings |
+| a column of plain numbers with one cell or a few written with thousands separators | the same: excluded with reason `numeric_with_separators` and its warning, not read as numeric (D34) |
+| a column of plain numbers with a few cells of other text (`abc`) | numeric; those cells read as missing and counted in `n_coerced`; `values_coerced` warning |
 | a feature whose single-column skill is at least 0.90 and below 0.98 | kept as a feature; `strong_single_column` warning |
 | exact duplicate rows | kept; `input.duplicate_rows`; `duplicate_rows` warning |
 | an unknown column type | excluded with reason `unsupported_type` |
@@ -1029,8 +1047,14 @@ a harness error and never a code fault.
 Set by the harness stage by measurement, for the owner's approval. Bands belong
 to the gate (`verify/smoke_test.py`, where each is written beside its
 measurements). Cut-offs belong to this spec: those measured on 2026-11-15 were
-approved as D23; the two added on 2026-11-16 (the warning tier of D30 and the
-separator rule of D28) are marked in 10.2.
+approved as D23; of the two added on 2026-11-16, the warning cut-off was
+approved as D33 and the separator rule was settled by D34. Both are marked in
+10.2.
+
+The scripts, the seeds and a per-seed table behind everything measured on
+2026-11-16 are in `docs/measurements/CP1/` (D35), with a README that says how
+to run each measurement again. The seeds of 2026-11-15 were not recorded and
+are not recoverable.
 
 ### 10.1 Bands asserted by the gate
 
@@ -1058,39 +1082,52 @@ from the reference's still lands inside. All bands are on `headline.skill`.
 near-copy itself (0.969 to 1.000 over 30 seeds, against 0.672 to 0.801 on
 `signal_clf`), which is what its warning is for. Its margins are in 10.2.
 
-**Re-measured on 2026-11-16, for D27 to D30.** The 30 data seeds of the first
-measurement were not recorded, and 22 likely schemes failed to reproduce its
-range on `messy`, so this measurement uses its own: the base seeds
-1115 + 100*k*, *k* = 0 to 29 (*k* = 0 is the gate's own data). The reference as
-it was before the changes and the reference after them were run on the same
-seeds, fast profile:
+**Re-measured on 2026-11-16, for D27 to D30 and again for D34.** The 30 data
+seeds of the first measurement were not recorded, and 22 likely schemes failed
+to reproduce its range on `messy`, so this measurement uses its own: the base
+seeds 1115 + 100*k*, *k* = 0 to 29 (*k* = 0 is the gate's own data). The
+reference was run on the same seeds, fast profile, in three states: as it was
+on 2026-11-15; after D27 to D30; and after D34.
 
-| Dataset | Reference, before and after: range (mean, sd) | Band (unchanged) |
+| Dataset | Reference, all three states: range (mean, sd) | Band (unchanged) |
 |---|---|---|
 | `signal_clf` | 0.672 to 0.801 (0.741, 0.033) | 0.54 to 0.91 |
 | `leak` | 0.648 to 0.821 (0.751, 0.037) | 0.54 to 0.91 |
 | `signal_reg` | 0.819 to 0.891 (0.848, 0.017) | 0.76 to 0.93 |
 | `leak_reg` | 0.806 to 0.859 (0.840, 0.014) | 0.76 to 0.93 |
-| `messy`, with its new column | 0.670 to 0.826 (0.746, 0.035) | 0.55 to 0.91 |
+| `messy`, with `revenue` and `fee` | 0.670 to 0.826 (0.746, 0.035) | 0.55 to 0.91 |
 | `noise_clf` | −0.115 to +0.159 (+0.004, 0.058) | −0.27 to 0.27 |
 | `noise_reg` | −0.503 to −0.242 (−0.377, 0.076) | −0.65 to −0.05 |
 | `imbalanced` | −0.150 to +0.376 (+0.017, 0.097) | −0.42 to 0.42 |
 | `time_blocks` | −0.248 to +0.217 (−0.007, 0.115) | −0.48 to 0.48 |
 | `random_walk` | −0.100 to +0.012 (−0.006, 0.021) | −0.30 to 0.05 |
 
-Before and after are identical on every seed: 390 runs (the ten above and
+The three states are identical on every seed: 390 runs (the ten above and
 three more configurations, 30 seeds each) with no difference in the headline,
 the row counts, the task, the validation record, the baselines, the models
-table or the predictions. At the gate's own seed the same holds for all 19
-runs that existed before, the three full-profile ones included. What differs
-is the new warnings and the two new limitation strings. `messy` gained a
-column and nothing else: its eleven earlier columns are byte-identical on all
-30 seeds, and the new one reaches no model. **No band's measurement changed,
-so no band was changed;** each still rests on the first measurement, in the
-table above this one. Every value here is inside its band. On this second set
-of seeds two bands are narrower than 4.5 sd on one side: `noise_reg` (its
-lower edge is 3.6 sd below this mean) and `imbalanced` (its upper edge is
-4.2 sd above; the highest of 30 was 0.376).
+table or the predictions, and 420 between the second state and the third,
+which share `near_leak`. At the gate's own seed the same holds for all 19 runs
+of the first state, the three full-profile ones included. What differs is the
+new warnings and the two new limitation strings.
+
+`messy` changed in three ways and its headline did not move. It gained
+`revenue` and `fee`, which reach no model. And for D34 three text cells of
+`spend` were reworded, `1,200` and `3,450` becoming `tbc` and `pending`: they
+were coerced to missing before and are now. Over the 30 seeds its eleven
+original columns hold 508,110 identical cells and 90 that differ as text and
+read the same. The other fifteen datasets of the first state are
+byte-identical, and every dataset's seed is what it was.
+
+**No band's measurement changed, so no band was changed;** each still rests on
+the first measurement, in the table above this one. Every value here is inside
+its band. On this second set of seeds two bands are narrower than 4.5 sd on
+one side: `noise_reg` (its lower edge is 3.6 sd below this mean) and
+`imbalanced` (its upper edge is 4.2 sd above; the highest of 30 was 0.376).
+D35 leaves both as they are, because a band changes only when it was measured
+wrong and the gate judges one fixed seed. There the reference lands at −0.407
+on `noise_reg`, 0.243 above the band's lower edge and 0.357 below its upper,
+and at +0.072 on `imbalanced`, 0.492 above the lower edge and 0.348 below the
+upper.
 
 Two other measured margins:
 
@@ -1126,13 +1163,13 @@ Three things the measurements showed, which shaped the datasets:
 | Cut-off | Starting value | Pinned | Measurement |
 |---|---|---|---|
 | leak: single-column skill | 0.98 | **0.98** | 30 seeds: `outcome_copy` 0.995 to 1.000 and `amount_scaled` 0.996 to 0.998, flagged 30 of 30; `strong_feature` 0.60 to 0.71, and no other column of any dataset, flagged 0 of 30. Where the edge is: a copy of a 0/1 target with noise of sd 0.25 is flagged on 14 of 30 seeds and with sd 0.30 never; a copy with 0.5% of labels flipped on 21 of 30, with 2% never; a legitimate feature with true ROC AUC 0.993 never, with 0.998 on 10 of 30. Regression: a rescaled copy is flagged while its noise is under about 12% of the target's deviation. |
-| leak warning: single-column skill (D30; measured 2026-11-16) | 0.90 | **0.90** | 30 data seeds. `outcome_noisy` of `near_leak`, the target with exactly 2% of its labels flipped: 0.938 to 0.960 (mean 0.949, sd 0.005); warned 30 of 30, excluded 0 of 30. The highest single-column skill of any legitimate column in any gate dataset: `strong_feature` of `leak`, 0.609 to 0.748 (mean 0.656, sd 0.032); the next is `f1` of `signal_reg`, 0.530 to 0.610; warned 0 of 30. The cut-off is 9.5 sd below the first mean and 7.7 sd above the second; 0.98 is 6.1 sd above the first. Where the tier's edges are, for a copy of a 0/1 target on 1,500 rows with an exact share of its labels flipped: 0.5%, 0.979 to 0.990 (excluded on 28 of 30); 1%, 0.965 to 0.980; 1.5%, 0.952 to 0.972; 2.5%, 0.925 to 0.947; 3%, 0.915 to 0.937 (each warned 30 of 30); 4%, 0.892 to 0.916 (22 of 30); 5%, 0.872 to 0.898 (never). Regression, the target rescaled with noise as a share of its deviation: 12%, 0.978 to 0.985 (excluded on 28 of 30); 15%, 0.968 to 0.977; 20%, 0.946 to 0.961; 25%, 0.920 to 0.938 (each warned 30 of 30); 30%, 0.888 to 0.918 (15 of 30); 35%, never. Recipes for the tests follow this table. |
+| leak warning: single-column skill (D30; measured 2026-11-16; approved as D33) | 0.90 | **0.90** | 30 data seeds. `outcome_noisy` of `near_leak`, the target with exactly 2% of its labels flipped: 0.938 to 0.960 (mean 0.949, sd 0.005); warned 30 of 30, excluded 0 of 30. The highest single-column skill of any legitimate column in any gate dataset: `strong_feature` of `leak`, 0.609 to 0.748 (mean 0.656, sd 0.032); the next is `f1` of `signal_reg`, 0.530 to 0.610; warned 0 of 30. The cut-off is 9.5 sd below the first mean and 7.7 sd above the second; 0.98 is 6.1 sd above the first. Where the tier's edges are, for a copy of a 0/1 target on 1,500 rows with an exact share of its labels flipped: 0.5%, 0.979 to 0.990 (excluded on 28 of 30); 1%, 0.965 to 0.980; 1.5%, 0.952 to 0.972; 2.5%, 0.925 to 0.947; 3%, 0.915 to 0.937 (each warned 30 of 30); 4%, 0.892 to 0.916 (22 of 30); 5%, 0.872 to 0.898 (never). Regression, the target rescaled with noise as a share of its deviation: 12%, 0.978 to 0.985 (excluded on 28 of 30); 15%, 0.968 to 0.977; 20%, 0.946 to 0.961; 25%, 0.920 to 0.938 (each warned 30 of 30); 30%, 0.888 to 0.918 (15 of 30); 35%, never. Recipes for the tests follow this table. |
 | leak: missing by class | above 95% and below 5% | **the same** | 100%/0% and 97%/2%: flagged 30 of 30. 96%/4%: 26 of 30. 94%/3% and 97%/6%: 6 of 30. 90%/10%: never. |
 | id-like, text | more than 95% of rows distinct (D19) | **the same** | 100% and 98% distinct: id-like. 70%: free text. 44% and 2%: features. |
 | id-like, whole numbers | distinct, and consecutive or strictly ordered (D19) | **the same** | At 200, 2,000, 20,000 and 100,000 rows: salary, price in pence, volume, age and a distinct unordered measure are features at every size (the 95% rule called volume an identifier at every size, and salary and price at the smaller ones). Consecutive ids in order, in order with 1% blank, and shuffled: caught. Increasing non-consecutive ids: caught. **Not caught:** a random unordered identifier (as D19 says), and a shuffled consecutive identifier with any blank cell. **Wrongly caught:** a whole-number measure with every value distinct in a table sorted by that measure. Both are accepted limits (D31) and show in the column accounting. |
 | free text | not given | **more than 50% of non-missing values distinct** | Needed to tell free text from categories; see the row above. |
-| numeric coercion | at least 90% parse | **90%** | Only values of 1,000 or more carry a thousands separator, so a column with 50% of its cells written that way still parses 91% and is numeric with 173 of 2,000 cells coerced; written that way throughout, 81% parse and the column is excluded: as free text when this was measured, with the reason `numeric_with_separators` since D28 (next row). |
-| numbers with separators (D28; measured 2026-11-16) | 90%, counting the values that parse together with those that match the pattern | **the same** | `revenue` of `messy`, written with separators throughout, over 30 data seeds: 17% to 22% of its values are below 1,000 and parse; 78% to 83% match the pattern; every value does one or the other; 99.8% to 100% are distinct. Excluded with the reason `numeric_with_separators` on 30 of 30; the reference as it was before D28 calls it `id_like` on 30 of 30. `spend` of `messy`, where three of the eight text cells are `1,200` or `3,450`: numeric, with `values_coerced` and `numeric_with_separators`, on 30 of 30. On 2,000 crafted rows: written that way throughout with 83% parsing, `numeric_with_separators`; with half the cells written that way and 92% parsing, numeric with 167 cells coerced. On 400 crafted rows: written with separators and 60% distinct, or holding five distinct values, `numeric_with_separators` (without the rule: `free_text`, and a categorical feature); holding one value, `constant`; the same amounts written `1.200,50` or `12,34`, `id_like` when all distinct and `free_text` at 60% distinct; 85% with separators and 15% words, not this reason; 95% plain and 5% with separators, numeric with both warnings; a numeric column whose only text cells are words, `values_coerced` alone. |
+| numeric coercion | at least 90% parse | **90%** | Only values of 1,000 or more carry a thousands separator, so a column with 50% of its cells written that way still parses 91% and passed this rule with 173 of 2,000 cells coerced; written that way throughout, 81% parse and the column was excluded as free text. That is how the rule behaved when it was measured. Since D34 neither column reaches it: both are excluded by rule 4a (next row). The rule now decides only columns whose text cells are of another kind. |
+| numbers with separators (D28, D34; measured 2026-11-16) | 90%, counting the values that parse together with those that match the pattern | **the same, and at least one value that matches** | On `messy` over 30 data seeds. `revenue`, written with separators throughout: 17% to 22% of its values are below 1,000 and parse; 78% to 83% match the pattern; every value does one or the other; 99.8% to 100% are distinct. `fee`, plain numbers with six cells of 1,000 or more written with separators: 99.6% to 99.7% of its values parse, and 4 to 6 of the six cells are in rows with a target. Both are excluded with the reason `numeric_with_separators` and named by its warning on 30 of 30. The reference as it was on 2026-11-15, with no such rule, calls `revenue` `id_like` on 30 of 30; under the coercion rule alone `fee` would be numeric with its six largest values coerced. `spend`, whose eight text cells are words: numeric, with `values_coerced` and no `numeric_with_separators`, on 30 of 30. On 2,000 crafted rows, amounts mostly below 1,000: written with separators throughout (83% parse), excluded; with half the cells written that way (92% parse, 167 cells with a separator, all of them the amounts of 1,000 and more), excluded, where the coercion rule alone kept it. On 400 crafted rows, excluded with this reason: written with separators and every value distinct, 60% distinct, or five distinct values (without the rule: `id_like`, `free_text`, a categorical feature); plain numbers with one cell written `1,200`; plain numbers with 5% of the cells written with separators. Not this reason: `1,200` in every row, `constant`; the same amounts written `1.200,50` or `12,34`, `id_like` when all distinct and `free_text` at 60% distinct; 85% with separators and 15% words, `id_like`; plain numbers whose only text cells are words, numeric with `values_coerced` alone; plain numbers whose one `1,200` sits in a row with no target, numeric with that cell coerced. |
 | date-like | 95%, fixed forms | **95%, the forms of 4.5** | The fixed list matches ISO dates and date-times, d/m/y, m/d/y, d-m-y, d.m.y, y/m/d and month-name forms (4 of 4 each), and none of `1,200`, `May`, `09:30`, `2024Q1`, `1/2`, `1.2.3`, `2024-01`, or impossible dates. pandas' lenient parser accepts the first five. |
 | small holdout | fewer than 50 of the rarer class | **50** (regression: 50 holdout rows) | On pure noise, 95% of honest results fall within ±0.23 of zero with 50 rows of the rarer class in a balanced holdout (±0.16 at 5% positives), ±0.36 with 20, ±0.16 with 100. |
 | too small to profile | fewer than 100 usable rows | **100**, and 10 of each class | 30 seeds per size. Random scheme at 100 rows: every run finishes; skill sd 0.17 (classification) and 0.06 (regression). Time order at 100 rows: fold 1 trains on 13 rows, every run finishes, no fold unscored, skill sd 0.16 and 0.08. Below the floor under time order, folds start to hold one class: 1 run in 30 at 80 rows, 4 at 60, 13 at 40. |
@@ -1271,8 +1308,11 @@ figure on real data is believable.
 | D25 pinned model settings | 3 (seeds and threads), 4.1, 9 |
 | D26 step functions and the seam | 2.3, 2.6, 2.7 |
 | D27 approximate interval under time order | 2.5, 3 (step 12), 5.4, 7, 10.3 |
-| D28 numbers with thousands separators | 2.5, 3 (step 5), 4.3, 5.2, 6, 7, 10.2 |
+| D28 numbers with thousands separators | 2.5, 3 (step 5), 4.3, 5.2, 6, 7, 10.2; its second warning form is replaced by D34 |
 | D29 negative skill explained | 3 (step 11), 5.4, 7 |
 | D30 warning tier below the leak cut-off | 2.5, 3 (step 8), 4.3, 7, 8, 10.2 |
 | D31 accepted limits | 3 (step 8), 9, 10.1, 10.2 |
 | D32 venv base path | 9 |
+| D33 warning cut-off approved; three limits accepted | 2.5, 3 (steps 5, 8), 4.3, 10.1, 10.2 |
+| D34 a partly formatted numeric column is excluded | 2.5, 3 (step 5, rule 4a), 4.3, 6, 7, 10.2 |
+| D35 measurements kept in the repo | 10, 10.1; `docs/measurements/CP1/` |

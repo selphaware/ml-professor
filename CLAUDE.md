@@ -2,7 +2,7 @@
 
 A Python package, `mlprofessor`, that measures how predictable one target
 column of one table is. The contract is `spec.md`. The decisions behind it are
-`docs/DECISIONS.md` (D1 to D32). The build order is `plan/tasks.json`; what the
+`docs/DECISIONS.md` (D1 to D35). The build order is `plan/tasks.json`; what the
 tests prove is `plan/test-plan.md`. The method and the table of common failures
 are in the skill `mlprofessor-build`.
 

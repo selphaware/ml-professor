@@ -93,9 +93,11 @@ BANDS = {
     # good 0.811..0.878 (mean 0.844, sd 0.018). `leak_reg` with the copy excluded:
     # 0.810..0.882. F2 on `leak_reg`: 0.9994..0.9996.
     "signal_reg": (0.76, 0.93),
-    # good 0.630..0.824 (mean 0.731, sd 0.039). Re-measured when the `revenue` column
-    # was added, on 30 other seeds: 0.670..0.826 (mean 0.746, sd 0.035), identical seed
-    # by seed with and without the column, which reaches no model. Band unchanged.
+    # good 0.630..0.824 (mean 0.731, sd 0.039). Re-measured on 30 other seeds when
+    # `revenue` and `fee` were added and three text cells of `spend` were reworded:
+    # 0.670..0.826 (mean 0.746, sd 0.035), identical seed by seed before and after,
+    # since neither new column reaches a model and `spend` parses as it did. Band
+    # unchanged (docs/measurements/CP1).
     "messy": (0.55, 0.91),
     # good -0.099..+0.141 (mean +0.010, sd 0.058). F1 (refit on all rows):
     # 0.389..0.559 when the linear model is chosen, 1.0000 when the tree is.
@@ -240,20 +242,33 @@ def make_ambiguous(seed, n=1500):
 def make_messy(seed, n=1540):
     """signal_clf with everything a real export does to a table.
 
-    `revenue` is written with thousands separators throughout (D28). It is drawn
-    from its own stream and written after the target, so no other column of this
-    table depends on it. About one value in five is below 1,000 and so carries no
-    separator: fewer than 90% of the values parse as plain numbers, fewer than 90%
-    carry a separator, and only the two together reach 90%. Nearly every value is
-    distinct, so without the rule of D28 the column would be called id-like.
+    `spend` is numeric with eight text cells, none of them a number with thousands
+    separators, so it goes on testing coercion (D34). Two columns test D28 and D34,
+    each drawn from its own stream and written after the target, so no other column
+    of this table depends on them:
+
+    `revenue` is written with thousands separators throughout. About one value in
+    five is below 1,000 and so carries no separator: fewer than 90% of the values
+    parse as plain numbers, fewer than 90% carry a separator, and only the two
+    together reach 90%. Nearly every value is distinct, so without the rule the
+    column would be called id-like.
+
+    `fee` is plain numbers below 1,000 except for six cells of 1,000 or more, which
+    carry a separator. More than 99% of its values parse, so the coercion rule
+    alone would keep it as numeric with its six largest values turned into missing.
     """
     rng = random.Random(seed)
     amounts = random.Random(f"messy.revenue.{seed}")
+    fees = random.Random(f"messy.fee.{seed}")
+    large_fee = set(fees.sample(range(n), 6))
     base = [_signal_row(rng) for _ in range(n)]
     visits = rng.sample(range(1000, 100000), n)          # distinct, whole, not in order
     special = rng.sample(range(n), 18)
-    text_cells = dict(zip(special[:8], ["abc", "1,200", "12 units", "3,450", "unknown", "abc",
-                                        "1,200", "-"]))
+    # Until D34 the second, fourth and seventh of these were `1,200`, `3,450` and
+    # `1,200`. They were coerced to missing then and are now: every parsed value of
+    # the column is what it was.
+    text_cells = dict(zip(special[:8], ["abc", "tbc", "12 units", "pending", "unknown", "abc",
+                                        "tbc", "-"]))
     na_cells, blank_cells = set(special[8:14]), set(special[14:])
     no_target = set(rng.sample(range(n), 40))
     blank_after = set(rng.sample(range(n - 1), 5))       # blank lines: not rows
@@ -272,9 +287,10 @@ def make_messy(seed, n=1540):
             (start + datetime.timedelta(days=rng.randrange(1500))).isoformat(),
             "" if i in no_target else ("yes" if r["y"] else "no"),
             f"{(-1 if amounts.random() < 0.03 else 1) * amounts.lognormvariate(7.92, 1.2):,.2f}",
+            f"{fees.uniform(1000, 9000) if i in large_fee else fees.uniform(20, 980):,.2f}",
         ])
     header = ["f1", "f2", "seg", "n1", "spend", "visits", "const", "record_id", "notes",
-              "signup_date", "outcome", "revenue"]
+              "signup_date", "outcome", "revenue", "fee"]
     return header, rows, blank_after
 
 
@@ -918,17 +934,22 @@ MESSY_ROLES = {
     "notes": ("excluded", "free_text", None), "signup_date": ("excluded", "datetime", None),
     "outcome": ("target", None, None),
     "revenue": ("excluded", "numeric_with_separators", None),
+    "fee": ("excluded", "numeric_with_separators", None),
 }
 ROLE_HINTS = {
     "visits": "a whole-number measure with every value distinct but not in order is a feature, "
               "not an identifier (D19)",
     "record_id": "a whole-number column whose values are all distinct and consecutive is an "
                  "identifier (D19)",
-    "spend": "a text column in which at least 90% of the values parse as numbers is numeric",
+    "spend": "a text column in which at least 90% of the values parse as numbers is numeric; "
+             "its eight text cells are words, none of them a number with thousands separators",
     "n1": "`n/a` is a missing value on load, so this column is an ordinary numeric column",
     "revenue": "every value is a number written with thousands separators (`1,200.50`) or, "
                "below 1,000, a plain number. Such a column is never parsed, and is excluded "
                "with its own reason ahead of the id-like and free-text rules (D28)",
+    "fee": "six of its cells are numbers written with thousands separators and the rest are "
+           "plain numbers. One such cell is enough to exclude the column, ahead of the "
+           "coercion rule: kept as numeric it would be missing its six largest values (D34)",
 }
 
 
@@ -952,11 +973,19 @@ def data_columns_accounted(ctx):
             ctx.require(column["kind"] == kind,
                         f"feature `{column['name']}` on `messy` has kind {column['kind']!r}; "
                         f"expected {kind!r}: {hint}")
-    ctx.require(any(w["column"] == "revenue"
-                    for w in warnings_of(result, "numeric_with_separators")),
-                "no warning with code `numeric_with_separators` names the column `revenue` on "
-                "`messy`: a column excluded because it is written with thousands separators "
-                "must be reported, so the caller knows to parse it (D28)")
+    separated = sorted(str(w["column"]) for w in warnings_of(result, "numeric_with_separators"))
+    ctx.record("messy numeric_with_separators", ",".join(separated))
+    for name in ("revenue", "fee"):
+        ctx.require(name in separated,
+                    f"no warning with code `numeric_with_separators` names the column `{name}` "
+                    "on `messy`: a column excluded because it holds numbers written with "
+                    "thousands separators must be reported, so the caller knows to parse it "
+                    "(D28, D34)")
+    ctx.require(separated == ["fee", "revenue"],
+                f"`numeric_with_separators` warnings on `messy` name {separated}; the warning "
+                "has one form, one per column excluded with that reason: `fee` and `revenue` "
+                "(D34). A numeric column whose text cells are words, such as `spend`, is not "
+                "named")
     band(ctx, at(result, "headline.skill", "number"), "messy", "skill on messy",
          "the signal is still there under the mess; a wrong column role or lost rows remove it")
 
@@ -998,12 +1027,12 @@ def data_coercion_reported(ctx):
     ctx.require(any(w["column"] == "spend" for w in warnings_of(result, "values_coerced")),
                 "no warning with code `values_coerced` names the column `spend` on `messy`: "
                 "values turned into missing must be reported")
-    ctx.require(any(w["column"] == "spend"
-                    for w in warnings_of(result, "numeric_with_separators")),
-                "no warning with code `numeric_with_separators` names the column `spend` on "
-                "`messy`: three of the cells coerced to missing there are numbers written "
-                "with thousands separators (`1,200`, `3,450`), and that is reported beside "
-                "`values_coerced` (D28)")
+    ctx.require(not any(w["column"] == "spend"
+                        for w in warnings_of(result, "numeric_with_separators")),
+                "a warning with code `numeric_with_separators` names the column `spend` on "
+                "`messy`. None of its eight text cells is a number with thousands separators "
+                "(`abc`, `tbc`, `12 units`, `pending`, `unknown`, `-`), so it is an ordinary "
+                "case of coercion: kept as numeric, with `values_coerced` alone (D34)")
 
 
 def _parses(cell):

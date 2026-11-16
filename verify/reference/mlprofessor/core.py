@@ -331,14 +331,12 @@ def _separated(text):
 
 
 def _roles(df, usable, target, time_col):
-    """Step 5 (D19, D20, D28): roles that need no target, judged on the usable rows.
+    """Step 5 (D19, D20, D28, D34): roles that need no target, judged on the usable rows.
 
-    Returns the column records; for each feature, its prepared values over
-    every loaded row (float64 for numeric, object for categorical); and, for
-    each column read as numeric, how many of its coerced cells are numbers
-    written with thousands separators, where there are any.
+    Returns the column records and, for each feature, its prepared values over
+    every loaded row: float64 for numeric, object for categorical.
     """
-    records, prepared, separated = [], {}, {}
+    records, prepared = [], {}
     n_rows = int(usable.sum())
     for position, name in enumerate(df.columns):
         series = df[name]
@@ -367,23 +365,22 @@ def _roles(df, usable, target, time_col):
                 and all(isinstance(v, str) for v in present):
             text = present.str.strip()
             parses = pd.to_numeric(text, errors="coerce").notna().to_numpy(dtype=bool)
+            separated = text.map(_separated).to_numpy(dtype=bool)
+            distinct = int(text.nunique())          # text is compared after stripping
             if text.map(lambda v: DATE_RE.fullmatch(v) is not None).mean() >= DATE_SHARE:
                 rec.update(role="excluded", reason="datetime", kind="datetime")
+            elif distinct > 1 and separated.any() \
+                    and (parses | separated).mean() >= SEPARATED_SHARE:
+                # D34: never parsed, and never used with those cells left out. One
+                # such cell is enough: the cells lost would be the largest values.
+                rec.update(role="excluded", reason="numeric_with_separators", kind="text")
             elif parses.mean() >= NUMERIC_SHARE:
                 numbers = pd.to_numeric(series.str.strip(), errors="coerce") \
                     .to_numpy(dtype="float64", na_value=np.nan)
-                lost = series.notna().to_numpy() & np.isnan(numbers)
-                rec["n_coerced"] = int(lost.sum())
-                n_separated = sum(_separated(v.strip()) for v in series[lost])
-                if n_separated:                         # never parsed, and said so (D28)
-                    separated[name] = n_separated
+                rec["n_coerced"] = int((series.notna().to_numpy() & np.isnan(numbers)).sum())
             else:
-                distinct = int(present.nunique())
                 if distinct == 1:
                     rec.update(role="excluded", reason="constant", kind="categorical")
-                elif (parses | text.map(_separated).to_numpy(dtype=bool)).mean() \
-                        >= SEPARATED_SHARE:
-                    rec.update(role="excluded", reason="numeric_with_separators", kind="text")
                 elif distinct > ID_TEXT_SHARE * n_rows:
                     rec.update(role="excluded", reason="id_like", kind="text")
                 elif distinct > FREE_TEXT_SHARE * len(present):
@@ -410,7 +407,7 @@ def _roles(df, usable, target, time_col):
                 prepared[name] = numbers
         elif levels is not None:
             prepared[name] = levels
-    return records, prepared, separated
+    return records, prepared
 
 
 def _split_time(keys, gap, capped):
@@ -759,25 +756,20 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs):
                   target)
 
     # 5. column roles that need no target
-    records, prepared, separated = _roles(df, usable, target, time_col)
+    records, prepared = _roles(df, usable, target, time_col)
     by_name = {r["name"]: r for r in records}
     for rec in records:
         if rec["n_coerced"]:
             _warn(warnings, "values_coerced",
                   f"{rec['n_coerced']} text value(s) in numeric column {rec['name']!r} could not "
                   "be read as numbers and are treated as missing", rec["name"])
-        if rec["name"] in separated:
-            _warn(warnings, "numeric_with_separators",
-                  f"{separated[rec['name']]} of the value(s) treated as missing in "
-                  f"{rec['name']!r} are numbers written with thousands separators (such as "
-                  "1,200). They are never read as numbers, because the same text means 1.2 in "
-                  "some locales: parse the column and pass a DataFrame", rec["name"])
         if rec["reason"] == "numeric_with_separators":
             _warn(warnings, "numeric_with_separators",
-                  f"column {rec['name']!r} is written with thousands separators (such as "
-                  "1,200) and is excluded. Such values are never read as numbers, because the "
-                  "same text means 1.2 in some locales: parse the column and pass a DataFrame",
-                  rec["name"])
+                  f"column {rec['name']!r} holds numbers written with thousands separators "
+                  "(such as 1,200) and is excluded. Such a value is never read as a number, "
+                  "because the same text means 1.2 in some locales, and a column used without "
+                  "those cells would be missing its largest values: parse the column and pass "
+                  "a DataFrame", rec["name"])
         if rec["n_infinite"]:
             _warn(warnings, "infinite_values",
                   f"{rec['n_infinite']} infinite value(s) in {rec['name']!r} are treated as "

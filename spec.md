@@ -859,8 +859,17 @@ other argument. Consequences, all measured on pandas 3.1.1 (section 9):
   compares the names before loading.
 - A blank header cell is kept under pandas' name (`Unnamed: 3`) with a
   `blank_header` warning.
-- Data rows with more fields than the header are an `input_error` (pandas would
-  otherwise turn the first column into an index and shift the names).
+- Data rows with more fields than the header are an `input_error`. pandas does
+  not report them when the first data row is the long one: it makes an index of
+  the leading fields of every row and gives the header's names to the fields
+  after them. A row number written in front of every row, with no name in the
+  header, is lost in this way with nothing said; an extra field anywhere else
+  puts each name to its left over its neighbour's values. **The index pandas
+  returns cannot be used to detect this.** When the leading field is evenly
+  spaced whole numbers (row numbers; 1, 4, 7; 3, 2, 1) the index is a
+  `RangeIndex`, the type a well-formed file gives, and row numbers from 0 give
+  the default index itself. A row longer than the first data row makes pandas
+  raise `ParserError` (section 9; `docs/measurements/CP2`).
 
 **A DataFrame** is used as it is. Its index is ignored. Column names are read
 through `str()`; duplicates after that stop the run. Types a CSV cannot carry:
@@ -934,7 +943,7 @@ Each keeps its id through the gate, the tests and the review.
 | F3 | The headline is the best cross-validation score, not the holdout score. | Gate: `model.headline_recomputed`, `model.selection_full`. Tests: a fake family whose fold scores and holdout score differ by construction. |
 | F4 | Accuracy is the headline on a rare class. | Gate: `model.metric_clf`, `model.headline_recomputed`. Tests: metrics by hand. |
 | F5 | The task is misread from the column's type. | Gate: `task.binary_numeric`, `task.ambiguous_stops`. Tests: the rule on every loaded shape. |
-| F6 | Something is lost without being reported: rows, a column, a model family. | Gate: `data.rows_reconcile`, `data.columns_accounted`, `data.coercion_reported`, `models.all_accounted`. Tests: accounting on crafted tables; a family that raises. |
+| F6 | Something is lost without being reported: rows, a column, a model family. | Gate: `data.rows_reconcile`, `data.columns_accounted`, `data.coercion_reported`, `data.long_rows_stop`, `models.all_accounted`. Tests: accounting on crafted tables; a family that raises. |
 | F7 | Time order is ignored: a shuffled split, a training row at or after the holdout, the gap not applied, or the time column misread. | Gate: `time.order_respected`, `time.no_skill_on_blocks`, `time.gap_applied`, `time.dayfirst_stops`. Tests: the split as a function of keys. |
 | F8 | Under time order a trending or random-walk target is scored against the training mean only. | Gate: `time.persistence_baseline`. Tests: baselines by hand. |
 
@@ -968,7 +977,8 @@ threads, 192 GB. Default pools: OpenMP 64 threads, OpenBLAS 24.
 | duplicate header names | renamed `a`, `a.1` | silent: read the header line yourself |
 | blank header | `Unnamed: 3` | |
 | blank lines | skipped | rows are not lines minus one |
-| every data row one field longer than the header | first column becomes the index | silent shift of every name |
+| every data row one field longer than the header | the first field of each row becomes the index and the names go to the fields after it. The index is a `RangeIndex` when that field is evenly spaced whole numbers (1, 2, 3; 1, 4, 7; 3, 2, 1) and an `Index` otherwise (1, 4, 9; text; 0.5, 1.0, 1.5; a single row) | silent, with no error and no warning. **The index cannot be used to detect it:** a `RangeIndex` is what a well-formed file gives, and row numbers from 0 give the default index exactly. A leading row number is lost; a trailing extra field puts every name over its neighbour's values |
+| a row longer than the first data row | `ParserError` | the first data row is the only long row pandas reads silently; a line of only spaces or tabs before it is skipped like a blank line |
 
 **Other traps.**
 

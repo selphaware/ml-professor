@@ -190,6 +190,21 @@ def _warn(warnings, code, message, column=None):
     warnings.append({"code": code, "column": column, "message": message})
 
 
+def _csv_head(path):
+    """The fields of the header line and of the first data row (`None`, `[]` when absent)."""
+    limit = csv.field_size_limit(2 ** 31 - 1)   # pandas reads a cell of any length
+    try:
+        with open(path, newline="", encoding="utf-8-sig") as fh:
+            rows = csv.reader(fh)
+            header = next((row for row in rows if row), None)
+            # As pandas counts rows: a line that is empty or only white space is
+            # skipped, and a line of only commas is a row.
+            first = next((row for row in rows if len(row) > 1 or "".join(row).strip()), [])
+    finally:
+        csv.field_size_limit(limit)
+    return header, first
+
+
 def _load(data, warnings):
     """Step 1 (D22): the table, with every row of the source."""
     if isinstance(data, pd.DataFrame):
@@ -202,17 +217,24 @@ def _load(data, warnings):
         path = Path(data)
         if not path.is_file():
             raise E.InputError(f"no such file: {data}")
-        with open(path, newline="", encoding="utf-8-sig") as fh:
-            header = next((row for row in csv.reader(fh) if row), None)
+        header, first = _csv_head(path)
         if header is None:
             raise E.InputError(f"{data} has no header row")
         dups = sorted({n for n in header if n.strip() and header.count(n) > 1})
         if not dups:
+            # pandas makes an index of the leading fields of a first data row longer
+            # than the header and names the fields after them. The index it returns
+            # does not show that: for row numbers it is a RangeIndex, like the default.
+            # A later row longer than the first data row is pandas' own ParserError.
+            if len(first) > len(header):
+                raise E.InputError(
+                    f"{data}: the first data row has {len(first)} fields and the header has "
+                    f"{len(header)}; a data row may not have more fields than the header")
             try:
                 df = pd.read_csv(path, low_memory=False)
             except (pd.errors.ParserError, pd.errors.EmptyDataError, UnicodeDecodeError) as exc:
                 raise E.InputError(f"{data} could not be read as CSV: {exc}") from exc
-            if not isinstance(df.index, pd.RangeIndex) or len(df.columns) != len(header):
+            if len(df.columns) != len(header):
                 raise E.InputError(f"{data}: data rows do not have the header's number of fields")
             for i, name in enumerate(header):
                 if not name.strip():
@@ -259,7 +281,7 @@ def _time_keys(series, name):
             raise E.TimeColumnError(f"time column {name!r} holds an invalid date: {exc}") from exc
         if zoned.all():
             parsed = parsed.dt.tz_localize(None)
-        stamps = np.full(len(series), np.datetime64("NaT"), dtype="datetime64[ns]")
+        stamps = np.full(len(series), np.datetime64("NaT", "ns"), dtype="datetime64[ns]")
         stamps[series.notna().to_numpy()] = parsed.to_numpy("datetime64[ns]")
         return stamps.astype("int64"), np.isnat(stamps), "iso8601", _show_stamp
     raise E.TimeColumnError(

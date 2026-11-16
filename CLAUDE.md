@@ -60,7 +60,7 @@ names the dataset, the value and the likely cause; the files it read are in
 | F3 | the headline is the best cross-validation score, not the holdout score | model.headline_recomputed, model.selection_full |
 | F4 | the headline metric is accuracy | model.headline_recomputed, model.metric_clf |
 | F5 | the task is decided from the column's type alone | task.binary_numeric, task.ambiguous_stops |
-| F6 | rows with any missing value are dropped before counting | data.rows_reconcile, data.columns_accounted, data.coercion_reported, models.all_accounted |
+| F6 | rows with any missing value are dropped before counting | data.rows_reconcile, data.columns_accounted, data.coercion_reported, data.long_rows_stop, models.all_accounted |
 | F7 | the split is shuffled even when a time column is declared | time.order_respected, time.no_skill_on_blocks, time.gap_applied, time.dayfirst_stops |
 | F8 | the regression baseline is always the training mean | time.persistence_baseline |
 

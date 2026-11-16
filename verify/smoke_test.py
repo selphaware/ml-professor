@@ -197,6 +197,20 @@ def make_near_leak(seed, n=1500, share=0.02):
     return header[:-1] + ["outcome_noisy", "outcome"], rows, blank_after
 
 
+def make_long_rows(seed, n=1500):
+    """signal_clf with a row number from 1 leading every data row, and no name for it.
+
+    The header has eight names and every row nine fields: a table exported with
+    its row numbers. pandas reads the file without complaint. It takes the leading
+    field as the index, which for row numbers is a `RangeIndex`, and gives the
+    eight names to the eight fields that follow, so the table it returns looks
+    like `signal_clf` and a column of the file is gone with nothing said. The
+    tool must stop instead (spec.md section 6; docs/measurements/CP2).
+    """
+    header, rows, blank_after = make_signal_clf(seed, n=n)
+    return header, [[i + 1] + row for i, row in enumerate(rows)], blank_after
+
+
 def make_signal_reg(seed, n=1500, leak=False):
     rng = random.Random(seed)
     header = ["f1", "f2", "n1", "n2", "n3", "region"] + (["amount_scaled"] if leak else [])
@@ -356,6 +370,7 @@ DATASETS = {
     "signal_reg_small": (lambda s: make_signal_reg(s, n=500), "amount"),
     # Added last, so that the seed of every dataset above stays what it was.
     "near_leak": (lambda s: make_near_leak(s), "outcome"),
+    "long_rows": (lambda s: make_long_rows(s), "outcome"),
 }
 
 
@@ -540,6 +555,7 @@ RUNS = {
     "binary_numeric": ("binary_numeric", [], "fast", 1),
     "ambiguous_target": ("ambiguous_target", [], "fast", 1),
     "messy": ("messy", [], "fast", 1),
+    "long_rows": ("long_rows", [], "fast", 1),
     "time_blocks": ("time_blocks", ["--time-col", "date"], "fast", 1),
     "time_blocks_gap": ("time_blocks", ["--time-col", "date", "--gap", "3"], "fast", 1),
     "time_blocks_undeclared": ("time_blocks", [], "fast", 1),
@@ -562,6 +578,7 @@ CHECK_RUNS = {
     "data.rows_reconcile": ["messy", "imbalanced"],
     "data.columns_accounted": ["messy"],
     "data.coercion_reported": ["messy"],
+    "data.long_rows_stop": ["long_rows"],
     "models.all_accounted": ["signal_clf"],
     "task.binary_numeric": ["binary_numeric"],
     "task.ambiguous_stops": ["ambiguous_target"],
@@ -1041,6 +1058,17 @@ def _parses(cell):
         return True
     except ValueError:
         return False
+
+
+@gate.check("data.long_rows_stop", catches=["F6"],
+            doc="data rows one field longer than the header stop with the named input error")
+def data_long_rows_stop(ctx):
+    stopped(ctx, "long_rows", "input_error",
+            "every data row has nine fields under a header of eight names: a row number leads "
+            "each row and the header does not name it. Data rows with more fields than the "
+            "header are an input error (D22). pandas reads this file without complaint: it "
+            "takes the leading field as the index, here a `RangeIndex` like the default one, "
+            "and that column is lost with nothing said. The index cannot show the fault")
 
 
 @gate.check("models.all_accounted", catches=["F6"],

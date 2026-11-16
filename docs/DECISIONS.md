@@ -185,3 +185,204 @@ Alternatives considered: Streamlit (less control over layout, awkward with
 long-running fits); Dash only (no shareable file for notebook users).
 Consequence: none for phase 1 beyond D2's rule that the result object is
 complete.
+
+## D16 — 2026-11-15 — Forest strength and the run-time budget (replaces parts of D8 and D12)
+Decision: Each family has at most 8 configurations including its default: at
+most 24 configurations and 120 cross-validation fits. The forest stays at
+full strength, with no cap on rows per tree. The regression forest considers
+one third of the features at each split; that is the only departure from
+scikit-learn's defaults. The budget in D12 is restated as: a full run on
+100,000 rows by 100 columns inside 10 minutes on this machine using all
+cores. The harness stage times a full run for both tasks before pinning the
+grids and reports if either is over; it does not weaken a model to fit.
+Alternatives considered: scikit-learn defaults on one thread (rejected:
+Phase 0 measured about 55 minutes for classification and about 5 hours for
+regression); capping each tree at 10,000 rows (rejected for now: it weakens
+the forest exactly where there is most data). Deferred until a real table
+proves too slow: a capped `balanced` profile, and searching the grid on a
+subsample then refitting the winner on every training row.
+Consequence: run time depends on the machine's cores. Tables beyond the
+scale target run and take longer; nothing is capped silently.
+
+## D17 — 2026-11-15 — Cores and reproducibility (replaces `n_jobs=1` in D2 and D12)
+Decision: `n_jobs` defaults to all cores (`n_jobs=-1`); a positive whole
+number uses that many. The value used is recorded in the output. The tool
+uses `threadpoolctl`, already a dependency of scikit-learn, so that `n_jobs`
+governs every thread pool, and holds linear algebra to one thread always. The
+same seed must give the same result at any `n_jobs`; the gate proves it by
+comparing runs at 1 and 4. If the harness stage finds that cannot be
+achieved, it reports, and the fallback is "same seed and same `n_jobs`".
+Alternatives considered: one thread by default (rejected: a plain call on a
+large table would take about an hour).
+Consequence: the gate runs single-threaded; real runs use the machine.
+
+## D18 — 2026-11-15 — Accepted forms of the time column
+Decision: The time column is accepted as a datetime-typed DataFrame column,
+as it is; as a numeric column, ordered as numbers; or as text in ISO 8601
+form, year first. Anything else stops with a named error. The tool never
+guesses between day-first and month-first.
+Alternatives considered: pandas' date parser (rejected: Phase 0 showed it
+reads 01/12/2023 as 12 January without complaint, which mis-orders the rows
+and puts the wrong rows in the holdout).
+Consequence: a CSV with day-first dates must be parsed by the caller and
+passed as a DataFrame. F7 gains a form (a misread time column) and a gate
+check for it.
+
+## D19 — 2026-11-15 — Id-like rule
+Decision: A text column is id-like when its distinct values number more than
+95% of the rows. A whole-number column, judged by value so that blanks do not
+matter, is id-like only when every value is distinct and the values are
+either consecutive or strictly ordered in file order. Any other whole-number
+column stays a feature. The harness stage measures the rule and reports it.
+Alternatives considered: the 95% rule for every non-float column (rejected:
+Phase 0 showed it excludes price and volume columns on a 2,000-row table and
+keeps them on a large one).
+Consequence: a real integer measure is a feature at any table size. An
+unordered random integer identifier is not caught and stays in as a feature.
+
+## D20 — 2026-11-15 — Fast and full agree; wide panels under the fast profile
+Decision: The task and the column roles that need no target are decided
+before the fast profile's row cap, so both profiles agree on them. If the
+capped rows hold too few timestamps to form the holdout and the six blocks,
+the fast profile stops with a named error telling the caller to use `full`.
+Alternatives considered: changing the cap rule for panels (deferred to phase
+2, when entity columns allow a panel to be sampled properly).
+Consequence: `profile="fast"` refuses a panel with more than roughly 250
+rows per date.
+
+## D21 — 2026-11-15 — Warning for a whole-number regression target
+Decision: When `task="auto"` picks regression for a target whose values are
+all whole numbers, the output carries a warning.
+Alternatives considered: none; it covers the gap in D4 where an identifier or
+a class with more than 20 codes is read as a continuous target.
+Consequence: one more warning code.
+
+## D22 — 2026-11-15 — Loading rules
+Decision: pandas' default missing-value tokens (such as `n/a`) count as
+missing, never as coerced. The loader reads with `low_memory=False`. Blank
+lines are not rows. Duplicate column names stop with a named error; a blank
+header is kept under pandas' name with a warning. "Date-like" is decided
+against a fixed list of date formats, never pandas' lenient parser. The
+floors for "too small to profile" and for the block bootstrap are set from
+the harness stage's measurements and reported for approval.
+Alternatives considered: forcing every column to text on load (rejected:
+the tool would then own all type inference).
+Consequence: a cell such as `1,200` is not read as a number; it is counted
+as coerced to missing and a warning names the column. A CSV is read with
+pandas' types, so text identifiers can lose leading zeros; a caller who
+needs control passes a DataFrame. The output states this as a limitation.
+
+## D23 — 2026-11-16 — Cut-offs approved as measured by the harness stage
+Decision: The tool's cut-offs are approved as pinned in `spec.md` section 4.3
+and measured in its section 10: leak by single-column skill at 0.98; leak by
+missingness at more than 95% of one class and less than 5% of the other;
+free text at more than 50% distinct; numeric coercion at 90%; date-like at
+95% against fixed date forms; small-holdout warning at 50 (rows of the rarer
+class, or rows in all for regression); too small to profile at 100 usable
+rows or 10 of a class; no block-bootstrap interval below 30 holdout
+timestamps (not 20); autocorrelated panel warning at 0.5 (not 0.8).
+Alternatives considered: the starting values in the brief for the last two
+(rejected on the measurements: coverage of 79% at 20 timestamps, and the
+previous value beating the training mean from 0.5 upward).
+Consequence: these values are part of the contract and change only by a new
+decision backed by a new measurement.
+
+## D24 — 2026-11-16 — Leak rule under time order (clarifies D11)
+Decision: A column's single-column skill is measured on the scheme's own
+selection folds, on training rows only. Under time order with unique
+timestamps, regression skill is measured against the stronger of the training
+mean and the previous value.
+Alternatives considered: D11 read literally (rejected: it flags a series'
+own lag as a leak).
+Consequence: a lag feature of a single series is not excluded. See D31 for
+the panel case, which is not covered.
+
+## D25 — 2026-11-16 — Pinned model settings (adds to D16)
+Decision: Six configurations per family, 18 in all and 90 cross-validation
+fits, as listed in `spec.md` section 4.1. Histogram gradient boosting runs
+with early stopping off, so its behaviour does not change at 10,000 rows.
+Logistic regression is allowed 1,000 iterations. Forests predict on one
+thread, which is what makes results identical at any `n_jobs`.
+Alternatives considered: scikit-learn's defaults for those three settings
+(rejected: a behaviour change at a row count, convergence warnings, and
+results that differ between identical runs).
+Consequence: a full run at 100,000 by 100 on all cores was measured at about
+3 minutes for classification and 3.4 for regression. Identical output at any
+`n_jobs` (D17) was achieved.
+
+## D26 — 2026-11-16 — Step functions and the test seam are part of the contract (adds to D2)
+Decision: `mlprofessor.stages` (twelve step functions) and
+`mlprofessor.extensions.use` (the seam for recording fakes) are pinned in the
+spec and built by the loop, so each data-handling task can be judged before
+any model exists. The user-facing interface remains the `profile` function
+and the command line.
+Alternatives considered: two entry points only (rejected: the early tasks
+could not then be judged by tests alone).
+Consequence: builders have less freedom over internal structure than D2
+intended.
+
+## D27 — 2026-11-16 — The time-ordered interval is labelled as approximate (keeps D9)
+Decision: The block bootstrap of D9 stays. Whenever it is used the output
+carries a warning that the interval is approximate, and the limitations
+statement says intervals tend to be too narrow on short holdouts and, under
+time order, when errors are serially correlated.
+Alternatives considered: a longer or data-driven block length (deferred: a
+candidate for a later change, with its own coverage measurements); no
+interval below 100 timestamps (rejected: monthly data would rarely get one).
+Consequence: the nominal 95% interval was measured to cover about 86% at 30
+timestamps on independent data and 64% to 85% under strong serial
+correlation. The tool says so and does not hide it.
+
+## D28 — 2026-11-16 — Numbers written with thousands separators (adds to D22)
+Decision: A value such as `1,200` is never parsed as a number, because the
+same text means 1.2 in some locales. A column made mostly of such values is
+excluded with its own reason, `numeric_with_separators`, not as free text,
+and a warning tells the caller to parse it and pass a DataFrame. A numeric
+column in which some cells were coerced to missing for this reason carries
+the same warning.
+Alternatives considered: stripping the commas (rejected: a guess about
+locale, the same class of error as guessing day-first dates).
+Consequence: a financial CSV with formatted amounts loses those columns
+until the caller parses them, and the output says exactly why.
+
+## D29 — 2026-11-16 — Negative skill is explained
+Decision: The limitations statement says that negative skill means the
+models did worse than the baseline on the holdout and is to be read as no
+evidence of predictability.
+Alternatives considered: clipping skill at zero (rejected: D5 reports skill
+as measured).
+Consequence: one more fixed string in the output.
+
+## D30 — 2026-11-16 — A warning tier below the leak cut-off (adds to D11)
+Decision: A feature whose single-column skill is high but below the 0.98
+exclusion cut-off is kept, and a warning names it and asks whether the column
+is known before the outcome. The warning cut-off starts at 0.90, is measured
+by the harness stage, and is reported for approval.
+Alternatives considered: lowering the exclusion cut-off (rejected: it would
+remove legitimately strong features from the headline).
+Consequence: a near-copy of the target, such as one with 2% of labels
+flipped, no longer passes without comment.
+
+## D31 — 2026-11-16 — Limits of phase 1, accepted
+Decision: These are accepted as known limits, visible in the output where
+stated. (1) The id-like rule misses a shuffled identifier that has a blank
+cell, and wrongly excludes a distinct whole-number measure in a table sorted
+by that measure; both show in the column accounting. (2) In a panel, a lagged
+level of a persistent target is flagged as a suspected leak, because the only
+baseline there is the training mean; profile returns or changes until phase
+2 adds entities. (3) The gate's p-value check fails a correct build with
+probability 1 in 201. (4) The 10-minute budget was measured once and no check
+enforces it.
+Alternatives considered: an argument to override column roles (deferred: a
+candidate for a later change).
+Consequence: none of these blocks the build.
+
+## D32 — 2026-11-16 — Venv base interpreter path
+Decision: `mlprof_env\pyvenv.cfg` now has
+`home = C:\Users\uahma\anaconda3\envs\py312`, the same interpreter by its
+local path, in place of the mapped `A:` drive.
+Alternatives considered: leaving it (rejected: the harness stage measured
+Python processes started together stalling for 35 or 70 seconds on the
+mapping's lock timeout).
+Consequence: `doctor` was clean after the change, with the self-test passing
+and the per-edit gate at 10.4 seconds.

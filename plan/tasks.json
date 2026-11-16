@@ -1,0 +1,193 @@
+{
+  "version": 1,
+  "deliverable": "mlprofessor",
+  "tasks": [
+    {
+      "id": "T1",
+      "title": "Package skeleton, command-line stub, requirements.txt",
+      "tier": "support",
+      "why_tier": "One obvious right answer: names, signatures and error codes are all given in spec section 2.",
+      "depends_on": [],
+      "writes": ["mlprofessor/__init__.py", "mlprofessor/__main__.py", "mlprofessor/cli.py", "mlprofessor/errors.py", "mlprofessor/extensions.py", "mlprofessor/stages.py", "mlprofessor/result.py", "requirements.txt"],
+      "brief": "Create the package folder `mlprofessor` (spec 2). `mlprofessor.profile` with exactly the signature and defaults of 2.1; for now it may raise NotImplementedError. A `ProfileResult` class (2.3) to be filled later. `mlprofessor/errors.py` with every class of 2.4, each subclassing `ProfileError` and carrying its `code`. `mlprofessor/extensions.py` with the context manager `use(families=None, steps=None)` exactly as 2.6 describes (it stores the overrides, restores the previous state on exit including after an exception, and nests). An empty module `mlprofessor/stages.py` that later tasks fill. The command line of 2.2: `python -m mlprofessor profile` with every option, calling `profile`, exit codes 0, 2 and 3; `--help` must exit 0. `requirements.txt` pinning pandas==3.1.1, numpy==2.5.4, scikit-learn==1.9.1 and threadpoolctl==3.8.0. Install nothing: all four are already in the interpreter, and the package itself is never installed.",
+      "gate_checks": [],
+      "tests": ["tests/test_skeleton.py"]
+    },
+    {
+      "id": "T2",
+      "title": "Load one table; count usable rows",
+      "tier": "complex",
+      "why_tier": "Carries F6: a row lost here is lost from every count that follows.",
+      "depends_on": ["T1"],
+      "writes": ["mlprofessor/load.py", "mlprofessor/stages.py"],
+      "brief": "Build `stages.load_table(data)` and `stages.usable_rows(frame, target, time_col=None)` (spec 2.7), implementing step 1 and step 2 of section 3 and the loading rules of section 6. Read spec section 9 first: pandas 3 renames duplicate headers silently, skips blank lines, and turns the first column into an index when rows are longer than the header. The loader reads the header line itself to catch duplicates. `row` positions are fixed here and never change.",
+      "gate_checks": [],
+      "tests": ["tests/test_load.py"]
+    },
+    {
+      "id": "T3",
+      "title": "Column roles that need no target",
+      "tier": "complex",
+      "why_tier": "Carries F6 and decides which columns ever reach a model.",
+      "depends_on": ["T2"],
+      "writes": ["mlprofessor/columns.py", "mlprofessor/stages.py"],
+      "brief": "Build `stages.column_roles(frame, target, time_col=None)` (spec 2.7): the rule table of step 5, in its order, with the cut-offs of 4.3 and the date forms of 4.5. Roles are judged on the usable rows; `n_missing`, `n_coerced` and `n_infinite` are counted over every row. Whole numbers are judged by value, never by dtype (a blank cell makes an integer column float). Never use pandas' date parser to decide whether a column is a date.",
+      "gate_checks": [],
+      "tests": ["tests/test_columns.py"]
+    },
+    {
+      "id": "T4",
+      "title": "Task decision",
+      "tier": "complex",
+      "why_tier": "Carries F5: the wrong task puts the headline on the wrong scale.",
+      "depends_on": ["T2"],
+      "writes": ["mlprofessor/task.py", "mlprofessor/stages.py"],
+      "brief": "Build `stages.decide_task(values, task=\"auto\")` (spec 2.7, step 4 of section 3). Count distinct values; ignore the type for the two-value rule. Raise the named errors rather than guess. Return the classes in sorted order with the second as the positive class, and the `whole_number_regression_target` warning code when the rule picks regression on whole numbers.",
+      "gate_checks": [],
+      "tests": ["tests/test_task.py"]
+    },
+    {
+      "id": "T5",
+      "title": "Random holdout and folds",
+      "tier": "complex",
+      "why_tier": "Decides which rows every number is computed on.",
+      "depends_on": ["T1"],
+      "writes": ["mlprofessor/split.py", "mlprofessor/stages.py"],
+      "brief": "Build `stages.split_random(n_rows, classes=None, seed=0)` (spec 2.7, step 7 of section 3, random scheme): the holdout of ceil(n/4) rows first, stratified when `classes` is given, then five folds that partition the remaining rows. Everything comes from the seed.",
+      "gate_checks": [],
+      "tests": ["tests/test_split_random.py"]
+    },
+    {
+      "id": "T6",
+      "title": "Time column, time-ordered holdout, expanding folds, gap",
+      "tier": "complex",
+      "why_tier": "Carries F7: a training row at or after the holdout, or a misread date, gives an optimistic number with no error.",
+      "depends_on": ["T5"],
+      "writes": ["mlprofessor/split.py", "mlprofessor/stages.py"],
+      "brief": "Build `stages.read_time(values)` and `stages.split_time(keys, gap=0)` (spec 2.7; steps 3 and 7 of section 3). `read_time` accepts exactly the three forms of step 3 and raises `TimeColumnError` for anything else; text is matched against the ISO 8601 pattern before any parsing, and day-first or month-first text is never parsed. `split_time` cuts at whole timestamps, makes six contiguous blocks as numpy.array_split would, and takes the gap off before the holdout and before every validation block.",
+      "gate_checks": [],
+      "tests": ["tests/test_split_time.py"]
+    },
+    {
+      "id": "T7",
+      "title": "Metrics, skill and the previous-value baseline",
+      "tier": "complex",
+      "why_tier": "Carries F4 and F8; exact arithmetic that every headline rests on.",
+      "depends_on": ["T1"],
+      "writes": ["mlprofessor/metrics.py", "mlprofessor/stages.py"],
+      "brief": "Build `stages.roc_auc`, `stages.mse`, `stages.skill` and `stages.previous_value` (spec 2.7; step 11 of section 3). ROC AUC by ranks with ties sharing their average rank, in numpy. Accuracy is not a metric here.",
+      "gate_checks": [],
+      "tests": ["tests/test_metrics.py"]
+    },
+    {
+      "id": "T8",
+      "title": "Preprocessing fitted on the rows it is given",
+      "tier": "complex",
+      "why_tier": "Carries F1: preprocessing that learns from the wrong rows is the small, invisible form of leakage.",
+      "depends_on": ["T1"],
+      "writes": ["mlprofessor/preprocess.py", "mlprofessor/stages.py"],
+      "brief": "Build `stages.Preprocessor(kinds)` with `fit(frame)` and `transform(frame)` (spec 2.7; 'Preprocessing' under step 8 of section 3): median imputation and standardisation for numeric columns, the level `(missing)` and one-hot columns for at most the 30 most frequent levels for categorical columns. Every statistic comes from the frame given to `fit`.",
+      "gate_checks": [],
+      "tests": ["tests/test_preprocess.py"]
+    },
+    {
+      "id": "T9",
+      "title": "Fit, select, score once: the run in memory, random scheme, fast profile",
+      "tier": "complex",
+      "why_tier": "Carries F1 and F3: this is where a refit on the wrong rows or a cross-validation score as the headline would happen.",
+      "depends_on": ["T2", "T3", "T4", "T5", "T7", "T8"],
+      "writes": ["mlprofessor/pipeline.py", "mlprofessor/models.py", "mlprofessor/result.py", "mlprofessor/__init__.py"],
+      "brief": "Make `profile()` run in memory under the random scheme with `profile=\"fast\"`, following steps 1, 2, 4, 5, 6, 7, 9, 10 and 11 of spec section 3 by calling the step functions already built: load, usable rows, task, roles, the fast profile's random row cap, `split_random`, then for each configuration and fold a fresh `Preprocessor` and model fitted on the fold's training rows, selection by `cv_mean`, one refit on all training rows, one scoring of the holdout, the baselines and skill. The two families of the fast profile are `linear-0` and `tree-0` (4.1). Honour `extensions.use` (2.6): families replace the built-in ones, steps run first, every fit gets fresh objects and DataFrames indexed by source row position. A configuration that raises is recorded as failed and never chosen; all failing raises. Hold BLAS to one thread and OpenMP to `n_jobs` with threadpoolctl for the whole run. Return a `ProfileResult` whose `predictions`, `models`, `rows`, `columns`, `warnings` and `headline` (metric, score, model, baseline, baseline_score, skill) are populated. No time column, no leak screen, no interval, no files yet.",
+      "gate_checks": [],
+      "tests": ["tests/test_pipeline.py"]
+    },
+    {
+      "id": "T10",
+      "title": "profile.json, predictions.csv and the command line: the first run the gate can judge",
+      "tier": "complex",
+      "why_tier": "First task the gate judges; owns reconciliation between the source, the files and the result object.",
+      "depends_on": ["T9"],
+      "writes": ["mlprofessor/result.py", "mlprofessor/pipeline.py", "mlprofessor/cli.py"],
+      "brief": "Complete the output of spec section 5 for the random scheme under the fast profile: every key of `profile.json` (5.2), with fields that later tasks fill written as null or empty (the interval and p-value fields, `limitations`); `predictions.csv` (5.1); `to_dict()`, `to_json(path)` and `out_dir`; the DataFrames equal to their JSON parts (2.3). The command line writes both files, prints a short summary, exits 3 with `error: <code>: <message>` on a named error and writes nothing then. Add the warnings that arise in steps 1 to 11: `values_coerced`, `infinite_values`, `blank_header`, `duplicate_rows`, `whole_number_regression_target`, `small_holdout`, `fold_not_scored`, `model_failed`. No NaN in the JSON. Only `meta.timing` may hold a clock value.",
+      "gate_checks": ["data.rows_reconcile", "data.columns_accounted", "data.coercion_reported", "models.all_accounted", "task.binary_numeric", "task.ambiguous_stops", "model.signal_clf", "model.signal_reg", "model.noise_clf", "model.noise_reg", "model.headline_recomputed", "model.metric_clf", "result.matches_json", "output.deterministic"],
+      "tests": ["tests/test_result_schema.py"]
+    },
+    {
+      "id": "T11",
+      "title": "Time-ordered scheme wired into the run, with its baselines",
+      "tier": "complex",
+      "why_tier": "Carries F7 and F8.",
+      "depends_on": ["T6", "T10"],
+      "writes": ["mlprofessor/pipeline.py", "mlprofessor/metrics.py"],
+      "brief": "When `time_col` is given, follow the time-ordered path of spec section 3: read the time column (step 3), drop and count rows with no time value, apply the fast profile's cap as the most recent whole timestamps (step 6, `FastProfileError` for a wide panel), split with `split_time` (step 7), count `dropped_gap` and each fold's `gap_rows`, fill the time fields of `validation` (5.2). Regression baselines under time order (step 11): with unique timestamps score both `training_mean` and `previous_value` and use the lower error; with repeated timestamps use the training mean and raise `autocorrelated_panel_target` above 0.5. When `time_col` is not given and a column was excluded as `datetime`, raise `date_column_undeclared`. `--gap` without `--time-col` is an input error.",
+      "gate_checks": ["time.order_respected", "time.no_skill_on_blocks", "time.gap_applied", "time.dayfirst_stops", "time.persistence_baseline", "time.undeclared_warns"],
+      "tests": ["tests/test_time_pipeline.py"]
+    },
+    {
+      "id": "T12",
+      "title": "Leak screen",
+      "tier": "complex",
+      "why_tier": "Carries F2, and a screen fitted on the wrong rows is itself F1.",
+      "depends_on": ["T10", "T11"],
+      "writes": ["mlprofessor/leakage.py", "mlprofessor/pipeline.py"],
+      "brief": "Add the leak screen of step 8 of spec section 3, run on training rows only, before any model: the missing-by-class rule, then the single-column cross-validated skill with the pinned tree over the selection folds, cut-offs of 4.3. Under time order it uses the expanding folds and, for regression with unique timestamps, the previous-value baseline, so a lagged target on a random walk is not flagged. A flagged column is excluded with reason `suspected_leak`, its `leak_rule` and a warning, and reaches no model. No feature left raises `NoFeaturesError`.",
+      "gate_checks": ["leak.excluded", "leak.control_kept", "leak.regression"],
+      "tests": ["tests/test_leakage.py"]
+    },
+    {
+      "id": "T13",
+      "title": "Interval and p-value, row and block forms",
+      "tier": "complex",
+      "why_tier": "Decides how certain the headline looks; the resampling must respect time order.",
+      "depends_on": ["T10", "T11"],
+      "writes": ["mlprofessor/uncertainty.py", "mlprofessor/pipeline.py"],
+      "brief": "Add step 12 of spec section 3, from the holdout predictions alone, nothing refitted: the percentile bootstrap interval on score and skill and the permutation p-value under the random scheme; the moving-block bootstrap over distinct holdout timestamps under time order, with the p-value absent and its reason given; no interval below 30 holdout timestamps, with a reason and the `no_interval` warning. 200 resamples under fast, 1,000 under full. Fill the interval and p-value fields of `headline` (5.2).",
+      "gate_checks": ["uncertainty.reported", "model.noise_p_value"],
+      "tests": ["tests/test_uncertainty.py"]
+    },
+    {
+      "id": "T14",
+      "title": "Random forest and histogram gradient boosting behind the existing family interface",
+      "tier": "routine",
+      "why_tier": "One concern behind an interface that already exists; the estimators and their arguments are given in spec 4.1.",
+      "depends_on": ["T10"],
+      "writes": ["mlprofessor/models.py"],
+      "brief": "Under `profile=\"full\"` run three families in the order linear, forest, boosting (spec 4.1), each with at least its index-0 configuration, for both tasks, through the same family interface the fast profile uses. Forests are fitted with `n_jobs` and predict on one thread. The regression forest's default `max_features` is one third. Keep the handling of a configuration that raises: status `failed`, error text, `model_failed` warning, never chosen; every configuration failing raises `AllModelsFailedError`.",
+      "gate_checks": [],
+      "tests": ["tests/test_model_families.py"]
+    },
+    {
+      "id": "T15",
+      "title": "The full profile's grids, and the same result at any n_jobs",
+      "tier": "complex",
+      "why_tier": "Carries F3: with 18 configurations the best cross-validation score is optimistic, and selection must not touch the holdout.",
+      "depends_on": ["T13", "T14"],
+      "writes": ["mlprofessor/models.py", "mlprofessor/pipeline.py"],
+      "brief": "Complete the grids of spec 4.1: exactly 18 configurations under `full`, named and ordered as given, `params` holding the grid arguments. Selection over all of them by `cv_mean` with ties to the earlier family then the earlier grid position; only the chosen one is refitted and scored on the holdout. `meta.n_jobs` records the cores used. The same seed must give identical files at any `n_jobs` (D17): BLAS on one thread always, OpenMP on `n_jobs`, forests predicting on one thread.",
+      "gate_checks": ["model.selection_full", "output.same_at_any_n_jobs"],
+      "tests": ["tests/test_full_profile.py"]
+    },
+    {
+      "id": "T16",
+      "title": "Edges, limitations statement, console summary",
+      "tier": "routine",
+      "why_tier": "A clear contract: every edge, code and fixed text is listed in the spec.",
+      "depends_on": ["T11", "T12", "T13", "T15"],
+      "writes": ["mlprofessor/pipeline.py", "mlprofessor/result.py", "mlprofessor/cli.py"],
+      "brief": "Walk the table of spec section 7 row by row and make each edge give its named error or its reported outcome; none may be skipped silently. Every invalid argument of 2.1 raises `InputError`. Write the fixed limitations statement and the random-split caveat of 5.4 exactly. Make the console summary short and plain: task, scheme, row counts, skill with its metric, baseline and interval, the p-value when there is one, and each warning.",
+      "gate_checks": ["output.complete"],
+      "tests": ["tests/test_edges.py"]
+    },
+    {
+      "id": "T17",
+      "title": "README with run instructions",
+      "tier": "support",
+      "why_tier": "Prose from known facts.",
+      "depends_on": ["T16"],
+      "writes": ["README.md"],
+      "brief": "Write `README.md` for a data scientist: what the tool measures and what it does not (the limitations of spec 5.4, in plain words), how to call `mlprofessor.profile` and the command line with the interpreter at E:\\CODE\\ml-professor\\mlprof_env\\Scripts\\python.exe from the repo root, what `profile.json` and `predictions.csv` contain, the two validation schemes and when to pass `time_col`, the fast profile. State that the package is run from the repo root and is not installed. Every command shown must work as written.",
+      "gate_checks": [],
+      "tests": ["tests/test_readme.py"]
+    }
+  ]
+}

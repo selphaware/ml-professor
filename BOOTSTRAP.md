@@ -25,9 +25,14 @@ manufactures ground truth: synthetic datasets where the correct conclusion is
 known by construction, and it checks the tool reaches that conclusion.
 
 **This brief covers phase 1 of five.** The decisions it rests on are recorded
-in `docs/DECISIONS.md` as D1 to D15. Read that file. Cite the decision numbers
+in `docs/DECISIONS.md` as D1 to D22. Read that file. Cite the decision numbers
 in `spec.md` wherever the spec restates one. If this brief and that file
 disagree, stop and say so.
+
+**Revised on 2026-11-15, after the Phase 0 report.** D16 to D22 were taken in
+answer to that report. They replace parts of D2, D8 and D12; where an earlier
+entry and a later one differ, the later one holds. This brief has been brought
+into line with them.
 
 ---
 
@@ -58,7 +63,10 @@ disagree, stop and say so.
 >
 > - Target: one column, named by the caller.
 > - Time: an optional time column, named by the caller as `time_col`. It is
->   never inferred (D7).
+>   never inferred (D7). Accepted forms (D18): a datetime-typed column in a
+>   DataFrame, as it is; a numeric column, ordered as numbers; a text column
+>   in ISO 8601 form, year first. Anything else stops with a named error.
+>   The tool never guesses between day-first and month-first.
 > - Repeated entities: possible (a panel). Phase 1 has no grouped scheme. A
 >   panel is handled by the time-ordered scheme when `time_col` is given;
 >   otherwise the output carries the random-split caveat (D6).
@@ -72,8 +80,9 @@ disagree, stop and say so.
 > Two public entry points (D2), and nothing else is public:
 >
 > - The function
->   `mlprofessor.profile(data, target, task="auto", time_col=None, gap=0, profile="full", seed=0, out_dir=None, n_jobs=1)`,
->   which returns a `ProfileResult`.
+>   `mlprofessor.profile(data, target, task="auto", time_col=None, gap=0, profile="full", seed=0, out_dir=None, n_jobs=-1)`,
+>   which returns a `ProfileResult`. `n_jobs=-1` uses every core; a positive
+>   whole number uses that many (D17).
 > - The command line, a thin wrapper over that function:
 >   `python -m mlprofessor profile --data file.csv --target col --out dir`,
 >   with the options `--task`, `--time-col`, `--gap`, `--profile`, `--seed`
@@ -155,7 +164,9 @@ disagree, stop and say so.
 >   stops with a named error asking the caller to declare the task. A
 >   declared task is honoured if the target supports it, and refused with a
 >   named error if not (more than two classes; a non-numeric regression
->   target).
+>   target). When the rule picks regression for a target whose values are all
+>   whole numbers, the output carries a warning (D21). The task is decided
+>   before the fast profile's row cap, so both profiles agree on it (D20).
 > - **Headline and baseline (D5):** skill over a baseline, 0 for no better
 >   than the baseline and 1 for perfect. Classification: ROC AUC on the
 >   holdout, baseline 0.5, skill = 2 x AUC - 1. Regression: skill = 1 - (model
@@ -174,7 +185,8 @@ disagree, stop and say so.
 >   `gap` is a number of distinct timestamps removed from the training side
 >   immediately before the holdout and before each validation block. If a
 >   date column exists and `time_col` is not given, the random scheme is used
->   and a warning is raised.
+>   and a warning is raised. The time column must be in one of the accepted
+>   forms (D18); a text column that is not year-first ISO 8601 stops the run.
 > - **Regression baseline under time order (D10):** with unique timestamps,
 >   the training mean and the previous value (the target `gap + 1` timestamps
 >   earlier) are both scored on the holdout; the headline baseline is the one
@@ -182,11 +194,15 @@ disagree, stop and say so.
 >   timestamps the baseline is the training mean, with a warning when the
 >   per-timestamp mean of the target is strongly autocorrelated over the
 >   training period.
-> - **Models and budget (D8):** scikit-learn only. A regularised linear model
->   (logistic regression or ridge), a random forest, histogram gradient
->   boosting. Each at default settings plus a fixed grid of at most 8
->   combinations, which you pin in `spec.md`. A dummy baseline is fitted as a
->   reference and is never a candidate.
+> - **Models and budget (D8, D16):** scikit-learn only. A regularised linear
+>   model (logistic regression or ridge), a random forest, histogram gradient
+>   boosting. Each family has at most 8 configurations including its default,
+>   which you pin in `spec.md`: at most 24 configurations and 120
+>   cross-validation fits. The forest is at full strength: every tree may
+>   draw on all training rows, with no cap on rows per tree. The regression
+>   forest considers one third of the features at each split; that is the
+>   only departure from scikit-learn's defaults. A dummy baseline is fitted
+>   as a reference and is never a candidate.
 > - **Inflation (D8):** the chosen model is the one with the best mean
 >   cross-validation score (ROC AUC, or squared error for regression); ties
 >   go to the earlier family in the order above. The headline is that model's
@@ -204,15 +220,25 @@ disagree, stop and say so.
 >   or when it is filled in for one class and empty for the other. The
 >   cut-offs are yours to set by measurement (see Phase 1). A merely
 >   predictive column must not be flagged.
-> - **Scale and run time (D12):** up to 100,000 rows by 100 columns; a full
->   run inside 10 minutes.
+> - **Scale and run time (D12, D16):** up to 100,000 rows by 100 columns; a
+>   full run inside 10 minutes on this machine using all cores. Time a full
+>   run for both tasks before you pin the grids. If either is over, report it
+>   and wait; do not weaken a model to fit. Tables beyond the scale target
+>   run and take longer; nothing is capped silently. A capped `balanced`
+>   profile and searching on a subsample are deferred, not in this phase.
 > - **Fast profile (D12):** `profile="fast"` runs the linear model plus one
 >   deep decision tree (unlimited depth, so that leakage shows as a large
 >   effect), no grid, at most 2,000 rows, 200 resamples and shuffles. Under
 >   time order the row cap keeps the most recent whole timestamps. Rows left
->   out by the cap are counted.
-> - **Seeds and threads:** one `seed` drives the split, the folds, every
->   model and every resample. `n_jobs` defaults to 1.
+>   out by the cap are counted. If the capped rows hold too few timestamps to
+>   form the holdout and the six blocks (a wide panel), the fast profile
+>   stops with a named error telling the caller to use `full` (D20).
+> - **Seeds and threads (D17):** one `seed` drives the split, the folds, every
+>   model and every resample. `n_jobs` defaults to all cores and is recorded
+>   in the output. The tool uses `threadpoolctl` so that `n_jobs` governs
+>   every thread pool, and it holds linear algebra to one thread always. The
+>   same seed must give the same result at any `n_jobs`. If you find that
+>   cannot be achieved on this stack, report it and wait.
 
 **What "broken but passes tests" looks like:**
 > - **F1.** A fitted step sees the holdout. The model is refitted on all rows
@@ -233,8 +259,9 @@ disagree, stop and say so.
 >   column with a few text values turned all-missing or silently treated as
 >   categories, a model family that raised an error and was skipped.
 > - **F7.** Time order is ignored. Rows are shuffled despite a declared time
->   column, a training row is at or after the first holdout timestamp, or
->   the gap is not applied.
+>   column, a training row is at or after the first holdout timestamp, the
+>   gap is not applied, or the time column is misread so the rows are put in
+>   the wrong order (a day-first date read month-first).
 > - **F8.** Under time order, a trending or random-walk target is scored
 >   against the training mean only. A model that has learned "today
 >   resembles yesterday" is reported as high skill.
@@ -245,16 +272,22 @@ disagree, stop and say so.
 >   It sits inside the repo; the installer added it to `.gitignore`.
 > - Already installed (gate dependencies): `pytest`. No browser: nothing in
 >   phase 1 is rendered.
-> - You may install (app runtime dependencies): `pandas`, `numpy`,
->   `scikit-learn` — into the interpreter above, never into a new venv. You
->   will need them in this session for the timed fits and the reference
->   implementations. Record the exact versions in `CLAUDE.md`; the first
->   build task pins the same versions in `requirements.txt`, because a
->   library upgrade can move a score. No other modelling library.
-> - Windows, PowerShell 5.1. Project at `E:\CODE\ml-professor`, a local disk.
-> - Claude Code 2.1.316. `loop\run_loop.py doctor` and `doctor --live` were
->   both clean on 2026-11-15, before this session.
-> - No GPU needed. No network at run time. Core count: discover it.
+> - App runtime dependencies, already in the interpreter above (Phase 0):
+>   `pandas` 3.1.1, `numpy` 2.5.4, `scikit-learn` 1.9.1, with `scipy` 1.18.1,
+>   `joblib` 1.6.0 and `threadpoolctl` 3.8.0. Record these in `CLAUDE.md`;
+>   the first build task pins `pandas`, `numpy`, `scikit-learn` and
+>   `threadpoolctl` at these versions in `requirements.txt`, because a
+>   library upgrade can move a score. No other modelling library, and never
+>   a new venv.
+> - Windows. Agent sessions run PowerShell 7.6.10; PowerShell 5.1 is also
+>   installed. Project at `E:\CODE\ml-professor`, a local disk.
+> - The venv's base interpreter is on `A:`, a mapped drive to the user's
+>   Anaconda folder. If that mapping is absent the interpreter will not
+>   start; treat that as a harness error, never a code fault.
+> - Claude Code 2.1.325. `loop\run_loop.py doctor` and `doctor --live` were
+>   both clean on 2026-11-15.
+> - Threadripper PRO 5975WX, 32 cores and 64 threads, 192 GB. No GPU needed.
+>   No network at run time.
 > - Code conventions for `CLAUDE.md`: modular code, PEP 8, short docstrings
 >   rather than long ones, dependencies pinned in `requirements.txt`.
 
@@ -317,7 +350,7 @@ iterations. Establish facts first, and **write them down** in the harness.
    score that moves after an upgrade must be traceable.
 3. **Check the project location.** Resolve the working directory to an absolute
    path. If it is a mapped network drive or UNC path, say so. Confirm
-   `docs/DECISIONS.md` exists and contains D1 to D15; if it does not, stop.
+   `docs/DECISIONS.md` exists and contains D1 to D22; if it does not, stop.
 4. **There is no real dataset to inspect. Establish how the stack behaves on
    the shapes the failure modes depend on instead.** Write small CSV files to
    a temporary folder and report, for the installed pandas version, how
@@ -398,8 +431,9 @@ measurements call for more:**
 | `leak_reg` | as `signal_reg`, plus a column that is the target rescaled with a little noise | the column excluded and listed |
 | `binary_numeric` | as `signal_clf`, with the target stored as the integers 0 and 1 | task is classification, decided by the rule; metric is ROC AUC |
 | `ambiguous_target` | an integer target with 7 distinct values | the tool stops with the named error and writes no headline |
-| `messy` | as `signal_clf`, with blank cells in features, 40 rows with no target, a numeric column with a few text cells, a constant column, an identifier column, a free-text column and a date column | every count equals the gate's own count from the source; each column has the expected role and reason; skill still clear |
+| `messy` | as `signal_clf`, with blank cells and `n/a` cells in features, 40 rows with no target, a few blank lines, a numeric column with a few text cells that pandas does not treat as missing (such as `abc` and `1,200`), a whole-number measure with every value distinct but not in order, a constant column, a consecutive identifier column, a free-text column and a date column | every count equals the gate's own count from the source; each column has the expected role and reason (the measure is a feature, the identifier is id-like); skill still clear |
 | `time_blocks` | a time column; the label is random per block of about 20 consecutive timestamps; the features identify the block (constant within it, plus small noise) and carry nothing else | with `--time-col`: skill about zero, and the holdout is the latest rows. Under a shuffled split the same data shows high skill, which is what the broken F7 implementation must show |
+| `time_dayfirst` | as `time_blocks`, with the time column written as day/month/year text | with `--time-col`: the tool stops with the named time-column error and writes no headline |
 | `random_walk` | unique timestamps; the target is a random walk; the one feature is the target's previous value | with `--time-col`: the headline baseline is the previous value, and skill is about zero. Against the training mean alone the same data shows skill near 1 |
 
 **Checks:**
@@ -408,7 +442,7 @@ measurements call for more:**
 |---|---|---|---|
 | `data.rows_reconcile` | F6 | `messy` | rows loaded, dropped by reason, training and holdout in `profile.json` each equal the gate's own count from the source, and they add up |
 | `data.columns_accounted` | F6 | `messy` | every source column appears exactly once, with the expected role and reason |
-| `data.coercion_reported` | F6 | `messy` | the numeric column with text cells is used as numeric, its text cells are counted as coerced, and a warning names it; it is not all-missing and not treated as categories |
+| `data.coercion_reported` | F6 | `messy` | the numeric column with text cells is used as numeric, its text cells are counted as coerced, its `n/a` cells are counted as missing, and a warning names it; it is not all-missing and not treated as categories |
 | `models.all_accounted` | F6 | `signal_clf` | the models table lists every family of the profile, each with a status; none is absent |
 | `task.binary_numeric` | F5 | `binary_numeric` | task is classification, decided by the rule; metric is `roc_auc` |
 | `task.ambiguous_stops` | F5 | `ambiguous_target` | the tool exits non-zero naming the task error, and no headline is written |
@@ -425,12 +459,14 @@ measurements call for more:**
 | `time.order_respected` | F7 | `time_blocks` | the last training timestamp is earlier than the first holdout timestamp; the holdout rows in `predictions.csv` are exactly the source rows at or after the first holdout timestamp, counted by the gate; the holdout share is at least 25% |
 | `time.no_skill_on_blocks` | F7 | `time_blocks` | skill inside a measured band around zero |
 | `time.gap_applied` | F7 | `time_blocks`, with `--gap 3` | the rows counted as inside the gap equal the gate's own count of rows in the 3 timestamps before the holdout, and none of them is a training row |
+| `time.dayfirst_stops` | F7 | `time_dayfirst` | the tool exits non-zero naming the time-column error, and no headline is written |
 | `time.persistence_baseline` | F8 | `random_walk` | the headline baseline is the previous value, both baselines are reported, and skill is inside a measured band around zero |
 | `time.undeclared_warns` | — (`why=`: a date column with no declared time column is the commonest way to get a random split on ordered data without noticing) | `time_blocks`, without `--time-col` | the scheme is random and the warning is present |
 | `uncertainty.reported` | — (`why=`: a headline without a valid interval reads as more certain than it is) | `signal_clf`, `time_blocks` | the interval contains the headline score and is not degenerate; the method is the row bootstrap with a p-value under the random scheme, and the block bootstrap with the p-value absent and a reason given under time order |
 | `result.matches_json` | — (`why=`: two accounts of one run that disagree make every other check meaningless to the user) | `signal_clf` | called through the Python function, every DataFrame on `ProfileResult` equals the matching part of `profile.json` |
 | `output.complete` | — (`why=`: a blank or NaN field looks like a result) | `signal_clf` | every required key is present and populated; no NaN or infinity anywhere; the limitations statement is present |
 | `output.deterministic` | — (`why=`: a number that moves between identical runs cannot be checked) | `signal_clf` | two runs with the same seed give identical files apart from `meta.timing` |
+| `output.same_at_any_n_jobs` (slow) | — (`why=`: the default uses every core, so a result that depends on the core count differs between machines) | `signal_clf`, `signal_reg` | runs with `--n-jobs 1` and `--n-jobs 4` give identical files apart from `meta.timing` and the recorded `n_jobs` |
 
 *F1 has two forms of very different size. Refitting the model on all rows is a
 large effect and the noise datasets catch it. A scaler or imputer fitted
@@ -471,19 +507,26 @@ Requirements for the gate:
     less than 5% of the other. It must flag `outcome_copy`,
     `settlement_amount` and the regression copy on every seed, and never flag
     `strong_feature`;
-  - id-like: a non-float column whose distinct values number more than 95%
-    of the rows;
+  - id-like (D19): a text column whose distinct values number more than 95%
+    of the rows; or a whole-number column, judged by value so that blanks do
+    not matter, in which every value is distinct and the values are either
+    consecutive or strictly ordered in file order. Any other whole-number
+    column stays a feature. Column roles are decided before the fast
+    profile's row cap, so both profiles agree on them (D20);
   - numeric coercion: a text column in which at least 90% of the non-missing
     values parse as numbers is treated as numeric;
-  - date-like: a column with a datetime type, or a text column in which at
-    least 95% of the non-missing values parse as dates;
+  - date-like (D22): a column with a datetime type, or a text column in
+    which at least 95% of the non-missing values match one of a fixed list
+    of date formats that you pin. Never pandas' lenient date parser, which
+    accepts `1,200`, `May` and `09:30` as dates;
   - small holdout warning: fewer than 50 rows of the rarer class;
   - too small to profile: fewer than 100 usable rows;
   - no block-bootstrap interval: fewer than 20 distinct holdout timestamps;
   - autocorrelated panel target warning: lag-1 autocorrelation of the
     per-timestamp mean target above 0.8.
 - **Deterministic.** Fixed seeds everywhere, and single-threaded inside the
-  gate: pass `--n-jobs 1` and set `OMP_NUM_THREADS`, `OPENBLAS_NUM_THREADS`
+  gate: pass `--n-jobs 1` on every run except the two that
+  `output.same_at_any_n_jobs` compares, and set `OMP_NUM_THREADS`, `OPENBLAS_NUM_THREADS`
   and `MKL_NUM_THREADS` to 1 in the environment before the tool starts.
   Record every measured value with `ctx.record` or the band helpers:
   `--selftest` runs the good implementation twice and fails if anything moves.
@@ -493,7 +536,10 @@ Requirements for the gate:
   start the tool only for the datasets those checks need. Mark
   `model.selection_full` `slow=True`, and any other check that still takes
   more than a few seconds. Use `ctx.fast` in setup to skip heavy preparation.
-  Keep the per-edit run inside the budget `doctor` reports.
+  Keep the per-edit run inside the budget `doctor` reports (20 seconds). The
+  gate may start tool runs side by side to do so, at most 8 at once, each
+  still single-threaded. The values must be identical to a sequential run;
+  prove that once and say so in your report.
 - **Through the public interface.** The command line and the documented
   function only. Never import internals; the builder is free to change those.
 - **Binary.** Exit 0 = pass, non-zero = fail. No warnings tier, no partial credit.
@@ -562,14 +608,15 @@ Concrete, not a template. It must contain:
 
 - **The methodology, as decided above**, restated so that leakage is
   decidable from the text. The order of operations:
-  1. load the table; count the rows;
+  1. load the table (D22); count the rows;
   2. drop rows with a missing target, and under time order rows with a
      missing time value; count each;
-  3. under time order, parse the time column and sort by it;
-  4. apply the fast profile's row cap, if any; count the rows left out;
-  5. decide the task (D4);
-  6. assign column roles that need no target: constant, id-like, datetime,
-     free text, all missing, unsupported type;
+  3. under time order, read the time column in its accepted form (D18) and
+     sort by it;
+  4. decide the task (D4, D20);
+  5. assign column roles that need no target: constant, id-like, datetime,
+     free text, all missing, unsupported type (D19, D20);
+  6. apply the fast profile's row cap, if any; count the rows left out;
   7. split off the holdout (D6 or D7), applying the gap;
   8. from here on, every fitted step sees training rows only: the leak
      screen, coercion statistics, imputation, encoding, scaling;
@@ -598,6 +645,14 @@ Concrete, not a template. It must contain:
 - **The pinned values:** the grids (at most 8 combinations per family), the
   cut-offs you measured in Phase 1, the family order used for ties.
 - **The facts from Phase 0** and the traps found there.
+- **The loading rules (D22):** pandas' default missing-value tokens count as
+  missing, never as coerced; the loader reads with `low_memory=False`; blank
+  lines are not rows; duplicate column names stop with a named error and a
+  blank header is kept under pandas' name with a warning. Say how each
+  DataFrame-only type is treated (nullable integers, categories, booleans,
+  datetimes). State as a limitation that a CSV is read with pandas' types,
+  so text identifiers can lose leading zeros, and that a caller who needs
+  control passes a DataFrame.
 - **What happens at the edges.** Each one either raises a named error or is
   reported in the output. None is silently skipped:
   - the target column is absent, or has one distinct value;
@@ -606,7 +661,10 @@ Concrete, not a template. It must contain:
   - no usable feature column;
   - too few rows to split;
   - a holdout or a fold with one class;
-  - a time column that does not parse, or a gap that leaves no training rows;
+  - a time column that is not in an accepted form, or a gap that leaves no
+    training rows;
+  - duplicate column names; a blank header;
+  - the fast profile on a panel too wide for its row cap;
   - too few holdout timestamps for the block bootstrap (interval absent,
     with a warning);
   - a model family that raises (status failed, error text kept, a warning);
@@ -624,14 +682,18 @@ For each test file: what it proves and through which interface. Expected
 shape:
 
 - `tests/test_skeleton.py` — the package imports; `python -m mlprofessor --help` exits 0.
-- `tests/test_load.py` — a DataFrame and a CSV path give the same result; rows
-  with a missing target are dropped and counted; the row accounting adds up
-  (`test_f6_...`).
+- `tests/test_load.py` — a DataFrame and a CSV path give the same result for
+  the types a CSV can carry; rows with a missing target are dropped and
+  counted; the row accounting adds up (`test_f6_...`); blank lines are not
+  rows; duplicate column names raise.
 - `tests/test_columns.py` — each column role and reason on crafted columns;
-  the coercion rule and its count; every column appears once (`test_f6_...`).
+  the coercion rule and its count; every column appears once (`test_f6_...`);
+  the id-like rule on distinct-but-unordered measures, consecutive ids and
+  ids with blanks; roles are the same under both profiles.
 - `tests/test_task.py` — the rule on each shape from Phase 0 step 4; a 0/1
   integer target is classification (`test_f5_...`); an ambiguous target
-  raises; a declared task is honoured or refused.
+  raises; a declared task is honoured or refused; the whole-number
+  regression warning; the task is the same under both profiles.
 - `tests/test_split_random.py` — holdout and training rows are disjoint and
   cover every usable row; the holdout is 25% and stratified; folds partition
   the training rows; the same seed gives the same split.
@@ -639,7 +701,9 @@ shape:
   holdout timestamp (`test_f7_...`); no timestamp straddles the cut; the
   holdout is the smallest set of latest timestamps holding at least 25%; in
   each expanding fold training precedes validation; the gap removes exactly
-  the stated timestamps, in the holdout split and in every fold.
+  the stated timestamps, in the holdout split and in every fold; each
+  accepted time column form orders correctly; a day-first text column
+  raises (`test_f7_...`).
 - `tests/test_metrics.py` — ROC AUC, squared error, each baseline and skill
   against values worked out by hand on arrays of five to ten elements,
   including ties; the classification metric is never accuracy (`test_f4_...`);
@@ -653,7 +717,8 @@ shape:
   score of the chosen configuration and not the best fold score
   (`test_f3_...`); only the chosen configuration is scored on the holdout;
   shuffling the target removes the skill on a small planted-signal table;
-  adding a constant column changes nothing; the same seed gives the same result.
+  adding a constant column changes nothing; the same seed gives the same
+  result, at `n_jobs` 1 and 2.
 - `tests/test_time_pipeline.py` — the time-ordered scheme is used when and
   only when `time_col` is given; the undeclared-date warning; baselines under
   unique and repeated timestamps.
@@ -748,12 +813,12 @@ Expected shape (adjust to what Phase 0 shows, and say what you changed):
 | T8 preprocessing fitted on training rows only | complex | carries F1 | `tests/test_preprocess.py` |
 | T9 fit, select, score once, with the fast profile's two models | complex | carries F1 and F3 | `tests/test_pipeline.py` |
 | T10 result object, `profile.json`, `predictions.csv`, command line: the first end-to-end run | complex | first task the gate can judge; owns reconciliation | `data.rows_reconcile`, `data.columns_accounted`, `data.coercion_reported`, `task.binary_numeric`, `task.ambiguous_stops`, `models.all_accounted`, `model.signal_clf`, `model.signal_reg`, `model.noise_clf`, `model.noise_reg`, `model.headline_recomputed`, `model.metric_clf`, `result.matches_json`, `tests/test_result_schema.py` |
-| T11 time-ordered scheme wired into the run, with its baselines | complex | carries F7 and F8 | `time.order_respected`, `time.no_skill_on_blocks`, `time.gap_applied`, `time.persistence_baseline`, `time.undeclared_warns`, `tests/test_time_pipeline.py` |
+| T11 time-ordered scheme wired into the run, with its baselines | complex | carries F7 and F8 | `time.order_respected`, `time.no_skill_on_blocks`, `time.gap_applied`, `time.dayfirst_stops`, `time.persistence_baseline`, `time.undeclared_warns`, `tests/test_time_pipeline.py` |
 | T12 leak screen | complex | carries F2 | `leak.excluded`, `leak.control_kept`, `leak.regression`, `tests/test_leakage.py` |
 | T13 interval and p-value, row and block forms | complex | touches the headline's validity | `uncertainty.reported`, `tests/test_uncertainty.py` |
 | T14 random forest and histogram gradient boosting behind the T9 interface | routine | one concern behind an existing interface | `tests/test_model_families.py` |
 | T15 the full profile and its grids | complex | carries F3 | `model.selection_full` |
-| T16 edges, warnings, limitations statement, console summary | routine | clear contract, codes given | `output.complete`, `output.deterministic`, `tests/test_edges.py` |
+| T16 edges, warnings, limitations statement, console summary | routine | clear contract, codes given | `output.complete`, `output.deterministic`, `output.same_at_any_n_jobs`, `tests/test_edges.py` |
 | T17 README with run instructions | support | prose from known facts | `tests/test_readme.py` |
 
 T10 owns many checks because it is the first point at which any of them can
@@ -767,7 +832,7 @@ do so and say why.
 - The output schema, as a table.
 - The failure-mode matrix (paste the output of `--matrix`).
 - The environment facts from Phase 0: interpreter path, library versions,
-  seed policy, `n_jobs` and thread settings.
+  seed policy, `n_jobs` and thread settings, the mapped `A:` drive.
 - Code conventions: modular code, PEP 8, short docstrings rather than long ones.
 - Guardrails: no secrets in code, no editing the harness, no git, scope of
   writes (the `mlprofessor` folder, `requirements.txt`, `README.md`), no

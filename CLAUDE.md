@@ -2,7 +2,7 @@
 
 A Python package, `mlprofessor`, that measures how predictable one target
 column of one table is. The contract is `spec.md`. The decisions behind it are
-`docs/DECISIONS.md` (D1 to D22). The build order is `plan/tasks.json`; what the
+`docs/DECISIONS.md` (D1 to D32). The build order is `plan/tasks.json`; what the
 tests prove is `plan/test-plan.md`. The method and the table of common failures
 are in the skill `mlprofessor-build`.
 
@@ -48,7 +48,7 @@ names the dataset, the value and the likely cause; the files it read are in
 | `cv` | metric, folds scored, configurations, the chosen one, its mean and spread | `to_dict()` |
 | `models` | one record per configuration: params, status, error, fold scores, mean, spread, chosen | `.models` |
 | `warnings` | records of code, column, message | `.warnings` |
-| `limitations` | seven fixed sentences | `to_dict()` |
+| `limitations` | nine fixed sentences | `to_dict()` |
 | `predictions.csv` | `row`, `y_true`, `y_pred` for every holdout row | `.predictions` |
 
 ## Failure modes and the checks that catch them
@@ -56,7 +56,7 @@ names the dataset, the value and the likely cause; the files it read are in
 | Failure mode | Description | Caught by |
 |---|---|---|
 | F1 | the chosen model is refitted on all rows before the holdout is scored | model.noise_clf, model.noise_p_value, model.noise_reg |
-| F2 | the leak screen is removed, so a copy of the target is a feature | leak.excluded, leak.regression |
+| F2 | the leak screen is removed, so a copy of the target is a feature | leak.excluded, leak.regression, leak.near_leak_warned |
 | F3 | the headline is the best cross-validation score, not the holdout score | model.headline_recomputed, model.selection_full |
 | F4 | the headline metric is accuracy | model.headline_recomputed, model.metric_clf |
 | F5 | the task is decided from the column's type alone | task.binary_numeric, task.ambiguous_stops |
@@ -68,7 +68,7 @@ The gate catches the large forms. The small forms (a scaler fitted before the
 split, a fold that saw its own validation rows) are caught exactly by the test
 suite's recording fakes, through `mlprofessor.extensions` (spec 2.6).
 
-## Environment (measured 2026-11-15)
+## Environment (measured 2026-11-15; interpreter base and process starts 2026-11-16)
 
 - Interpreter: `E:\CODE\ml-professor\mlprof_env\Scripts\python.exe`, Python
   3.12.13. Use this path for everything. Bare `python` on this machine is the
@@ -87,13 +87,17 @@ suite's recording fakes, through `mlprofessor.extensions` (spec 2.6).
   always and OpenMP to `n_jobs`, with `threadpoolctl`; forests predict on one
   thread. The gate runs the tool with `--n-jobs 1` and the thread variables
   set to 1.
-- The interpreter's base is on `A:`, a drive mapped to the user's Anaconda
-  folder through a loopback network share. If `A:` is missing the interpreter
-  does not start: that is a harness error, not a code fault.
-- **Never start two Python processes at the same instant on this machine.**
-  Measured: they block each other for exactly 35 or 70 seconds (the share's
-  lock timeout). Run them one after another, or at least 0.5 seconds apart.
-  The gate spaces its own runs.
+- The interpreter's base is `C:\Users\uahma\anaconda3\envs\py312`, a local
+  path (`home` in `mlprof_env\pyvenv.cfg`, D32; confirmed 2026-11-16 with
+  `sys.base_prefix`). If the interpreter does not start, that is a harness
+  error, not a code fault.
+- Until D32 the base was on `A:`, a drive mapped through a loopback network
+  share, and Python processes started at the same instant blocked each other
+  for exactly 35 or 70 seconds. Measured again on 2026-11-16 with the local
+  path: eight processes started at the same instant, 30 rounds, twice; none
+  blocked, and each run took about 3 seconds. The gate still spaces its own
+  runs 0.5 seconds apart and retries once. Running Python processes one after
+  another is still the simplest habit, but it is no longer a rule.
 - Windows, PowerShell 7. The project is on a local disk.
 
 ## Code conventions

@@ -2,7 +2,7 @@
 
 This file is what the application is built from and what the tests are written
 against. It restates the owner's decisions (`docs/DECISIONS.md`, cited as D1 to
-D22) without changing them, pins every value they leave to this stage, and
+D32) without changing them, pins every value they leave to this stage, and
 defines the interface precisely enough to test without seeing the code.
 
 Words used throughout: **pinned** means part of the contract; **open** means
@@ -99,8 +99,8 @@ of `models.fold_scores` are lists.
 For a user there are two entry points: the function and the command line (D2).
 For tests the contract also covers `mlprofessor.ProfileResult`,
 `mlprofessor.errors`, and the two halves of the seam: `mlprofessor.extensions`
-(2.6) and `mlprofessor.stages` (2.7). Everything else is internal and may be
-reorganised.
+(2.6) and `mlprofessor.stages` (2.7); both are pinned and built with the
+package (D26). Everything else is internal and may be reorganised.
 
 ### 2.4 Errors
 
@@ -137,19 +137,22 @@ module only; they are always in the output.
 | `code` | `column` | Raised when |
 |---|---|---|
 | `suspected_leak` | the column | One per column excluded by the leak rule (D11). |
-| `small_holdout` | `null` | Classification: fewer than 50 holdout rows of the rarer class. Regression: fewer than 50 holdout rows. |
+| `strong_single_column` | the column | One per column that the leak screen keeps as a feature although its single-column skill is at least 0.90 (and below 0.98): step 8, rule 3 (D30). |
+| `small_holdout` | `null` | Classification: fewer than 50 holdout rows of the rarer class. Regression: fewer than 50 holdout rows (D23). |
 | `date_column_undeclared` | the column | One per column excluded as `datetime` when `time_col` is `None` (D7). |
-| `autocorrelated_panel_target` | the target | Regression under time order with repeated timestamps, and the lag-1 autocorrelation of the per-timestamp mean of the target over the training rows is above 0.5 (D10; section 10). |
+| `autocorrelated_panel_target` | the target | Regression under time order with repeated timestamps, and the lag-1 autocorrelation of the per-timestamp mean of the target over the training rows is above 0.5 (D10, D23; section 10). |
 | `model_failed` | `null` | One per configuration with status `failed`. |
 | `values_coerced` | the column | One per numeric column in which text cells were turned into missing (D22). |
+| `numeric_with_separators` | the column | Two forms (D28). One per column excluded with the reason `numeric_with_separators` (step 5, rule 6a). And one per column that carries `values_coerced` in which at least one of the cells turned into missing is a number with thousands separators (step 5). |
 | `whole_number_regression_target` | the target | `task="auto"` picked regression and every target value is a whole number (D21). |
 | `blank_header` | pandas' name for it | One per CSV column whose header cell is blank (D22). |
 | `infinite_values` | the column | One per numeric feature holding infinite values. |
 | `duplicate_rows` | `null` | The loaded table holds exact duplicate rows. They are kept. |
 | `fold_not_scored` | `null` | Classification, and a fold's training or validation rows hold one class. |
 | `no_interval` | `null` | No interval could be computed; `headline.interval_reason` says why. |
+| `interval_approximate` | `null` | Exactly one whenever `headline.interval_method` is `bootstrap_blocks` (D27): that interval tends to be too narrow (10.3). Never under the random scheme, and never when there is no interval. |
 
-### 2.6 Seam for tests
+### 2.6 Seam for tests (D26)
 
 A test must be able to prove which rows every fitted step received. The seam is
 a context manager:
@@ -195,7 +198,7 @@ row; inside each fold no `fit` receives a row of that fold's validation block;
 only the chosen configuration predicts on the holdout; linear algebra is on one
 thread.
 
-### 2.7 Step functions
+### 2.7 Step functions (D26)
 
 The data-handling steps are built and verified before any model exists, so each
 is also callable on its own through one module, `mlprofessor.stages`. It is a
@@ -207,7 +210,7 @@ Section 3 defines what each step does; this table defines only the call.
 |---|---|---|
 | `load_table(data)` | `(frame, info)`. `frame` is the loaded table (step 1, section 6) with a default index 0..n−1, the rows' source positions, and string column names. `info` is `{"kind", "source", "warnings"}` as in `input.kind`, `input.source` and a list of warning records (only `blank_header` arises here). | `InputError`, `DuplicateColumnsError` |
 | `usable_rows(frame, target, time_col=None)` | Step 2 as a count: `{"usable", "dropped_missing_target", "dropped_missing_time"}`. `usable` is an array of the positions of the usable rows in increasing order; the two counts and its length add up to the rows of `frame`. A missing time value is a missing cell (or an infinite number); the time column's form is not checked here. | `ColumnNotFoundError` |
-| `column_roles(frame, target, time_col=None)` | A DataFrame with the eleven columns of `profile.json["columns"]` (5.2), one row per column of `frame` in order, as decided by step 5 alone: `leak_rule` is null and `n_imputed` is 0 throughout, since the leak screen and imputation come later. Usable rows are those with a target and, when `time_col` is given, a time value. | `ColumnNotFoundError` |
+| `column_roles(frame, target, time_col=None)` | A DataFrame with the eleven columns of `profile.json["columns"]` (5.2), one row per column of `frame` in order, as decided by step 5 alone: `leak_rule` is null and `n_imputed` is 0 throughout, since the leak screen and imputation come later. Usable rows are those with a target and, when `time_col` is given, a time value. It returns no warnings: those of step 5 (`values_coerced`, `infinite_values`, `numeric_with_separators`) are raised by `profile()`. | `ColumnNotFoundError` |
 | `decide_task(values, task="auto")` | `{"type", "decided_by", "n_distinct", "classes", "positive_class", "warnings"}` for the target values given (missing ones are ignored). `warnings` is a list of warning codes: `["whole_number_regression_target"]` or `[]`. | `TargetConstantError`, `TaskAmbiguousError`, `TaskUnsupportedError`, `InputError` |
 | `read_time(values)` | `(keys, form)`. `keys` is a numpy array, one per value, that sorts in time order: `datetime64[ns]` with `NaT` for a missing value under the `datetime` and `iso8601` forms (in UTC if the values carried a zone), `float64` with NaN for a missing or infinite value under the `numeric` form. `form` is as in `validation.time_form`. | `TimeColumnError` |
 | `split_random(n_rows, classes=None, seed=0)` | `{"training", "holdout", "folds"}`: arrays of positions in 0..`n_rows`−1, each in increasing order; `folds` is a list of five `{"training", "validation"}`. `classes`, when given, is an array of `n_rows` labels with two distinct values and makes the split stratified (step 7). | |
@@ -295,9 +298,10 @@ rule that applies decides:
 | 4 | text, and at least 95% of the non-missing values match a date form of section 4.5 | excluded, `datetime` |
 | 5 | text, and at least 90% of the non-missing values parse as numbers | numeric with coercion: go to rule 8 |
 | 6 | text, one distinct value | excluded, `constant` |
-| 6a | text, distinct values number more than 95% of the usable rows | excluded, `id_like` |
-| 6b | text, distinct values number more than 50% of the non-missing values | excluded, `free_text` |
-| 6c | any other text | feature, kind `categorical` |
+| 6a | text, and at least 90% of the non-missing values either parse as numbers or are numbers with thousands separators (D28) | excluded, `numeric_with_separators` |
+| 6b | text, distinct values number more than 95% of the usable rows | excluded, `id_like` |
+| 6c | text, distinct values number more than 50% of the non-missing values | excluded, `free_text` |
+| 6d | any other text | feature, kind `categorical` |
 | 7 | any other type (mixed objects, complex numbers, durations, containers) | excluded, `unsupported_type` |
 | 8 | numeric, infinite values read as missing: no value left | excluded, `all_missing` |
 | 8a | numeric, one distinct value | excluded, `constant` |
@@ -312,10 +316,37 @@ number. In rule 8b, judged on the non-missing values: "consecutive" means
 largest minus smallest plus one equals their count; "strictly ordered" means
 strictly increasing, or strictly decreasing, down the file.
 
+**A number with thousands separators (D28)** is a text value which, after
+stripping, is the whole of: an optional sign (`+` or `-`); one to three digits;
+one or more groups of a comma and exactly three digits; and optionally a point
+followed by one or more digits. Digits are `0` to `9`. As a pattern:
+`[+-]?[0-9]{1,3}(,[0-9]{3})+(\.[0-9]+)?`.
+
+| Matches | Does not match |
+|---|---|
+| `1,200`, `-3,450.75`, `+12,345,678`, `0,123` | `1200` and `532.10` (plain numbers: they parse), `12,34`, `1,2345`, `1234,567`, `1.200,50`, `1,200.`, `1,200.5.1`, `$1,200`, `(1,200)`, `1 200`, `1,200 units` |
+
+**Such a value is never parsed as a number**, because the same text means 1.2
+in some locales: the tool does not strip the commas, in any column, under any
+rule. Under rule 5 it is a cell that did not parse. Rule 6a is reached only by
+a column that failed rule 5, so fewer than 90% of its values parse; the rule
+then counts the values that parse together with those that match the pattern.
+It comes after rule 6, so a column holding `1,200` in every row is `constant`,
+and before rules 6b to 6d, so a column written this way is never `id_like`,
+`free_text` or a categorical feature, whether it has two distinct values or as
+many as it has rows.
+
 Counts are kept per column over **every loaded row** (section 5.3): `n_missing`,
 `n_coerced` (rule 5: non-missing text cells that did not parse, which become
 missing, with a `values_coerced` warning), `n_infinite` (which become missing,
-with an `infinite_values` warning).
+with an `infinite_values` warning). `n_coerced` is 0 for a column that rule 5
+did not read as numeric, including one excluded by rule 6a.
+
+Two warnings carry the code `numeric_with_separators`, each naming its column
+(D28). Rule 6a adds one for the column it excludes. Rule 5 adds one, beside
+`values_coerced`, when at least one of the cells it coerced, among every loaded
+row, is a number with thousands separators; a column whose coerced cells are
+all of another kind (`abc`, `12 units`) carries `values_coerced` alone.
 
 **6. Apply the fast profile's row cap (D12, D20); count the rows left out.**
 Only under `profile="fast"` and only when there are more than 2,000 usable rows.
@@ -365,17 +396,25 @@ For classification, a holdout or a set of training rows with one class raises
 scored for any configuration (`fold_not_scored`); if no fold can be scored,
 `one_class`.
 
-**8. The leak screen (D11), on training rows only.** For each feature column,
-in file order:
+**8. The leak screen (D11, D24, D30), on training rows only.** For each feature
+column, in file order, the first rule that applies decides:
 
 1. *Filled in for one class and empty for the other* (classification only): on
    the training rows, the column is missing for more than 95% of one class and
-   less than 5% of the other. Leak rule `missing_by_class`.
-2. Otherwise, *on its own it predicts the target almost perfectly*: the
-   column's single-column cross-validated skill is at least 0.98. Leak rule
+   less than 5% of the other. Excluded, leak rule `missing_by_class`.
+2. *On its own it predicts the target almost perfectly*: the column's
+   single-column cross-validated skill is at least 0.98. Excluded, leak rule
    `predicts_target`.
+3. *On its own it predicts the target strongly* (D30): that same skill is at
+   least 0.90, and so below 0.98. The column **stays a feature**, with a
+   `strong_single_column` warning that names it, so that the caller can check
+   it is known before the outcome.
 
-Single-column skill is measured with the **selection folds of step 7** (so
+A column that none of the three applies to stays a feature without comment.
+Rules 2 and 3 use one number, measured once per column; a column excluded by
+rule 1 is not measured and gets no `strong_single_column` warning.
+
+Single-column skill is measured with the **selection folds of step 7** (D24; so
 under time order it respects time, and no holdout row is involved): in each
 scored fold a decision tree (`max_depth=6`, `min_samples_leaf=5`,
 `random_state=seed`) is fitted on that one column of the fold's training rows
@@ -387,9 +426,14 @@ predictions of all folds are pooled and skill is computed as in step 11:
 being each fold's training mean and, under time order with unique timestamps,
 whichever of that and the previous value has the lower error.
 
-A flagged column gets role `excluded`, reason `suspected_leak`, its
-`leak_rule`, and a `suspected_leak` warning. It reaches no model. If no feature
-is left: `no_features`.
+A column excluded by rule 1 or 2 gets role `excluded`, reason `suspected_leak`,
+its `leak_rule`, and a `suspected_leak` warning. It reaches no model. If no
+feature is left: `no_features`. A column kept by rule 3 has role `feature`, a
+null `reason` and a null `leak_rule`, and reaches the models like any other.
+
+Known limit (D31): in a panel (repeated timestamps) the only baseline is the
+training mean, so a lagged level of a persistent target can be excluded by rule
+2 or warned about by rule 3. Profile returns or changes there.
 
 **Preprocessing, fitted on the rows of each fit only (D3).** One preprocessing
 is fitted for each fit, on that fit's training rows, and applied to the rows it
@@ -444,8 +488,9 @@ D10).** Only the chosen configuration ever predicts the holdout.
   training timestamps in order, is above 0.5.
 
 Accuracy is never the headline. Skill may be negative and is reported as
-measured. A dummy model that predicts the baseline is the reference only; it is
-never a candidate and never appears in the models table.
+measured, never clipped at zero (D5); the limitations statement says how to
+read it (D29; 5.4, sentence 9). A dummy model that predicts the baseline is the
+reference only; it is never a candidate and never appears in the models table.
 
 **12. Compute the interval and the p-value from the holdout predictions (D9).**
 Nothing is refitted. *R* is 1,000 under `full` and 200 under `fast`.
@@ -464,20 +509,23 @@ Nothing is refitted. *R* is 1,000 under `full` and 200 under `fast`.
   blocks of *L* consecutive timestamps, each starting at a position drawn
   uniformly from those that fit, joins them, keeps the first *T* timestamps,
   and takes every row of each drawn timestamp. Percentiles as above. Method
-  `bootstrap_blocks`, with `block_length`. With fewer than 30 distinct holdout
-  timestamps there is no interval: the fields are `null`,
-  `interval_reason` says why, and the warning `no_interval` is added.
+  `bootstrap_blocks`, with `block_length`. Whenever the interval is computed
+  this way the warning `interval_approximate` is added (D27): it tends to be
+  too narrow (10.3). With fewer than 30 distinct holdout timestamps (D23) there
+  is no interval: the fields are `null`, `interval_reason` says why, and the
+  warning `no_interval` is added in place of `interval_approximate`.
 - *Time-ordered scheme, p-value:* absent (`null`), and `p_value_reason` states
   that shuffling assumes independent rows.
 - A resample in which the score cannot be computed (one class) is left out and
   the number used is reported. If fewer than half can be used there is no
-  interval, with a reason and the `no_interval` warning.
+  interval under either scheme: `interval_method` is `null`, with a reason and
+  the `no_interval` warning (and no `interval_approximate`).
 
 Also added here: `small_holdout` (2.5).
 
 **13. Assemble the result; write the files** (section 5).
 
-### Seeds and threads (D17)
+### Seeds and threads (D17, D25)
 
 One `seed` drives everything random. The same arguments on the same data give
 the same `profile.json` and `predictions.csv`, apart from `meta.timing`, and
@@ -492,7 +540,7 @@ the measurements. How the generator is seeded for each purpose is open.
 
 ## 4. Pinned values
 
-### 4.1 Model families and grids (D8, D16)
+### 4.1 Model families and grids (D8, D16, D25)
 
 Family order, which is also the tie-break order: `linear`, then `forest`, then
 `boosting` under `full`; `linear`, then `tree` under `fast`. Configuration
@@ -515,8 +563,11 @@ names are `<family>-<index>`; index 0 is the family's default.
 Every argument not listed is scikit-learn's default. The forest is at full
 strength: every tree draws on all training rows (no `max_samples`). The
 regression forest's default considers one third of the features at each split,
-the only departure from scikit-learn's defaults (D16). `params` in the models
-table holds exactly the grid arguments (`{}` for `tree-0`).
+the only departure from scikit-learn's defaults (D16). Three settings are
+pinned by D25: six configurations per family; histogram gradient boosting with
+early stopping off, so that its behaviour does not change at 10,000 rows; and
+1,000 iterations for logistic regression. `params` in the models table holds
+exactly the grid arguments (`{}` for `tree-0`).
 
 ### 4.2 Sizes and counts
 
@@ -530,16 +581,18 @@ table holds exactly the grid arguments (`{}` for `tree-0`).
 | too small to profile | fewer than 100 usable rows; fewer than 10 of a class |
 | one-hot levels kept per column | 30 |
 
-### 4.3 Cut-offs (measurements in section 10)
+### 4.3 Cut-offs (D23, D28, D30; measurements in section 10)
 
 | Cut-off | Value |
 |---|---|
-| leak: single-column cross-validated skill | at least 0.98 |
+| leak: single-column cross-validated skill | at least 0.98: excluded |
+| leak warning: the same skill | at least 0.90 and below 0.98: kept, with the `strong_single_column` warning |
 | leak: missing by class | more than 95% of one class and less than 5% of the other |
 | id-like, text column | distinct values more than 95% of the usable rows |
 | id-like, whole-number column | every value distinct, and consecutive or strictly ordered in file order |
 | free text | distinct values more than 50% of the non-missing values |
 | numeric coercion | at least 90% of the non-missing values parse as numbers |
+| numbers with separators | at least 90% of the non-missing values parse as numbers or are numbers with thousands separators (step 5) |
 | date-like | datetime type, or at least 95% of the non-missing values match a form of 4.5 |
 | small holdout warning | fewer than 50 holdout rows of the rarer class (classification) or in all (regression) |
 | no block-bootstrap interval | fewer than 30 distinct holdout timestamps |
@@ -632,10 +685,10 @@ order: `loaded`, `dropped_missing_target`, `dropped_missing_time`,
 | `dtype` | string | the pandas type as loaded (informative) |
 | `role` | string | `target`, `time`, `feature` or `excluded` |
 | `kind` | string or null | for a feature, `numeric` or `categorical` (pinned); for other roles informative |
-| `reason` | string or null | for an excluded column: `constant`, `id_like`, `datetime`, `free_text`, `suspected_leak`, `all_missing` or `unsupported_type`; otherwise null |
+| `reason` | string or null | for an excluded column: `constant`, `id_like`, `datetime`, `free_text`, `numeric_with_separators`, `suspected_leak`, `all_missing` or `unsupported_type`; otherwise null |
 | `leak_rule` | string or null | for a suspected leak: `predicts_target` or `missing_by_class`; otherwise null |
 | `n_missing` | integer | missing cells among all loaded rows, as loaded |
-| `n_coerced` | integer | non-missing text cells of a numeric column that did not parse, among all loaded rows |
+| `n_coerced` | integer | non-missing text cells that did not parse, among all loaded rows, in a column read as numeric by rule 5 of step 5; otherwise 0 |
 | `n_infinite` | integer | infinite cells among all loaded rows |
 | `n_imputed` | integer | for a feature, its missing cells (as loaded, coerced or infinite) among the training and holdout rows; otherwise 0 |
 
@@ -730,7 +783,7 @@ headline baseline.
 
 **`warnings`**: a list of records `{code, column, message}` (2.5). May be empty.
 
-**`limitations`**: the list of seven sentences of 5.4, exactly, in order.
+**`limitations`**: the list of nine sentences of 5.4, exactly, in order.
 
 ### 5.3 Reconciliation rules
 
@@ -751,7 +804,8 @@ The random-split caveat (`validation.caveat`), exactly:
 
 > Random split: this number is optimistic if the rows are ordered in time or one entity appears on many rows.
 
-The limitations statement (`limitations`), exactly these seven strings:
+The limitations statement (`limitations`), exactly these nine strings, in this
+order, on every run whatever its scheme or task (8 is D27, 9 is D29):
 
 1. `Predictability here means how well these model families did on this data under this validation scheme.`
 2. `Low skill is not proof that the target cannot be predicted.`
@@ -760,10 +814,12 @@ The limitations statement (`limitations`), exactly these seven strings:
 5. `Look-ahead inside the caller's own features cannot be detected.`
 6. `Classification skill and regression skill are on different scales and are not comparable.`
 7. `A CSV file is read with pandas' types, so text identifiers can lose leading zeros; pass a DataFrame to control the types.`
+8. `Intervals are approximate: they tend to be too narrow when the holdout is short and, under time order, when errors are serially correlated.`
+9. `Negative skill means the models did worse than the baseline on the holdout; read it as no evidence of predictability.`
 
 ---
 
-## 6. Loading rules and types (D3, D22)
+## 6. Loading rules and types (D3, D22, D28)
 
 **A CSV path** is read with `pandas.read_csv(path, low_memory=False)` and no
 other argument. Consequences, all measured on pandas 3.1.1 (section 9):
@@ -773,7 +829,13 @@ other argument. Consequences, all measured on pandas 3.1.1 (section 9):
   was written, so they are counted in `n_missing`, never in `n_coerced`.
 - A cell such as `1,200` or `abc` in an otherwise numeric column makes the whole
   column load as text. Rule 5 of step 5 then reads it as numeric and counts
-  those cells as coerced.
+  those cells as coerced; a `1,200` among them adds the warning
+  `numeric_with_separators` (D28).
+- A column written with thousands separators throughout loads as text and is
+  never parsed: no `thousands` argument is passed, and the commas are not
+  stripped afterwards. Rule 6a of step 5 excludes it with the reason
+  `numeric_with_separators` and a warning (D28). A caller who wants the column
+  used parses it and passes a DataFrame.
 - **Duplicate column names stop the run** with `duplicate_columns`. pandas
   renames them silently (`a`, `a.1`), so the tool reads the header line itself
   (the first non-blank line, UTF-8, an optional byte-order mark ignored) and
@@ -825,9 +887,14 @@ None is skipped silently: each raises a named error or is reported in the output
 | duplicate column names | `duplicate_columns` |
 | a blank header | kept under pandas' name; `blank_header` warning |
 | too few holdout timestamps for the block bootstrap (fewer than 30) | interval fields null; `interval_reason`; `no_interval` warning |
+| an interval from the block bootstrap (time order, 30 holdout timestamps or more) | reported, with the `interval_approximate` warning |
+| negative skill | reported as measured, never clipped; sentence 9 of the limitations says how to read it |
 | a model configuration that raises | status `failed`, error text kept, `model_failed` warning |
 | every configuration failing | `all_models_failed` |
 | infinite values in a feature | read as missing, counted in `n_infinite`, `infinite_values` warning |
+| a text column written mostly as numbers with thousands separators | never parsed; excluded with reason `numeric_with_separators`; `numeric_with_separators` warning |
+| a few cells written with thousands separators in a numeric column | read as missing, counted in `n_coerced`; `values_coerced` and `numeric_with_separators` warnings |
+| a feature whose single-column skill is at least 0.90 and below 0.98 | kept as a feature; `strong_single_column` warning |
 | exact duplicate rows | kept; `input.duplicate_rows`; `duplicate_rows` warning |
 | an unknown column type | excluded with reason `unsupported_type` |
 | a date column present with no `time_col` | random scheme; `date_column_undeclared` warning per column |
@@ -845,7 +912,7 @@ Each keeps its id through the gate, the tests and the review.
 | Id | The silent failure | Judged by |
 |---|---|---|
 | F1 | A fitted step sees the holdout: the model refitted on all rows before scoring (large), or an imputer, encoder, scaler or the leak screen fitted before the split (small). | Gate: `model.noise_clf`, `model.noise_reg`, `model.noise_p_value` (large form). Tests: recording fakes through the seam (both forms, exactly). |
-| F2 | A column that copies the target, or is only filled in after the outcome, is used as a feature. | Gate: `leak.excluded`, `leak.regression`. Tests: the leak rule on crafted columns. |
+| F2 | A column that copies the target, or is only filled in after the outcome, is used as a feature. | Gate: `leak.excluded`, `leak.regression`, and `leak.near_leak_warned` (a build with no leak screen has no warning tier either, D30). Tests: the leak rule and its warning tier on crafted columns. |
 | F3 | The headline is the best cross-validation score, not the holdout score. | Gate: `model.headline_recomputed`, `model.selection_full`. Tests: a fake family whose fold scores and holdout score differ by construction. |
 | F4 | Accuracy is the headline on a rare class. | Gate: `model.metric_clf`, `model.headline_recomputed`. Tests: metrics by hand. |
 | F5 | The task is misread from the column's type. | Gate: `task.binary_numeric`, `task.ambiguous_stops`. Tests: the rule on every loaded shape. |
@@ -900,7 +967,8 @@ threads, 192 GB. Default pools: OpenMP 64 threads, OpenBLAS 24.
   the fixed list of 4.5.
 - `Int64`, `category` and datetime types do not survive a CSV round trip.
 
-**Run time (D16).** A full run on 100,000 rows × 100 columns with the grids of
+**Run time (D16, D25).** Measured once; no check enforces the budget (D31). A
+full run on 100,000 rows × 100 columns with the grids of
 4.1 and all cores (`n_jobs=-1`, 64 threads): classification 178.6 seconds,
 regression 205.6 seconds, against a budget of 600. The forest takes most of it
 (105 and 138 seconds), then boosting (36), then the leak screen (27 to 29,
@@ -925,22 +993,34 @@ each was measured without it:
 - Histogram gradient boosting gave identical bits at every thread count tried.
 - `n_jobs` alone does not limit boosting's OpenMP threads; `threadpoolctl` does.
 
-**The interpreter's base** is on `A:`, a drive mapped to the user's Anaconda
-folder through a loopback network share (`\\localhost\C$\...`). Two
-consequences, both about the environment and never about the code:
+**The interpreter's base (D32)** is `C:\Users\uahma\anaconda3\envs\py312`, a
+local path: `mlprof_env\pyvenv.cfg` has it as `home`, and `sys.base_prefix`
+reports it (confirmed 2026-11-16). If the interpreter does not start, that is
+a harness error and never a code fault.
 
-- If the mapping is absent the interpreter does not start: a harness error.
-- **Interpreters started at the same instant block each other.** Measured: two,
-  four or eight tool processes started together all wait exactly 35 or 70
-  seconds and then finish together (every round tried). Rounds of eight starts
-  that blocked, by the spacing between starts: 0.1 seconds, 2 of 2; 0.2
-  seconds, 3 of 30; 0.3 seconds, 0 of 30; 0.5 seconds, 0 of 30. 35 seconds is
-  the share's lock-break timeout. The gate therefore starts its runs 0.5
-  seconds apart. Anything else that starts Python processes in parallel on
-  this machine (a test helper, a script) must space them too, or simply run
-  them one after another. Earlier the same day 17 simultaneous starts did not
-  block, so the behaviour comes and goes; pointing the environment at the same
-  interpreter by its local path would remove it.
+- **As it was on 2026-11-15.** The base was on `A:`, a drive mapped to the same
+  folder through a loopback network share (`\\localhost\C$\...`), and
+  interpreters started at the same instant blocked each other: two, four or
+  eight tool processes started together all waited exactly 35 or 70 seconds
+  and then finished together. Rounds of eight starts that blocked, by the
+  spacing between starts: none, 6 of 6; 0.1 seconds, 2 of 2; 0.2 seconds, 3 of
+  30; 0.3 seconds, 0 of 30; 0.5 seconds, 0 of 30. 35 seconds is the share's
+  lock-break timeout. Earlier the same day 17 simultaneous starts did not
+  block, so the behaviour came and went.
+- **Measured again on 2026-11-16, with the local path.** Eight tool processes
+  (the reference implementation, fast profile, on `signal_clf`) started at the
+  same instant, within 0.2 to 1.2 milliseconds of each other, for 30 rounds,
+  twice: **0 of 30 rounds blocked, both times.** Each process took 2.9 to 3.2
+  seconds, except in the very first round, where all eight took 10.9 seconds.
+  That is taken to be the first load of the libraries from disk: it is far
+  from 35 seconds, and it did not recur in the second set of 30.
+- The gate still starts its runs 0.5 seconds apart and gives a run that did
+  not finish one more go. Both are kept as they are. Starting Python processes
+  in parallel is no longer known to stall on this machine; running them one
+  after another remains the simpler habit for a test helper.
+- `pyvenv.cfg` still names the share in its `executable` and `command` lines.
+  They record how the environment was made; the measurement above was taken
+  with them in place.
 
 ---
 
@@ -948,7 +1028,9 @@ consequences, both about the environment and never about the code:
 
 Set by the harness stage by measurement, for the owner's approval. Bands belong
 to the gate (`verify/smoke_test.py`, where each is written beside its
-measurements). Cut-offs belong to this spec.
+measurements). Cut-offs belong to this spec: those measured on 2026-11-15 were
+approved as D23; the two added on 2026-11-16 (the warning tier of D30 and the
+separator rule of D28) are marked in 10.2.
 
 ### 10.1 Bands asserted by the gate
 
@@ -972,12 +1054,50 @@ from the reference's still lands inside. All bands are on `headline.skill`.
 | `time.no_skill_on_blocks` | `time_blocks` | −0.167 to +0.270 (+0.012, 0.104) | −0.48 to 0.48 | F7: 0.994 to 1.000 | 0.51 |
 | `time.persistence_baseline` | `random_walk` | −0.118 to +0.009 (−0.008, 0.024) | −0.30 to 0.05 | F8: 0.881 to 1.000 | 0.83 |
 
+`leak.near_leak_warned` asserts no score: on `near_leak` the headline is the
+near-copy itself (0.969 to 1.000 over 30 seeds, against 0.672 to 0.801 on
+`signal_clf`), which is what its warning is for. Its margins are in 10.2.
+
+**Re-measured on 2026-11-16, for D27 to D30.** The 30 data seeds of the first
+measurement were not recorded, and 22 likely schemes failed to reproduce its
+range on `messy`, so this measurement uses its own: the base seeds
+1115 + 100*k*, *k* = 0 to 29 (*k* = 0 is the gate's own data). The reference as
+it was before the changes and the reference after them were run on the same
+seeds, fast profile:
+
+| Dataset | Reference, before and after: range (mean, sd) | Band (unchanged) |
+|---|---|---|
+| `signal_clf` | 0.672 to 0.801 (0.741, 0.033) | 0.54 to 0.91 |
+| `leak` | 0.648 to 0.821 (0.751, 0.037) | 0.54 to 0.91 |
+| `signal_reg` | 0.819 to 0.891 (0.848, 0.017) | 0.76 to 0.93 |
+| `leak_reg` | 0.806 to 0.859 (0.840, 0.014) | 0.76 to 0.93 |
+| `messy`, with its new column | 0.670 to 0.826 (0.746, 0.035) | 0.55 to 0.91 |
+| `noise_clf` | −0.115 to +0.159 (+0.004, 0.058) | −0.27 to 0.27 |
+| `noise_reg` | −0.503 to −0.242 (−0.377, 0.076) | −0.65 to −0.05 |
+| `imbalanced` | −0.150 to +0.376 (+0.017, 0.097) | −0.42 to 0.42 |
+| `time_blocks` | −0.248 to +0.217 (−0.007, 0.115) | −0.48 to 0.48 |
+| `random_walk` | −0.100 to +0.012 (−0.006, 0.021) | −0.30 to 0.05 |
+
+Before and after are identical on every seed: 390 runs (the ten above and
+three more configurations, 30 seeds each) with no difference in the headline,
+the row counts, the task, the validation record, the baselines, the models
+table or the predictions. At the gate's own seed the same holds for all 19
+runs that existed before, the three full-profile ones included. What differs
+is the new warnings and the two new limitation strings. `messy` gained a
+column and nothing else: its eleven earlier columns are byte-identical on all
+30 seeds, and the new one reaches no model. **No band's measurement changed,
+so no band was changed;** each still rests on the first measurement, in the
+table above this one. Every value here is inside its band. On this second set
+of seeds two bands are narrower than 4.5 sd on one side: `noise_reg` (its
+lower edge is 3.6 sd below this mean) and `imbalanced` (its upper edge is
+4.2 sd above; the highest of 30 was 0.376).
+
 Two other measured margins:
 
 - `model.noise_p_value`: the fast profile's p-value is a multiple of 1/201. On
   `noise_clf` the reference gave 0.010 to 0.965 and never the floor; F1 gave
   exactly 1/201 on all 30 seeds. The check requires at least 0.0075. A correct
-  implementation lands on the floor by chance once in 201.
+  implementation lands on the floor by chance once in 201 (accepted, D31).
 - `model.metric_clf`: the distance between `headline.score` and the majority
   share is 0.363 to 0.549 for the reference and 0.000 to 0.078 for F4. The
   check requires more than 0.20.
@@ -1006,16 +1126,45 @@ Three things the measurements showed, which shaped the datasets:
 | Cut-off | Starting value | Pinned | Measurement |
 |---|---|---|---|
 | leak: single-column skill | 0.98 | **0.98** | 30 seeds: `outcome_copy` 0.995 to 1.000 and `amount_scaled` 0.996 to 0.998, flagged 30 of 30; `strong_feature` 0.60 to 0.71, and no other column of any dataset, flagged 0 of 30. Where the edge is: a copy of a 0/1 target with noise of sd 0.25 is flagged on 14 of 30 seeds and with sd 0.30 never; a copy with 0.5% of labels flipped on 21 of 30, with 2% never; a legitimate feature with true ROC AUC 0.993 never, with 0.998 on 10 of 30. Regression: a rescaled copy is flagged while its noise is under about 12% of the target's deviation. |
+| leak warning: single-column skill (D30; measured 2026-11-16) | 0.90 | **0.90** | 30 data seeds. `outcome_noisy` of `near_leak`, the target with exactly 2% of its labels flipped: 0.938 to 0.960 (mean 0.949, sd 0.005); warned 30 of 30, excluded 0 of 30. The highest single-column skill of any legitimate column in any gate dataset: `strong_feature` of `leak`, 0.609 to 0.748 (mean 0.656, sd 0.032); the next is `f1` of `signal_reg`, 0.530 to 0.610; warned 0 of 30. The cut-off is 9.5 sd below the first mean and 7.7 sd above the second; 0.98 is 6.1 sd above the first. Where the tier's edges are, for a copy of a 0/1 target on 1,500 rows with an exact share of its labels flipped: 0.5%, 0.979 to 0.990 (excluded on 28 of 30); 1%, 0.965 to 0.980; 1.5%, 0.952 to 0.972; 2.5%, 0.925 to 0.947; 3%, 0.915 to 0.937 (each warned 30 of 30); 4%, 0.892 to 0.916 (22 of 30); 5%, 0.872 to 0.898 (never). Regression, the target rescaled with noise as a share of its deviation: 12%, 0.978 to 0.985 (excluded on 28 of 30); 15%, 0.968 to 0.977; 20%, 0.946 to 0.961; 25%, 0.920 to 0.938 (each warned 30 of 30); 30%, 0.888 to 0.918 (15 of 30); 35%, never. Recipes for the tests follow this table. |
 | leak: missing by class | above 95% and below 5% | **the same** | 100%/0% and 97%/2%: flagged 30 of 30. 96%/4%: 26 of 30. 94%/3% and 97%/6%: 6 of 30. 90%/10%: never. |
 | id-like, text | more than 95% of rows distinct (D19) | **the same** | 100% and 98% distinct: id-like. 70%: free text. 44% and 2%: features. |
-| id-like, whole numbers | distinct, and consecutive or strictly ordered (D19) | **the same** | At 200, 2,000, 20,000 and 100,000 rows: salary, price in pence, volume, age and a distinct unordered measure are features at every size (the 95% rule called volume an identifier at every size, and salary and price at the smaller ones). Consecutive ids in order, in order with 1% blank, and shuffled: caught. Increasing non-consecutive ids: caught. **Not caught:** a random unordered identifier (as D19 says), and a shuffled consecutive identifier with any blank cell. **Wrongly caught:** a whole-number measure with every value distinct in a table sorted by that measure. |
+| id-like, whole numbers | distinct, and consecutive or strictly ordered (D19) | **the same** | At 200, 2,000, 20,000 and 100,000 rows: salary, price in pence, volume, age and a distinct unordered measure are features at every size (the 95% rule called volume an identifier at every size, and salary and price at the smaller ones). Consecutive ids in order, in order with 1% blank, and shuffled: caught. Increasing non-consecutive ids: caught. **Not caught:** a random unordered identifier (as D19 says), and a shuffled consecutive identifier with any blank cell. **Wrongly caught:** a whole-number measure with every value distinct in a table sorted by that measure. Both are accepted limits (D31) and show in the column accounting. |
 | free text | not given | **more than 50% of non-missing values distinct** | Needed to tell free text from categories; see the row above. |
-| numeric coercion | at least 90% parse | **90%** | Only values of 1,000 or more carry a thousands separator, so a column with 50% of its cells written that way still parses 91% and is numeric with 173 of 2,000 cells coerced; written that way throughout, 81% parse and the column is excluded as free text. |
+| numeric coercion | at least 90% parse | **90%** | Only values of 1,000 or more carry a thousands separator, so a column with 50% of its cells written that way still parses 91% and is numeric with 173 of 2,000 cells coerced; written that way throughout, 81% parse and the column is excluded: as free text when this was measured, with the reason `numeric_with_separators` since D28 (next row). |
+| numbers with separators (D28; measured 2026-11-16) | 90%, counting the values that parse together with those that match the pattern | **the same** | `revenue` of `messy`, written with separators throughout, over 30 data seeds: 17% to 22% of its values are below 1,000 and parse; 78% to 83% match the pattern; every value does one or the other; 99.8% to 100% are distinct. Excluded with the reason `numeric_with_separators` on 30 of 30; the reference as it was before D28 calls it `id_like` on 30 of 30. `spend` of `messy`, where three of the eight text cells are `1,200` or `3,450`: numeric, with `values_coerced` and `numeric_with_separators`, on 30 of 30. On 2,000 crafted rows: written that way throughout with 83% parsing, `numeric_with_separators`; with half the cells written that way and 92% parsing, numeric with 167 cells coerced. On 400 crafted rows: written with separators and 60% distinct, or holding five distinct values, `numeric_with_separators` (without the rule: `free_text`, and a categorical feature); holding one value, `constant`; the same amounts written `1.200,50` or `12,34`, `id_like` when all distinct and `free_text` at 60% distinct; 85% with separators and 15% words, not this reason; 95% plain and 5% with separators, numeric with both warnings; a numeric column whose only text cells are words, `values_coerced` alone. |
 | date-like | 95%, fixed forms | **95%, the forms of 4.5** | The fixed list matches ISO dates and date-times, d/m/y, m/d/y, d-m-y, d.m.y, y/m/d and month-name forms (4 of 4 each), and none of `1,200`, `May`, `09:30`, `2024Q1`, `1/2`, `1.2.3`, `2024-01`, or impossible dates. pandas' lenient parser accepts the first five. |
 | small holdout | fewer than 50 of the rarer class | **50** (regression: 50 holdout rows) | On pure noise, 95% of honest results fall within ±0.23 of zero with 50 rows of the rarer class in a balanced holdout (±0.16 at 5% positives), ±0.36 with 20, ±0.16 with 100. |
 | too small to profile | fewer than 100 usable rows | **100**, and 10 of each class | 30 seeds per size. Random scheme at 100 rows: every run finishes; skill sd 0.17 (classification) and 0.06 (regression). Time order at 100 rows: fold 1 trains on 13 rows, every run finishes, no fold unscored, skill sd 0.16 and 0.08. Below the floor under time order, folds start to hold one class: 1 run in 30 at 80 rows, 4 at 60, 13 at 40. |
 | no block-bootstrap interval | fewer than 20 holdout timestamps | **30** | See 10.3. |
 | autocorrelated panel target | lag-1 autocorrelation above 0.8 | **0.5** | "The same as last period" beats the training mean exactly when the autocorrelation is above 0.5 (its skill over the mean is 2r − 1). Measured on simulated panels of 200 timestamps: at a measured autocorrelation of 0.45 that naive rule has skill −0.07; at 0.74 it has +0.49, and a cut-off of 0.8 warned on only 19% of such panels; at 0.85 it has +0.75. |
+
+The rows measured on 2026-11-16 use 30 data seeds of their own (the base seeds
+1115 + 100*k*, *k* = 0 to 29): the seeds of the first measurement were not
+recorded. That is why `strong_feature` reads 0.60 to 0.71 in the first row and
+0.609 to 0.748 in the second.
+
+**Recipes for a column clearly inside the warning tier.** A test cannot measure
+a column's single-column skill before the application exists, so these were
+measured on the reference implementation, over the same 30 seeds. Each is on
+**1,500 rows**, with a target of two roughly balanced classes (or, for
+regression, a continuous target) and the rows to flip drawn without replacement
+from a fixed seed. The tier is 0.90 to 0.98.
+
+| Scheme | The column | Single-column skill: range (mean, sd) |
+|---|---|---|
+| random | a copy of the target with exactly 2% of the rows flipped (30 rows) | 0.938 to 0.960 (0.949, 0.005) |
+| random | the same with exactly 2.5% (38 rows) | 0.925 to 0.947 (0.936, 0.005) |
+| time order, unique timestamps | the same with exactly 2.5% | 0.927 to 0.961 (0.941, 0.008) |
+| time order, unique timestamps | the same with exactly 2% | 0.939 to 0.969 (0.953, 0.008) |
+| random, regression | the target plus independent normal noise whose deviation is 20% of the target's own (rescaling the result, as × 3.7 + 12, changes nothing) | 0.946 to 0.961 (0.953, 0.004) |
+
+What does not sit clearly inside it: the 2% copy on 400 rows (0.918 to 0.967
+under the random scheme, sd 0.013; up to 0.985 under time order); a copy in
+which each row is flipped at a 2% chance, so that the share itself varies
+(0.924 to 0.959 on 1,500 rows, sd 0.008); and any share from 4% up or from 1%
+down. A column near 0.6 or below is clearly under the tier, and an exact copy
+is clearly over it.
 
 ### 10.3 The block bootstrap's coverage
 
@@ -1045,7 +1194,9 @@ bootstrap's coverage on the smallest holdout the random scheme allows (25
 rows). Under strong serial correlation the interval stays too narrow even at
 250 timestamps: the cube-root block length of D9 is shorter than the
 dependence. That is a property of the decided method, reported to the owner;
-it is not something an implementation can fix.
+it is not something an implementation can fix. D27 keeps the method and has
+the output say so: the `interval_approximate` warning on every block-bootstrap
+interval (step 12), and sentence 8 of the limitations on every run (5.4).
 
 ### 10.4 Run time and reproducibility
 
@@ -1079,8 +1230,9 @@ The builder decides these, and no test may pin them:
   feature.
 
 Pinned, despite looking like detail: the estimators and grids of 4.1, the
-preprocessing of step 8, the single-column screen of step 8, the percentile
-and block rules of step 12, the fixed texts of 5.4.
+pattern of step 5 for a number with thousands separators, the preprocessing of
+step 8, the single-column screen of step 8 and both of its cut-offs, the
+percentile and block rules of step 12, the fixed texts of 5.4.
 
 Not judged by any test or gate check, and left to a human: whether the
 limitations read well, whether the console summary is clear, whether a skill
@@ -1114,3 +1266,13 @@ figure on real data is believable.
 | D20 fast and full agree | 3 (steps 4, 5, 6) |
 | D21 whole-number regression warning | 3 (step 4), 2.5 |
 | D22 loading rules | 4.4, 4.5, 6 |
+| D23 cut-offs approved as measured | 2.5, 3 (step 12), 4.3, 10.2, 10.3 |
+| D24 leak rule under time order | 3 (step 8) |
+| D25 pinned model settings | 3 (seeds and threads), 4.1, 9 |
+| D26 step functions and the seam | 2.3, 2.6, 2.7 |
+| D27 approximate interval under time order | 2.5, 3 (step 12), 5.4, 7, 10.3 |
+| D28 numbers with thousands separators | 2.5, 3 (step 5), 4.3, 5.2, 6, 7, 10.2 |
+| D29 negative skill explained | 3 (step 11), 5.4, 7 |
+| D30 warning tier below the leak cut-off | 2.5, 3 (step 8), 4.3, 7, 8, 10.2 |
+| D31 accepted limits | 3 (step 8), 9, 10.1, 10.2 |
+| D32 venv base path | 9 |

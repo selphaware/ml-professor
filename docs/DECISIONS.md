@@ -386,3 +386,45 @@ Python processes started together stalling for 35 or 70 seconds on the
 mapping's lock timeout).
 Consequence: `doctor` was clean after the change, with the self-test passing
 and the per-edit gate at 10.4 seconds.
+
+## D33 — 2026-11-16 — Near-leak warning cut-off approved; objections weighed (completes D30)
+Decision: The `strong_single_column` warning cut-off is 0.90, as measured in
+the CP1 session: the near-copy of the target scored 0.938 to 0.960 and the
+strongest legitimate column 0.609 to 0.748, over 30 seeds. Three objections
+raised by that session are accepted as limits of phase 1. (1) A warned column
+still drives the headline, because the tool cannot tell a near-leak from a
+very strong real feature. (2) The `interval_approximate` warning fires on
+every time-ordered run, including those where coverage is adequate, because
+the tool cannot know how correlated the errors are. (3) Only the comma form
+of a formatted number is recognised; `$1,200` and `1.200,50` are excluded as
+free text or id-like.
+Alternatives considered: excluding warned columns (rejected in D30).
+Deferred as a later change: reporting skill with and without the warned
+columns.
+Consequence: any legitimate feature with single-column ROC AUC of about 0.95
+or more will be warned. The warning asks a question; it does not accuse.
+
+## D34 — 2026-11-16 — A partly formatted numeric column is excluded (replaces part of D28)
+Decision: A column in which at least 90% of the non-missing values are plain
+numbers or numbers with thousands separators, and at least one is a number
+with thousands separators, is excluded with the reason
+`numeric_with_separators` and its warning. The warning has this one form
+only. A numeric column whose unparsed cells are other text is unchanged: it
+is kept, with `values_coerced`.
+Alternatives considered: keeping the column with those cells set to missing,
+as D28 first had it (rejected: the cells lost are by construction the values
+of 1,000 and above, so the headline would knowingly use a distorted column).
+Consequence: a single stray `1,200` excludes a column. The output says
+exactly which column and why, and the caller parses it and passes a
+DataFrame.
+
+## D35 — 2026-11-16 — Measurements are kept in the repo
+Decision: The scripts, the seeds and a compact per-seed table behind every
+band and cut-off measured in the CP1 session are saved under
+`docs\measurements\CP1`. The two bands that session found tight on its own
+seeds (`model.noise_reg` and `model.metric_clf`) are left as they are; the
+session reports where the reference lands at the gate's fixed seed.
+Alternatives considered: widening those bands (rejected: a band changes only
+when it was measured wrong, and the gate judges one fixed seed).
+Consequence: every band can be re-measured from the repo. The first harness
+session's seeds were not recorded and are not recoverable.

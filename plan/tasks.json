@@ -31,7 +31,7 @@
       "why_tier": "Carries F6 and decides which columns ever reach a model.",
       "depends_on": ["T2"],
       "writes": ["mlprofessor/columns.py", "mlprofessor/stages.py"],
-      "brief": "Build `stages.column_roles(frame, target, time_col=None)` (spec 2.7): the rule table of step 5, in its order, with the cut-offs of 4.3 and the date forms of 4.5. Roles are judged on the usable rows; `n_missing`, `n_coerced` and `n_infinite` are counted over every row. Whole numbers are judged by value, never by dtype (a blank cell makes an integer column float). Never use pandas' date parser to decide whether a column is a date.",
+      "brief": "Build `stages.column_roles(frame, target, time_col=None)` (spec 2.7): the rule table of step 5, in its order, with the cut-offs of 4.3 and the date forms of 4.5. Roles are judged on the usable rows; `n_missing`, `n_coerced` and `n_infinite` are counted over every row. Whole numbers are judged by value, never by dtype (a blank cell makes an integer column float). Never use pandas' date parser to decide whether a column is a date. A number written with thousands separators (`1,200`; the pattern is pinned in step 5) is never parsed: under rule 5 it is a cell that did not parse, and rule 6a excludes a column made mostly of such values with the reason `numeric_with_separators`, after `constant` and ahead of the id-like and free-text rules (D28). This function returns no warnings.",
       "gate_checks": [],
       "tests": ["tests/test_columns.py"]
     },
@@ -108,7 +108,7 @@
       "why_tier": "First task the gate judges; owns reconciliation between the source, the files and the result object.",
       "depends_on": ["T9"],
       "writes": ["mlprofessor/result.py", "mlprofessor/pipeline.py", "mlprofessor/cli.py"],
-      "brief": "Complete the output of spec section 5 for the random scheme under the fast profile: every key of `profile.json` (5.2), with fields that later tasks fill written as null or empty (the interval and p-value fields, `limitations`); `predictions.csv` (5.1); `to_dict()`, `to_json(path)` and `out_dir`; the DataFrames equal to their JSON parts (2.3). The command line writes both files, prints a short summary, exits 3 with `error: <code>: <message>` on a named error and writes nothing then. Add the warnings that arise in steps 1 to 11: `values_coerced`, `infinite_values`, `blank_header`, `duplicate_rows`, `whole_number_regression_target`, `small_holdout`, `fold_not_scored`, `model_failed`. No NaN in the JSON. Only `meta.timing` may hold a clock value.",
+      "brief": "Complete the output of spec section 5 for the random scheme under the fast profile: every key of `profile.json` (5.2), with fields that later tasks fill written as null or empty (the interval and p-value fields, `limitations`); `predictions.csv` (5.1); `to_dict()`, `to_json(path)` and `out_dir`; the DataFrames equal to their JSON parts (2.3). The command line writes both files, prints a short summary, exits 3 with `error: <code>: <message>` on a named error and writes nothing then. Add the warnings that arise in steps 1 to 11: `values_coerced`, `numeric_with_separators` (both forms of step 5: for a column excluded with that reason, and beside `values_coerced` when a coerced cell is a number with thousands separators), `infinite_values`, `blank_header`, `duplicate_rows`, `whole_number_regression_target`, `small_holdout`, `fold_not_scored`, `model_failed`. No NaN in the JSON. Only `meta.timing` may hold a clock value.",
       "gate_checks": ["data.rows_reconcile", "data.columns_accounted", "data.coercion_reported", "models.all_accounted", "task.binary_numeric", "task.ambiguous_stops", "model.signal_clf", "model.signal_reg", "model.noise_clf", "model.noise_reg", "model.headline_recomputed", "model.metric_clf", "result.matches_json", "output.deterministic"],
       "tests": ["tests/test_result_schema.py"]
     },
@@ -130,8 +130,8 @@
       "why_tier": "Carries F2, and a screen fitted on the wrong rows is itself F1.",
       "depends_on": ["T10", "T11"],
       "writes": ["mlprofessor/leakage.py", "mlprofessor/pipeline.py"],
-      "brief": "Add the leak screen of step 8 of spec section 3, run on training rows only, before any model: the missing-by-class rule, then the single-column cross-validated skill with the pinned tree over the selection folds, cut-offs of 4.3. Under time order it uses the expanding folds and, for regression with unique timestamps, the previous-value baseline, so a lagged target on a random walk is not flagged. A flagged column is excluded with reason `suspected_leak`, its `leak_rule` and a warning, and reaches no model. No feature left raises `NoFeaturesError`.",
-      "gate_checks": ["leak.excluded", "leak.control_kept", "leak.regression"],
+      "brief": "Add the leak screen of step 8 of spec section 3, run on training rows only, before any model: the missing-by-class rule, then the single-column cross-validated skill with the pinned tree over the selection folds, cut-offs of 4.3. Under time order it uses the expanding folds and, for regression with unique timestamps, the previous-value baseline, so a lagged target on a random walk is not flagged. A flagged column is excluded with reason `suspected_leak`, its `leak_rule` and a warning, and reaches no model. The same skill, measured once per column, also decides the warning tier (rule 3 of step 8, D30): at least 0.90 and below 0.98, the column stays a feature and a `strong_single_column` warning names it. No feature left raises `NoFeaturesError`.",
+      "gate_checks": ["leak.excluded", "leak.control_kept", "leak.regression", "leak.near_leak_warned"],
       "tests": ["tests/test_leakage.py"]
     },
     {
@@ -141,7 +141,7 @@
       "why_tier": "Decides how certain the headline looks; the resampling must respect time order.",
       "depends_on": ["T10", "T11"],
       "writes": ["mlprofessor/uncertainty.py", "mlprofessor/pipeline.py"],
-      "brief": "Add step 12 of spec section 3, from the holdout predictions alone, nothing refitted: the percentile bootstrap interval on score and skill and the permutation p-value under the random scheme; the moving-block bootstrap over distinct holdout timestamps under time order, with the p-value absent and its reason given; no interval below 30 holdout timestamps, with a reason and the `no_interval` warning. 200 resamples under fast, 1,000 under full. Fill the interval and p-value fields of `headline` (5.2).",
+      "brief": "Add step 12 of spec section 3, from the holdout predictions alone, nothing refitted: the percentile bootstrap interval on score and skill and the permutation p-value under the random scheme; the moving-block bootstrap over distinct holdout timestamps under time order, with the p-value absent and its reason given; no interval below 30 holdout timestamps, with a reason and the `no_interval` warning. Whenever the interval does come from the block bootstrap, add exactly one `interval_approximate` warning with a null column (D27); never under the random scheme. 200 resamples under fast, 1,000 under full. Fill the interval and p-value fields of `headline` (5.2).",
       "gate_checks": ["uncertainty.reported", "model.noise_p_value"],
       "tests": ["tests/test_uncertainty.py"]
     },
@@ -174,7 +174,7 @@
       "why_tier": "A clear contract: every edge, code and fixed text is listed in the spec.",
       "depends_on": ["T11", "T12", "T13", "T15"],
       "writes": ["mlprofessor/pipeline.py", "mlprofessor/result.py", "mlprofessor/cli.py"],
-      "brief": "Walk the table of spec section 7 row by row and make each edge give its named error or its reported outcome; none may be skipped silently. Every invalid argument of 2.1 raises `InputError`. Write the fixed limitations statement and the random-split caveat of 5.4 exactly. Make the console summary short and plain: task, scheme, row counts, skill with its metric, baseline and interval, the p-value when there is one, and each warning.",
+      "brief": "Walk the table of spec section 7 row by row and make each edge give its named error or its reported outcome; none may be skipped silently. Every invalid argument of 2.1 raises `InputError`. Write the fixed limitations statement (nine strings) and the random-split caveat of 5.4 exactly. Make the console summary short and plain: task, scheme, row counts, skill with its metric, baseline and interval, the p-value when there is one, and each warning.",
       "gate_checks": ["output.complete"],
       "tests": ["tests/test_edges.py"]
     },

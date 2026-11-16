@@ -37,11 +37,13 @@ N_BLOCKS = 6
 MIN_ROWS = 100              # fewer usable rows than this: too small to profile
 MIN_CLASS_ROWS = 10         # fewer usable rows of a class than this: too small
 LEAK_SKILL = 0.98           # single-column cross-validated skill on training rows
+STRONG_SKILL = 0.90         # at least this and below LEAK_SKILL: kept, with a warning (D30)
 LEAK_MISSING_HIGH = 0.95    # missing for more than this share of one class ...
 LEAK_MISSING_LOW = 0.05     # ... and less than this share of the other
 ID_TEXT_SHARE = 0.95        # text column: distinct values > 95% of the rows
 FREE_TEXT_SHARE = 0.50      # text column: distinct values > 50% of non-missing
 NUMERIC_SHARE = 0.90        # text column: >= 90% of non-missing parse as numbers
+SEPARATED_SHARE = 0.90      # text column: >= 90% parse or carry thousands separators (D28)
 DATE_SHARE = 0.95           # text column: >= 95% of non-missing look like dates
 SMALL_HOLDOUT = 50
 MIN_BLOCK_TIMESTAMPS = 30   # fewer distinct holdout timestamps: no interval
@@ -74,6 +76,8 @@ DATE_RE = re.compile("(?:" + "|".join(DATE_FORMS) + ")", re.I)
 ISO_TIME_RE = re.compile(
     r"\d{4}-\d{2}-\d{2}(?:[T ]\d{2}:\d{2}(?::\d{2}(?:\.\d{1,9})?)?)?(?:Z|[+-]\d{2}:\d{2})?")
 ISO_TZ_RE = re.compile(r".*(?:Z|[+-]\d{2}:\d{2})")
+# D28: a number written with thousands separators. Never parsed: `1,200` is 1.2 in some locales.
+SEPARATED_RE = re.compile(r"[+-]?[0-9]{1,3}(?:,[0-9]{3})+(?:\.[0-9]+)?")
 
 RANDOM_CAVEAT = ("Random split: this number is optimistic if the rows are ordered in time "
                  "or one entity appears on many rows.")
@@ -90,6 +94,10 @@ LIMITATIONS = [
     "Classification skill and regression skill are on different scales and are not comparable.",
     "A CSV file is read with pandas' types, so text identifiers can lose leading zeros; "
     "pass a DataFrame to control the types.",
+    "Intervals are approximate: they tend to be too narrow when the holdout is short and, "
+    "under time order, when errors are serially correlated.",
+    "Negative skill means the models did worse than the baseline on the holdout; read it as "
+    "no evidence of predictability.",
 ]
 
 
@@ -317,13 +325,20 @@ def _whole_number_id(values):
     return bool(np.all(step > 0) or np.all(step < 0) or x.max() - x.min() + 1 == len(x))
 
 
-def _roles(df, usable, target, time_col):
-    """Step 5 (D19, D20): roles that need no target, judged on the usable rows.
+def _separated(text):
+    """D28: whether a stripped text value is a number written with thousands separators."""
+    return SEPARATED_RE.fullmatch(text) is not None
 
-    Returns the column records and, for each feature, its prepared values over
-    every loaded row: float64 for numeric, object for categorical.
+
+def _roles(df, usable, target, time_col):
+    """Step 5 (D19, D20, D28): roles that need no target, judged on the usable rows.
+
+    Returns the column records; for each feature, its prepared values over
+    every loaded row (float64 for numeric, object for categorical); and, for
+    each column read as numeric, how many of its coerced cells are numbers
+    written with thousands separators, where there are any.
     """
-    records, prepared = [], {}
+    records, prepared, separated = [], {}, {}
     n_rows = int(usable.sum())
     for position, name in enumerate(df.columns):
         series = df[name]
@@ -351,16 +366,24 @@ def _roles(df, usable, target, time_col):
         elif (pt.is_string_dtype(dtype) or dtype == object) \
                 and all(isinstance(v, str) for v in present):
             text = present.str.strip()
+            parses = pd.to_numeric(text, errors="coerce").notna().to_numpy(dtype=bool)
             if text.map(lambda v: DATE_RE.fullmatch(v) is not None).mean() >= DATE_SHARE:
                 rec.update(role="excluded", reason="datetime", kind="datetime")
-            elif pd.to_numeric(text, errors="coerce").notna().mean() >= NUMERIC_SHARE:
+            elif parses.mean() >= NUMERIC_SHARE:
                 numbers = pd.to_numeric(series.str.strip(), errors="coerce") \
                     .to_numpy(dtype="float64", na_value=np.nan)
-                rec["n_coerced"] = int((series.notna().to_numpy() & np.isnan(numbers)).sum())
+                lost = series.notna().to_numpy() & np.isnan(numbers)
+                rec["n_coerced"] = int(lost.sum())
+                n_separated = sum(_separated(v.strip()) for v in series[lost])
+                if n_separated:                         # never parsed, and said so (D28)
+                    separated[name] = n_separated
             else:
                 distinct = int(present.nunique())
                 if distinct == 1:
                     rec.update(role="excluded", reason="constant", kind="categorical")
+                elif (parses | text.map(_separated).to_numpy(dtype=bool)).mean() \
+                        >= SEPARATED_SHARE:
+                    rec.update(role="excluded", reason="numeric_with_separators", kind="text")
                 elif distinct > ID_TEXT_SHARE * n_rows:
                     rec.update(role="excluded", reason="id_like", kind="text")
                 elif distinct > FREE_TEXT_SHARE * len(present):
@@ -387,7 +410,7 @@ def _roles(df, usable, target, time_col):
                 prepared[name] = numbers
         elif levels is not None:
             prepared[name] = levels
-    return records, prepared
+    return records, prepared, separated
 
 
 def _split_time(keys, gap, capped):
@@ -736,13 +759,25 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs):
                   target)
 
     # 5. column roles that need no target
-    records, prepared = _roles(df, usable, target, time_col)
+    records, prepared, separated = _roles(df, usable, target, time_col)
     by_name = {r["name"]: r for r in records}
     for rec in records:
         if rec["n_coerced"]:
             _warn(warnings, "values_coerced",
                   f"{rec['n_coerced']} text value(s) in numeric column {rec['name']!r} could not "
                   "be read as numbers and are treated as missing", rec["name"])
+        if rec["name"] in separated:
+            _warn(warnings, "numeric_with_separators",
+                  f"{separated[rec['name']]} of the value(s) treated as missing in "
+                  f"{rec['name']!r} are numbers written with thousands separators (such as "
+                  "1,200). They are never read as numbers, because the same text means 1.2 in "
+                  "some locales: parse the column and pass a DataFrame", rec["name"])
+        if rec["reason"] == "numeric_with_separators":
+            _warn(warnings, "numeric_with_separators",
+                  f"column {rec['name']!r} is written with thousands separators (such as "
+                  "1,200) and is excluded. Such values are never read as numbers, because the "
+                  "same text means 1.2 in some locales: parse the column and pass a DataFrame",
+                  rec["name"])
         if rec["n_infinite"]:
             _warn(warnings, "infinite_values",
                   f"{rec['n_infinite']} infinite value(s) in {rec['name']!r} are treated as "
@@ -835,9 +870,17 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs):
                 share = [gone[y[train] == c].mean() for c in (0, 1)]
                 if max(share) > LEAK_MISSING_HIGH and min(share) < LEAK_MISSING_LOW:
                     rule = "missing_by_class"
-            if rule is None and _screen_column(values, numeric, y, split["folds"], classification,
-                                               seed, prev) >= LEAK_SKILL:
-                rule = "predicts_target"
+            alone = None
+            if rule is None:
+                alone = _screen_column(values, numeric, y, split["folds"], classification,
+                                       seed, prev)
+                if alone >= LEAK_SKILL:
+                    rule = "predicts_target"
+            if rule is None and alone >= STRONG_SKILL:  # kept, and the caller is told (D30)
+                _warn(warnings, "strong_single_column",
+                      f"column {name!r} on its own predicts the target with skill {alone:.2f} "
+                      "on the training rows. It is kept as a feature: check that it is known "
+                      "before the outcome", name)
             if rule:
                 by_name[name].update(role="excluded", reason="suspected_leak", leak_rule=rule,
                                      n_imputed=0)
@@ -957,6 +1000,11 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs):
         groups = [np.flatnonzero(inverse == g) for g in range(inverse.max() + 1)]
     uncertainty = _uncertainty(truth, pred, base_pred, classification, groups, RESAMPLES[profile],
                                seed, score)
+    if uncertainty["interval_method"] == "bootstrap_blocks":
+        _warn(warnings, "interval_approximate",
+              "the interval comes from a block bootstrap over the holdout timestamps and is "
+              "approximate: it tends to be too narrow when the holdout is short or the errors "
+              "are serially correlated")
     if uncertainty["interval_reason"]:
         _warn(warnings, "no_interval", "no interval: " + uncertainty["interval_reason"])
     rarer = int(min(truth.sum(), len(truth) - truth.sum())) if classification else len(truth)

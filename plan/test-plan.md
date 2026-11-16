@@ -28,7 +28,9 @@ any application code exists. Section and step numbers below are those of
   `tests/fixtures/` as CSV, 40 to 400 rows. A run of `profile()` needs at least
   100 usable rows and 10 of each class (4.2). The whole suite runs in well
   under a minute: use `profile="fast"` and `n_jobs=1` unless the test is about
-  the full profile or about `n_jobs`.
+  the full profile or about `n_jobs`. One exception: the middle case of the
+  leak screen (`test_leakage.py`) uses 1,500 rows, because on 400 rows no
+  column sits clearly between the two cut-offs (spec 10.2).
 - **No skipped or expected-to-fail tests.** The driver counts a skip as a
   failure. If something cannot be tested, leave it out and say so in a comment.
 - **Name the failure mode.** A test that guards a named failure carries its id
@@ -37,7 +39,11 @@ any application code exists. Section and step numbers below are those of
 - **Stay away from cut-offs.** Test each rule with one case clearly on each
   side: a column 100% distinct and one 20% distinct; a copy of the target and a
   column with single-column skill near 0.6; 100%/0% missing by class and
-  60%/40%; 10 and 200 holdout timestamps.
+  60%/40%; 10 and 200 holdout timestamps. The leak screen has two cut-offs,
+  0.98 and 0.90, and so three cases: the copy (above both), the column near 0.6
+  (below both), and one clearly between them. You cannot measure a column's
+  single-column skill yourself before the application exists, so build the
+  middle case by a recipe of spec 10.2, which gives its measured range.
 - **Recording fakes** are the instrument for everything from `test_pipeline.py`
   on. Build them once in `tests/conftest.py`: a model and a preprocessing step
   that record `list(X.index)` on every `fit`, `transform` and `predict`,
@@ -47,10 +53,13 @@ any application code exists. Section and step numbers below are those of
   hand through a whole run.
 - A helper in `conftest.py` runs the command line in a new process with the
   repo root as the working directory and the interpreter running the tests
-  (`sys.executable`). **One process at a time, never in parallel:** on this
-  machine Python processes started at the same instant block each other for 35
-  or 70 seconds (spec section 9). Keep the number of process starts small; most
-  tests call the function in-process.
+  (`sys.executable`). **One process at a time, never in parallel.** Each start
+  costs about 3 seconds, most of it importing the libraries, so keep the
+  number of process starts small; most tests call the function in-process.
+  (Until D32 moved the interpreter's base off a mapped drive, processes started
+  at the same instant on this machine blocked each other for 35 or 70 seconds.
+  Measured since: 60 rounds of eight simultaneous starts, none blocked; spec
+  section 9.)
 
 ## Files
 
@@ -117,6 +126,26 @@ function of `stages` here.
   feature and `n_coerced` equals the number of such cells; `n/a` cells in it
   count in `n_missing`, not `n_coerced`; a column where half the cells are text
   is not numeric (`test_f6_...`).
+- Numbers with thousands separators (step 5, D28), through role and reason
+  only: `column_roles` returns no warnings, and the two forms of the
+  `numeric_with_separators` warning are tested in `test_result_schema.py`.
+  - The pattern, matching: a text column written as `1,200`, `-3,450.75`,
+    `+12,345,678`, with its values below 1,000 written plain (`532.10`), is
+    excluded with the reason `numeric_with_separators` and `n_coerced` 0.
+  - The pattern, not matching: the same amounts written as `1.200,50`, and as
+    `12,34`, never get that reason; they fall to the rules that follow (id-like
+    or free text, by their distinct values). So do `1,2345`, `1,200.`, `$1,200`
+    and `1,200 units`.
+  - Never parsed: a numeric column in which a few cells are written `1,200`
+    stays a numeric feature, and those cells count in `n_coerced`
+    (`test_f6_...`).
+  - The 90%: a column in which 85% of the values match or parse and the rest
+    are words does not get the reason.
+  - Precedence: a column written with separators in which about 60% of the
+    values are distinct is `numeric_with_separators`, where the same shape in
+    another form is `free_text`; one with every value distinct is
+    `numeric_with_separators`, not `id_like`; one written with separators but
+    holding a single value is `constant`.
 - Infinite values are counted in `n_infinite`.
 - Counts are over every row of the frame, including rows with no target.
 - The id-like rule (D19): a consecutive id in order, the same shuffled, an id
@@ -259,6 +288,11 @@ Keep to the members listed in the table above.
 - Warnings that arise in steps 1 to 11 are in the output with their code and
   column: `values_coerced`, `infinite_values`, `blank_header`, `duplicate_rows`,
   `whole_number_regression_target`, `small_holdout`.
+- `numeric_with_separators`, both forms (D28). A column excluded with that
+  reason is named by one such warning. A numeric feature in which a few cells
+  are written `1,200` carries it beside `values_coerced`; a numeric feature
+  whose only coerced cells are words (`abc`, `12 units`) carries
+  `values_coerced` and not `numeric_with_separators`.
 
 ### `tests/test_time_pipeline.py`: `profile()` with `time_col`
 - The time-ordered scheme is used when and only when `time_col` is given; the
@@ -284,10 +318,24 @@ Keep to the members listed in the table above.
   a column filled only for one class is excluded with `missing_by_class`; each
   has a `suspected_leak` warning and reaches no model (a recording fake sees no
   such column) (`test_f2_...`).
-- A merely predictive column is NOT flagged.
+- A merely predictive column is NOT flagged, and carries no
+  `strong_single_column` warning.
+- The warning tier (rule 3 of step 8, D30). Warned and kept: a column built by
+  a recipe of spec 10.2 to sit clearly between 0.90 and 0.98 has the role
+  `feature`, a null `reason` and a null `leak_rule`, reaches the models (a
+  recording fake sees it), and is named by exactly one `strong_single_column`
+  warning and by no `suspected_leak` warning (`test_f2_...`).
+- Both sides of each cut-off, in one table or several: the copy of the target
+  (above 0.98) is excluded and carries no `strong_single_column` warning; the
+  middle column is warned and kept; the merely predictive column (near 0.6) is
+  kept with neither warning.
 - The rule is evaluated on training rows only: under time order, a column that
   copies the target on the holdout rows only is not flagged, and one that
-  copies it on the training rows only is (`test_f1_...`).
+  copies it on the training rows only is (`test_f1_...`). The warning tier
+  uses the same measure on the same rows: a column that is the middle column
+  on the training rows and noise on the holdout rows is warned; one that
+  copies the target on the holdout rows and is noise on the training rows is
+  neither flagged nor warned (`test_f1_...`).
 - Under time order a lagged target on a random walk is not flagged (step 8).
 - A table whose only feature is a leak raises `NoFeaturesError`.
 
@@ -303,6 +351,10 @@ Keep to the members listed in the table above.
   4); the p-value is null with a reason.
 - Fewer than 30 distinct holdout timestamps: the interval fields are null, a
   reason is given and `no_interval` is raised; 200 give an interval.
+- `interval_approximate` (D27). Present: whenever `interval_method` is
+  `bootstrap_blocks` there is exactly one such warning, with a null column.
+  Absent: under the random scheme, and under time order when there is no
+  interval (10 holdout timestamps), where `no_interval` stands in its place.
 - `small_holdout` below 50 rows of the rarer class, absent above.
 
 ### `tests/test_model_families.py`: `profile(profile="full")`
@@ -329,10 +381,14 @@ Keep to the members listed in the table above.
 
 ### `tests/test_edges.py`
 Every row of section 7 with its named error or its reported outcome; every
-invalid argument of 2.1 with `InputError`; the limitations statement and the
-caveat are the fixed texts of 5.4; `fold_not_scored` on a time-ordered table
-whose early blocks hold one class; roles and the task are the same under
-`fast` and `full` on a table of more than 2,000 rows (D20).
+invalid argument of 2.1 with `InputError`; the limitations statement is the
+nine fixed strings of 5.4, in order, under both schemes and both tasks,
+including the two added by D27 and D29, and the caveat is the fixed text;
+negative skill is reported as measured, not clipped at zero (a fake family
+whose predictions are worse than the baseline's gives a `headline.skill`
+below zero equal to the test's own arithmetic); `fold_not_scored` on a
+time-ordered table whose early blocks hold one class; roles and the task are
+the same under `fast` and `full` on a table of more than 2,000 rows (D20).
 
 ### `tests/test_readme.py`
 Every command in a fenced block of `README.md` names something that exists: the

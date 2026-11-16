@@ -49,12 +49,14 @@ gate = Gate("mlprofessor")
 HERE = Path(__file__).resolve().parent
 REFERENCE = HERE / "reference" / "mlprofessor"
 PARALLEL = 8                 # tool runs side by side, each single-threaded
-# Seconds between process starts. Measured on this machine: interpreters started
-# at the same instant (eight, four, or just two) all block for exactly 35 or 70
-# seconds and then finish together, because the interpreter's base and standard
-# library sit on A:, a drive mapped to a loopback network share, and 35 seconds
-# is the share's lock-break timeout. Rounds of eight starts that blocked, by
-# spacing: none 6 of 6, 0.1 s 2 of 2, 0.2 s 3 of 30, 0.3 s 0 of 30, 0.5 s 0 of 30.
+# Seconds between process starts. Measured on this machine on 2026-11-15, when the
+# interpreter's base and standard library sat on A:, a drive mapped to a loopback
+# network share: interpreters started at the same instant (eight, four, or just
+# two) all blocked for exactly 35 or 70 seconds and then finished together; 35
+# seconds is the share's lock-break timeout. Rounds of eight starts that blocked,
+# by spacing: none 6 of 6, 0.1 s 2 of 2, 0.2 s 3 of 30, 0.3 s 0 of 30, 0.5 s 0 of 30.
+# Since D32 the base is a local path. Measured again on 2026-11-16: eight starts at
+# the same instant, 30 rounds, twice, and none blocked. The spacing is kept.
 START_SPACING = 0.5
 FAST_CAP = 2000              # spec.md: the fast profile's row cap
 SEED = 1115                  # base seed of every dataset the gate uses
@@ -71,6 +73,10 @@ LIMITATIONS = [
     "Classification skill and regression skill are on different scales and are not comparable.",
     "A CSV file is read with pandas' types, so text identifiers can lose leading zeros; "
     "pass a DataFrame to control the types.",
+    "Intervals are approximate: they tend to be too narrow when the holdout is short and, "
+    "under time order, when errors are serially correlated.",
+    "Negative skill means the models did worse than the baseline on the holdout; read it as "
+    "no evidence of predictability.",
 ]
 
 # ---------------------------------------------------------------- bands --
@@ -87,7 +93,9 @@ BANDS = {
     # good 0.811..0.878 (mean 0.844, sd 0.018). `leak_reg` with the copy excluded:
     # 0.810..0.882. F2 on `leak_reg`: 0.9994..0.9996.
     "signal_reg": (0.76, 0.93),
-    # good 0.630..0.824 (mean 0.731, sd 0.039).
+    # good 0.630..0.824 (mean 0.731, sd 0.039). Re-measured when the `revenue` column
+    # was added, on 30 other seeds: 0.670..0.826 (mean 0.746, sd 0.035), identical seed
+    # by seed with and without the column, which reaches no model. Band unchanged.
     "messy": (0.55, 0.91),
     # good -0.099..+0.141 (mean +0.010, sd 0.058). F1 (refit on all rows):
     # 0.389..0.559 when the linear model is chosen, 1.0000 when the tree is.
@@ -168,6 +176,25 @@ def make_signal_clf(seed, n=1500, numeric_target=False, leak=False):
     return header + ["outcome"], rows, ()
 
 
+def make_near_leak(seed, n=1500, share=0.02):
+    """signal_clf plus `outcome_noisy`: the target with exactly 2% of its labels flipped.
+
+    Not a leak by the 0.98 rule, and far too good to pass without comment (D30). The
+    rows to flip come from their own stream, and their number is fixed at 30 of
+    1,500. Measured over 30 data seeds, the column's single-column skill: 0.938 to
+    0.960 (mean 0.949, sd 0.005) with exactly 2% of the rows flipped; 0.924 to 0.959
+    (mean 0.948, sd 0.008) with each row flipped at a 2% chance, where the share
+    itself varies with the seed and 0.98 is only 4.2 sd above the mean.
+    """
+    header, rows, blank_after = make_signal_clf(seed, n=n)
+    flipped = set(random.Random(f"near_leak.outcome_noisy.{seed}")
+                  .sample(range(n), round(share * n)))
+    other = {"yes": "no", "no": "yes"}
+    rows = [row[:-1] + [other[row[-1]] if i in flipped else row[-1], row[-1]]
+            for i, row in enumerate(rows)]
+    return header[:-1] + ["outcome_noisy", "outcome"], rows, blank_after
+
+
 def make_signal_reg(seed, n=1500, leak=False):
     rng = random.Random(seed)
     header = ["f1", "f2", "n1", "n2", "n3", "region"] + (["amount_scaled"] if leak else [])
@@ -211,8 +238,17 @@ def make_ambiguous(seed, n=1500):
 
 
 def make_messy(seed, n=1540):
-    """signal_clf with everything a real export does to a table."""
+    """signal_clf with everything a real export does to a table.
+
+    `revenue` is written with thousands separators throughout (D28). It is drawn
+    from its own stream and written after the target, so no other column of this
+    table depends on it. About one value in five is below 1,000 and so carries no
+    separator: fewer than 90% of the values parse as plain numbers, fewer than 90%
+    carry a separator, and only the two together reach 90%. Nearly every value is
+    distinct, so without the rule of D28 the column would be called id-like.
+    """
     rng = random.Random(seed)
+    amounts = random.Random(f"messy.revenue.{seed}")
     base = [_signal_row(rng) for _ in range(n)]
     visits = rng.sample(range(1000, 100000), n)          # distinct, whole, not in order
     special = rng.sample(range(n), 18)
@@ -235,9 +271,10 @@ def make_messy(seed, n=1540):
             f"{rng.choice(OPENERS)} {rng.choice(CLOSERS)}",
             (start + datetime.timedelta(days=rng.randrange(1500))).isoformat(),
             "" if i in no_target else ("yes" if r["y"] else "no"),
+            f"{(-1 if amounts.random() < 0.03 else 1) * amounts.lognormvariate(7.92, 1.2):,.2f}",
         ])
     header = ["f1", "f2", "seg", "n1", "spend", "visits", "const", "record_id", "notes",
-              "signup_date", "outcome"]
+              "signup_date", "outcome", "revenue"]
     return header, rows, blank_after
 
 
@@ -301,6 +338,8 @@ DATASETS = {
     "noise_small": (lambda s: make_noise(s, n=400, columns=10, kind="clf"), "outcome"),
     "signal_clf_small": (lambda s: make_signal_clf(s, n=500), "outcome"),
     "signal_reg_small": (lambda s: make_signal_reg(s, n=500), "amount"),
+    # Added last, so that the seed of every dataset above stays what it was.
+    "near_leak": (lambda s: make_near_leak(s), "outcome"),
 }
 
 
@@ -481,6 +520,7 @@ RUNS = {
     "imbalanced": ("imbalanced", [], "fast", 1),
     "leak": ("leak", [], "fast", 1),
     "leak_reg": ("leak_reg", [], "fast", 1),
+    "near_leak": ("near_leak", [], "fast", 1),
     "binary_numeric": ("binary_numeric", [], "fast", 1),
     "ambiguous_target": ("ambiguous_target", [], "fast", 1),
     "messy": ("messy", [], "fast", 1),
@@ -512,6 +552,7 @@ CHECK_RUNS = {
     "leak.excluded": ["leak"],
     "leak.control_kept": ["leak"],
     "leak.regression": ["leak_reg"],
+    "leak.near_leak_warned": ["near_leak"],
     "model.signal_clf": ["signal_clf"],
     "model.signal_reg": ["signal_reg"],
     "model.noise_clf": ["noise_clf"],
@@ -808,11 +849,13 @@ def prepare(ctx):
     held_up = [n for n in slow_first if "harness" not in done[n] and done[n]["rc"] is None]
     finished = [n for n in slow_first if done[n].get("rc") is not None]
     if held_up and finished:
-        # Measured on this machine: when eight interpreters start together they
-        # sometimes all wait a minute or more on file reads, because the
-        # interpreter's base sits on a mapped drive (spec.md section 9). The tool
-        # finished other runs in time, so a run that did not gets one more go
-        # before it is called a failure. If nothing finished, nothing is retried.
+        # Measured on this machine before D32: when eight interpreters started
+        # together they sometimes all waited a minute or more on file reads, because
+        # the interpreter's base sat on a mapped drive (spec.md section 9). It is a
+        # local path now and the wait was not seen again in 60 rounds; the retry is
+        # kept all the same. The tool finished other runs in time, so a run that did
+        # not gets one more go before it is called a failure. If nothing finished,
+        # nothing is retried.
         _launch_all(ctx, held_up)
         for name in held_up:
             done[name]["attempts"] = 2
@@ -874,6 +917,7 @@ MESSY_ROLES = {
     "const": ("excluded", "constant", None), "record_id": ("excluded", "id_like", None),
     "notes": ("excluded", "free_text", None), "signup_date": ("excluded", "datetime", None),
     "outcome": ("target", None, None),
+    "revenue": ("excluded", "numeric_with_separators", None),
 }
 ROLE_HINTS = {
     "visits": "a whole-number measure with every value distinct but not in order is a feature, "
@@ -882,6 +926,9 @@ ROLE_HINTS = {
                  "identifier (D19)",
     "spend": "a text column in which at least 90% of the values parse as numbers is numeric",
     "n1": "`n/a` is a missing value on load, so this column is an ordinary numeric column",
+    "revenue": "every value is a number written with thousands separators (`1,200.50`) or, "
+               "below 1,000, a plain number. Such a column is never parsed, and is excluded "
+               "with its own reason ahead of the id-like and free-text rules (D28)",
 }
 
 
@@ -905,6 +952,11 @@ def data_columns_accounted(ctx):
             ctx.require(column["kind"] == kind,
                         f"feature `{column['name']}` on `messy` has kind {column['kind']!r}; "
                         f"expected {kind!r}: {hint}")
+    ctx.require(any(w["column"] == "revenue"
+                    for w in warnings_of(result, "numeric_with_separators")),
+                "no warning with code `numeric_with_separators` names the column `revenue` on "
+                "`messy`: a column excluded because it is written with thousands separators "
+                "must be reported, so the caller knows to parse it (D28)")
     band(ctx, at(result, "headline.skill", "number"), "messy", "skill on messy",
          "the signal is still there under the mess; a wrong column role or lost rows remove it")
 
@@ -946,6 +998,12 @@ def data_coercion_reported(ctx):
     ctx.require(any(w["column"] == "spend" for w in warnings_of(result, "values_coerced")),
                 "no warning with code `values_coerced` names the column `spend` on `messy`: "
                 "values turned into missing must be reported")
+    ctx.require(any(w["column"] == "spend"
+                    for w in warnings_of(result, "numeric_with_separators")),
+                "no warning with code `numeric_with_separators` names the column `spend` on "
+                "`messy`: three of the cells coerced to missing there are numbers written "
+                "with thousands separators (`1,200`, `3,450`), and that is reported beside "
+                "`values_coerced` (D28)")
 
 
 def _parses(cell):
@@ -1040,7 +1098,7 @@ def leak_excluded(ctx):
 @gate.check("leak.control_kept",
             why="a screen that flags every strong column would pass leak.excluded while "
                 "throwing real signal away (D11: merely predictive is not a leak)",
-            doc="a strongly predictive but legitimate column stays a feature")
+            doc="a strongly predictive but legitimate column stays a feature, with no warning")
 def leak_control_kept(ctx):
     result = outputs(ctx, "leak")
     got = {c["name"]: c for c in records(result, "columns", ["name", "role", "reason"])} \
@@ -1050,6 +1108,18 @@ def leak_control_kept(ctx):
                 f"`strong_feature` on `leak` has role {got.get('role')!r} (reason "
                 f"{got.get('reason')!r}): it is strongly predictive but legitimate, and must "
                 "stay a feature. The leak cut-off is too low or is not measured as spec.md says")
+    # Measured, 30 data seeds: its single-column skill is 0.61 to 0.75 (mean 0.66,
+    # sd 0.03), the highest of any legitimate column in any dataset of this gate,
+    # against a warning cut-off of 0.90 (spec.md 10.2).
+    warned = [w for w in warnings_of(result, "strong_single_column")
+              if w["column"] == "strong_feature"]
+    ctx.record("leak strong_feature warned", len(warned))
+    ctx.require(not warned,
+                "`strong_feature` on `leak` carries a `strong_single_column` warning. On its "
+                "own it predicts the outcome with skill of about 0.65, far below the warning "
+                "cut-off of 0.90 (D30): the cut-off is too low, or the skill is not measured "
+                "as spec.md says (the pinned tree, over the selection folds, training rows "
+                "only)")
 
 
 @gate.check("leak.regression", catches=["F2"],
@@ -1070,6 +1140,40 @@ def leak_regression(ctx):
                 "no warning with code `suspected_leak` names `amount_scaled` on `leak_reg`")
     band(ctx, skill, "signal_reg", "skill on leak_reg",
          "with the copy excluded this is the skill of `signal_reg`")
+
+
+@gate.check("leak.near_leak_warned", catches=["F2"],
+            doc="a copy of the target with 2% of its labels flipped stays a feature, with a warning")
+def leak_near_leak_warned(ctx):
+    # No score is asserted here: with `outcome_noisy` among the features the headline
+    # is that column, which is the reason for the warning. Measured, 30 data seeds: its
+    # single-column skill is 0.938 to 0.960 (mean 0.949, sd 0.005), between the warning
+    # cut-off of 0.90 and the exclusion cut-off of 0.98; the next strongest column of
+    # this table, `f1`, is at 0.37 to 0.49.
+    result = outputs(ctx, "near_leak")
+    got = {c["name"]: c for c in records(result, "columns", ["name", "role", "reason",
+                                                             "leak_rule"])} \
+        .get("outcome_noisy", {})
+    ctx.record("near_leak outcome_noisy", f"{got.get('role')}/{got.get('reason')}")
+    ctx.require(got.get("role") == "feature",
+                f"`outcome_noisy` on `near_leak` has role {got.get('role')!r} (reason "
+                f"{got.get('reason')!r}, leak_rule {got.get('leak_rule')!r}): it agrees with "
+                "the outcome on 98% of the rows, so its single-column skill is about 0.95, "
+                "below the exclusion cut-off of 0.98. It stays a feature and is warned about "
+                "(D30); lowering the exclusion cut-off would remove legitimately strong columns")
+    warned = sorted(str(w["column"]) for w in warnings_of(result, "strong_single_column"))
+    ctx.record("near_leak strong_single_column", ",".join(warned))
+    ctx.require("outcome_noisy" in warned,
+                "no warning with code `strong_single_column` names `outcome_noisy` on "
+                "`near_leak`. The column is the outcome with 2% of its labels flipped: on its "
+                "own it predicts the target with skill of about 0.95, at least the warning "
+                "cut-off of 0.90 and below 0.98, so it is kept and the caller is told (D30). "
+                "The leak screen is missing, or it has no warning tier")
+    ctx.require(warned == ["outcome_noisy"],
+                f"`strong_single_column` warnings on `near_leak` name {warned}; only "
+                "`outcome_noisy` is at or above the warning cut-off of 0.90 (the next "
+                "strongest column, `f1`, is at about 0.43). One warning per column, and "
+                "none for an ordinary feature")
 
 
 @gate.check("model.signal_clf",
@@ -1402,7 +1506,8 @@ def time_undeclared_warns(ctx):
 
 @gate.check("uncertainty.reported",
             why="a headline without a valid interval reads as more certain than it is",
-            doc="the interval contains the score; row bootstrap with a p-value, or block bootstrap")
+            doc="the interval contains the score; row bootstrap with a p-value, or block "
+                "bootstrap labelled approximate")
 def uncertainty_reported(ctx):
     for name, method in (("signal_clf", "bootstrap_rows"), ("time_blocks", "bootstrap_blocks")):
         result = outputs(ctx, name)
@@ -1424,6 +1529,19 @@ def uncertainty_reported(ctx):
                     f"the skill interval on `{name}` does not contain the skill {skill:.4f}")
         ctx.require(at(result, "headline.n_resamples") == 200,
                     "the fast profile uses 200 resamples (headline.n_resamples)")
+        approximate = warnings_of(result, "interval_approximate")
+        ctx.record(f"{name} interval_approximate warnings", len(approximate))
+        if method == "bootstrap_blocks":
+            ctx.require(len(approximate) == 1 and approximate[0]["column"] is None,
+                        f"`{name}` has {len(approximate)} warning(s) with code "
+                        "`interval_approximate`; whenever the interval is a block bootstrap "
+                        "there is exactly one, with a null column: that interval tends to be "
+                        "too narrow, and the output says so (D27)")
+        else:
+            ctx.require(not approximate,
+                        f"`{name}` carries an `interval_approximate` warning under the random "
+                        "scheme: it belongs to the block bootstrap of the time-ordered scheme "
+                        "only (D27)")
         if method == "bootstrap_rows":
             p_value = at(result, "headline.p_value", "number")
             ctx.record(f"{name} p-value", p_value)

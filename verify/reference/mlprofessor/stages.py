@@ -112,11 +112,14 @@ def mse(y, pred):
 
 
 def skill(metric, score, baseline_score):
-    """Skill over the baseline: 0 is no better than it, 1 is perfect."""
+    """Skill over the baseline: 0 is no better than it, 1 is perfect.
+
+    None for `"mse"` when the baseline's error is zero: skill has no value there (D36).
+    """
     if metric == "roc_auc":
         return (score - baseline_score) / (1 - baseline_score)
     if metric == "mse":
-        return 1 - score / baseline_score
+        return None if baseline_score == 0 else 1 - score / baseline_score
     raise ValueError(f"metric must be roc_auc or mse, not {metric!r}")
 
 
@@ -132,7 +135,11 @@ def previous_value(y, keys, gap=0):
 
 
 class Preprocessor:
-    """Step 8's built-in preprocessing for one fit: fit on some rows, apply to any."""
+    """Step 8's built-in preprocessing for one fit: fit on some rows, apply to any.
+
+    `fit` raises `FeatureNameCollisionError` when two of the columns it would
+    give the matrix have the same name (D37).
+    """
 
     def __init__(self, kinds):
         self._prep = core._Prep(dict(kinds))

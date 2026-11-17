@@ -1,11 +1,13 @@
 """Reference implementation of spec.md, in the spec's order of operations.
 
 Judge fixture: the gate measures its bands on this code and breaks it in eight
-named ways (see _variant.py). One module on purpose, so each step of the
-methodology can be read top to bottom in `_run`.
+named ways; the test suite is proved against five smaller faults (see
+_variant.py). One module on purpose, so each step of the methodology can be
+read top to bottom in `_run`.
 """
 from __future__ import annotations
 
+import codecs
 import csv
 import json
 import os
@@ -83,6 +85,8 @@ RANDOM_CAVEAT = ("Random split: this number is optimistic if the rows are ordere
                  "or one entity appears on many rows.")
 NO_P_VALUE = ("not computed under the time-ordered scheme: shuffling the holdout targets "
               "assumes independent rows")
+NO_P_VALUE_NO_SKILL = ("not computed: the baseline's squared error on the holdout is zero, so "
+                       "skill has no value to compare the shuffles with")
 LIMITATIONS = [
     "Predictability here means how well these model families did on this data under this "
     "validation scheme.",
@@ -133,20 +137,33 @@ def summary(result):
     """Short plain-text account for the command line."""
     d = result.to_dict()
     h, rows = d["headline"], {r["item"]: r["count"] for r in d["rows"]}
+    skill = "not defined" if h["skill"] is None else f"{h['skill']:.6g}"
     lines = [
         f"task: {d['task']['type']} ({d['task']['decided_by']}); "
         f"scheme: {d['validation']['scheme']}",
         f"rows: {rows['loaded']} loaded, {rows['training']} training, {rows['holdout']} holdout",
-        f"headline: skill {h['skill']:.4f} ({h['metric']} {h['score']:.6g} against "
+        f"headline: skill {skill} ({h['metric']} {h['score']:.6g} against "
         f"{h['baseline']} {h['baseline_score']:.6g}), model {h['model']}",
     ]
-    if h["interval_low"] is not None:
-        lines.append(f"95% interval on skill: {h['skill_low']:.4f} to {h['skill_high']:.4f} "
-                     f"({h['interval_method']})")
-    if h["p_value"] is not None:
-        lines.append(f"permutation p-value: {h['p_value']:.4g}")
-    for w in d["warnings"]:
-        lines.append(f"warning [{w['code']}]: {w['message']}")
+    # The interval on the score and on skill, and the p-value: each as a number,
+    # or the reason there is none (D39).
+    if h["interval_method"] is None:
+        lines.append(f"95% interval: none. {h['interval_reason']}")
+    else:
+        lines.append(f"95% interval on {h['metric']}: {h['interval_low']:.6g} to "
+                     f"{h['interval_high']:.6g} ({h['interval_method']})")
+        if h["skill_low"] is None:
+            code = "skill_undefined" if h["skill"] is None else "no_skill_interval"
+            lines.append(f"95% interval on skill: none (see the warning {code})")
+        else:
+            lines.append(f"95% interval on skill: {h['skill_low']:.6g} to {h['skill_high']:.6g}")
+    if h["p_value"] is None:
+        lines.append(f"permutation p-value: none. {h['p_value_reason']}")
+    else:
+        lines.append(f"permutation p-value: {h['p_value']:.6g}")
+    for w in d["warnings"]:                 # one line each: the code, then the column
+        where = "" if w["column"] is None else f" column {w['column']!r}"
+        lines.append(f"warning [{w['code']}]{where}: {w['message']}")
     return "\n".join(lines)
 
 
@@ -170,6 +187,8 @@ def profile(data, target, task="auto", time_col=None, gap=0, profile="full", see
         raise E.InputError("gap needs time_col: it counts timestamps")
     if time_col is not None and time_col == target:
         raise E.InputError("time_col and target are the same column")
+    if out_dir is not None:
+        _check_out_dir(out_dir)             # before anything is loaded (D39)
     threads = (os.cpu_count() or 1) if n_jobs == -1 else int(n_jobs)
     with threadpoolctl.threadpool_limits(limits=1, user_api="blas"), \
             threadpoolctl.threadpool_limits(limits=threads, user_api="openmp"):
@@ -190,18 +209,57 @@ def _warn(warnings, code, message, column=None):
     warnings.append({"code": code, "column": column, "message": message})
 
 
+def _check_out_dir(out_dir):
+    """D39: an output folder that cannot be used is an input error. Nothing is created."""
+    if not isinstance(out_dir, (str, os.PathLike)):
+        raise E.InputError(f"out_dir must be a folder path or None, not {out_dir!r}")
+    place = Path(out_dir)
+    while not place.exists() and place.parent != place:
+        place = place.parent                # the nearest ancestor that exists
+    if place.exists() and not place.is_dir():
+        raise E.InputError(f"out_dir {str(out_dir)!r} cannot be used: {str(place)!r} exists "
+                           "and is not a folder")
+
+
+def _check_utf8(path):
+    """D39: a file that is not valid UTF-8 is an input error wherever the bad byte sits."""
+    decoder = codecs.getincrementaldecoder("utf-8")()
+    try:
+        with open(path, "rb") as fh:
+            for chunk in iter(lambda: fh.read(1 << 20), b""):
+                decoder.decode(chunk)
+            decoder.decode(b"", final=True)
+    except UnicodeDecodeError as exc:
+        raise E.InputError(f"{path} is not valid UTF-8: {exc}") from exc
+
+
+def _from_header(lines):
+    """The lines of a file from its header line on.
+
+    pandas skips a leading line that is empty or holds only spaces and tabs, so
+    the header is the first line that is neither (D39). A line of other white
+    space, of two quotes or of commas is the header to pandas, and here.
+    """
+    started = False
+    for line in lines:
+        if started or line.strip(" \t\r\n"):
+            started = True
+            yield line
+
+
 def _csv_head(path):
     """The fields of the header line and of the first data row (`None`, `[]` when absent)."""
     limit = csv.field_size_limit(2 ** 31 - 1)   # pandas reads a cell of any length
     try:
         with open(path, newline="", encoding="utf-8-sig") as fh:
-            rows = csv.reader(fh)
-            header = next((row for row in rows if row), None)
-            # As pandas counts rows: a line that is empty or only white space is
-            # skipped, and a line of only commas is a row.
-            first = next((row for row in rows if len(row) > 1 or "".join(row).strip()), [])
+            rows = csv.reader(_from_header(fh))
+            header = next(rows, None)
+            # As pandas counts rows: a line that is empty or holds only spaces and
+            # tabs is skipped, and a line of only commas is a row.
+            first = next((row for row in rows
+                          if len(row) > 1 or "".join(row).strip(" \t")), [])
     finally:
-        csv.field_size_limit(limit)
+        csv.field_size_limit(limit)             # the caller's setting, as it was (D39)
     return header, first
 
 
@@ -217,10 +275,13 @@ def _load(data, warnings):
         path = Path(data)
         if not path.is_file():
             raise E.InputError(f"no such file: {data}")
+        _check_utf8(path)
         header, first = _csv_head(path)
         if header is None:
             raise E.InputError(f"{data} has no header row")
-        dups = sorted({n for n in header if n.strip() and header.count(n) > 1})
+        # A cell is blank only when it is empty. One that holds white space is a name
+        # like any other, so two of them are duplicates (D42).
+        dups = sorted({n for n in header if n != "" and header.count(n) > 1})
         if not dups:
             # pandas makes an index of the leading fields of a first data row longer
             # than the header and names the fields after them. The index it returns
@@ -237,7 +298,7 @@ def _load(data, warnings):
             if len(df.columns) != len(header):
                 raise E.InputError(f"{data}: data rows do not have the header's number of fields")
             for i, name in enumerate(header):
-                if not name.strip():
+                if name == "":
                     _warn(warnings, "blank_header",
                           f"column {i + 1} has no header and is kept as {df.columns[i]!r}",
                           str(df.columns[i]))
@@ -408,7 +469,10 @@ def _roles(df, usable, target, time_col):
                 elif distinct > FREE_TEXT_SHARE * len(present):
                     rec.update(role="excluded", reason="free_text", kind="text")
                 else:
-                    levels = series.astype(object).where(series.notna(), MISSING_LEVEL).to_numpy()
+                    # A level is the cell's text without the white space round it (D42):
+                    # here, so that the screen, the steps and the matrix all see it so.
+                    levels = series.str.strip().astype(object) \
+                        .where(series.notna(), MISSING_LEVEL).to_numpy()
                     rec["kind"] = "categorical"
         else:
             rec.update(role="excluded", reason="unsupported_type")
@@ -488,10 +552,38 @@ def _split_random(n, y, classification, seed):
     return {"train": train, "gap": np.array([], dtype=int), "holdout": holdout, "folds": folds}
 
 
+def _collisions(kinds, levels_of):
+    """D37: names the preprocessed matrix would hold twice -> the columns that give them.
+
+    A numeric column gives its own name; a categorical column gives
+    `<column>=<level>` for each level in `levels_of[column]`.
+    """
+    givers = {}
+    for column, kind in kinds.items():
+        names = [column] if kind == "numeric" else [f"{column}={lv}" for lv in levels_of[column]]
+        for name in names:
+            givers.setdefault(name, []).append(column)
+    return {name: columns for name, columns in givers.items() if len(columns) > 1}
+
+
+def _collision_error(clashes):
+    """The named error for `_collisions`, naming every column involved."""
+    involved = []
+    for columns in clashes.values():
+        involved += [c for c in columns if c not in involved]
+    shown = "; ".join(f"{name!r} from columns " + " and ".join(repr(c) for c in columns)
+                      for name, columns in list(clashes.items())[:5])
+    return E.FeatureNameCollisionError(
+        "two columns of the preprocessed matrix would have the same name: " + shown
+        + ". A numeric column keeps its own name and a level of a categorical column is named "
+          "<column>=<level>. Rename one of: " + ", ".join(repr(c) for c in involved))
+
+
 class _Prep:
     """Step 8: imputation, scaling and encoding, fitted on the frame it is given."""
 
     def __init__(self, kinds):
+        self.kinds = dict(kinds)
         self.numeric = [c for c, k in kinds.items() if k == "numeric"]
         self.categorical = [c for c, k in kinds.items() if k == "categorical"]
 
@@ -502,8 +594,18 @@ class _Prep:
                 for c in self.categorical]
         return num, cats
 
-    def fit(self, frame):
+    def fit(self, frame, stats_frame=None, level_values=None):
+        """Learn every statistic from `frame`.
+
+        The other two arguments exist only for the broken variants M1 and M2:
+        rows to learn the numeric statistics from, and values to learn each
+        categorical column's levels from, in place of the rows of `frame`.
+        """
         num, cats = self._parts(frame)
+        if stats_frame is not None:
+            num = self._parts(stats_frame)[0]
+        if level_values is not None:
+            cats = level_values
         with _pywarnings.catch_warnings():
             _pywarnings.simplefilter("ignore", RuntimeWarning)
             self.median = np.nanmedian(num, axis=0) if num.shape[1] else np.empty(0)
@@ -517,6 +619,9 @@ class _Prep:
             names, counts = np.unique(values.astype(str), return_counts=True)
             order = np.lexsort((names, -counts))[:MAX_LEVELS]
             self.levels.append(sorted(names[order]))
+        clashes = _collisions(self.kinds, dict(zip(self.categorical, self.levels)))
+        if clashes:                                 # never two columns under one name (D37)
+            raise _collision_error(clashes)
         return self
 
     def transform(self, frame):
@@ -611,14 +716,22 @@ def _mse(y, pred):
     return float(np.mean((y - pred) ** 2))
 
 
-def _screen_column(values, numeric, y, folds, classification, seed, prev):
-    """D11: one column's cross-validated skill over the selection folds."""
+def _screen_column(values, numeric, y, folds, classification, seed, prev, also_fit=None):
+    """D11: one column's cross-validated skill over the selection folds.
+
+    None when it cannot be computed: the baseline's error over the pooled
+    validation rows is zero (D36). `also_fit` exists only for the broken
+    variant M3: rows added to every fold's training rows for the tree.
+    """
     cls = DecisionTreeClassifier if classification else DecisionTreeRegressor
     truth, guess, mean_guess, rows = [], [], [], []
     for fold in folds:
         if not fold["scored"]:
             continue
         a, b = fold["train"], fold["valid"]
+        fold_mean = y[a].mean()
+        if also_fit is not None:
+            a = np.concatenate([a, also_fit])
         if numeric:
             xa, xb = values[a].reshape(-1, 1), values[b].reshape(-1, 1)
         else:
@@ -629,19 +742,19 @@ def _screen_column(values, numeric, y, folds, classification, seed, prev):
         model = cls(max_depth=6, min_samples_leaf=5, random_state=seed).fit(xa, y[a])
         guess.append(model.predict_proba(xb)[:, 1] if classification else model.predict(xb))
         truth.append(y[b])
-        mean_guess.append(np.full(len(b), y[a].mean()))
+        mean_guess.append(np.full(len(b), fold_mean))
         rows.append(b)
     truth, guess = np.concatenate(truth), np.concatenate(guess)
     if classification:
         auc = _auc(truth, guess)
-        return 0.0 if auc is None else 2 * auc - 1
+        return None if auc is None else 2 * auc - 1
     base = _mse(truth, np.concatenate(mean_guess))
     if prev is not None:
         before = prev[np.concatenate(rows)]
         known = ~np.isnan(before)
         if known.any():
             base = min(base, _mse(truth[known], before[known]))
-    return 1 - _mse(truth, guess) / base if base > 0 else 0.0
+    return 1 - _mse(truth, guess) / base if base > 0 else None
 
 
 def _cube_root_up(n):
@@ -654,19 +767,22 @@ def _cube_root_up(n):
     return length
 
 
-def _uncertainty(y, pred, base_pred, classification, time_groups, n_resamples, seed, score):
+def _uncertainty(y, pred, base_pred, classification, time_groups, n_resamples, seed, score,
+                 skill_defined=True):
     """Step 12 (D9): interval on the holdout score and skill, and the p-value."""
     out = dict(interval_method=None, interval_level=0.95, interval_low=None, interval_high=None,
                skill_low=None, skill_high=None, n_resamples=n_resamples, n_resamples_used=0,
-               block_length=None, interval_reason=None, p_value=None, n_permutations=None,
-               p_value_reason=None)
+               n_resamples_skill_used=0, block_length=None, interval_reason=None, p_value=None,
+               n_permutations=None, p_value_reason=None)
 
     def measure(rows):
+        """(score, skill) of one resample. None when the score cannot be computed (one
+        class); a skill of None when only the skill cannot (a zero baseline error: D36)."""
         if classification:
             auc = _auc(y[rows], pred[rows])
             return None if auc is None else (auc, 2 * auc - 1)
         mse, base = _mse(y[rows], pred[rows]), _mse(y[rows], base_pred[rows])
-        return (mse, 1 - mse / base) if base > 0 else None
+        return mse, (1 - mse / base if base > 0 else None)
 
     rng = np.random.default_rng([seed, 5])
     n = len(y)
@@ -685,33 +801,46 @@ def _uncertainty(y, pred, base_pred, classification, time_groups, n_resamples, s
 
         def blocks():
             for _ in range(n_resamples):
-                starts = rng.integers(0, total - length + 1, n_blocks)
-                picked = np.concatenate([np.arange(s, s + length) for s in starts])[:total]
+                if BROKEN == "M4":              # timestamps one by one: no blocks at all
+                    picked = rng.integers(0, total, total)
+                else:
+                    starts = rng.integers(0, total - length + 1, n_blocks)
+                    picked = np.concatenate([np.arange(s, s + length) for s in starts])[:total]
                 yield np.concatenate([time_groups[t] for t in picked])
         draws = blocks()
     results = [m for m in (measure(rows) for rows in draws) if m is not None]
-    out["n_resamples_used"] = len(results)
-    if out["interval_method"] and len(results) * 2 >= n_resamples:
-        scores, skills = np.array(results).T
+    scores = np.array([m[0] for m in results], dtype="float64")
+    # A resample with a zero baseline error is left out of the skill interval only (D40).
+    skills = np.array([m[1] for m in results if m[1] is not None], dtype="float64")
+    out["n_resamples_used"], out["n_resamples_skill_used"] = len(scores), len(skills)
+    if out["interval_method"] and len(scores) * 2 >= n_resamples:
         out["interval_low"], out["interval_high"] = (float(v) for v in
                                                      np.percentile(scores, [2.5, 97.5]))
-        out["skill_low"], out["skill_high"] = (float(v) for v in
-                                               np.percentile(skills, [2.5, 97.5]))
+        if len(skills) * 2 >= n_resamples:
+            out["skill_low"], out["skill_high"] = (float(v) for v in
+                                                   np.percentile(skills, [2.5, 97.5]))
     elif out["interval_method"]:
-        out["interval_method"] = None
-        out["interval_reason"] = "more than half of the resamples held a single class"
+        out.update(interval_method=None, block_length=None,
+                   interval_reason="the score could be computed in fewer than half of the "
+                                   "resamples: the others held a single class")
     if time_groups is not None:
         out["p_value_reason"] = NO_P_VALUE
+        return out
+    if not skill_defined:                   # nothing to compare the shuffles with (D36)
+        out["p_value_reason"] = NO_P_VALUE_NO_SKILL
         return out
     rng = np.random.default_rng([seed, 6])
     if classification:
         ranks, n_pos = _ranks(pred), int(y.sum())
         floor = n_pos * (n_pos + 1) / 2
         scale = n_pos * (n - n_pos)
-        hits = sum((ranks[rng.permutation(y) == 1].sum() - floor) / scale >= score
-                   for _ in range(n_resamples))
+        shuffled = ((ranks[rng.permutation(y) == 1].sum() - floor) / scale
+                    for _ in range(n_resamples))
+        # at least the observed skill; M5 counts only those strictly above it
+        hits = sum(s > score if BROKEN == "M5" else s >= score for s in shuffled)
     else:
-        hits = sum(_mse(rng.permutation(y), pred) <= score for _ in range(n_resamples))
+        shuffled = (_mse(rng.permutation(y), pred) for _ in range(n_resamples))
+        hits = sum(s < score if BROKEN == "M5" else s <= score for s in shuffled)
     out.update(p_value=(1 + int(hits)) / (1 + n_resamples), n_permutations=n_resamples)
     return out
 
@@ -800,6 +929,15 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs):
             _warn(warnings, "date_column_undeclared",
                   f"column {rec['name']!r} holds dates but no time_col was declared, so the "
                   "rows were split at random; " + RANDOM_CAVEAT, rec["name"])
+    # Two features may not give the matrix one name (D37). Judged here, on every
+    # level of the usable rows, so the answer does not depend on the cap, the
+    # seed or the rows a fit happens to see.
+    clashes = _collisions(
+        {name: by_name[name]["kind"] for name in prepared},
+        {name: sorted(set(values[usable].astype(str))) for name, values in prepared.items()
+         if by_name[name]["kind"] == "categorical"})
+    if clashes:
+        raise _collision_error(clashes)
 
     # 6. the fast profile's row cap; rows are put in time order here
     rows = np.flatnonzero(usable)
@@ -876,21 +1014,24 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs):
 
     # 8. from here on every fitted step sees training rows only: the leak screen first
     if BROKEN != "F2":
+        # M3: the screen looks at rows it must not see
+        judged = np.arange(len(rows)) if BROKEN == "M3" else train
         for name in list(prepared):
             values, numeric = prepared[name][rows], by_name[name]["kind"] == "numeric"
             rule = None
             if classification:
-                gone = np.isnan(values[train]) if numeric else values[train] == MISSING_LEVEL
-                share = [gone[y[train] == c].mean() for c in (0, 1)]
+                gone = np.isnan(values[judged]) if numeric else values[judged] == MISSING_LEVEL
+                share = [gone[y[judged] == c].mean() for c in (0, 1)]
                 if max(share) > LEAK_MISSING_HIGH and min(share) < LEAK_MISSING_LOW:
                     rule = "missing_by_class"
             alone = None
             if rule is None:
+                # None: the skill cannot be computed, so the column is not flagged (D36)
                 alone = _screen_column(values, numeric, y, split["folds"], classification,
-                                       seed, prev)
-                if alone >= LEAK_SKILL:
+                                       seed, prev, holdout if BROKEN == "M3" else None)
+                if alone is not None and alone >= LEAK_SKILL:
                     rule = "predicts_target"
-            if rule is None and alone >= STRONG_SKILL:  # kept, and the caller is told (D30)
+            if rule is None and alone is not None and alone >= STRONG_SKILL:  # kept, told (D30)
                 _warn(warnings, "strong_single_column",
                       f"column {name!r} on its own predicts the target with skill {alone:.2f} "
                       "on the training rows. It is kept as a feature: check that it is known "
@@ -905,7 +1046,10 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs):
                 _warn(warnings, "suspected_leak",
                       f"column {name!r} is excluded as a suspected leak: {why}", name)
     if not prepared:
-        raise E.NoFeaturesError("no usable feature column is left")
+        excluded = "; ".join(f"{r['name']} ({r['reason']})" for r in records
+                             if r["role"] == "excluded")
+        raise E.NoFeaturesError("no usable feature column is left. Excluded, with the reason "
+                                "for each: " + (excluded or "none"))
     kinds = {name: by_name[name]["kind"] for name in prepared}
     index = pd.Index(rows, name="row")
     step_makers = extensions.active()["steps"] or []
@@ -914,7 +1058,7 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs):
         return pd.DataFrame({name: values[rows[part]] for name, values in prepared.items()},
                             index=index[part])
 
-    def matrices(fit_rows, new_rows, family):
+    def matrices(fit_rows, new_rows, final=False):
         """Preprocessing fitted on `fit_rows` only, applied to both sets of rows."""
         fit_frame, new_frame = feature_frame(fit_rows), feature_frame(new_rows)
         y_fit = pd.Series(y[fit_rows], index=fit_frame.index, name=target)
@@ -922,7 +1066,11 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs):
             step = make()
             step.fit(fit_frame, y_fit)
             fit_frame, new_frame = step.transform(fit_frame), step.transform(new_frame)
-        prep = _Prep(kinds).fit(fit_frame)
+        # M1: the final fit's statistics also see the holdout. M2: levels from every row.
+        seen_too = pd.concat([fit_frame, new_frame]) if BROKEN == "M1" and final else None
+        every_level = [prepared[name] for name, kind in kinds.items() if kind == "categorical"] \
+            if BROKEN == "M2" else None
+        prep = _Prep(kinds).fit(fit_frame, seen_too, every_level)
         x_fit, x_new = prep.transform(fit_frame), prep.transform(new_frame)
         names = prep.names()
         frames = (pd.DataFrame(x_fit, index=fit_frame.index, columns=names),
@@ -931,9 +1079,9 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs):
 
     # 9. select by five folds inside the training rows, preprocessing refitted in each
     families = _families(profile, classification)
-    fold_data = [matrices(f["train"], f["valid"], None) if f["scored"] else None
+    fold_data = [matrices(f["train"], f["valid"]) if f["scored"] else None
                  for f in split["folds"]]
-    models, best = [], None
+    models, makers = [], []
     for family in families:
         for position, params in enumerate(family["grid"]):
             record = dict(config=f"{family['name']}-{position}", family=family["name"],
@@ -959,22 +1107,42 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs):
             if record["status"] == "fitted" and scored:
                 record["cv_mean"] = float(np.mean(scored))
                 record["cv_std"] = float(np.std(scored, ddof=1)) if len(scored) > 1 else None
-                better = best is None or (record["cv_mean"] > best[0]["cv_mean"] if classification
-                                          else record["cv_mean"] < best[0]["cv_mean"])
-                if better:
-                    best = (record, family, params)
             models.append(record)
-    if best is None:
-        raise E.AllModelsFailedError("every configuration failed: " +
-                                     "; ".join(f"{m['config']}: {m['error']}" for m in models))
-    chosen, family, params = best
-    chosen["chosen"] = True
+            makers.append((family, params))
+    # best mean first; a tie goes to the earlier family, then the earlier grid position
+    ranked = sorted((i for i, m in enumerate(models) if m["cv_mean"] is not None),
+                    key=lambda i: (-models[i]["cv_mean"] if classification
+                                   else models[i]["cv_mean"], i))
 
-    # 10. refit the chosen configuration on all training rows
+    def all_failed():
+        return E.AllModelsFailedError("every configuration failed: " +
+                                      "; ".join(f"{m['config']}: {m['error']}" for m in models))
+    if not ranked:
+        raise all_failed()
+
+    # 10. refit the chosen configuration on all training rows, and predict the holdout.
+    # One that raises here is marked failed and keeps its fold scores; the next best
+    # by cv_mean takes its place (D38). The holdout plays no part in the choice.
     fit_rows = np.concatenate([train, holdout]) if BROKEN == "F1" else train
-    x_fit, x_holdout, frames = matrices(fit_rows, holdout, family)
-    model = family["make"](task, params, seed, n_jobs)
-    pred = _fit_predict(family, model, x_fit, y[fit_rows], x_holdout, classification, frames)
+    x_fit, x_holdout, frames = matrices(fit_rows, holdout, final=True)
+    chosen = pred = None
+    for i in ranked:
+        family, params = makers[i]
+        try:
+            model = family["make"](task, params, seed, n_jobs)
+            pred = _fit_predict(family, model, x_fit, y[fit_rows], x_holdout, classification,
+                                frames)
+        except Exception as exc:            # recorded, never dropped, and never the headline
+            models[i].update(status="failed", error=f"{type(exc).__name__}: {exc}")
+            _warn(warnings, "model_failed",
+                  f"configuration {models[i]['config']} failed after it was chosen: "
+                  f"{models[i]['error']}")
+            continue
+        chosen = models[i]
+        break
+    if chosen is None:
+        raise all_failed()
+    chosen["chosen"] = True
 
     # 11. score it once on the holdout; score the baselines on the holdout
     truth = y[holdout]
@@ -1005,7 +1173,9 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs):
     elif classification:
         skill = 2 * score - 1
     else:
-        skill = 1 - score / baseline["score"] if baseline["score"] > 0 else 0.0
+        # With a baseline error of exactly zero skill has no value: null, never an
+        # error, an infinity or a zero in its place (D36).
+        skill = 1 - score / baseline["score"] if baseline["score"] > 0 else None
 
     # 12. the interval and the p-value, from the holdout predictions alone
     groups = None
@@ -1013,7 +1183,19 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs):
         _, inverse = np.unique(keys[holdout], return_inverse=True)
         groups = [np.flatnonzero(inverse == g) for g in range(inverse.max() + 1)]
     uncertainty = _uncertainty(truth, pred, base_pred, classification, groups, RESAMPLES[profile],
-                               seed, score)
+                               seed, score, skill is not None)
+    if skill is None:
+        _warn(warnings, "skill_undefined",
+              f"skill is not reported: the baseline {baseline['name']} has a squared error of "
+              "exactly zero on the holdout, so 1 - error / baseline error has no value. The "
+              "score and the baselines are reported as measured")
+    elif uncertainty["interval_method"] and uncertainty["skill_low"] is None:
+        # skill has a value and its interval has none: a code of its own (D42)
+        _warn(warnings, "no_skill_interval",
+              "the interval on skill is not reported: the baseline's squared error was exactly "
+              f"zero in {uncertainty['n_resamples_used'] - uncertainty['n_resamples_skill_used']}"
+              f" of the {uncertainty['n_resamples_used']} resamples, so skill could be computed "
+              "in fewer than half of them")
     if uncertainty["interval_method"] == "bootstrap_blocks":
         _warn(warnings, "interval_approximate",
               "the interval comes from a block bootstrap over the holdout timestamps and is "

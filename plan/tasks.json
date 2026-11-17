@@ -188,6 +188,72 @@
       "brief": "Write `README.md` for a data scientist: what the tool measures and what it does not (the limitations of spec 5.4, in plain words), how to call `mlprofessor.profile` and the command line with the interpreter at E:\\CODE\\ml-professor\\mlprof_env\\Scripts\\python.exe from the repo root, what `profile.json` and `predictions.csv` contain, the two validation schemes and when to pass `time_col`, the fast profile. State that the package is run from the repo root and is not installed. Every command shown must work as written.",
       "gate_checks": [],
       "tests": ["tests/test_readme.py"]
+    },
+    {
+      "id": "T18",
+      "title": "Guards for the first review's test holes, and two CSV edges: no code change expected",
+      "tier": "complex",
+      "why_tier": "Nothing is built here. But if a guard fails, the fix is in the code that decides which rows a fitted step sees, the most delicate code in the package.",
+      "depends_on": ["T17"],
+      "writes": ["mlprofessor/preprocess.py", "mlprofessor/leakage.py", "mlprofessor/uncertainty.py", "mlprofessor/pipeline.py", "mlprofessor/load.py", "mlprofessor/columns.py"],
+      "brief": "NO CODE CHANGE IS EXPECTED. These four test files guard behaviour the application already has: every test in them was measured to pass against the application on 2026-11-17, before this task existed (plan/test-plan.md, 'Second pass'). Run them first. If they all pass, change nothing and finish. If one fails, THE APPLICATION IS WRONG, NOT THE TEST: the tests are locked, and each guard was proved by running it against a copy of the reference implementation that carries exactly the fault it is named for (spec 8.1), or against the reference as it was before the decision the test holds (D42). Fix only what the failing test names, and say in your final message what you found. What each file guards: `test_guard_final_fit.py`, that the statistics of the final fit's imputation and scaling come from training rows only (M1), that one-hot levels come from the rows of each fit only (M2), and that a categorical level is the cell's text without the white space round it, in counting, in the leak screen, in what a step receives and in the matrix (D42; spec step 5); `test_guard_leak_screen.py`, that the leak screen's trees are fitted on each fold's training rows only and its missing-by-class rule counts training rows only (M3); `test_guard_uncertainty.py`, that the block bootstrap draws whole blocks of consecutive timestamps (M4) and that a shuffle whose skill equals the observed skill counts in the p-value (M5); `test_csv_edges.py`, that a file which is not valid UTF-8 is an `input_error` wherever the bad byte sits, that leading lines of only spaces and tabs are skipped when the header is read, as pandas skips them, and that a header cell holding only white space is a name like any other, so that two alike stop the run with `duplicate_columns` (D42; spec 6). These tests join the checks every later task must keep green.",
+      "gate_checks": [],
+      "tests": ["tests/test_guard_final_fit.py", "tests/test_guard_leak_screen.py", "tests/test_guard_uncertainty.py", "tests/test_csv_edges.py"]
+    },
+    {
+      "id": "T19",
+      "title": "Skill when a baseline's error is zero",
+      "tier": "complex",
+      "why_tier": "Decides which resamples the interval on skill is computed from, and what the headline reports where it has no value.",
+      "depends_on": ["T18"],
+      "writes": ["mlprofessor/metrics.py", "mlprofessor/pipeline.py", "mlprofessor/uncertainty.py", "mlprofessor/leakage.py", "mlprofessor/stages.py", "mlprofessor/cli.py"],
+      "brief": "When a baseline's squared error on the rows being scored is exactly zero, skill = 1 - error / baseline error has no value, and today the run dies with a ZeroDivisionError and writes nothing (D36). Make it report instead, everywhere skill is computed. (1) The headline, spec step 11: `headline.skill` is null, never an error, an infinity or a zero in its place; exactly one `skill_undefined` warning with a null column says why; the score, every baseline with its score (the zero included) and the rest of the output are reported as usual. (2) The interval, spec step 12: a resample whose baseline error is zero keeps its place in the interval on the score and is left out of the interval on skill only. Count the resamples kept for skill in a new key, `headline.n_resamples_skill_used`; `n_resamples_used` goes on counting those in which the score could be computed. If fewer than half of the resamples can be used for skill, `skill_low` and `skill_high` are null while the interval on the score stands (D40). That is always so when `headline.skill` is null, and the `skill_undefined` warning of (1) covers it: add no other. When `headline.skill` is a number and its interval cannot be computed, add exactly one warning with the code `no_skill_interval` and a null column, and no `skill_undefined` (D42): the two codes never appear together, and neither appears when there is no interval at all, which `no_interval` covers. (3) The p-value: when `headline.skill` is null, `p_value` and `n_permutations` are null and `p_value_reason` says why. (4) The leak screen, spec step 8: a column whose single-column skill cannot be computed is not flagged and gets no warning. The application already behaves so; keep it. (5) `stages.skill(\"mse\", score, 0)` returns None (spec 2.7). (6) The command line finishes on such a table: the summary must not fail on a null skill. Schema: spec 5.2. The gate's dataset is `flat_tail`, daily sales that stop: the target is 0 from 65% of the way through the series to its end, so the previous value predicts every holdout row exactly.",
+      "gate_checks": ["time.flat_holdout_reported"],
+      "tests": ["tests/test_skill_undefined.py"]
+    },
+    {
+      "id": "T20",
+      "title": "Colliding feature names stop the run",
+      "tier": "routine",
+      "why_tier": "A clear contract in spec step 5: one check, one named error. It decides no number.",
+      "depends_on": ["T18"],
+      "writes": ["mlprofessor/errors.py", "mlprofessor/columns.py", "mlprofessor/preprocess.py", "mlprofessor/pipeline.py", "mlprofessor/stages.py"],
+      "brief": "The preprocessed matrix names a numeric feature by its own name and each level of a categorical feature `<column>=<level>`. Today, when two of those names are the same, one column silently overwrites the other: a numeric column named `colour=red` beside a categorical `colour` with the level `red` reaches no model and is still listed as a feature (D37). Add the named error `FeatureNameCollisionError`, code `feature_name_collision`, to `mlprofessor/errors.py`, and raise it from `profile()` as spec step 5 says ('Feature names must be distinct'): after the column roles, before the row cap, the split, the leak screen and any fit, with nothing written. The message names every column involved. Which names are compared is pinned there and is the point of this task: the columns that are features after step 5; for a categorical column EVERY level among the usable rows, not only the 30 a fit keeps, with `(missing)` when a usable row has a missing cell, a level being the cell's text without the white space round it (D42), as the application already has it; decided before the row cap, so that `fast` and `full` agree and no seed changes the outcome. A level that sits only in rows with no target does not count. Two categorical columns can collide too (`site` with the level `a=b`, beside `site=a` with the level `b`). `stages.Preprocessor.fit` raises the same error when two of the names it would give are the same, judged on the levels it keeps from the rows it is given (spec 2.7). The command line exits 3 with `error: feature_name_collision: ...`, as for any named error.",
+      "gate_checks": [],
+      "tests": ["tests/test_feature_names.py"]
+    },
+    {
+      "id": "T21",
+      "title": "A configuration that fails after it is chosen",
+      "tier": "complex",
+      "why_tier": "Decides which configuration the headline comes from, and must not let the holdout take part in the choice.",
+      "depends_on": ["T18"],
+      "writes": ["mlprofessor/pipeline.py", "mlprofessor/models.py"],
+      "brief": "Spec steps 9 to 11 (D38). The application already falls back to the next best configuration by `cv_mean` when the chosen one raises on the final fit or while predicting the holdout, and already raises `all_models_failed` when none is left: keep both. What is wrong today is that the failed configuration's record is wiped: its fold scores, `cv_mean` and `cv_std` are set to null, so the models table misreports what was tried. Change that: a configuration that fails AFTER it was chosen gets status `failed`, its error text and a `model_failed` warning, and KEEPS the `fold_scores`, `cv_mean` and `cv_std` it had. A configuration that fails DURING selection is unchanged: all five fold scores null, `cv_mean` and `cv_std` null (a first-pass test pins that). The headline comes from exactly one configuration, the first in the ranking of step 9 whose refit and holdout prediction both succeed; `headline`, `cv.chosen`, `cv.chosen_mean`, the predictions, the interval and the p-value are its alone. Holdout rows are handed to one configuration at a time, in ranking order, and to none once one has predicted them. The holdout plays no part in the choice: a configuration is passed over only for raising, never for its score.",
+      "gate_checks": [],
+      "tests": ["tests/test_chosen_failure.py"]
+    },
+    {
+      "id": "T22",
+      "title": "Small defects: the output folder, process settings, the no-features message, the console summary",
+      "tier": "routine",
+      "why_tier": "Four small contracts, each stated in spec 2.1, 2.2 or 2.4.",
+      "depends_on": ["T19", "T20", "T21"],
+      "writes": ["mlprofessor/pipeline.py", "mlprofessor/load.py", "mlprofessor/result.py", "mlprofessor/cli.py"],
+      "brief": "Four defects from the first review (D39). (1) An `out_dir` that cannot be used is an `InputError` raised before anything is loaded (spec 2.1): the path, or the nearest folder above it that exists, is something other than a folder, for one when it names an existing file. Today that is an unnamed FileExistsError after the whole run. Check it with the other arguments, without creating anything. (2) Process-wide settings are left as the caller had them, whether `profile()` or a function of `stages` returns or raises (spec 2.1). The one found: the loader raises `csv.field_size_limit` for the whole process and never puts it back. Restore the caller's value in a `finally`. (3) The message of `no_features` names every excluded column and, for each, its reason as `columns[].reason` spells it (spec 2.4), both when no column is a feature after step 5 and when the leak screen removes the last one. Today it says 'see the column accounting', and an error returns none. (4) The console summary (spec 2.2) also shows: the interval on the score and the interval on skill, each end as a number, or the text of `headline.interval_reason` when there is no interval; the p-value as a number, or the text of `headline.p_value_reason` when there is none; and one line per warning holding its code and, when it has one, its column. A number counts as shown when it is printed to within 0.0005 x max(1, |value|) of the value in `profile.json`. The wording stays yours; keep it short and plain. A null skill, or a null interval on skill, needs no number: the line of its `skill_undefined` or `no_skill_interval` warning covers it.",
+      "gate_checks": [],
+      "tests": ["tests/test_run_hygiene.py", "tests/test_console_summary.py"]
+    },
+    {
+      "id": "T23",
+      "title": "The README's commands use a table kept in the repo",
+      "tier": "support",
+      "why_tier": "Prose and three command lines, from known facts.",
+      "depends_on": ["T22"],
+      "writes": ["README.md", "examples/"],
+      "brief": "Today every command in `README.md` reads a file under `verify/artifacts/data/`, which the project's own checks write and git ignores, so on a fresh clone no command works. The repo now holds a small example table for this purpose: `examples/customers.csv`, 400 synthetic customers, one row per sign-up date. Its columns: `customer_id` (an identifier), `signup_date` (ISO dates, year first, one row a day: usable as `--time-col`), `plan`, `region`, `monthly_spend` (six blank cells), `support_calls`, `age`, and the target `churned` (yes or no; three blank cells). Rewrite every command and the Python example in `README.md` to use it: `--data examples/customers.csv --target churned`, and for the time-ordered example `--time-col signup_date --gap 1`. After this the README names no file under `verify/` or `tests/`, in a command or anywhere else; remove the sentence that tells the reader to run the checks first. Every command shown must work as written, from the repo root, with the interpreter path already given. While you are there, bring the README's account of the output up to date with spec 2.2, 2.4 and 5.2: what the console summary now shows; that `headline.skill` can be null, with the warning `skill_undefined`, when a baseline predicts the holdout exactly, and that the warning `no_skill_interval` means skill has a value and its interval does not; the error code `feature_name_collision`. You may add a file under `examples/` only if a command needs another table, and then the README says what it is. `examples/customers.csv` itself is made by `docs/measurements/CP3/make_example.py`; leave it as it is.",
+      "gate_checks": [],
+      "tests": ["tests/test_readme_examples.py"]
     }
   ]
 }

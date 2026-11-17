@@ -348,6 +348,30 @@ def make_random_walk(seed, n=1500):
     return ["date", "level_prev", "level"], rows, ()
 
 
+def make_flat_tail(seed, n=1500, flat_from=0.65):
+    """Daily sales that stop: the target is exactly zero from 65% of the way through
+    the series to its end. One row per date, written in shuffled order.
+
+    The holdout is the last quarter of the dates. Every one of them is inside the
+    flat stretch, and so is the last training date, so the previous-value baseline
+    predicts every holdout row exactly: its squared error on the holdout is 0, and
+    skill, 1 - error / baseline error, has no value (D36). The training mean is
+    about 17 and scores about 300; a model fitted on the earlier dates predicts
+    about 20 on days when nothing was sold.
+    """
+    rng = random.Random(seed)
+    start = datetime.date(2019, 1, 1)
+    first_flat = round(flat_from * n)
+    rows = []
+    for t in range(n):
+        footfall, promo, noise = rng.gauss(0, 1), rng.gauss(0, 1), rng.gauss(0, 1)
+        sales = 0.0 if t >= first_flat else max(0.5, 20 + 6 * footfall - 3 * promo + 2 * noise)
+        rows.append([(start + datetime.timedelta(days=t)).isoformat(), _f(footfall), _f(promo),
+                     _f(sales)])
+    rng.shuffle(rows)
+    return ["date", "footfall", "promo", "sales"], rows, ()
+
+
 # name -> (builder, target column). Seeds are SEED + position.
 DATASETS = {
     "signal_clf": (lambda s: make_signal_clf(s), "outcome"),
@@ -371,6 +395,7 @@ DATASETS = {
     # Added last, so that the seed of every dataset above stays what it was.
     "near_leak": (lambda s: make_near_leak(s), "outcome"),
     "long_rows": (lambda s: make_long_rows(s), "outcome"),
+    "flat_tail": (lambda s: make_flat_tail(s), "sales"),
 }
 
 
@@ -561,6 +586,7 @@ RUNS = {
     "time_blocks_undeclared": ("time_blocks", [], "fast", 1),
     "time_dayfirst": ("time_dayfirst", ["--time-col", "date"], "fast", 1),
     "random_walk": ("random_walk", ["--time-col", "date"], "fast", 1),
+    "flat_tail": ("flat_tail", ["--time-col", "date"], "fast", 1),
     "api_signal_clf": ("signal_clf", "api", "fast", 1),
     "full_noise_small": ("noise_small", [], "full", 1),
     "full_signal_clf_j1": ("signal_clf_small", [], "full", 1),
@@ -600,6 +626,7 @@ CHECK_RUNS = {
     "time.dayfirst_stops": ["time_dayfirst"],
     "time.persistence_baseline": ["random_walk"],
     "time.undeclared_warns": ["time_blocks_undeclared"],
+    "time.flat_holdout_reported": ["flat_tail"],
     "uncertainty.reported": ["signal_clf", "time_blocks"],
     "result.matches_json": ["api_signal_clf"],
     "output.complete": ["signal_clf"],
@@ -1559,6 +1586,105 @@ def time_undeclared_warns(ctx):
                 "column is present and the rows were split at random")
     ctx.require(at(result, "validation.caveat"), "validation.caveat must carry the fixed "
                                                  "random-split caveat (D6)")
+
+
+@gate.check("time.flat_holdout_reported",
+            why="a baseline that scores exactly zero is where skill, 1 - error / baseline "
+                "error, has no value. The first build died there with a ZeroDivisionError and "
+                "wrote nothing; a zero or an infinity in its place would read as a measurement "
+                "(D36)",
+            doc="a target flat across the holdout: the run finishes, skill is null with a "
+                "warning, the score and both baselines are reported")
+def time_flat_holdout_reported(ctx):
+    why = ("On `flat_tail` nothing is sold from 65% of the way through the series to its end, "
+           "so the previous value predicts every holdout row exactly and that baseline's squared "
+           "error on the holdout is 0. Skill, 1 - error / baseline error, then has no value: "
+           "`headline.skill` is null, a `skill_undefined` warning says why, and the score, both "
+           "baselines and the rest of the output are reported as usual (D36)")
+    try:
+        result = outputs(ctx, "flat_tail")
+    except CheckFailed as exc:
+        raise CheckFailed(f"{exc}\n  {why}") from None
+    ctx.require(not result["bad_numbers"],
+                f"profile.json on `flat_tail` contains {sorted(set(result['bad_numbers']))}: "
+                f"NaN and infinity are not JSON and never appear. {why}")
+    held = holdout_check(ctx, result, "flat_tail")
+    want = _time_expectation(result, gap=0)
+    ctx.require(set(held) == want["holdout"],
+                f"the holdout on `flat_tail` is {len(held)} rows; the gate expects exactly the "
+                f"{len(want['holdout'])} source rows dated {want['holdout_start']} or later")
+    time_at, target = result["header"].index("date"), result["header"].index("sales")
+    order = sorted(range(len(result["source"])), key=lambda i: result["source"][i][time_at])
+    sales = {i: float(result["source"][i][target]) for i in order}
+    before = {row: order[k - 1] for k, row in enumerate(order) if k}
+    truth = [sales[p] for p in held]
+    base_mean = mse(truth, [mean([sales[i] for i in want["training"]])] * len(truth))
+    base_previous = mse(truth, [sales[before[p]] for p in held])
+    if base_previous != 0 or base_mean <= 0:
+        ctx.harness_error("the dataset `flat_tail` is not what the gate built it to be: the "
+                          f"previous-value baseline scores {base_previous!r} on the holdout and "
+                          f"the training mean {base_mean!r}; expected exactly 0 and above 0")
+    mine = mse(truth, [guess for _, _, guess in result["predictions"]])
+
+    baselines = {b["name"]: b for b in records(result, "baselines", ["name", "score", "used"])}
+    ctx.record("flat_tail baselines", ",".join(sorted(baselines)))
+    ctx.require({"training_mean", "previous_value"} <= set(baselines),
+                f"baselines on `flat_tail` lists {sorted(baselines)}; with unique timestamps "
+                "both training_mean and previous_value are scored and reported (D10), also "
+                "when one of them scores zero")
+    for name, expected in (("training_mean", base_mean), ("previous_value", base_previous)):
+        got = baselines[name]["score"]
+        ctx.record(f"flat_tail {name} score", got)
+        ctx.require(isinstance(got, (int, float)) and not isinstance(got, bool)
+                    and close(got, expected, 1e-7),
+                    f"the {name} baseline on `flat_tail` scores {got!r}; recomputed by the gate "
+                    f"from the source it is {expected:.6g}")
+    ctx.require(at(result, "headline.baseline") == "previous_value"
+                and at(result, "headline.baseline_score") == 0,
+                f"the headline baseline on `flat_tail` is {at(result, 'headline.baseline')!r} "
+                f"with score {at(result, 'headline.baseline_score')!r}; the previous value has "
+                f"the lower error (0 against {base_mean:.4g} for the training mean), so it is "
+                "the baseline (D10) and its score, 0, is reported as measured")
+    ctx.require(close(at(result, "headline.score", "number"), mine),
+                f"headline.score on `flat_tail` is {at(result, 'headline.score'):.6g}; mean "
+                f"squared error recomputed by the gate from predictions.csv is {mine:.6g}")
+
+    skill = at(result, "headline.skill")
+    ctx.record("flat_tail skill", skill)
+    ctx.require(skill is None,
+                f"headline.skill on `flat_tail` is {skill!r}; it must be null. {why}. A number "
+                "here, zero included, is not a measurement")
+    for key in ("headline.skill_low", "headline.skill_high"):
+        ctx.require(at(result, key) is None,
+                    f"`{key}` on `flat_tail` is {at(result, key)!r}; with no skill there is no "
+                    "interval on it, so it is null")
+    warned = warnings_of(result, "skill_undefined")
+    ctx.record("flat_tail skill_undefined warnings", len(warned))
+    ctx.require(len(warned) == 1 and warned[0]["column"] is None,
+                f"`flat_tail` has {len(warned)} warning(s) with code `skill_undefined`; there "
+                f"is exactly one, with a null column. {why}")
+
+    # The score still has its interval: only skill is undefined (spec.md, step 12).
+    method = at(result, "headline.interval_method")
+    ctx.record("flat_tail interval method", method)
+    ctx.require(method == "bootstrap_blocks",
+                f"headline.interval_method on `flat_tail` is {method!r}; expected "
+                "'bootstrap_blocks'. The holdout holds 375 timestamps and the squared error can "
+                "be computed in every resample: a resample whose baseline error is zero is left "
+                "out of the interval on skill only")
+    low, high = at(result, "headline.interval_low", "number"), \
+        at(result, "headline.interval_high", "number")
+    ctx.record("flat_tail interval low", low)
+    ctx.record("flat_tail interval high", high)
+    ctx.require(low <= mine <= high,
+                f"the interval on `flat_tail` ({low:.6g} to {high:.6g}) does not contain the "
+                f"headline score {mine:.6g}")
+    used, used_for_skill = at(result, "headline.n_resamples_used"), \
+        at(result, "headline.n_resamples_skill_used")
+    ctx.require(used == 200 and used_for_skill == 0,
+                f"`flat_tail` reports n_resamples_used {used!r} and n_resamples_skill_used "
+                f"{used_for_skill!r}; the score can be computed in all 200 resamples and skill "
+                "in none of them, and the two are counted apart")
 
 
 @gate.check("uncertainty.reported",

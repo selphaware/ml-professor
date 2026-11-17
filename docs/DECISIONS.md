@@ -490,3 +490,50 @@ suite (rejected: three of the holes are small forms of F1, the failure the
 tool exists to prevent, and nothing would catch a later regression).
 Consequence: a third change prompt (CP3), new test files beside the existing
 17, new build tasks, and a second review.
+
+## D40 — 2026-11-17 — The score interval is kept when skill is undefined (adds to D36)
+Decision: When the headline skill is undefined, the interval on the score is
+still computed, from the resamples in which the score can be computed. Only
+the interval on skill is empty. A resample with a zero baseline is left out
+of the skill interval alone and counted separately. The p-value is empty,
+with a reason. This was "CP3 ruling 1".
+Alternatives considered: dropping both intervals (rejected: the model's
+error on the holdout is still measurable).
+Consequence: one more count in the output, for the resamples used for skill.
+
+## D41 — 2026-11-17 — README examples use a table kept in the repo
+Decision: Every command in `README.md` uses `examples\customers.csv`, a small
+synthetic table committed to the repo. The README names nothing under
+`verify\` or `tests\`, and a test holds it to that. This was "CP3 ruling 2".
+Alternatives considered: examples that use the gate's generated data, as the
+first build wrote them (rejected: those files exist only after the gate has
+run, so the examples fail on a fresh clone, and so does one locked test).
+Consequence: the builders' write scope gains `examples\`.
+
+## D42 — 2026-11-17 — Three small rulings from the CP3 session
+Decision: (1) When the headline skill is defined but its interval cannot be
+computed, the warning has its own code, `no_skill_interval`;
+`skill_undefined` is kept for an undefined headline skill. (2) Surrounding
+white space is not part of a categorical level: `red` and `red ` are one
+level, in counting, in the leak screen and in the preprocessed matrix.
+(3) A header cell holding only white space is a name like any other, so two
+such cells are duplicate column names and stop the run.
+Alternatives considered: for (2) and (3), the reference's behaviour (levels
+as loaded; white-space headers treated as blank). Rejected: the built
+library already behaves as decided, both outcomes are visible to the caller,
+and a level that differs only by a trailing space is a data-entry artefact.
+Consequence: the spec and the reference change; the library does not.
+
+## D43 — 2026-11-17 — Limits accepted after CP3
+Decision: Accepted as known limits. (1) The guard on the p-value's
+inequality covers classification only; for regression a tie is a tie only up
+to rounding, and no tolerance is pinned. (2) F8 is caught by one test and
+one gate check. (3) A configuration that fails partway through selection
+loses the fold scores it had; a locked test requires it, and D38 covers only
+a failure after the choice. (4) A name collision (D37) stops the run even
+when the level sits only in rows the fast profile leaves out or in a column
+the leak screen would exclude; that keeps the outcome independent of seed
+and profile. (5) Undefined skill (D36) can arise under the random scheme
+too, when the training mean predicts the holdout exactly.
+Alternatives considered: none; each is recorded so it is not rediscovered.
+Consequence: none of these blocks the second build.

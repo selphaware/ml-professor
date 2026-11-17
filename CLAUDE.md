@@ -2,7 +2,7 @@
 
 A Python package, `mlprofessor`, that measures how predictable one target
 column of one table is. The contract is `spec.md`. The decisions behind it are
-`docs/DECISIONS.md` (D1 to D35). The build order is `plan/tasks.json`; what the
+`docs/DECISIONS.md` (D1 to D43). The build order is `plan/tasks.json`; what the
 tests prove is `plan/test-plan.md`. The method and the table of common failures
 are in the skill `mlprofessor-build`.
 
@@ -25,8 +25,8 @@ names the dataset, the value and the likely cause; the files it read are in
 1. Count every row and column; drop only rows with no target (or no time value), and say how many.
 2. Decide the task by a stated rule; split off a 25% holdout first: at random, or the latest whole timestamps when `time_col` is given.
 3. Choose a model by five folds inside the training rows only, with every preprocessing step refitted inside each fold.
-4. Refit the chosen one on the training rows and score it once on the holdout, as skill over a baseline (ROC AUC against 0.5; squared error against the training mean or the previous value).
-5. Report it with an interval and a p-value from the holdout predictions, and with every exclusion, warning and limitation.
+4. Refit the chosen one on the training rows and score it once on the holdout, as skill over a baseline (ROC AUC against 0.5; squared error against the training mean or the previous value). If it raises there, the next best by cross-validation takes its place: the holdout never takes part in the choice.
+5. Report it with an interval and a p-value from the holdout predictions, and with every exclusion, warning and limitation. Where a baseline's error is exactly zero, skill has no value and is reported as null, with the reason; the score keeps its interval.
 
 **The headline is computed only on rows no fitted step has seen.**
 
@@ -43,10 +43,10 @@ names the dataset, the value and the likely cause; the files it read are in
 | `columns` | one record per input column: role, kind, reason, leak rule, four counts | `.columns` |
 | `task` | type, decided by rule or declared, distinct values, classes, positive class | `to_dict()` |
 | `validation` | scheme, holdout share, folds, gap, time form, last training and first holdout timestamp, caveat | `to_dict()` |
-| `headline` | metric, score, model, baseline and its score, skill, interval, p-value, reasons | `.headline` |
+| `headline` | metric, score, model, baseline and its score, skill (null when the baseline's error is zero), the interval on the score and on skill, the resamples used for each, p-value, reasons | `.headline` |
 | `baselines` | each baseline scored on the holdout, and which one was used | `to_dict()` |
 | `cv` | metric, folds scored, configurations, the chosen one, its mean and spread | `to_dict()` |
-| `models` | one record per configuration: params, status, error, fold scores, mean, spread, chosen | `.models` |
+| `models` | one record per configuration: params, status, error, fold scores, mean, spread, chosen. One that fails after it was chosen keeps its fold scores | `.models` |
 | `warnings` | records of code, column, message | `.warnings` |
 | `limitations` | nine fixed sentences | `to_dict()` |
 | `predictions.csv` | `row`, `y_true`, `y_pred` for every holdout row | `.predictions` |
@@ -64,9 +64,35 @@ names the dataset, the value and the likely cause; the files it read are in
 | F7 | the split is shuffled even when a time column is declared | time.order_respected, time.no_skill_on_blocks, time.gap_applied, time.dayfirst_stops |
 | F8 | the regression baseline is always the training mean | time.persistence_baseline |
 
-The gate catches the large forms. The small forms (a scaler fitted before the
-split, a fold that saw its own validation rows) are caught exactly by the test
-suite's recording fakes, through `mlprofessor.extensions` (spec 2.6).
+One gate check names no failure mode and says why it exists instead:
+`time.flat_holdout_reported` (D36), on a target that is flat across the
+holdout, where skill has no value and must be reported as null.
+
+The gate catches the large forms. The small forms are caught by the test
+suite, each in the way that can see it:
+
+- A model, or a step supplied through the seam, that is handed a holdout row
+  or a row of its own fold's validation part: exactly, by the recording fakes,
+  through `mlprofessor.extensions` (spec 2.6).
+- The built-in imputation, scaling and one-hot encoding, and the leak screen.
+  The fakes cannot see inside these, so they are caught by effect, by the
+  guard tests below. Each guard is proved by running it against a copy of the
+  reference implementation that carries that one fault
+  (`verify/mutation_check.py`, which the owner runs after the tests stage).
+
+| Small fault | Description | Caught by (`tests/`) |
+|---|---|---|
+| M1 | the final fit's imputation and scaling statistics are learned from training and holdout rows together | `test_guard_final_fit.py::test_m1_final_fit_statistics_ignore_the_holdout` |
+| M2 | one-hot levels are learned from every row of the table in every fit | `test_guard_final_fit.py::test_m2_levels_come_from_the_rows_of_each_fit` |
+| M3 | the leak screen's trees are fitted on rows that include the holdout, and the missing-by-class rule counts every row | `test_guard_leak_screen.py::test_m3_single_column_skill_is_fitted_on_fold_training_rows_only`, `::test_m3_missing_by_class_counts_training_rows_only` |
+| M4 | the block bootstrap draws timestamps independently and still reports `bootstrap_blocks` | `test_guard_uncertainty.py::test_m4_block_bootstrap_draws_whole_blocks` |
+| M5 | the permutation p-value counts shuffles strictly greater than the observed skill | `test_guard_uncertainty.py::test_m5_ties_count_in_the_p_value` (classification only: D43) |
+
+A guard that fails means the application is wrong, not the test. Two more
+tests of that kind hold what D42 decided and the application already does:
+surrounding white space is not part of a categorical level
+(`test_guard_final_fit.py`), and a header cell of only white space is a name
+like any other (`test_csv_edges.py`).
 
 ## Environment (measured 2026-11-15; interpreter base and process starts 2026-11-16)
 
@@ -99,6 +125,10 @@ suite's recording fakes, through `mlprofessor.extensions` (spec 2.6).
   runs 0.5 seconds apart and retries once. Running Python processes one after
   another is still the simplest habit, but it is no longer a rule.
 - Windows, PowerShell 7. The project is on a local disk.
+- The built library, measured once on 2026-11-17 (`docs/measurements/CP3`): a
+  full run on 100,000 rows by 100 columns on all cores takes 174 seconds for
+  classification and 202 for regression, against a budget of 600; and a full
+  run on 5,000 by 30 writes identical files at `n_jobs` 1 and 64.
 
 ## Code conventions
 
@@ -119,7 +149,9 @@ suite's recording fakes, through `mlprofessor.extensions` (spec 2.6).
   wired into it. It is not a starting point: do not copy from it.
 - Application code never mentions the gate, the tests or the loop.
 - No git. The human owns every git operation.
-- Write only inside `mlprofessor/`, and `requirements.txt` and `README.md`.
+- Write only inside `mlprofessor/` and `examples/`, and `requirements.txt` and
+  `README.md`. `examples/` holds the small table the README's commands use;
+  the README names no file under `verify/` or `tests/`.
 - No network at run time.
 - A new dependency must be pinned in `requirements.txt`; phase 1 needs none
   beyond the four above.

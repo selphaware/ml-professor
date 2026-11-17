@@ -47,6 +47,10 @@ class GapError(ProfileError):
     code = "gap_too_large"
 
 
+class FeatureNameCollisionError(ProfileError):
+    code = "feature_name_collision"
+
+
 class NoFeaturesError(ProfileError):
     code = "no_features"
 

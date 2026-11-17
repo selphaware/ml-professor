@@ -2,7 +2,7 @@
 
 This file is what the application is built from and what the tests are written
 against. It restates the owner's decisions (`docs/DECISIONS.md`, cited as D1 to
-D35) without changing them, pins every value they leave to this stage, and
+D43) without changing them, pins every value they leave to this stage, and
 defines the interface precisely enough to test without seeing the code.
 
 Words used throughout: **pinned** means part of the contract; **open** means
@@ -32,6 +32,11 @@ third-party imports. No network access at run time.
 The package lives at `E:\CODE\ml-professor\mlprofessor` and is run from the
 repo root. It is never installed into the interpreter.
 
+The repo also carries one small synthetic table, `examples/customers.csv`, for
+the commands the README shows (D41). The README names no file under
+`verify/` or `tests/`: those folders belong to the judge, and part of
+`verify/` exists only after the gate has run.
+
 ---
 
 ## 2. Interface (D2, D17)
@@ -52,11 +57,18 @@ mlprofessor.profile(data, target, task="auto", time_col=None, gap=0,
 | `gap` | A whole number of distinct timestamps, at least 0 (D7). A gap above 0 without `time_col` is an `input_error`. |
 | `profile` | `"full"` or `"fast"` (D12). |
 | `seed` | A whole number, at least 0. It drives the row cap, the split, the folds, every model and every resample. |
-| `out_dir` | A folder, or `None`. When given it is created if missing and `profile.json` and `predictions.csv` are written into it. |
+| `out_dir` | A folder, or `None`. When given it is created if missing and `profile.json` and `predictions.csv` are written into it. It cannot be used when the path, or the nearest folder above it that exists, is something other than a folder (it names an existing file, for one): an `InputError` like any other invalid argument, found without creating anything (D39). |
 | `n_jobs` | `-1` for every core (`os.cpu_count()`), or a positive whole number (D17). |
 
 Any other value of an argument raises `InputError`. Nothing is written when an
 error is raised.
+
+**Process-wide settings are left as the caller had them** (D39), whether
+`profile()` returns or raises; the same holds for every function of `stages`.
+That covers `csv.field_size_limit()`, the thread limits `threadpoolctl`
+reports, the `warnings` filters, numpy's error state, the working directory
+and the environment. A test checks the first two: the others can be moved by a
+library's first import, which is not the tool's doing.
 
 ### 2.2 The command line
 
@@ -77,6 +89,23 @@ short plain-text summary to standard output. Defaults are those of the function.
 | 3 | A named error (2.4). Standard error carries one line `error: <code>: <message>`. No file is written. |
 
 Any other failure is a defect and exits with the interpreter's own non-zero code.
+
+The summary's wording and layout are open. What it shows is pinned (D39):
+
+- the interval on the score, `interval_low` and `interval_high`, and the
+  interval on skill, `skill_low` and `skill_high`, each as a number; when
+  there is no interval (`interval_method` is null), the text of
+  `headline.interval_reason` in their place;
+- `p_value` as a number, or, when it is null, the text of
+  `headline.p_value_reason`;
+- one line per warning, holding that warning's `code` and, when it has one,
+  its `column`. Two warnings never share a line.
+
+A value counts as shown when some decimal number printed in the summary is
+within 0.0005 × max(1, |value|) of the value in `profile.json`: four
+significant digits are enough. A null `skill`, `skill_low` or `skill_high`
+needs no number; the line of the `skill_undefined` or the `no_skill_interval`
+warning covers it.
 
 ### 2.3 `ProfileResult`
 
@@ -110,9 +139,9 @@ command line prints. The message says what was found and what the caller can do.
 
 | Class | `code` | Raised when |
 |---|---|---|
-| `InputError` | `input_error` | An argument has an invalid value; `data` is neither a DataFrame nor a path; the file is missing, empty or not parseable as CSV; data rows have more fields than the header; `gap` above 0 without `time_col`; `time_col` equals `target`. |
+| `InputError` | `input_error` | An argument has an invalid value; `out_dir` cannot be used (2.1); `data` is neither a DataFrame nor a path; the file is missing, empty, not valid UTF-8 or not parseable as CSV; data rows have more fields than the header; `gap` above 0 without `time_col`; `time_col` equals `target`. |
 | `ColumnNotFoundError` | `column_not_found` | `target` or `time_col` is not a column. |
-| `DuplicateColumnsError` | `duplicate_columns` | Two columns have the same name (D22). |
+| `DuplicateColumnsError` | `duplicate_columns` | Two columns have the same name (D22). A name that holds only white space is a name like any other: two header cells of one space each are two columns of the same name (D42). |
 | `TargetConstantError` | `target_constant` | The target has fewer than two distinct values among the usable rows. |
 | `TaskAmbiguousError` | `task_ambiguous` | `task="auto"` and the rule cannot decide (D4). |
 | `TaskUnsupportedError` | `task_unsupported` | A declared task the target does not support: classification with other than two distinct values, regression on a non-numeric target. |
@@ -120,9 +149,10 @@ command line prints. The message says what was found and what the caller can do.
 | `TooFewRowsError` | `too_few_rows` | Fewer than 100 usable rows; fewer than 10 usable rows of a class; under time order, too few distinct timestamps to form the holdout and six blocks. |
 | `FastProfileError` | `fast_profile_too_few_timestamps` | Under `profile="fast"` with a time column, the rows kept by the row cap hold too few distinct timestamps to form the holdout and six blocks (D20). The message tells the caller to use `profile="full"`. |
 | `GapError` | `gap_too_large` | The gap leaves fewer than six training timestamps, or no training rows before a validation block. |
-| `NoFeaturesError` | `no_features` | No column has the role feature after the leak screen. |
+| `FeatureNameCollisionError` | `feature_name_collision` | Two feature columns would give the preprocessed matrix a column of the same name (step 5; D37). The message names every column involved. |
+| `NoFeaturesError` | `no_features` | No column has the role feature after the leak screen. An error returns no column accounting, so the message carries it: the name of every excluded column and, for each, its reason as `columns[].reason` spells it (D39). |
 | `OneClassError` | `one_class` | Classification, and the holdout or the training rows hold one class, or no fold can be scored. |
-| `AllModelsFailedError` | `all_models_failed` | Every configuration failed. The message carries each error text. |
+| `AllModelsFailedError` | `all_models_failed` | Every configuration failed, during selection or after it was chosen (steps 9 and 10). The message carries each error text. |
 
 An invalid argument is reported before anything is loaded. Beyond that, when a
 table breaks several rules at once, which of the named errors is raised is open.
@@ -141,15 +171,17 @@ module only; they are always in the output.
 | `small_holdout` | `null` | Classification: fewer than 50 holdout rows of the rarer class. Regression: fewer than 50 holdout rows (D23). |
 | `date_column_undeclared` | the column | One per column excluded as `datetime` when `time_col` is `None` (D7). |
 | `autocorrelated_panel_target` | the target | Regression under time order with repeated timestamps, and the lag-1 autocorrelation of the per-timestamp mean of the target over the training rows is above 0.5 (D10, D23; section 10). |
-| `model_failed` | `null` | One per configuration with status `failed`. |
+| `model_failed` | `null` | One per configuration with status `failed`, whether it failed during selection or after it was chosen (D38). |
 | `values_coerced` | the column | One per numeric column in which text cells were turned into missing (D22). |
 | `numeric_with_separators` | the column | One per column excluded with the reason `numeric_with_separators` (step 5, rule 4a; D28, D34). It has this one form: a column that is kept never carries it. |
 | `whole_number_regression_target` | the target | `task="auto"` picked regression and every target value is a whole number (D21). |
-| `blank_header` | pandas' name for it | One per CSV column whose header cell is blank (D22). |
+| `blank_header` | pandas' name for it | One per CSV column whose header cell is blank, which means empty (D22). A cell that holds white space is a name, and gets no warning (D42). |
 | `infinite_values` | the column | One per numeric feature holding infinite values. |
 | `duplicate_rows` | `null` | The loaded table holds exact duplicate rows. They are kept. |
 | `fold_not_scored` | `null` | Classification, and a fold's training or validation rows hold one class. |
-| `no_interval` | `null` | No interval could be computed; `headline.interval_reason` says why. |
+| `no_interval` | `null` | No interval could be computed on the score; `headline.interval_reason` says why. |
+| `skill_undefined` | `null` | Regression. Exactly one when `headline.skill` is null, because the headline baseline's squared error on the holdout is exactly zero (D36). Never otherwise: it is the code for a headline skill that has no value, and for nothing else (D42). The message states the reason. |
+| `no_skill_interval` | `null` | Regression. Exactly one when `headline.skill` is a number and `skill_low` and `skill_high` are null although the score has its interval (`interval_method` is not null): skill could be computed in fewer than half of the resamples (step 12; D42). Never otherwise: not when `headline.skill` is null, which `skill_undefined` covers, and not when there is no interval at all, which `no_interval` covers. The message states the reason. |
 | `interval_approximate` | `null` | Exactly one whenever `headline.interval_method` is `bootstrap_blocks` (D27): that interval tends to be too narrow (10.3). Never under the random scheme, and never when there is no interval. It does not depend on how long the holdout is or how correlated the errors are, which the tool cannot know (D33). |
 
 ### 2.6 Seam for tests (D26)
@@ -178,16 +210,20 @@ with extensions.use(families=[...], steps=[...]):
   and scaling. `transform` must return a DataFrame with the same index and
   columns.
 - A fresh step object and a fresh estimator are made for **every fit**: once
-  per scored fold per configuration for estimators, once per scored fold and
-  once for the final fit for steps.
+  per scored fold per configuration for estimators, and once more for each
+  configuration tried after selection (step 10: one, unless a chosen
+  configuration fails); once per scored fold and once for the final fit for
+  steps.
 - Every `X` handed to a step or to a seam-supplied estimator is a pandas
   DataFrame whose **index is the rows' zero-based positions in the loaded
   source** (the same numbers as `predictions.row`). `y` is a Series with the
   same index: 0 and 1 for classification (1 is the positive class), floats for
-  regression. A step receives the feature columns as loaded and typed (numeric
-  columns as floats with NaN for missing, categorical columns as text with
-  `"(missing)"` for missing). An estimator receives the fully preprocessed
-  matrix.
+  regression. A step receives the feature columns as loaded and typed: numeric
+  columns as floats with NaN for missing; categorical columns as text, each
+  cell its level, which is the text without the white space round it (step 5;
+  D42), with `"(missing)"` for missing. So a step never sees `red ` or ` red`,
+  only `red`. An estimator receives the fully preprocessed matrix, in which a
+  level's column is named by that same stripped text (`colour=red`).
 - The estimator's `fit` is called inside the tool's thread limits, so
   `threadpoolctl.threadpool_info()` called there reports them.
 - When the block ends the previous state is restored, including after an
@@ -195,8 +231,18 @@ with extensions.use(families=[...], steps=[...]):
 
 With this a recording fake proves: no `fit` of any kind ever receives a holdout
 row; inside each fold no `fit` receives a row of that fold's validation block;
-only the chosen configuration predicts on the holdout; linear algebra is on one
-thread.
+holdout rows are handed to one configuration at a time, in the order of step
+9, and to none once one has predicted them, so that when nothing fails after
+selection the chosen configuration alone ever receives one (step 11); linear
+algebra is on one thread.
+
+The fake sees the steps and the models it supplies. It does not see inside the
+tool's own preprocessing or its leak screen, so those are proved by effect.
+The built-in imputation, scaling and encoding: the matrix handed to a
+seam-supplied estimator's `fit` is compared, value for value and column for
+column, between two runs on tables that differ only in rows the fit must not
+have seen. The leak screen: crafted columns that only a screen fed holdout
+rows would flag. Section 8 lists the faults these catch.
 
 ### 2.7 Step functions (D26)
 
@@ -217,9 +263,9 @@ Section 3 defines what each step does; this table defines only the call.
 | `split_time(keys, gap=0)` | `{"training", "gap", "holdout", "folds"}`: arrays of positions into `keys`, each in increasing order; `folds` is a list of five `{"training", "gap", "validation"}`, fold *k* validating on block *k*+1. `keys` is as returned by `read_time`, in any order, with no missing value. | `TooFewRowsError`, `GapError` |
 | `roc_auc(y, score)` | ROC AUC of `score` for labels `y` of 0 and 1 (1 is positive); ties share their average rank. | `OneClassError` |
 | `mse(y, pred)` | Mean squared error. | |
-| `skill(metric, score, baseline_score)` | For `"roc_auc"`: (score − baseline) ÷ (1 − baseline), which is 2 × AUC − 1 at the baseline 0.5. For `"mse"`: 1 − score ÷ baseline. | `ValueError` for any other metric |
+| `skill(metric, score, baseline_score)` | For `"roc_auc"`: (score − baseline) ÷ (1 − baseline), which is 2 × AUC − 1 at the baseline 0.5. For `"mse"`: 1 − score ÷ baseline; and `None`, not an error, when `baseline_score` is 0, where skill has no value (D36). | `ValueError` for any other metric |
 | `previous_value(y, keys, gap=0)` | An array aligned with `y`: for each row the target of the row `gap + 1` timestamps earlier, NaN where there is none. | `ValueError` if `keys` are not unique |
-| `Preprocessor(kinds)` | The built-in preprocessing of step 8 for one fit. `kinds` maps a column name to `"numeric"` or `"categorical"`. `fit(frame)` learns from the rows given and returns the object. `transform(frame)` returns a DataFrame with the same index: one column per numeric column, under its own name, then for each categorical column one column per kept level named `<column>=<level>`, levels in sorted order, holding 0.0 and 1.0. A missing categorical cell is the level `(missing)`. | |
+| `Preprocessor(kinds)` | The built-in preprocessing of step 8 for one fit. `kinds` maps a column name to `"numeric"` or `"categorical"`. `fit(frame)` learns from the rows given and returns the object. `transform(frame)` returns a DataFrame with the same index: one column per numeric column, under its own name, then for each categorical column one column per kept level named `<column>=<level>`, levels in sorted order, holding 0.0 and 1.0. A missing categorical cell is the level `(missing)`. No two columns of the result ever share a name (D37). | `FeatureNameCollisionError` from `fit`, when two of the names it would give are the same, judged on the levels it keeps from the rows given |
 
 `split_time` raises `TooFewRowsError` when there are too few timestamps;
 `profile()` turns that into `FastProfileError` when the fast profile's row cap
@@ -243,7 +289,8 @@ this section alone whether an implementation leaks.
 
 **1. Load the table (D3, D22); count the rows.** Section 6 gives the loading
 rules. `loaded` is the number of rows of the table: for a CSV, the data lines,
-not counting blank lines.
+not counting blank lines. A blank line is one that is empty or holds only
+spaces and tabs (section 6).
 
 **2. Drop rows with no target, then rows with no time value; count each.**
 A target is missing when the cell is missing (NaN, `None`, `pd.NA`, `NaT`) or,
@@ -311,6 +358,17 @@ rule that applies decides:
 "Text" is a pandas string column or an object column in which every non-missing
 value is a `str`; a category-typed column is treated as text through the string
 form of its values. Text is compared after stripping surrounding white space.
+
+**A categorical level is the cell's text without the white space round it
+(D42).** `red`, ` red` and `red ` are one level, `red`, everywhere a level is
+used: in the counts of this step (distinct values, and so `constant`,
+`id_like`, `free_text` and whether the column is a feature at all); in the
+collision rule below; in the leak screen of step 8, whose codes are those of
+the stripped levels; in what a seam-supplied step receives (2.6); and in the
+preprocessed matrix, where the three cells share the one column
+`colour=red`. A level that differs from another only by a trailing space is a
+data-entry artefact, not a category. A cell that holds only white space is not
+a missing cell: its level is the empty text.
 "Parse as numbers" means `pandas.to_numeric(..., errors="coerce")` gives a
 number. In rule 8b, judged on the non-missing values: "consecutive" means
 largest minus smallest plus one equals their count; "strictly ordered" means
@@ -361,6 +419,38 @@ Counts are kept per column over **every loaded row** (section 5.3): `n_missing`,
 missing, with a `values_coerced` warning), `n_infinite` (which become missing,
 with an `infinite_values` warning). `n_coerced` is 0 for a column that rule 5
 did not read as numeric, including one excluded by rule 4a.
+
+**Feature names must be distinct (D37).** The preprocessed matrix names a
+numeric feature by its own name and each level of a categorical feature
+`<column>=<level>` (2.7). If two of those names would be the same, the run
+stops here with `feature_name_collision`, before the row cap, the split, the
+leak screen and any fit, and nothing is written. Two shapes give a collision:
+a numeric feature whose name is a categorical feature's name, an equals sign
+and one of its levels (`colour=red` beside `colour` with the level `red`); and
+two categorical features whose names and levels combine to the same text
+(`site` with the level `a=b`, beside `site=a` with the level `b`). The message
+names every column involved.
+
+Which names are compared is pinned, so that the outcome depends on the table
+and never on the seed, the profile or the rows a fit happens to see:
+
+- the columns are those with the role `feature` after the rules above, before
+  the leak screen: a column the screen would go on to exclude counts;
+- a categorical column's levels are **every level among the usable rows**, not
+  only the 30 most frequent of some fit, and `(missing)` is one of them when a
+  usable row has a missing cell. A level is the stripped text, as above: a
+  cell ` red ` gives the name `colour=red`;
+- like every rule of this step it is decided before any row cap, so `fast` and
+  `full` agree (D20): a level that sits only in rows the cap leaves out
+  counts, and one that sits only in rows with no target does not.
+
+The price is accepted (D43): a collision stops the run even when the level
+sits only in rows the fast profile leaves out, or in a column the leak screen
+would have excluded.
+
+Silently renaming one column, or letting one overwrite the other, is the fault
+this rule exists to prevent: the first build listed a column as a feature that
+had reached no model.
 
 **6. Apply the fast profile's row cap (D12, D20); count the rows left out.**
 Only under `profile="fast"` and only when there are more than 2,000 usable rows.
@@ -434,15 +524,20 @@ scored fold a decision tree (`max_depth=6`, `min_samples_leaf=5`,
 `random_state=seed`) is fitted on that one column of the fold's training rows
 and predicts its validation rows. A numeric column is used as it is, missing
 values left missing; a categorical column as whole-number codes of the sorted
-levels of the fold's training rows, with −1 for an unseen level. The
+levels of the fold's training rows (levels as step 5 defines them: the
+stripped text), with −1 for an unseen level. The
 predictions of all folds are pooled and skill is computed as in step 11:
 2 × AUC − 1, or 1 − (squared error ÷ baseline squared error), the baseline
 being each fold's training mean and, under time order with unique timestamps,
-whichever of that and the previous value has the lower error.
+whichever of that and the previous value has the lower error. When that
+baseline's squared error over the pooled rows is exactly zero, the column's
+skill cannot be computed (D36): rules 2 and 3 do not apply to it, it stays a
+feature and it gets no warning.
 
 A column excluded by rule 1 or 2 gets role `excluded`, reason `suspected_leak`,
 its `leak_rule`, and a `suspected_leak` warning. It reaches no model. If no
-feature is left: `no_features`. A column kept by rule 3 has role `feature`, a
+feature is left: `no_features`, its message naming every excluded column with
+its reason (2.4). A column kept by rule 3 has role `feature`, a
 null `reason` and a null `leak_rule`, and reaches the models like any other:
 it still drives the headline, because the tool cannot tell a near-leak from a
 very strong real feature (D33). The warning asks a question; it does not
@@ -462,7 +557,8 @@ predicts:
   the fit's training rows (a zero deviation is read as 1);
 - categorical features: a missing value is the level `"(missing)"`; one-hot
   columns for the levels seen in the fit's training rows, at most the 30 most
-  frequent (ties by level text); any other level is all zeros.
+  frequent (ties by level text); any other level is all zeros. The levels are
+  those of step 5, the stripped text, so `red` and `red ` fill one column.
 
 The same preprocessing serves every model family. `n_imputed` of a feature is
 the number of its missing cells among the training and holdout rows.
@@ -474,25 +570,57 @@ training rows, predict its validation rows, and score them: ROC AUC for
 classification, mean squared error for regression. `cv_mean` is the mean over
 scored folds and `cv_std` their sample standard deviation.
 
-A configuration whose fit or prediction raises is recorded with status
-`failed`, the error text and a `model_failed` warning; it is never dropped
-from the table and never chosen. All failing: `all_models_failed`.
+A configuration whose fit or prediction raises on a fold is recorded with
+status `failed`, the error text and a `model_failed` warning. All five of its
+fold scores are null, and so are its `cv_mean` and `cv_std`: it loses the
+scores of the folds it had got through. That is an accepted limit (D43): a
+first-pass test requires it, and D38 covers only a failure after the choice.
+It is never dropped from the table and never chosen. All failing:
+`all_models_failed`.
 
-The **chosen** configuration has the best `cv_mean`: the highest ROC AUC, the
-lowest squared error. Ties go to the earlier family, then the earlier grid
-position.
+The configurations that have a `cv_mean` are **ranked**, best first: the
+highest ROC AUC, the lowest squared error. Ties go to the earlier family, then
+the earlier grid position. The first in the ranking is chosen.
 
-**10. Refit the chosen configuration on all training rows,** with its
-preprocessing fitted on all training rows.
+**10. Refit the chosen configuration on all training rows, and predict the
+holdout with it (D38),** with its preprocessing fitted on all training rows.
+
+If that fit or that prediction raises, the configuration was chosen in vain.
+It gets status `failed`, its error text and a `model_failed` warning, and its
+`chosen` stays false. Its `fold_scores`, `cv_mean` and `cv_std` **stay as they
+were measured**: the table reports what was tried. The next configuration in
+the ranking of step 9 is then chosen and tried in the same way, and so on. If
+none is left: `all_models_failed`, its message carrying each error text.
+
+The holdout plays no part in the choice. A configuration is passed over only
+for raising, never for its score, so the headline is not inflated by the
+fallback.
 
 **11. Score it once on the holdout; score the baselines on the holdout (D5,
-D10).** Only the chosen configuration ever predicts the holdout.
+D10).** **The headline comes from exactly one configuration**, the chosen
+one: the first in the ranking whose refit and holdout prediction both succeed.
+`headline`, `cv.chosen`, `cv.chosen_mean`, the predictions, the interval and
+the p-value come from it alone, and a failed configuration contributes no
+score anywhere. Holdout rows are handed to one configuration at a time, in
+ranking order, and to none once one has predicted them. So when nothing fails
+after selection, the chosen configuration alone ever receives a holdout row;
+and in every case each other configuration that received one has status
+`failed` and stands ahead of the chosen one in the ranking.
 
 - Classification: `score` is ROC AUC of the predicted probabilities (ties share
   their average rank). The baseline is `chance`, 0.5. **skill = 2 × AUC − 1.**
 - Regression: `score` is mean squared error. The baseline `training_mean`
   predicts the mean target of the training rows for every holdout row.
   **skill = 1 − score ÷ baseline score.**
+- **When the headline baseline's score is exactly zero, skill has no value
+  (D36).** `headline.skill` is `null`: never an error, an infinity or a zero
+  in its place. One `skill_undefined` warning says why. The score, every
+  baseline with its score (the zero included) and the rest of the output are
+  reported as usual, and the run completes. It happens when the baseline
+  predicts every holdout row exactly: a target flat across the holdout, under
+  time order, where the previous value is the value itself; and under the
+  random scheme too, when the training mean is the value of every holdout row
+  (D43).
 - Regression under time order with **unique timestamps**: a second baseline,
   `previous_value`, predicts for each holdout row the target of the row
   `gap + 1` timestamps earlier in the time-ordered usable rows (after the row
@@ -519,7 +647,10 @@ Nothing is refitted. *R* is 1,000 under `full` and 200 under `fast`.
   skill. Method `bootstrap_rows`.
 - *Random scheme, p-value:* *R* shuffles of the holdout targets against the
   fixed predictions. **p = (1 + number of shuffles whose skill is at least the
-  observed skill) ÷ (1 + *R*).**
+  observed skill) ÷ (1 + *R*).** "At least" means a tie counts. For
+  classification a tie is exact, since ROC AUC is a count of ranks, and a test
+  holds an implementation to it. For regression a tie is a tie only up to
+  rounding, and no tolerance is pinned (D43).
 - *Time-ordered scheme, interval:* a moving-block bootstrap over the distinct
   holdout timestamps in order. With *T* timestamps, the block length is *L* =
   the smallest whole number with *L*³ ≥ *T*. Each resample draws ⌈*T*/*L*⌉
@@ -533,10 +664,31 @@ Nothing is refitted. *R* is 1,000 under `full` and 200 under `fast`.
   warning `no_interval` is added in place of `interval_approximate`.
 - *Time-ordered scheme, p-value:* absent (`null`), and `p_value_reason` states
   that shuffling assumes independent rows.
-- A resample in which the score cannot be computed (one class) is left out and
-  the number used is reported. If fewer than half can be used there is no
-  interval under either scheme: `interval_method` is `null`, with a reason and
-  the `no_interval` warning (and no `interval_approximate`).
+- *Resamples in which the score cannot be computed* (classification: the rows
+  drawn hold one class) are left out of both intervals. `n_resamples_used` is
+  the number kept. If fewer than half of the *R* can be used there is no
+  interval under either scheme: `interval_method` and `block_length` are
+  `null`, with a reason and the `no_interval` warning (and no
+  `interval_approximate`).
+- *Resamples in which only the skill cannot be computed (D36, D40).* In
+  regression, a resample whose baseline has a squared error of exactly zero on
+  the rows drawn has a score and no skill. It **stays in the interval on the
+  score** and is left out of the interval on skill only, and it is counted
+  apart: `n_resamples_skill_used` is the number of resamples kept for the
+  skill interval (for classification it equals `n_resamples_used`). If fewer
+  than half of the *R* can be used for skill, `skill_low` and `skill_high` are
+  `null` while the interval on the score stands. Which warning says so depends
+  on the headline (D42):
+  - `headline.skill` is null: the `skill_undefined` warning of step 11 covers
+    it, and no other is added. The baseline is then exact on every holdout
+    row, so every resample has a zero baseline error and
+    `n_resamples_skill_used` is 0.
+  - `headline.skill` is a number: one `no_skill_interval` warning is added.
+    The baseline is exact on most holdout rows and not on all, so that most
+    resamples miss every row on which it errs.
+- *No p-value without skill.* When `headline.skill` is null there is nothing
+  to compare the shuffles with: `p_value` and `n_permutations` are `null` and
+  `p_value_reason` says why.
 
 Also added here: `small_holdout` (2.5).
 
@@ -753,24 +905,25 @@ carried a zone) for the `datetime` and `iso8601` forms, and as a number for the
 | `score` | number | the chosen configuration's score on the holdout |
 | `model` | string | the chosen configuration, as in `models.config` |
 | `baseline` | string | `chance`, `training_mean` or `previous_value` |
-| `baseline_score` | number | 0.5, or the baseline's squared error on the holdout |
-| `skill` | number | step 11 |
+| `baseline_score` | number | 0.5, or the baseline's squared error on the holdout, which may be 0 |
+| `skill` | number or null | step 11; null when `baseline_score` is 0, with the `skill_undefined` warning (D36) |
 | `interval_method` | string or null | `bootstrap_rows`, `bootstrap_blocks`, or null when there is no interval |
 | `interval_level` | number | 0.95 |
-| `interval_low`, `interval_high` | number or null | the interval on `score` |
-| `skill_low`, `skill_high` | number or null | the interval on `skill` |
+| `interval_low`, `interval_high` | number or null | the interval on `score`; null when `interval_method` is null |
+| `skill_low`, `skill_high` | number or null | the interval on `skill`; null when `interval_method` is null, and when skill could be computed in fewer than half of the resamples (step 12): always so when `skill` is null (`skill_undefined`), and otherwise with the `no_skill_interval` warning |
 | `n_resamples` | integer | 1,000 or 200 |
 | `n_resamples_used` | integer | resamples in which the score could be computed |
+| `n_resamples_skill_used` | integer | of those, the resamples in which skill could be computed too: the ones whose baseline error was not zero. Equal to `n_resamples_used` for classification |
 | `block_length` | integer or null | under `bootstrap_blocks` |
-| `interval_reason` | string or null | why there is no interval |
-| `p_value` | number or null | step 12 |
+| `interval_reason` | string or null | why there is no interval on the score |
+| `p_value` | number or null | step 12; null under time order, and when `skill` is null |
 | `n_permutations` | integer or null | shuffles used; null when there is no p-value |
 | `p_value_reason` | string or null | why there is no p-value |
 
 **`baselines`**: a list of records `{name, score, used}`. Classification: one,
 `chance`. Regression: `training_mean`, and under time order with unique
 timestamps also `previous_value`. Exactly one has `used` true and it is the
-headline baseline.
+headline baseline. A score of 0 is reported as it was measured.
 
 **`cv`**
 
@@ -791,11 +944,11 @@ headline baseline.
 | `config` | string | `<family>-<index>` |
 | `family` | string | |
 | `params` | object | the grid arguments of this configuration |
-| `status` | string | `fitted` or `failed` |
+| `status` | string | `fitted` or `failed`: failed when it raised during selection (step 9) or after it was chosen (step 10) |
 | `error` | string or null | the error text of a failed configuration |
-| `fold_scores` | list | five entries, a number or null (fold not scored, or failed) |
-| `cv_mean` | number or null | mean of the scored folds |
-| `cv_std` | number or null | their sample standard deviation; null with fewer than two |
+| `fold_scores` | list | five entries, a number or null. Null where the fold was not scored; all five null for a configuration that failed during selection. One that failed after it was chosen keeps the scores it had (D38) |
+| `cv_mean` | number or null | mean of the scored folds; null for a configuration that failed during selection |
+| `cv_std` | number or null | their sample standard deviation; null with fewer than two, and for a configuration that failed during selection |
 | `chosen` | boolean | true for exactly one, which has status `fitted` |
 
 **`warnings`**: a list of records `{code, column, message}` (2.5). May be empty.
@@ -810,7 +963,8 @@ headline baseline.
 3. `predictions.csv` has one row per holdout row, and each `y_true` equals the
    target of that row in the source.
 4. `headline.score` equals the metric recomputed from `predictions.csv`;
-   `headline.skill` follows from it and the baseline as in step 11.
+   `headline.skill` follows from it and the baseline as in step 11, and is
+   null when the baseline's score is 0.
 5. Every part of `ProfileResult` equals the matching part of `profile.json`.
 6. The same seed gives an identical `profile.json` and `predictions.csv`, apart
    from `meta.timing` (and `meta.n_jobs` when `n_jobs` differs).
@@ -841,7 +995,23 @@ order, on every run whatever its scheme or task (8 is D27, 9 is D29):
 **A CSV path** is read with `pandas.read_csv(path, low_memory=False)` and no
 other argument. Consequences, all measured on pandas 3.1.1 (section 9):
 
-- Blank lines are not rows. A line of only commas is a row of missing values.
+- Blank lines are not rows. A blank line is one that is empty or holds only
+  spaces and tabs: that is what pandas skips, between rows and before the
+  header alike. A line of only commas is a row of missing values.
+- **The header is the first line that is not blank (D39).** Leading blank
+  lines are skipped when the header is read, as pandas skips them, so the tool
+  and pandas agree on which line is the header. Any other first line is
+  content, to pandas and to the tool: a line of two quotes, or of white space
+  other than spaces and tabs (a form feed, a no-break space), is read as a
+  header of one column. In a table of two columns or more the lines after it,
+  the real header among them, then have more fields than the header:
+  `input_error`, by the rule below.
+- **A file that is not valid UTF-8 is an `input_error` wherever the first bad
+  byte sits (D39):** in the header line, in the first data row, deep in a
+  large file or in its last cell. An optional byte-order mark is ignored.
+  pandas reads a file in pieces and an implementation that reads the header
+  line itself meets a bad byte there first; every route ends in the same
+  named error and none in a bare `UnicodeDecodeError`.
 - The missing-value spellings of 4.4 load as missing. The tool cannot see what
   was written, so they are counted in `n_missing`, never in `n_coerced`.
 - A cell such as `1,200` or `abc` in an otherwise numeric column makes the whole
@@ -855,10 +1025,14 @@ other argument. Consequences, all measured on pandas 3.1.1 (section 9):
   passes a DataFrame.
 - **Duplicate column names stop the run** with `duplicate_columns`. pandas
   renames them silently (`a`, `a.1`), so the tool reads the header line itself
-  (the first non-blank line, UTF-8, an optional byte-order mark ignored) and
-  compares the names before loading.
+  (the first line that is not blank, UTF-8, an optional byte-order mark
+  ignored) and compares the names before loading.
 - A blank header cell is kept under pandas' name (`Unnamed: 3`) with a
-  `blank_header` warning.
+  `blank_header` warning. Blank means empty. **A header cell that holds only
+  white space is a name like any other (D42):** it is kept as it is written,
+  with no warning, and two such cells of the same text are two columns of the
+  same name, which stops the run with `duplicate_columns`. Names are compared
+  as they are written: one space and two spaces are two names.
 - Data rows with more fields than the header are an `input_error`. pandas does
   not report them when the first data row is the long one: it makes an index of
   the leading fields of every row and gives the header's names to the fields
@@ -902,7 +1076,11 @@ None is skipped silently: each raises a named error or is reported in the output
 | the target has one distinct value | `target_constant` |
 | a declared task the target does not support | `task_unsupported` |
 | an ambiguous target under `task="auto"` | `task_ambiguous` |
-| no usable feature column | `no_features` |
+| no usable feature column | `no_features`; the message names each excluded column and its reason |
+| two features that would give the preprocessed matrix one name (`colour=red` beside `colour` with the level `red`) | `feature_name_collision`, naming the columns, before any fit |
+| an output folder that cannot be used (the path, or a folder above it, is a file) | `input_error`, before anything is loaded |
+| a CSV that is not valid UTF-8, wherever the bad byte sits | `input_error` |
+| blank lines (empty, or only spaces and tabs) before the header of a CSV | skipped, as pandas skips them; the header is the first line that is not blank |
 | too few rows to split (fewer than 100 usable, or fewer than 10 of a class) | `too_few_rows` |
 | a holdout, or the training rows, with one class | `one_class` |
 | a fold with one class | that fold is not scored; `fold_not_scored` warning; `validation.folds[].scored` false; `fold_scores` null there. No fold scored: `one_class` |
@@ -910,13 +1088,20 @@ None is skipped silently: each raises a named error or is reported in the output
 | a gap that leaves no training rows | `gap_too_large` |
 | too few timestamps for the holdout and six blocks | `too_few_rows` |
 | the fast profile on a panel too wide for its row cap | `fast_profile_too_few_timestamps` |
-| duplicate column names | `duplicate_columns` |
-| a blank header | kept under pandas' name; `blank_header` warning |
+| duplicate column names, two header cells of the same white space among them | `duplicate_columns` |
+| a blank header (an empty cell) | kept under pandas' name; `blank_header` warning |
+| a header cell that holds only white space | a name like any other: kept as written, no warning |
+| a categorical cell written with white space round it (`red `) | the same level as without it, in the counts, the leak screen and the matrix |
 | too few holdout timestamps for the block bootstrap (fewer than 30) | interval fields null; `interval_reason`; `no_interval` warning |
 | an interval from the block bootstrap (time order, 30 holdout timestamps or more) | reported, with the `interval_approximate` warning |
 | negative skill | reported as measured, never clipped; sentence 9 of the limitations says how to read it |
-| a model configuration that raises | status `failed`, error text kept, `model_failed` warning |
-| every configuration failing | `all_models_failed` |
+| a regression baseline whose squared error on the holdout is exactly zero (a target flat across the holdout, under time order; a training mean that is the value of every holdout row, under the random scheme) | `headline.skill`, `skill_low` and `skill_high` null; one `skill_undefined` warning; the score, its interval and every baseline reported; no p-value, with a reason. Never an error, an infinity or a zero |
+| a resample whose baseline error is zero | kept in the interval on the score, left out of the interval on skill; `n_resamples_skill_used` is the number kept for skill |
+| skill that has a value and no interval (fewer than half of the resamples kept for skill, with the score's interval standing) | `skill_low` and `skill_high` null; one `no_skill_interval` warning |
+| a feature whose single-column skill cannot be computed (a zero baseline error over the screen's pooled rows) | stays a feature; no `suspected_leak`, no `strong_single_column` |
+| a model configuration that raises during selection | status `failed`, error text kept, all fold scores null, `model_failed` warning |
+| the chosen configuration raising on the final fit or on the holdout | status `failed`, error text and fold scores kept, `model_failed` warning; the next best by `cv_mean` is chosen |
+| every configuration failing, during selection or after | `all_models_failed` |
 | infinite values in a feature | read as missing, counted in `n_infinite`, `infinite_values` warning |
 | a text column written mostly as numbers with thousands separators | never parsed; excluded with reason `numeric_with_separators`; `numeric_with_separators` warning |
 | a column of plain numbers with one cell or a few written with thousands separators | the same: excluded with reason `numeric_with_separators` and its warning, not read as numeric (D34) |
@@ -938,14 +1123,35 @@ Each keeps its id through the gate, the tests and the review.
 
 | Id | The silent failure | Judged by |
 |---|---|---|
-| F1 | A fitted step sees the holdout: the model refitted on all rows before scoring (large), or an imputer, encoder, scaler or the leak screen fitted before the split (small). | Gate: `model.noise_clf`, `model.noise_reg`, `model.noise_p_value` (large form). Tests: recording fakes through the seam (both forms, exactly). |
+| F1 | A fitted step sees the holdout: the model refitted on all rows before scoring (large), or an imputer, encoder, scaler or the leak screen fitted before the split (small). | Gate: `model.noise_clf`, `model.noise_reg`, `model.noise_p_value` (large form). Tests: recording fakes through the seam, for the model and for a step the seam supplies (exactly); for the built-in preprocessing and the leak screen, which the seam cannot see inside, the guard tests of the table below. |
 | F2 | A column that copies the target, or is only filled in after the outcome, is used as a feature. | Gate: `leak.excluded`, `leak.regression`, and `leak.near_leak_warned` (a build with no leak screen has no warning tier either, D30). Tests: the leak rule and its warning tier on crafted columns. |
 | F3 | The headline is the best cross-validation score, not the holdout score. | Gate: `model.headline_recomputed`, `model.selection_full`. Tests: a fake family whose fold scores and holdout score differ by construction. |
 | F4 | Accuracy is the headline on a rare class. | Gate: `model.metric_clf`, `model.headline_recomputed`. Tests: metrics by hand. |
 | F5 | The task is misread from the column's type. | Gate: `task.binary_numeric`, `task.ambiguous_stops`. Tests: the rule on every loaded shape. |
 | F6 | Something is lost without being reported: rows, a column, a model family. | Gate: `data.rows_reconcile`, `data.columns_accounted`, `data.coercion_reported`, `data.long_rows_stop`, `models.all_accounted`. Tests: accounting on crafted tables; a family that raises. |
 | F7 | Time order is ignored: a shuffled split, a training row at or after the holdout, the gap not applied, or the time column misread. | Gate: `time.order_respected`, `time.no_skill_on_blocks`, `time.gap_applied`, `time.dayfirst_stops`. Tests: the split as a function of keys. |
-| F8 | Under time order a trending or random-walk target is scored against the training mean only. | Gate: `time.persistence_baseline`. Tests: baselines by hand. |
+| F8 | Under time order a trending or random-walk target is scored against the training mean only. | Gate: `time.persistence_baseline`. Tests: baselines by hand. One gate check and one test catch it; that is accepted (D43). |
+
+### 8.1 Small faults the gate cannot see (D39)
+
+The first review found five faults that a build could carry while passing
+every gate check and all 308 tests of the first suite. Three are small forms of
+F1. None moves a score on the gate's datasets by enough to leave a band, so no
+gate check names them: each is caught by a test, and each test is proved by
+running it against a copy of the reference implementation that carries that
+one fault (`verify/mutation_check.py`; the switch is in the reference's
+`_variant.py`).
+
+| Id | The fault | Caught by (`tests/`) |
+|---|---|---|
+| M1 | The final fit's imputation and scaling statistics are learned from training and holdout rows together. | `test_guard_final_fit.py::test_m1_final_fit_statistics_ignore_the_holdout` |
+| M2 | One-hot levels are learned from every row of the table in every fit. | `test_guard_final_fit.py::test_m2_levels_come_from_the_rows_of_each_fit` |
+| M3 | The leak screen's trees are fitted on rows that include the holdout, and its missing-by-class rule counts every row. | `test_guard_leak_screen.py::test_m3_single_column_skill_is_fitted_on_fold_training_rows_only`, `::test_m3_missing_by_class_counts_training_rows_only` |
+| M4 | The block bootstrap draws timestamps independently and still reports `bootstrap_blocks`. | `test_guard_uncertainty.py::test_m4_block_bootstrap_draws_whole_blocks` |
+| M5 | The permutation p-value counts shuffles strictly greater than the observed skill. | `test_guard_uncertainty.py::test_m5_ties_count_in_the_p_value`, for classification only: for regression a tie is a tie only up to rounding (D43) |
+
+The gate goes on catching the large forms; the fake goes on catching, exactly,
+a model or a seam-supplied step that is handed a row it must not see.
 
 ---
 
@@ -976,9 +1182,13 @@ threads, 192 GB. Default pools: OpenMP 64 threads, OpenBLAS 24.
 | `inf` | float infinity | reachable from a CSV |
 | duplicate header names | renamed `a`, `a.1` | silent: read the header line yourself |
 | blank header | `Unnamed: 3` | |
+| a header cell of only spaces | kept as the name `' '`; a second one is renamed `' .1'` | silent, like any duplicate name: such a cell is a name, not a blank (D42) |
+| a text cell written ` red` or `red ` | text, with its spaces | pandas keeps them, so `red` and `red ` are two values until the tool strips them (D42) |
 | blank lines | skipped | rows are not lines minus one |
 | every data row one field longer than the header | the first field of each row becomes the index and the names go to the fields after it. The index is a `RangeIndex` when that field is evenly spaced whole numbers (1, 2, 3; 1, 4, 7; 3, 2, 1) and an `Index` otherwise (1, 4, 9; text; 0.5, 1.0, 1.5; a single row) | silent, with no error and no warning. **The index cannot be used to detect it:** a `RangeIndex` is what a well-formed file gives, and row numbers from 0 give the default index exactly. A leading row number is lost; a trailing extra field puts every name over its neighbour's values |
 | a row longer than the first data row | `ParserError` | the first data row is the only long row pandas reads silently; a line of only spaces or tabs before it is skipped like a blank line |
+| lines before the header (measured 2026-11-17) | an empty line and a line of only spaces and tabs are skipped. A line of a form feed, a vertical tab, a no-break space, an em space, two quotes or a quoted space is read as a header of one column; a line of only commas as a header of blank names | Python's `str.strip()` calls all of the first four white space, and pandas only spaces and tabs: a loader that strips with the default would take a different line for the header than pandas does |
+| a byte that is not valid UTF-8 | `UnicodeDecodeError` from `read_csv`, when it reaches the byte | a loader that reads the header line itself meets a bad byte in the first few kilobytes before pandas does, outside any handler written around `read_csv` |
 
 **Other traps.**
 
@@ -1091,6 +1301,19 @@ from the reference's still lands inside. All bands are on `headline.skill`.
 `leak.near_leak_warned` asserts no score: on `near_leak` the headline is the
 near-copy itself (0.969 to 1.000 over 30 seeds, against 0.672 to 0.801 on
 `signal_clf`), which is what its warning is for. Its margins are in 10.2.
+
+`time.flat_holdout_reported` (D36, added 2026-11-17) asserts no band either,
+since on `flat_tail` there is no skill to put in one. It recomputes both
+baselines from the source (the previous value scores exactly 0, the training
+mean about 300) and the score from `predictions.csv`, and requires a null
+`skill`, one `skill_undefined` warning, an interval on the score that holds
+the score, and 200 resamples used for the score against none for skill. The
+reference as it stood before D36 failed it with a `skill` of 0.0, and the
+first build with a `ZeroDivisionError`. Adding the dataset last moved nothing
+else: between the two states of the judge, at the gate's seed, 18 datasets, 30
+checks, 92 recorded values and every number of 23 runs are identical; what
+differs in those runs is the text of the console summary and one new key,
+`headline.n_resamples_skill_used` (`docs/measurements/CP3`).
 
 **Re-measured on 2026-11-16, for D27 to D30 and again for D34.** The 30 data
 seeds of the first measurement were not recorded, and 22 likely schemes failed
@@ -1265,7 +1488,21 @@ The builder decides these, and no test may pin them:
   are the contract, not the row numbers. (Within one implementation,
   `profile()` and `stages.split_random` must agree: 2.7.);
 - the wording of every warning `message`, every error message, the console
-  summary and `interval_reason` / `p_value_reason` (their presence is pinned);
+  summary and `interval_reason` / `p_value_reason` (their presence is pinned).
+  What a message must name is pinned in three places and nowhere else: the
+  excluded columns and their reasons in `no_features` (2.4), the columns
+  involved in `feature_name_collision` (step 5), and what the console summary
+  shows (2.2);
+- whether the preprocessing of the final fit is fitted again for a
+  configuration tried after another one failed (step 10): each such try gets
+  a fresh estimator, and that is all that is pinned;
+- what `stages.skill("roc_auc", ...)` does with a baseline of 1, which no run
+  can produce;
+- how close two skills must be to count as a tie in the regression p-value
+  (step 12; D43);
+- what `stages.Preprocessor` does with white space round a level in a frame
+  handed to it directly. `profile()` strips before the preprocessing sees a
+  cell (step 5; D42), and that is what is pinned;
 - the floating-point type of the preprocessed matrix (its columns and their
   names are pinned by `stages.Preprocessor`, 2.7);
 - extra keys in `profile.json` beyond those of section 5 (allowed anywhere
@@ -1277,9 +1514,12 @@ The builder decides these, and no test may pin them:
   feature.
 
 Pinned, despite looking like detail: the estimators and grids of 4.1, the
-pattern of step 5 for a number with thousands separators, the preprocessing of
-step 8, the single-column screen of step 8 and both of its cut-offs, the
-percentile and block rules of step 12, the fixed texts of 5.4.
+pattern of step 5 for a number with thousands separators, which rows' levels
+decide a name collision (step 5), the preprocessing of step 8, the
+single-column screen of step 8 and both of its cut-offs, the order in which
+configurations are tried after selection (step 10), the percentile and block
+rules of step 12 and which resamples each interval keeps, that a tie counts in
+the p-value, the fixed texts of 5.4.
 
 Not judged by any test or gate check, and left to a human: whether the
 limitations read well, whether the console summary is clear, whether a skill
@@ -1325,4 +1565,12 @@ figure on real data is believable.
 | D32 venv base path | 9 |
 | D33 warning cut-off approved; three limits accepted | 2.5, 3 (steps 5, 8), 4.3, 10.1, 10.2 |
 | D34 a partly formatted numeric column is excluded | 2.5, 3 (step 5, rule 4a), 4.3, 6, 7, 10.2 |
-| D35 measurements kept in the repo | 10, 10.1; `docs/measurements/CP1/` |
+| D35 measurements kept in the repo | 10, 10.1; `docs/measurements/CP1/`, `CP2/`, `CP3/` |
+| D36 skill when the baseline's error is zero | 2.5, 2.7 (`skill`), 3 (steps 8, 11, 12), 5.2, 5.3, 7, 10.1; the part about resamples is refined by D40 |
+| D37 colliding feature names stop the run | 2.4, 2.7 (`Preprocessor`), 3 (step 5), 7, 11 |
+| D38 a configuration that fails after it has been chosen | 2.4, 2.5, 2.6, 3 (steps 9, 10, 11), 5.2, 7, 11 |
+| D39 first review accepted | (1) the five test holes: 2.6, 8, 8.1; `verify/mutation_check.py`. (2) the output folder: 2.1, 2.4, 7. (3) process settings: 2.1. (4) the no-features message: 2.4, 3 (step 8), 7. (5) the console summary: 2.2, 11. (6) UTF-8 and leading blank lines: 2.4, 3 (step 1), 6, 7, 9. (7) the built library timed and compared: not in this spec; `docs/measurements/CP3/` |
+| D40 the score interval is kept when skill is undefined | 3 (step 12), 5.2 (`n_resamples_skill_used`), 7, 10.1 |
+| D41 README examples use a table kept in the repo | 1; `examples/customers.csv` |
+| D42 three small rulings | (1) `no_skill_interval`: 2.2, 2.5, 3 (step 12), 5.2, 7. (2) white space is not part of a level: 2.6, 3 (steps 5, 8), 7, 9, 11. (3) a header cell of white space is a name: 2.4, 2.5, 6, 7, 9 |
+| D43 limits accepted after CP3 | (1) the p-value's tie in regression: 3 (step 12), 8.1, 11. (2) F8: 8. (3) fold scores lost by a failure during selection: 3 (step 9). (4) a collision outside the rows or columns used: 3 (step 5). (5) undefined skill under the random scheme: 3 (step 11) |

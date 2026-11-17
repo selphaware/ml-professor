@@ -428,3 +428,65 @@ Alternatives considered: widening those bands (rejected: a band changes only
 when it was measured wrong, and the gate judges one fixed seed).
 Consequence: every band can be re-measured from the repo. The first harness
 session's seeds were not recorded and are not recoverable.
+
+## D36 — 2026-11-17 — Skill when the baseline's error is zero
+Decision: When a baseline's squared error on the rows being scored is exactly
+zero, skill cannot be computed and is reported as empty (`null`), never as an
+error, an infinity or a zero. On the headline this comes with a warning that
+states the reason; the score, both baselines and the rest of the output are
+reported as usual and the run completes. The same rule holds everywhere skill
+is computed: a bootstrap resample with a zero baseline is left out and
+counted, and a single-column skill that cannot be computed flags no column.
+Alternatives considered: stopping with a named error (rejected: it throws
+away a valid row and column accounting); the crash found by the first review
+(a `ZeroDivisionError` on a regression target that is flat across the
+holdout under time order).
+Consequence: a flat holdout gives a result that says plainly that skill could
+not be measured on it.
+
+## D37 — 2026-11-17 — Colliding feature names stop the run
+Decision: The preprocessed matrix names a numeric column by its own name and
+a categorical level as `<column>=<level>`. If two of those names would be the
+same, the run stops with a named error that names the columns involved,
+before any model is fitted.
+Alternatives considered: renaming one of them silently (rejected: the first
+review found the silent form, in which a numeric column named `c=red` was
+overwritten, reached no model and was still listed as a feature).
+Consequence: the caller renames a column. Every feature listed in the output
+has reached the models.
+
+## D38 — 2026-11-17 — A configuration that fails after it has been chosen
+Decision: If the chosen configuration raises on the final fit or while
+predicting the holdout, it is marked failed with its error text, keeps its
+fold scores in the models table, and a warning is raised. The next best
+configuration by mean cross-validation score is then chosen, and so on. If
+none succeeds the run stops with the existing all-models-failed error. The
+headline comes from exactly one configuration; one that failed contributes no
+score.
+Alternatives considered: stopping at once (rejected: one fragile
+configuration would cost the whole run); erasing the failed configuration's
+fold scores, as the first build did (rejected: the table would then
+misreport what was tried).
+Consequence: the holdout plays no part in the choice, so the headline is not
+inflated by the fallback.
+
+## D39 — 2026-11-17 — First review of phase 1: findings accepted
+Decision: The first review (`docs\reviews\phase1-review-1.md`, verdict FIX
+FIRST) is accepted in full. Beside D36 to D38: (1) the five test holes it
+found are closed, each with a deliberately broken copy of the reference that
+proves the new test fails: preprocessing statistics fitted on holdout rows,
+category levels learned from every row, the leak screen using holdout rows,
+a block bootstrap that draws timestamps independently, and a strict
+inequality in the p-value. (2) An unusable output folder is an input error
+raised before any work. (3) The tool leaves the caller's process settings as
+it found them. (4) The no-features error names the excluded columns and
+their reasons. (5) The console summary prints the interval, the p-value and
+one line per warning. (6) A CSV that is not valid UTF-8 is an input error
+wherever the bad byte sits, and leading lines of only white space are
+skipped as pandas skips them. (7) The built library, not only the reference,
+is timed once at 100,000 by 100 and compared at 1 and 64 cores.
+Alternatives considered: shipping on the strength of the passing gate and
+suite (rejected: three of the holes are small forms of F1, the failure the
+tool exists to prevent, and nothing would catch a later regression).
+Consequence: a third change prompt (CP3), new test files beside the existing
+17, new build tasks, and a second review.

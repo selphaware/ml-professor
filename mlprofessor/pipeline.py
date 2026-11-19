@@ -16,7 +16,7 @@ from threadpoolctl import threadpool_limits
 from mlprofessor import errors, extensions, leakage, metrics, models, uncertainty
 from mlprofessor.columns import column_roles, numeric_values, parse_numbers, stripped_text, type_family
 from mlprofessor.load import load_table, usable_rows
-from mlprofessor.preprocess import MISSING_LEVEL, Preprocessor
+from mlprofessor.preprocess import MISSING_LEVEL, Preprocessor, check_feature_names
 from mlprofessor.result import LIMITATIONS, RANDOM_CAVEAT, ROWS_ITEMS, ProfileResult
 from mlprofessor.split import N_FOLDS, read_time, split_random, split_time
 from mlprofessor.task import TASKS, decide_task
@@ -71,6 +71,27 @@ def check_arguments(data, target, task, time_col, gap, profile, seed, out_dir, n
     if not _is_whole(n_jobs) or not (n_jobs == -1 or n_jobs >= 1):
         raise errors.InputError(
             f"n_jobs must be -1 (every core) or a positive whole number; got {n_jobs!r}.")
+    if out_dir is not None:
+        _check_out_dir(os.fspath(out_dir))
+
+
+def _check_out_dir(path):
+    """The path, or the nearest folder above it that exists, must be a folder."""
+    probe = os.path.abspath(path)
+    while not os.path.lexists(probe):
+        parent = os.path.dirname(probe)
+        if parent == probe:
+            return
+        probe = parent
+    if not os.path.isdir(probe):
+        raise errors.InputError(
+            f"out_dir {path!r} cannot be used: {probe!r} exists and is not a folder.")
+
+
+def _excluded_text(roles):
+    """Each excluded column with its reason, as `columns[].reason` spells it."""
+    return "; ".join(f"{r['name']} ({r['reason']})"
+                     for r in roles.to_dict(orient="records") if r["role"] == "excluded")
 
 
 def resolve_n_jobs(n_jobs):
@@ -334,8 +355,11 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs):
     features, kinds, feature_missing = build_features(frame, roles)
     if not kinds:
         raise errors.NoFeaturesError(
-            "No column can be used as a feature; see the column accounting for why "
-            "each was excluded.")
+            "No column can be used as a feature. Excluded: " + _excluded_text(roles) + ".")
+    usable_features = features.iloc[usable]
+    check_feature_names(kinds, {
+        name: sorted(set(usable_features[name]))
+        for name, kind in kinds.items() if kind == "categorical"})
 
     # Step 6: the fast profile's row cap.
     if time_ordered:
@@ -423,8 +447,8 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs):
                 "before the outcome."))
     if not kinds:
         raise errors.NoFeaturesError(
-            "No feature is left after the leak screen; see the column accounting for why "
-            "each column was excluded.")
+            "No feature is left after the leak screen. Excluded: "
+            + _excluded_text(roles) + ".")
     features = features[list(kinds)]
 
     # Step 9: select by five folds inside the training rows.
@@ -443,9 +467,8 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs):
         except errors.ProfileError:
             raise
         except Exception as exc:
-            model_records[index].update(status="failed", error=_error_text(exc),
-                                        fold_scores=[None] * N_FOLDS, cv_mean=None,
-                                        cv_std=None)
+            # Failing after the choice keeps the fold scores it was chosen on.
+            model_records[index].update(status="failed", error=_error_text(exc))
             continue
         chosen_index = index
         break
@@ -499,6 +522,13 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs):
         "baseline_score": float(baseline["score"]),
         "skill": metrics.skill(metric, score, baseline["score"]),
     }
+    if headline["skill"] is None:
+        warnings.append(_warning(
+            "skill_undefined", None,
+            f"Skill has no value: the {baseline['name']} baseline predicts every holdout row "
+            "exactly (squared error 0), so 1 - score / baseline score is undefined. The score "
+            "and every baseline are reported as measured; there is no interval on skill and "
+            "no p-value."))
 
     # Step 12: the interval and the p-value, from the holdout predictions alone.
     spread, spread_warnings = uncertainty.headline_uncertainty(

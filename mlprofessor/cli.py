@@ -60,9 +60,13 @@ def _number(value):
 
 
 def _summary(document, out_dir):
-    """A few plain lines: the task, the rows, the headline and the files written."""
+    """Plain lines: the task, the rows, the headline, its spread, each warning, the files."""
     headline = document["headline"]
     rows = {record["item"]: record["count"] for record in document["rows"]}
+    if headline["skill"] is None:
+        skill_text = "none (see skill_undefined)"
+    else:
+        skill_text = _number(headline["skill"])
     lines = [
         f"task: {document['task']['type']} ({document['task']['decided_by']}), "
         f"scheme: {document['validation']['scheme']}",
@@ -70,8 +74,29 @@ def _summary(document, out_dir):
         f"{rows['holdout']} holdout",
         f"headline: {headline['metric']} {_number(headline['score'])} with "
         f"{headline['model']}; baseline {headline['baseline']} "
-        f"{_number(headline['baseline_score'])}; skill {_number(headline['skill'])}",
-        f"warnings: {len(document['warnings'])}",
-        f"wrote profile.json and predictions.csv to {out_dir}",
+        f"{_number(headline['baseline_score'])}; skill {skill_text}",
     ]
+    if headline["interval_method"] is None:
+        lines.append(f"interval: none: {headline['interval_reason']}")
+    else:
+        level = f"{100 * headline['interval_level']:g}%"
+        lines.append(
+            f"interval ({level}, {headline['interval_method']}): score "
+            f"{_number(headline['interval_low'])} to {_number(headline['interval_high'])}")
+        if headline["skill_low"] is None:
+            lines.append("interval on skill: none (see the warnings)")
+        else:
+            lines.append(f"interval on skill: {_number(headline['skill_low'])} to "
+                         f"{_number(headline['skill_high'])}")
+    if headline["p_value"] is None:
+        lines.append(f"p-value: none: {headline['p_value_reason']}")
+    else:
+        lines.append(f"p-value: {_number(headline['p_value'])} "
+                     f"({headline['n_permutations']} shuffles)")
+    lines.append(f"warnings: {len(document['warnings'])}")
+    for warning in document["warnings"]:
+        where = f" [{warning['column']}]" if warning["column"] is not None else ""
+        message = " ".join(str(warning["message"]).split())
+        lines.append(f"  {warning['code']}{where}: {message}")
+    lines.append(f"wrote profile.json and predictions.csv to {out_dir}")
     return "\n".join(lines)

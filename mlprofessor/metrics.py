@@ -51,10 +51,15 @@ def mse(y, pred):
 
 
 def skill(metric, score, baseline_score):
-    """Skill over the baseline: 0 at the baseline, 1 at perfect, may be negative."""
+    """Skill over the baseline: 0 at the baseline, 1 at perfect, may be negative.
+
+    For `mse`, None when the baseline's error is exactly zero: skill has no value.
+    """
     if metric == "roc_auc":
         return float((score - baseline_score) / (1.0 - baseline_score))
     if metric == "mse":
+        if baseline_score == 0:
+            return None
         return float(1.0 - score / baseline_score)
     raise ValueError(f"unknown metric {metric!r}; expected one of {METRICS}")
 

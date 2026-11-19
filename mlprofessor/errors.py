@@ -55,5 +55,9 @@ class OneClassError(ProfileError):
     code = "one_class"
 
 
+class FeatureNameCollisionError(ProfileError):
+    code = "feature_name_collision"
+
+
 class AllModelsFailedError(ProfileError):
     code = "all_models_failed"

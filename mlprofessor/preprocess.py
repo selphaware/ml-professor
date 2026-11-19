@@ -10,6 +10,8 @@ in sorted order; any other level is all zeros.
 import numpy as np
 import pandas as pd
 
+from .errors import FeatureNameCollisionError
+
 MISSING_LEVEL = "(missing)"
 MAX_LEVELS = 30
 
@@ -34,6 +36,30 @@ def kept_levels(levels):
     counts = pd.Series(levels, dtype=object).value_counts(sort=False)
     ranked = sorted(counts.items(), key=lambda item: (-item[1], item[0]))
     return sorted(level for level, _ in ranked[:MAX_LEVELS])
+
+
+def check_feature_names(kinds, levels_by_column):
+    """Raise when two matrix columns would share a name.
+
+    `levels_by_column` maps each categorical column to the levels that name
+    matrix columns.
+    """
+    owners = {}
+    for col, kind in kinds.items():
+        if kind == "numeric":
+            owners.setdefault(col, []).append(col)
+        else:
+            for level in levels_by_column[col]:
+                owners.setdefault(f"{col}={level}", []).append(col)
+    clashes = {name: cols for name, cols in owners.items() if len(cols) > 1}
+    if clashes:
+        involved = sorted({col for cols in clashes.values() for col in cols},
+                          key=list(kinds).index)
+        names = ", ".join(repr(name) for name in clashes)
+        raise FeatureNameCollisionError(
+            f"Feature names must be distinct; {names} would be given by more than one "
+            f"column. Columns involved: {', '.join(repr(c) for c in involved)}. "
+            "Rename one of them.")
 
 
 class Preprocessor:
@@ -65,6 +91,7 @@ class Preprocessor:
             self.scales[col] = deviation if deviation > 0 and np.isfinite(deviation) else 1.0
         for col in self.categorical_cols:
             self.levels[col] = kept_levels(level_values(frame[col]))
+        check_feature_names(self.kinds, self.levels)
         return self
 
     def transform(self, frame):

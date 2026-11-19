@@ -61,6 +61,7 @@ def single_column_skill(values, kind, y, folds, scored, task_type, seed, previou
     `previous`, when given (regression, time order, unique timestamps), holds
     for every row position the previous-value baseline; the baseline used is
     whichever of it and each fold's training mean has the lower pooled error.
+    None when that baseline's pooled error is exactly zero: skill has no value.
     """
     y = np.asarray(y)
     truth, predicted, mean_base, previous_base = [], [], [], []
@@ -92,8 +93,6 @@ def single_column_skill(values, kind, y, folds, scored, task_type, seed, previou
         previous_pred = np.concatenate(previous_base)
         if np.all(np.isfinite(previous_pred)):
             baseline_error = min(baseline_error, metrics.mse(truth, previous_pred))
-    if baseline_error == 0.0:
-        return float("-inf")
     return metrics.skill("mse", metrics.mse(truth, predicted), baseline_error)
 
 
@@ -115,6 +114,10 @@ def screen(features, kinds, missing, y, training_rows, folds, scored, task_type,
         values = features[name].to_numpy()
         skill = single_column_skill(values, kind, y, folds, scored, task_type, seed,
                                     previous=previous)
+        if skill is None:
+            # The baseline is exact on the pooled rows: no skill, so no rule applies.
+            records.append(record)
+            continue
         record["skill"] = float(skill)
         if skill >= LEAK_SKILL:
             record["leak_rule"] = "predicts_target"

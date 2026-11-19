@@ -84,7 +84,14 @@ def _check_csv_shape(path):
     Raises on an empty file, on duplicate header names and on any data row
     with more fields than the header.
     """
-    csv.field_size_limit(_CSV_FIELD_LIMIT)
+    callers_limit = csv.field_size_limit(_CSV_FIELD_LIMIT)
+    try:
+        return _read_header(path)
+    finally:
+        csv.field_size_limit(callers_limit)
+
+
+def _read_header(path):
     header = None
     try:
         with open(path, "r", encoding="utf-8-sig", newline="") as handle:

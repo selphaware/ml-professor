@@ -23,6 +23,9 @@ _PERMUTATION_STREAM = 3
 P_VALUE_REASON_TIME = (
     "No p-value under time order: shuffling the holdout targets assumes the rows are "
     "independent, and rows in time order are not.")
+P_VALUE_REASON_NO_SKILL = (
+    "No p-value: the baseline predicts every holdout row exactly, so skill has no value "
+    "and there is nothing to compare the shuffled targets with.")
 
 
 def _stream(seed, purpose):
@@ -65,7 +68,11 @@ class _HoldoutScorer:
             self.base_error = (y - self.baseline_pred) ** 2
 
     def score_and_skill(self, weights):
-        """(score, skill) under `weights`, or None when the score cannot be computed."""
+        """(score, skill) under `weights`, or None when the score cannot be computed.
+
+        Skill is None when only it cannot be computed: the baseline is exact on
+        the rows drawn.
+        """
         if self.metric == "roc_auc":
             pos = np.bincount(self.group, weights=weights * self.positive,
                               minlength=self.n_groups)
@@ -82,8 +89,6 @@ class _HoldoutScorer:
             return None
         score = float((weights * self.model_error).sum() / total)
         base = float((weights * self.base_error).sum() / total)
-        if base == 0:
-            return None
         return score, metrics.skill("mse", score, base)
 
 
@@ -115,7 +120,7 @@ def _p_value(metric, y, pred, baseline_pred, observed_skill, n_shuffles, rng):
     for _ in range(n_shuffles):
         scorer.set_targets(y[rng.permutation(len(y))])
         result = scorer.score_and_skill(ones)
-        if result is not None and result[1] >= observed_skill - tolerance:
+        if result is not None and result[1] is not None                 and result[1] >= observed_skill - tolerance:
             at_least += 1
     return (1 + at_least) / (1 + n_shuffles)
 
@@ -136,7 +141,8 @@ def headline_uncertainty(metric, y, pred, baseline_pred, skill, profile, seed,
     fields = {
         "interval_method": None, "interval_level": INTERVAL_LEVEL,
         "interval_low": None, "interval_high": None, "skill_low": None, "skill_high": None,
-        "n_resamples": n_resamples, "n_resamples_used": 0, "block_length": None,
+        "n_resamples": n_resamples, "n_resamples_used": 0, "n_resamples_skill_used": 0,
+        "block_length": None,
         "interval_reason": None, "p_value": None, "n_permutations": None,
         "p_value_reason": None,
     }
@@ -167,8 +173,10 @@ def headline_uncertainty(metric, y, pred, baseline_pred, skill, profile, seed,
             result = scorer.score_and_skill(draw())
             if result is not None:
                 scores.append(result[0])
-                skills.append(result[1])
+                if result[1] is not None:
+                    skills.append(result[1])
         fields["n_resamples_used"] = len(scores)
+        fields["n_resamples_skill_used"] = len(skills)
         if 2 * len(scores) < n_resamples:
             fields["block_length"] = None
             fields["interval_reason"] = (
@@ -177,7 +185,15 @@ def headline_uncertainty(metric, y, pred, baseline_pred, skill, profile, seed,
         else:
             fields["interval_method"] = method
             fields["interval_low"], fields["interval_high"] = _percentiles(scores)
-            fields["skill_low"], fields["skill_high"] = _percentiles(skills)
+            if 2 * len(skills) >= n_resamples:
+                fields["skill_low"], fields["skill_high"] = _percentiles(skills)
+            elif skill is not None:
+                # A null headline skill is covered by its own warning (step 11).
+                warnings.append((
+                    "no_skill_interval",
+                    f"No interval on skill: it could be computed in {len(skills)} of "
+                    f"{n_resamples} resamples (in the others the baseline is exact on every "
+                    "row drawn); at least half are needed. The interval on the score stands."))
 
     if fields["interval_method"] is None:
         warnings.append(("no_interval", "No interval: " + fields["interval_reason"]))
@@ -188,7 +204,10 @@ def headline_uncertainty(metric, y, pred, baseline_pred, skill, profile, seed,
             "it tends to be too narrow, more so on a short holdout or when errors are "
             "serially correlated."))
 
-    if holdout_keys is None:
+    if skill is None:
+        if holdout_keys is None:
+            fields["p_value_reason"] = P_VALUE_REASON_NO_SKILL
+    elif holdout_keys is None:
         fields["p_value"] = _p_value(metric, y, pred, baseline_pred, skill, n_resamples,
                                      _stream(seed, _PERMUTATION_STREAM))
         fields["n_permutations"] = n_resamples

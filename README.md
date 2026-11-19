@@ -26,16 +26,19 @@ Dependencies are pinned in `requirements.txt` and already present in
 Run every command from `E:\CODE\ml-professor`, so that `mlprofessor` is found
 in the current folder.
 
+The examples use `examples/customers.csv`, a synthetic table kept in the repo:
+400 customers, one row per sign-up day. Its columns are `customer_id`, `signup_date`
+(ISO dates, year first, so it can serve as the time column), `plan`, `region`,
+`monthly_spend` (six blank cells, kept and handled inside each fold), `support_calls`,
+`age`, and the target `churned` (`yes` or `no`, with three blank cells, which
+are dropped and counted). To use your own table, replace the path with a CSV
+path; a relative path is read from the repo root.
+
 ## Command line
 
 ```
-E:\CODE\ml-professor\mlprof_env\Scripts\python.exe -m mlprofessor profile --data verify/artifacts/data/signal_clf.csv --target outcome --out runs/signal_clf
+E:\CODE\ml-professor\mlprof_env\Scripts\python.exe -m mlprofessor profile --data examples/customers.csv --target churned --out runs/customers
 ```
-
-The example reads `verify/artifacts/data/signal_clf.csv`, a sample table the
-project's own checks generate. Replace it with the path to your CSV. (That
-folder is git-ignored, so on a fresh clone run the checks once, or use your
-own file.)
 
 Options (`python -m mlprofessor profile` takes these):
 
@@ -51,22 +54,42 @@ Options (`python -m mlprofessor profile` takes these):
 | `--seed` | the random seed; the same seed gives the same output | 0 |
 | `--n-jobs` | threads; `-1` uses every core | -1 |
 
-The command prints a short plain-text summary (task, row counts, headline,
-warning count, output folder). Exit codes: `0` finished and both files written;
-`2` the command line could not be parsed; `3` a named error, with one line
-`error: <code>: <message>` on standard error and no files written.
+The command prints a short plain-text summary to standard output, in this order:
 
-Time-ordered example, with a time column and a one-timestamp gap:
+- the task, and the validation scheme;
+- the rows loaded, the rows used for training, and the rows held out;
+- the headline: the metric, the score, the chosen model, the baseline and its
+  score, and the skill;
+- the interval on the score and the interval on the skill, each with its method
+  in brackets; where there is no interval, the reason is printed in its place;
+- the p-value and the number of shuffles, or, when there is none, the reason;
+- one line per warning, with its code and, when it has one, its column;
+- the output folder.
+
+Exit codes: `0` finished and both files written; `2` the command line could not
+be parsed; `3` a named error, with one line `error: <code>: <message>` on
+standard error and no files written.
+
+Time-ordered example, with `signup_date` as the time column and a one-timestamp
+gap:
 
 ```
-E:\CODE\ml-professor\mlprof_env\Scripts\python.exe -m mlprofessor profile --data verify/artifacts/data/time_blocks.csv --target regime --time-col date --gap 1 --out runs/time_blocks
+E:\CODE\ml-professor\mlprof_env\Scripts\python.exe -m mlprofessor profile --data examples/customers.csv --target churned --time-col signup_date --gap 1 --out runs/customers_time
 ```
+
+Here the holdout is the latest sign-up days, and the summary gives no p-value,
+with the reason: shuffling the holdout assumes independent rows, and rows in time
+order are not.
 
 Quick check, with the fast profile:
 
 ```
-E:\CODE\ml-professor\mlprof_env\Scripts\python.exe -m mlprofessor profile --data verify/artifacts/data/signal_clf.csv --target outcome --profile fast --out runs/signal_clf_fast
+E:\CODE\ml-professor\mlprof_env\Scripts\python.exe -m mlprofessor profile --data examples/customers.csv --target churned --profile fast --out runs/customers_fast
 ```
+
+Without `--time-col` the tool never guesses a time column. It notices that
+`signup_date` looks like a date, excludes it, and says so in a
+`date_column_undeclared` warning.
 
 ## Python
 
@@ -74,14 +97,14 @@ E:\CODE\ml-professor\mlprof_env\Scripts\python.exe -m mlprofessor profile --data
 from mlprofessor import profile
 
 result = profile(
-    "verify/artifacts/data/signal_clf.csv",   # a path, or a pandas DataFrame
-    "outcome",
+    "examples/customers.csv",   # a path, or a pandas DataFrame
+    "churned",
     task="auto",          # "auto", "classification" or "regression"
     time_col=None,        # name of a time column, or None for the random scheme
     gap=0,                # whole distinct timestamps between training and holdout
     profile="full",       # "full" or "fast"
     seed=0,
-    out_dir="runs/signal_clf",   # optional: writes profile.json and predictions.csv
+    out_dir="runs/customers",   # optional: writes profile.json and predictions.csv
     n_jobs=-1,
 )
 
@@ -113,7 +136,7 @@ is raised.
 | `columns` | one record per input column: role, kind, reason, leak rule, and counts |
 | `task` | type, whether it was decided by rule or declared, distinct values, classes, positive class |
 | `validation` | scheme, holdout share, folds, gap, time form, last training and first holdout timestamp, caveat |
-| `headline` | metric, score, chosen model, baseline and its score, skill, interval, p-value, reasons |
+| `headline` | metric, score, chosen model, baseline and its score, skill (null when it has no value), interval on the score and on the skill, p-value, reasons |
 | `baselines` | each baseline scored on the holdout, and which one was used |
 | `cv` | metric, folds scored, configurations, the chosen one, its mean and spread |
 | `models` | one record per configuration: parameters, status, error, fold scores, mean, spread, chosen |
@@ -127,6 +150,26 @@ positive class; for regression it is the predicted value.
 
 The headline is computed only on holdout rows, which no fitted step has seen.
 Every number in `headline.score` can be recomputed from `predictions.csv`.
+
+### When skill has no value
+
+Skill is a regression quantity that can have no value. It is `null` in two cases,
+and each has its own warning.
+
+- **The baseline predicts the holdout exactly.** The headline baseline's squared
+  error on the holdout is then zero, so skill would divide by zero. That happens
+  when the target is flat across the holdout under time order, or when the
+  training mean is the value of every holdout row under the random scheme.
+  `headline.skill`, `skill_low` and `skill_high` are `null`, not an error, an
+  infinity or a zero. The warning `skill_undefined` says why; it appears exactly
+  once, and only in this case. The score, its interval and every baseline,
+  including the zero, are reported as usual. There is no p-value, and
+  `p_value_reason` says why.
+- **Skill has a value, but no interval.** The baseline is exact on most holdout
+  rows and not on all, so skill can be computed in fewer than half of the
+  resamples. `headline.skill` is a number, `skill_low` and `skill_high` are
+  `null`, and the interval on the score stands. The warning `no_skill_interval`
+  says so.
 
 ## Validation schemes
 
@@ -171,7 +214,8 @@ It measures how well these model families did on this table, under this
 validation scheme, on rows they had not seen. It reports that against a baseline:
 for classification, chance (AUC 0.5); for regression, the training mean, or the
 previous value under time order. Skill is `2 × AUC − 1` for classification and
-`1 − MSE ÷ baseline MSE` for regression.
+`1 − MSE ÷ baseline MSE` for regression; for regression it has no value when the
+baseline's error is zero (see above).
 
 It does not:
 
@@ -213,8 +257,12 @@ dropped counts plus training plus holdout. Rows are not dropped for missing
 feature values; those are handled inside each fold, after the split.
 
 A profile stops with a named error rather than guessing when the table is too
-small (fewer than 100 usable rows, or fewer than 10 of a class) or when the task
-is ambiguous. A column whose numbers are written with thousands separators, such
+small (fewer than 100 usable rows, or fewer than 10 of a class), when the task
+is ambiguous, or when two feature columns would give the preprocessed matrix the
+same column name. The last is `feature_name_collision`: for example a numeric
+column named `colour=red` beside a categorical column `colour` with a level
+`red`. The run stops before any fit, names the columns involved, and writes
+nothing. A column whose numbers are written with thousands separators, such
 as `1,200`, is excluded rather than read as a number, and the column record says
 why. The full list of error codes is in `spec.md` section 2.4.
 

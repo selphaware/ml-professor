@@ -20,11 +20,14 @@ def main(argv=None):
     p.add_argument("--profile", default="full", choices=["full", "fast"])
     p.add_argument("--seed", type=int, default=0)
     p.add_argument("--n-jobs", type=int, default=-1)
+    p.add_argument("--duplicates", default="error", choices=["error", "keep"],
+                   help="what to do when holdout rows have copies among the training rows "
+                        "under the random scheme: stop (error, the default) or run (keep)")
     args = parser.parse_args(argv)
     try:
         result = profile(args.data, args.target, task=args.task, time_col=args.time_col,
                          gap=args.gap, profile=args.profile, seed=args.seed,
-                         out_dir=args.out, n_jobs=args.n_jobs)
+                         out_dir=args.out, n_jobs=args.n_jobs, duplicates=args.duplicates)
     except ProfileError as exc:
         print(f"error: {exc.code}: {exc}", file=sys.stderr)
         return 3

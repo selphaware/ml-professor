@@ -14,11 +14,13 @@ Named silent failures (docs/DECISIONS.md D13; spec.md "Failure modes"):
   F2 a leak is used as a feature             F6 something is lost unreported
   F3 the headline is a cross-validation score F7 time order is ignored
   F4 accuracy is the headline                F8 only the training-mean baseline
+  F9 copies of holdout rows in training are scored with no error (D49)
 
 F6 and F7 each have more than one form, and one broken fixture cannot fail
 every check of its family. The other forms have fixtures of their own (D46):
   F6b a column is lost from the accounting    F6d a long row is read silently
   F6c a model family is lost from the table   F7b a day-first date is parsed leniently
+  F7c whole-number time keys are read as floats, so distinct instants merge (D50)
 
 The self-test proves more than gatekit asks. gatekit accepts a failure mode as
 soon as one check that names it fails on its fixture. Here every check that
@@ -521,6 +523,54 @@ def make_flat_tail(seed, n=1500, flat_from=0.65):
     return ["date", "footfall", "promo", "sales"], rows, ()
 
 
+def make_dup_noise(seed, n=750, columns=10):
+    """Pure noise with every row present twice, in shuffled order (D49).
+
+    Nothing predicts the target, so the right skill is about zero. But a quarter
+    of the rows go to the holdout at random, so about three quarters of the
+    holdout rows have their copy among the training rows, and a model that can
+    recall a row scores on those: the third review measured skill 0.918 on such
+    a table under the full profile, p = 0.001, against 0.009 without the copies.
+    The tool must stop instead. Measured over 30 data seeds on the reference
+    (docs/measurements/CP5): 263 to 305 of the 375 holdout rows have a copy,
+    70% to 81%; the rule is more than 1% and at least 10 rows (D53). On every
+    other dataset of this gate under the random scheme, and on the README's
+    example table, the count is 0 on all 30 seeds, but for `time_blocks` run
+    with no time column, where it is 494 to 500 of 500. The order of the rows
+    comes from its own stream.
+    """
+    header, rows, blank_after = make_noise(seed, n=n, columns=columns, kind="clf")
+    rows = rows + [list(row) for row in rows]
+    random.Random(f"dup_noise.order.{seed}").shuffle(rows)
+    return header, rows, blank_after
+
+
+INT_STAMP_START = 1_700_000_000_000_000_000     # nanoseconds since 1970: November 2023
+INT_STAMP_STEP = 100                            # nanoseconds between two rows
+
+
+def make_int_stamps(seed, n=1500):
+    """A random walk whose time column is whole numbers: nanoseconds since 1970 as
+    64-bit integers, 100 nanoseconds apart. The one feature is the level before.
+
+    Every timestamp is distinct and far above 2**53, where a 64-bit float holds
+    only every 256th whole number: read as floats, these 1,500 instants are 587
+    (D50; the third review, finding 3). The timestamps are then not unique, the
+    previous-value baseline is gone, and a random walk is scored against the
+    training mean, which is the outcome of F8 by another road. Read as the
+    integers they are, this is `random_walk` again: both baselines, the previous
+    value the one used, and skill about zero.
+    """
+    rng = random.Random(seed)
+    level, rows = 0.0, []
+    for k in range(n):
+        new = level + rng.gauss(0, 1)
+        rows.append([INT_STAMP_START + INT_STAMP_STEP * k, _f(level), _f(new)])
+        level = float(_f(new))
+    rng.shuffle(rows)
+    return ["t", "level_prev", "level"], rows, ()
+
+
 # name -> (builder, target column). Seeds are SEED + position.
 DATASETS = {
     "signal_clf": (lambda s: make_signal_clf(s), "outcome"),
@@ -545,6 +595,9 @@ DATASETS = {
     "near_leak": (lambda s: make_near_leak(s), "outcome"),
     "long_rows": (lambda s: make_long_rows(s), "outcome"),
     "flat_tail": (lambda s: make_flat_tail(s), "sales"),
+    # Added last again (CP5), for the same reason.
+    "dup_noise": (lambda s: make_dup_noise(s), "outcome"),
+    "int_stamps": (lambda s: make_int_stamps(s), "level"),
 }
 
 
@@ -730,11 +783,17 @@ RUNS = {
     "ambiguous_target": ("ambiguous_target", [], "fast", 1),
     "messy": ("messy", [], "fast", 1),
     "long_rows": ("long_rows", [], "fast", 1),
+    "dup_noise": ("dup_noise", [], "fast", 1),
     "time_blocks": ("time_blocks", ["--time-col", "date"], "fast", 1),
     "time_blocks_gap": ("time_blocks", ["--time-col", "date", "--gap", "3"], "fast", 1),
-    "time_blocks_undeclared": ("time_blocks", [], "fast", 1),
+    # With `date` excluded, the rows of one block of dates differ in nothing the
+    # models see, so every holdout row has a copy among the training rows (500 of
+    # 500 at the gate seed). The run is about the warning for an undeclared date
+    # column, so it says the copies are meant: `--duplicates keep` (D49, D53).
+    "time_blocks_undeclared": ("time_blocks", ["--duplicates", "keep"], "fast", 1),
     "time_dayfirst": ("time_dayfirst", ["--time-col", "date"], "fast", 1),
     "random_walk": ("random_walk", ["--time-col", "date"], "fast", 1),
+    "int_stamps": ("int_stamps", ["--time-col", "t"], "fast", 1),
     "flat_tail": ("flat_tail", ["--time-col", "date"], "fast", 1),
     "api_signal_clf": ("signal_clf", "api", "fast", 1),
     "full_noise_small": ("noise_small", [], "full", 1),
@@ -754,6 +813,7 @@ CHECK_RUNS = {
     "data.columns_accounted": ["messy"],
     "data.coercion_reported": ["messy"],
     "data.long_rows_stop": ["long_rows"],
+    "data.holdout_copies_stop": ["dup_noise"],
     "models.all_accounted": ["signal_clf"],
     "task.binary_numeric": ["binary_numeric"],
     "task.ambiguous_stops": ["ambiguous_target"],
@@ -774,6 +834,7 @@ CHECK_RUNS = {
     "time.gap_applied": ["time_blocks_gap"],
     "time.dayfirst_stops": ["time_dayfirst"],
     "time.persistence_baseline": ["random_walk"],
+    "time.integer_keys_distinct": ["int_stamps"],
     "time.undeclared_warns": ["time_blocks_undeclared"],
     "time.flat_holdout_reported": ["flat_tail"],
     "uncertainty.reported": ["signal_clf", "time_blocks"],
@@ -1022,7 +1083,7 @@ def _runs_dir(ctx):
 
     A gate run on a build writes to verify/artifacts/runs, the folder a failure
     message and CLAUDE.md send the builder to. The self-test runs the reference
-    and twelve broken copies of it through the same checks; it writes to a folder
+    and fourteen broken copies of it through the same checks; it writes to a folder
     per fixture under verify/artifacts/selftest_runs, so that after it `runs/`
     still holds the last gate run on the build and not a broken fixture's output
     (D46; second review, finding 6).
@@ -1260,6 +1321,19 @@ def data_long_rows_stop(ctx):
             "header are an input error (D22). pandas reads this file without complaint: it "
             "takes the leading field as the index, here a `RangeIndex` like the default one, "
             "and that column is lost with nothing said. The index cannot show the fault")
+
+
+@gate.check("data.holdout_copies_stop", catches=["F9"],
+            doc="noise with every row present twice stops with the named copies error, and "
+                "writes no headline")
+def data_holdout_copies_stop(ctx):
+    stopped(ctx, "dup_noise", "holdout_copies_in_training",
+            "every row of this table is present twice, so about three quarters of the holdout "
+            "rows have a copy among the training rows: the same value in every feature column "
+            "and the same target. A model scores on those rows by recalling them, and pure "
+            "noise is reported as predictable. Under the random scheme the run stops when more "
+            "than 1% of the holdout rows, and at least 10 of them, have such a copy, unless "
+            "`--duplicates keep` is given (D49, D53; spec.md step 8)")
 
 
 @gate.check("models.all_accounted", catches=["F6c"],
@@ -1734,12 +1808,111 @@ def time_persistence_baseline(ctx):
          "tomorrow's level is today's plus noise, so nothing beats the previous value")
 
 
+@gate.check("time.integer_keys_distinct", catches=["F7c"],
+            doc="64-bit integer timestamps above 2**53 stay distinct: the timestamp counts "
+                "equal the gate's own, and the baseline is the previous value")
+def time_integer_keys_distinct(ctx):
+    why = ("On `int_stamps` the time column `t` holds 1,500 distinct whole numbers, nanoseconds "
+           "since 1970, 100 apart and far above 2**53. A 64-bit float holds only every 256th "
+           "whole number there, so keys read as floats merge into 587 timestamps: they are no "
+           "longer unique, the previous-value baseline is lost, and a random walk is scored "
+           "against the training mean. Integer time keys above 2**53 are compared as the "
+           "integers they are (D50, D53; spec.md step 3)")
+    try:
+        result = outputs(ctx, "int_stamps")
+    except CheckFailed as exc:
+        raise CheckFailed(f"{exc}\n  {why}") from None
+    time_at, target = result["header"].index("t"), result["header"].index("level")
+    stamps = {i: int(row[time_at]) for i, row in enumerate(result["source"])}
+    as_floats = {float(s) for s in stamps.values()}
+    if len(set(stamps.values())) != len(stamps) or min(stamps.values()) <= 2 ** 53 \
+            or len(as_floats) == len(stamps):
+        ctx.harness_error("the dataset `int_stamps` is not what the gate built it to be: "
+                          f"{len(set(stamps.values()))} distinct timestamps in {len(stamps)} "
+                          f"rows, the smallest {min(stamps.values())}, and {len(as_floats)} "
+                          "distinct values as floats; expected every one distinct, above "
+                          "2**53, and fewer as floats")
+    want = expected_time_split(stamps, gap=0)
+    ctx.require(at(result, "validation.scheme") == "time_ordered"
+                and at(result, "validation.time_form") == "numeric",
+                f"validation on `int_stamps` reports scheme {at(result, 'validation.scheme')!r} "
+                f"and time_form {at(result, 'validation.time_form')!r}; a whole-number time "
+                "column gives the time-ordered scheme and the form 'numeric'")
+    n_train = at(result, "validation.n_train_timestamps")
+    n_holdout = at(result, "validation.n_holdout_timestamps")
+    ctx.record("int_stamps training timestamps", n_train)
+    ctx.record("int_stamps holdout timestamps", n_holdout)
+    ctx.require((n_train, n_holdout) == (len(want["training"]), want["holdout_stamps"]),
+                f"validation on `int_stamps` reports {n_train!r} training and {n_holdout!r} "
+                f"holdout timestamps; the gate counts {len(want['training'])} and "
+                f"{want['holdout_stamps']}, one per row ({len(as_floats)} of the "
+                f"{len(stamps)} are left when the keys are read as floats). {why}")
+    unique = at(result, "validation.timestamps_unique")
+    ctx.record("int_stamps timestamps_unique", unique)
+    ctx.require(unique is True,
+                f"validation.timestamps_unique on `int_stamps` is {unique!r}; every one of the "
+                f"{len(stamps)} timestamps is distinct. {why}")
+    held = holdout_check(ctx, result, "int_stamps")
+    ctx.require(set(held) == want["holdout"],
+                f"the holdout on `int_stamps` is {len(held)} rows; the gate expects exactly the "
+                f"{len(want['holdout'])} source rows with t >= {want['holdout_start']} "
+                f"({len(set(held) - want['holdout'])} unexpected, "
+                f"{len(want['holdout'] - set(held))} missing). {why}")
+    for key, expected in (("validation.train_end", want["train_end"]),
+                          ("validation.holdout_start", want["holdout_start"])):
+        got = at(result, key)
+        ctx.record(f"int_stamps {key}", got)
+        ctx.require(isinstance(got, int) and not isinstance(got, bool) and got == expected,
+                    f"`{key}` on `int_stamps` is {got!r}; the gate computes {expected}. A "
+                    "whole-number timestamp is written as the whole number it is, exactly: "
+                    "one that has been through a float is a multiple of 256 here")
+
+    order = sorted(stamps, key=stamps.get)
+    level = {i: float(result["source"][i][target]) for i in order}
+    before = {row: order[k - 1] for k, row in enumerate(order) if k}
+    in_holdout = set(held)
+    truth = [level[p] for p in held]
+    base_mean = mse(truth, [mean([level[i] for i in order if i not in in_holdout])] * len(truth))
+    base_previous = mse(truth, [level[before[p]] for p in held])
+    mine = mse(truth, [guess for _, _, guess in result["predictions"]])
+    baselines = {b["name"]: b for b in records(result, "baselines", ["name", "score", "used"])}
+    ctx.record("int_stamps baselines", ",".join(sorted(baselines)))
+    ctx.require({"training_mean", "previous_value"} <= set(baselines),
+                f"baselines on `int_stamps` lists {sorted(baselines)}; with unique timestamps "
+                f"both training_mean and previous_value are scored and reported (D10). {why}")
+    for name, expected in (("training_mean", base_mean), ("previous_value", base_previous)):
+        got = baselines[name]["score"]
+        ctx.require(isinstance(got, (int, float)) and not isinstance(got, bool)
+                    and close(got, expected, 1e-7),
+                    f"the {name} baseline on `int_stamps` scores {got!r}; recomputed by the "
+                    f"gate from the source, in the order of the integer timestamps, it is "
+                    f"{expected:.6g}")
+    skill = at(result, "headline.skill", "number")
+    ctx.record("int_stamps baseline", at(result, "headline.baseline"))
+    ctx.require(at(result, "headline.baseline") == "previous_value",
+                f"the headline baseline on `int_stamps` is {at(result, 'headline.baseline')!r}, "
+                f"giving skill {skill:.4f}. The previous value has the lower error "
+                f"({base_previous:.4g} against {base_mean:.4g} for the training mean), so it is "
+                "the baseline (D10)")
+    ctx.require(close(skill, 1 - mine / base_previous, 1e-7),
+                f"headline.skill on `int_stamps` is {skill:.6g}; 1 - error / previous-value "
+                f"error, recomputed by the gate, is {1 - mine / base_previous:.6g}")
+
+
 @gate.check("time.undeclared_warns",
             why="a date column with no declared time column is the commonest way to get a "
                 "random split on ordered data without noticing",
             doc="a date column with no --time-col: random scheme, with a warning")
 def time_undeclared_warns(ctx):
-    result = outputs(ctx, "time_blocks_undeclared")
+    try:
+        result = outputs(ctx, "time_blocks_undeclared")
+    except CheckFailed as exc:
+        raise CheckFailed(
+            f"{exc}\n  This run passes `--duplicates keep` (spec.md 2.1 and step 8; D49, D53). "
+            "With `date` excluded, the rows of one block of dates differ in nothing the models "
+            "see, so every holdout row has a copy among the training rows; without the "
+            "argument the run stops with `holdout_copies_in_training`. The command line must "
+            "accept `--duplicates`, and `keep` must let the run go ahead") from None
     scheme = at(result, "validation.scheme")
     ctx.record("undeclared scheme", scheme)
     ctx.require(scheme == "random",
@@ -2187,6 +2360,22 @@ def broken_long_rows_read(tmp):
                           "on the wrong order")
 def broken_lenient_dates(tmp):
     return _fixture(tmp, "F7b")
+
+
+# The two routes to a wrong headline that the third review found (D49, D50), each
+# with a dataset on which the right conclusion is known and a fixture that takes
+# the wrong road. Registered last, so the order of the modes above stays.
+
+@gate.failure_mode("F7c", "whole-number time keys are read as floats, so distinct instants "
+                          "above 2**53 become one timestamp")
+def broken_float_time_keys(tmp):
+    return _fixture(tmp, "F7c")
+
+
+@gate.failure_mode("F9", "holdout rows with copies among the training rows are scored with no "
+                         "error")
+def broken_copies_ignored(tmp):
+    return _fixture(tmp, "F9")
 
 
 if __name__ == "__main__":

@@ -1,11 +1,11 @@
 # Test plan: what the suite must prove (phase 1)
 
 > **If `mlprofessor/` already exists at the repo root, this is not the first
-> pass. Go straight to the last section of this file, "Third pass (CP4)", and
+> pass. Go straight to the last section of this file, "Fourth pass (CP5)", and
 > read its ground rules before anything else. They override your role prompt
-> and the rules of the earlier passes wherever they differ.** The section
-> "Second pass (CP3)" above it describes the pass before: its tests are
-> written, built and final.
+> and the rules of the earlier passes wherever they differ.** The sections
+> "Second pass (CP3)" and "Third pass (CP4)" above it describe the passes
+> before: their tests are written, built and final.
 
 Written for the test author. You write the suite from `spec.md` alone, before
 any application code exists. Section and step numbers below are those of
@@ -1509,3 +1509,819 @@ the split's own rule (spec step 8) and no input reaches the other case. The
 fast profile's `gap_too_large` on rows that do hold six training timestamps.
 A missing value among the `classes` handed to `stages.split_random`. The
 gate's self-test and its run folder, which are the gate's own business.
+
+---
+
+# Fourth pass (CP5): the third review's findings
+
+Written on 2026-11-20, after the third build and its review
+(`docs/reviews/phase1-review-3.md`; D49 to D54). Everything above describes
+the first three passes and stays as it is. This section is the whole of your
+work in the fourth pass.
+
+## Ground rules of the fourth pass
+
+1. **The application already exists, and this is the fourth pass.**
+   `mlprofessor/` is built and passes all 411 cases of the first three passes.
+   Your role prompt says you write the suite before the application exists
+   and that every test must fail now. In this pass that is not so: most of
+   your tests must fail today, six guards must pass today, and most cases of
+   the type matrix pass today. Rule 5 says which.
+
+2. **The first three passes are final. Do not edit them, with ONE exception,
+   which rule 3 spells out.** That means the 34 existing test files,
+   `tests/conftest.py`, `tests/mlp_helpers.py`, `tests/cp3_helpers.py`,
+   `tests/cp4_helpers.py` and everything under `tests/fixtures/`: not a line,
+   not a blank, not a rename, not a new fixture file. New shared helpers go in
+   one new file, `tests/cp5_helpers.py`, which may import the three earlier
+   helper files. The driver does not lock `tests/` during your stage, so
+   nothing will stop you; the owner reads the diff of the folder against the
+   committed one afterwards, and any change to an existing file other than the
+   one of rule 3 sends the whole stage back.
+
+3. **THE ONE EXCEPTION (D54). You change exactly one existing test, in exactly
+   this way, and nothing else in any existing file.** The test is
+   `tests/test_skeleton.py::test_profile_signature_and_defaults`. It pins the
+   signature of `mlprofessor.profile` to exactly nine parameters, and D49 adds
+   a tenth, `duplicates`. Loosen it so that it accepts both shapes:
+   - the first nine parameters stay pinned **exactly as now**: the same names,
+     in the same order, each with the same default (`data`, `target`,
+     `task="auto"`, `time_col=None`, `gap=0`, `profile="full"`, `seed=0`,
+     `out_dir=None`, `n_jobs=-1`);
+   - after them there is either nothing, or exactly one more parameter named
+     `duplicates` whose default is `"error"`. Any other extra parameter, a
+     second extra one, or another default fails the test.
+
+   In code: compare the list of the nine names with the first nine names of
+   the signature, check the nine defaults as the test does now, then assert
+   that the names after the ninth are `[]` or `["duplicates"]`, and in the
+   second case that its default is `"error"`. Change only the body of that
+   one test function. Do not touch the file's imports, its other four tests,
+   the list `ERRORS`, or a single character outside that function; do not add
+   `--duplicates` to the list of options in
+   `test_help_exits_zero_and_lists_every_option` (your new file checks it).
+   **The loosened test must pass against the application as it stands today**
+   (nine parameters) and against the reference implementation (ten): run it
+   and see. It is not on the red list. Why this is done at all: the driver
+   re-runs every earlier test before it builds, and a test that fails against
+   the built library reopens every finished task. Why it is safe: your new
+   `tests/test_duplicates.py` requires the tenth parameter and its default,
+   so the signature is pinned exactly again as soon as it is built.
+
+4. **You write eight new test files and the helper file, and nothing else.**
+   The files are listed below, each with the tests it must hold, **under the
+   names given**: the lists of rule 5 and the mutation check go by name. Split
+   a named test into parameter cases as the text says. If you add a test of
+   your own, say so in your final report, with the list of rule 5 it belongs
+   to.
+
+5. **Which tests fail today and which pass today is fixed, by name.** The
+   lists are at the end of this section. A test on the red list fails against
+   the application as it stands, in every one of its parameter cases. A test
+   on the green list passes today in every case. For the type matrix the red
+   list names the cases, by their ids, and every other case is green. Run the
+   new files before you finish and compare with the lists. **Do not weaken a
+   guard to make it fail, and do not weaken a red test to make it pass.** If
+   a test on the green list fails, or one on the red list passes, and you
+   believe your test is what the spec says, stop and report it with the
+   output. Where this section tells you to keep several cases in ONE test
+   function, it is because some of them pass today and the function as a
+   whole must be red: do not split them into parameter cases.
+
+6. **Every guard must fail on its variant, and `verify/mutation_check.py` is
+   how that will be judged.** The owner runs it after your stage. It runs the
+   whole suite against a copy of the reference implementation
+   (`verify/reference/`, a second correct implementation, whose random split
+   differs from the application's), and again with the reference broken in
+   one way at a time: fourteen forms the gate also catches (F1 to F9, F6b,
+   F6c, F6d, F7b, F7c) and thirteen smaller faults (M1 to M13; spec 8 and
+   8.1). It passes only if:
+   - **the good reference fails none of your tests** (the README tests apart:
+     they judge `README.md`). A test that passes against the application and
+     fails against the reference has pinned something the spec leaves open
+     (spec 11): row numbers a seed produces, the wording of a message beyond
+     what spec 11 pins, the order of warnings, how a number is formatted;
+   - **every variant fails at least one test.** Eight are new, and each has
+     tests of this pass named for it: M8 to M13 the six guards of
+     `test_guard_review3.py`, one each; F9 the tests of `test_duplicates.py`;
+     F7c the tests of `test_whole_numbers.py`. M8, M9, M10 and M11 are caught
+     by nothing else.
+
+   You may run it yourself, from the repo root, with the project interpreter:
+   `E:\CODE\ml-professor\mlprof_env\Scripts\python.exe verify/mutation_check.py --jobs 8`,
+   about ten minutes. It writes nothing inside the repo. Do not read the
+   reference implementation to tune a test to it. The README test of this pass
+   goes in a file named `tests/test_readme_duplicates.py`: files named
+   `tests/test_readme*.py` are shown on a line of their own and not counted.
+
+7. **How the seed becomes random streams is open (spec 11), and two guards
+   must live with that.** Two correct implementations draw different
+   resamples and keep different rows from the same seed. So no test of this
+   pass asserts a particular resample, a particular kept row or a particular
+   holdout row that a seed produces, and no test compares an interval end
+   with a number worked out for one stream. The guards for M8 and M10 are
+   written to hold for any correct implementation; their recipes below say
+   how. Where a test needs to know a run's holdout and training rows, it
+   finds them out from the run itself, through the seam.
+
+8. **The rules of the earlier passes still hold**: the documented surface only
+   (spec 2.1 to 2.7); pin what the spec pins and nothing else; recompute, do
+   not trust; assert on values as the application produced them (rule 6 of
+   the third pass); **no skipped or expected-to-fail test** (where a
+   combination does not exist, leave it out of the parameter list: a skipped
+   test counts as a failure in the build); nothing written outside
+   `tmp_path`; the application imported inside test functions; the command
+   line run one process at a time through `mlp_helpers.run_cli`. Tiny tables,
+   with the exceptions this pass needs: `test_fast_cap_error.py` has tables of
+   3,260 to 40,000 rows of two numeric features (a constant family through
+   the seam where a run must finish: a few seconds in all);
+   `test_duplicates.py` has two tables of 4,000 rows; and the type matrix has
+   about 800 tables of 200 rows, 40 seconds in all. The eight files start
+   about a dozen processes between them and run in under two minutes
+   (measured: 59 seconds against the application).
+
+## Files of the fourth pass
+
+Each file belongs to exactly one task of `plan/tasks.json`.
+
+| File | Task | About | Today |
+|---|---|---|---|
+| `tests/test_guard_review3.py` | T31 | F: six pinned behaviours the third review could break unseen (D52) | green |
+| `tests/test_duplicates.py` | T32 | A: copies of a holdout row among the training rows (D49, D53, D54) | red |
+| `tests/test_whole_numbers.py` | T33 | B: whole numbers compared exactly, in typed columns; whole numbers beyond 64 bits (D50) | red |
+| `tests/test_object_numbers.py` | T34 | C: number columns held as objects; a warning for every unsupported column (D51) | red |
+| `tests/test_type_matrix.py` | T35 | H: every kind of column, role and extreme ends in a result or a named error (D52) | 37 cases red, the rest green |
+| `tests/test_time_fraction.py` | T36 | D: one to nine digits in a fraction of a second (D52) | red |
+| `tests/test_fast_cap_error.py` | T37 | E: the fast profile's cap leaving too few rows (D52, D53) | red |
+| `tests/test_readme_duplicates.py` | T38 | the README on copies of holdout rows (D49) | red |
+| `tests/cp5_helpers.py` | none | shared helpers of the fourth pass; holds no test | |
+| `tests/test_skeleton.py` | (T1) | one test loosened as rule 3 says; nothing else | green before and after |
+
+### `tests/cp5_helpers.py`
+
+Import `mlp_helpers as h`, `cp3_helpers as c` and, where useful,
+`cp4_helpers`, and build on them; do not copy from them. What the new files
+need, so build it once here:
+
+- **`flat_family(log, n_rows, value=0.5)`**: a list holding one family for the
+  seam, an `h.LookupEstimator` that predicts `value` for every row. It is
+  quick and never fails, so a test about rows, counts or errors does not pay
+  for real models.
+- **`run_kept(frame, target="y", seed=0, **kw)`**: `c.run` with that family
+  and with a `c.KeepStep` through a `c.KeepLog`, so that every frame a step
+  is handed is kept. Returns `(result, log)`.
+- **`training_rows(log)`**: the rows of the largest `fit` a step was handed:
+  the final fit's rows, which are the training rows. The holdout rows are
+  `h.holdout_rows(result)`.
+- **`raised(frame, target="y", **kw)`**: calls `profile()` (fast profile, one
+  core, unless `kw` says otherwise) and returns the `ProfileError` it raises;
+  fails if it returns a result. Any other exception passes through, which is
+  what a test of this pass wants.
+- **`copies_by_hand(result, log)`**: the test's own count for step 8a. From
+  the largest step `fit` (the training frame and the `y` it was handed) and
+  from the step `transform` whose rows are the holdout rows, build one Python
+  tuple per row: every feature cell as handed, with a NaN replaced by `None`
+  and `0.0` added to every float (so `-0.0` becomes `0.0`), then the target.
+  The holdout rows' target is not handed to a step: take it from
+  `result.predictions["y_true"]`, as 1 or 0 by comparison with
+  `task.positive_class` for classification and as the number for regression.
+  The count is the holdout tuples that are in the set of training tuples.
+- **`plant_copies(frame, k, target="y", seed=0, **kw)`**: a copy of `frame`
+  in which exactly `k` holdout rows are copies of training rows; returns it
+  with the number of holdout rows. It works because the random split depends
+  only on the number of rows, the seed and, for classification, the classes
+  (spec step 7, 2.7): run once with `run_kept`, read the training and holdout
+  rows, then give each of the first `k` holdout rows every feature value of a
+  training row of its own (a different training row each time; for
+  classification one of the same class, so that the classes do not change;
+  for regression copy the target too). The run on the table returned has the
+  same split, and with continuous features no copy arises by chance.
+- **`twice(frame, seed=0)`**: every row present twice, in an order shuffled
+  from `seed`; **`noise_frame(n, seed, n_columns=4, task="classification")`**:
+  normal columns `n1`.. and a target `y` that depends on none of them (0/1
+  drawn at random, or normal).
+- **`nanosecond_walk(n=600, start=1_700_000_000_000_000_000, step=100,
+  seed=0)`**: a random walk `level` (the running sum of normal steps), its
+  previous value `level_prev` (0.0 for the first row), a noise column `x1`,
+  and a time column `t` of `int64` values `start + step * k`; the rows in an
+  order shuffled from the seed. As floats these 600 stamps are 235 distinct
+  values.
+
+## F: the guards (task T31; all green today)
+
+### `tests/test_guard_review3.py`
+
+Spec 8.1 (M8 to M13). The third review planted each of these six faults in a
+copy of the application and all 411 tests still passed. Six tests, one per
+fault. Each passes against the application and the reference today and fails
+on the variant it is named for. If one fails against the application, the
+application is wrong.
+
+- `test_m8_the_interval_is_the_middle_95_percent` (fails on M8). Spec step 12.
+  The draws of a bootstrap are open (rule 7), so one run cannot tell the
+  2.5th and 97.5th percentiles from the 5th and 95th: with 200 resamples the
+  end of one interval moves by about 0.19 of the bootstrap's standard
+  deviation from seed to seed, and the two rules differ by 0.31. So average.
+  A table of 400 rows, one feature `x1` and a regression target `y`, both
+  standard normal from `default_rng(81)`; an `h.LookupEstimator` family whose
+  values are `y` plus standard normal noise from the same generator;
+  `task="regression"`, fast profile. For each `seed` from 0 to 59: run; check
+  `interval_method == "bootstrap_rows"`, `interval_level == 0.95` and
+  `n_resamples_used == 200`; take the 100 squared errors of the holdout from
+  `result.predictions` (their mean is `headline.score`); draw 4,000 resamples
+  of them with replacement from a generator of the test's own
+  (`default_rng(82)`, one generator across the 60 runs) and take the 2.5th
+  and 97.5th percentiles and the standard deviation of the 4,000 means;
+  record `(interval_low − own 2.5th) ÷ sd` and `(interval_high − own
+  97.5th) ÷ sd`. Assert that the mean of each over the 60 seeds is below 0.18
+  in absolute value. Measured: the reference lands at +0.03 and −0.04 (the
+  mean of 60 runs moves by about 0.02 to 0.03 with the stream), and M8 at
+  +0.26 and −0.35. Do not tighten the 0.18 and do not use fewer seeds: both
+  sides of it are more than four standard errors away. About five seconds.
+- `test_m9_the_leak_screen_uses_the_previous_value` (fails on M9). Spec step
+  8. The series must be one that the fault flags, and a plain random walk is
+  not (its lag scores about 0.92 against the training mean alone: measured).
+  Use a slow wave: 600 rows, `t = 0.0, 1.0, …`, `y = 30·sin(2π·t ÷ 100) +
+  0.1·noise` with noise from `default_rng(91)`; features `lag` (`y` one row
+  earlier; `y[0]` for the first row) and `x1` (noise from the same
+  generator). `time_col="t"`, `task="regression"`, the profile's own
+  families. Against the training mean alone a tree on `lag` scores 0.993,
+  above the leak cut-off; against the previous value it does worse than the
+  baseline (about −0.85). Assert: `lag` has role `feature` with a null
+  `reason` and `leak_rule`; no `suspected_leak` and no `strong_single_column`
+  warning names it; `baselines` lists `training_mean` then `previous_value`;
+  `headline.baseline` is `previous_value`.
+- `test_m10_the_fast_cap_is_a_sample_from_the_seed` (fails on M10). Spec step
+  6. `h.clf_frame(n=3000)`, fast profile, a recording family and a recording
+  step, for `seed` 0 and 1. Which rows are kept is open (rule 7); that they
+  are a sample is not. For each seed: `rows.dropped_row_cap == 1000`; the
+  kept rows (every row a `fit` was handed, with the holdout rows) number
+  2,000; between 550 and 780 of them lie at position 2,000 or beyond (a
+  sample of 2,000 from 3,000 holds about 667 from the last 1,000; the head of
+  the file holds none); at least one holdout row is at position 2,000 or
+  beyond. And the two seeds keep different sets of rows.
+- `test_m11_cv_std_is_the_sample_deviation` (fails on M11). Spec step 9, 5.2.
+  `h.clf_frame(n=300)` and `h.reg_frame(n=300)`, fast profile, the profile's
+  own two families. For every configuration: five fold scores, not all
+  equal; `cv_std` equals `statistics.stdev(fold_scores)` within 1e-9
+  (relative), and that value differs from `statistics.pstdev` by more than
+  one part in a million, so the test can tell them apart. `cv.chosen_std` is
+  the chosen configuration's `cv_std`.
+- `test_m12_tied_predictions_in_a_resample` (fails on M12). Spec steps 11 and
+  12. 400 rows, a 0/1 target drawn at random; an `h.LookupEstimator` family
+  predicting 0.5 for every row. On any rows that hold both classes, a
+  constant prediction scores exactly 0.5 when ties share their rank. So:
+  `score == 0.5`, `skill == 0.0`, `n_resamples_used == 200`, and
+  `interval_low == interval_high == 0.5`, `skill_low == skill_high == 0.0`,
+  exactly. (The second pass's `test_m5_ties_count_in_the_p_value` uses the
+  same prediction and asserts the score and the p-value; nobody asserted the
+  interval.) A second run in the same test, with predictions of 0.75 where
+  `x1 > 0` and 0.25 elsewhere: `headline.score` equals `h.auc_by_hand` of the
+  predictions within 1e-12, and the interval contains the score and reaches
+  less than 0.2 to either side of it.
+- `test_m13_n_imputed_counts_rows_that_reach_a_model` (fails on M13). Spec
+  step 8, 5.2. `h.clf_frame(n=260)` with a text column `colour` (two levels)
+  added; the target made float and set missing in rows 0 to 39; `x1` set
+  missing in rows 20 to 69 (50 cells, 20 of them in rows with no target);
+  `colour` set missing in rows 30 to 44 (15 cells, 10 of them in such rows).
+  Fast profile, the profile's own families. Assert:
+  `rows.dropped_missing_target == 40` and training plus holdout is 220;
+  `x1` has `n_missing` 50 and `n_imputed` 30; `colour` is categorical with
+  `n_missing` 15 and `n_imputed` 5; `z1` has 0 and 0.
+
+## A: copies of a holdout row among the training rows (task T32)
+
+### `tests/test_duplicates.py`
+
+Spec: 2.1, 2.2, 2.4, 2.5, step 8a, 5.2, 11. Red today, every test: the
+application has no `duplicates` argument, makes no count and never stops for
+copies. Use `cp5_helpers` throughout. The error's code is
+`holdout_copies_in_training`.
+
+- `test_duplicates_is_the_tenth_parameter_and_defaults_to_error`. The
+  signature of `mlprofessor.profile` is exactly the ten names of spec 2.1, in
+  order; `duplicates` defaults to `"error"` and is an ordinary
+  positional-or-keyword parameter. (This is the test that pins the signature
+  exactly again: D54.)
+- `test_error_class_and_code`. `errors.HoldoutCopiesError` subclasses
+  `ProfileError` and its `code` is `holdout_copies_in_training`.
+- `test_any_other_value_is_an_input_error`, one case each for `"drop"`,
+  `"KEEP"`, `""`, `True`, `None`, `1`: `InputError`, on an ordinary table, and
+  also on a table with duplicate column names (so it is raised before
+  anything is loaded).
+- `test_every_row_twice_stops_the_run`, one case for classification and one
+  for regression. `twice(noise_frame(n=300, task=...))`: 600 rows. With an
+  `out_dir`: `HoldoutCopiesError` and nothing written. Then the same table
+  with `duplicates="keep"` through `run_kept`: 150 holdout rows; the count by
+  hand is between 90 and 135 (about three quarters); `validation.
+  n_holdout_copies` equals it and `holdout_copy_share` equals it ÷ 150. Then
+  the error's message (spec 11): among the numbers `c.numbers_in` finds in it
+  are the count and the number of holdout rows, and one within 0.1 of 100 ×
+  the share; it holds the word `keep`; it does not hold `time_col`, since no
+  date column was excluded.
+- `test_keep_runs_and_says_so`. `twice(noise_frame(300))` with
+  `duplicates="keep"`: `input.duplicates == "keep"`; the scheme is `random`;
+  the count equals the count by hand and is at least 10; the warnings hold
+  exactly one `("holdout_copies_kept", None)`; `duplicate_rows` is there once
+  as before; the result is strict JSON.
+- `test_the_rule_needs_a_share_and_a_count`, five cases, each `(rows of
+  h.clf_frame, copies planted, stops?)`: `(400, 9, no)`, nine of 100, 9% and
+  fewer than 10 rows; `(400, 10, yes)`; `(4000, 10, no)`, ten of 1,000,
+  exactly 1% and so not more than 1%; `(4000, 11, yes)`; `(4000, 0, no)`. Full
+  profile (with the constant family it is quick, and the fast profile's cap
+  would cut the 4,000 rows). Build the table with `plant_copies`; assert the
+  holdout is a quarter of the rows. Run with `duplicates="keep"`: the count
+  by hand is exactly the number planted, `n_holdout_copies` equals it, the
+  share is it ÷ the holdout rows, and there is one `holdout_copies_kept`
+  warning when the rule is met and none when it is not. When it is met, the
+  same call without `duplicates` raises `HoldoutCopiesError`. When it is not,
+  the same call without `duplicates` returns: `input.duplicates == "error"`,
+  the same count, no `holdout_copies_kept`; and its `to_dict()` equals that
+  of the `keep` run once `meta.timing` and `input.duplicates` are taken out
+  of both, and the two `predictions` frames are equal (`"keep"` changes
+  nothing else).
+- `test_the_rule_in_regression`. `plant_copies(h.reg_frame(400), 12,
+  task="regression")`: stops by default; with `keep`, the count is 12 by hand
+  and by the tool. Then add 1.0 to the target of six of the planted holdout
+  rows: a row that agrees in every feature and differs in its target is not a
+  copy, and the count is 6.
+- `test_values_are_compared_as_a_step_receives_them`. Spec step 8a, "How
+  values are compared". 400 rows: `x1`, `x2` normal, `y` 0/1 at random. Run
+  once (full profile, `run_kept`) for the split. Then build the table under
+  test: `x1` **written as text** (`f"{v:.6f}"`), so that it is numeric by
+  rule 5; a text column `colour` (`red`/`blue` by row parity); a text column
+  `record` of distinct ids, which is excluded; the target as `yes`/`no`. For
+  twelve holdout rows, each paired with a training row of the same class,
+  copy `x1`, `x2` and `colour` from the training row. Then make the pairs
+  differ in ways that do not count: one pair `"0.0"` and `"-0.0"` in `x1`;
+  one pair an empty cell and the text `abc` (a coerced cell: both missing);
+  one pair `"1.5"` and `" 1.50 "`; one holdout row's `colour` with white
+  space round it; one holdout row's target written `yes ` or `no `. And in
+  one way that does count: one holdout row's `colour` in another case
+  (`Red`). Run with `keep`: the holdout rows are those of the first run (the
+  split has not moved); `x1` is numeric, `colour` categorical, `record`
+  excluded; the count by hand is 11, and so is `n_holdout_copies`.
+- `test_the_rule_is_judged_before_any_model_is_fitted`. Spec 2.4, step 8a.
+  `twice(noise_frame(300))`, with a family of `h.FailingEstimator` and a
+  recording step through the seam: by default `HoldoutCopiesError`, and the
+  log holds no event at all (no step and no model was fitted). With `keep`,
+  the same family ends in `AllModelsFailedError`.
+- `test_time_order_has_no_rule`. 400 rows: `t = 0.0, 1.0, …`; `x1` four
+  values repeated down the column; `x2` 0.0 and 1.0 alternating; `y` 0/1 at
+  random (do not derive it from `x1`: the leak screen would exclude the
+  column). With `time_col="t"`, for `duplicates` `"error"` and `"keep"`
+  alike: the run returns; `n_holdout_copies` and `holdout_copy_share` are
+  `None`; `input.duplicates` is the value passed; no `holdout_copies_kept`.
+  The same table without `t`, random scheme: `holdout_copies_in_training`.
+- `test_the_message_names_an_undeclared_date_column`. D53. 400 rows: `when`,
+  400 consecutive dates as ISO text; `x1`, 50 normal values each repeated on
+  eight consecutive rows; `y` 0/1 at random. With no time column the date is
+  excluded and rows differ in nothing else: `holdout_copies_in_training`,
+  and the message holds `when` and `time_col`. With `time_col="when"` the run
+  returns and the count is `None`. With `duplicates="keep"` and no time
+  column it returns with `("date_column_undeclared", "when")` and one
+  `holdout_copies_kept`.
+- `test_command_line_takes_duplicates`. `twice(noise_frame(300))` written to
+  a CSV. Without the option: exit 3, exactly one line on standard error
+  starting `error: holdout_copies_in_training: `, nothing in the output
+  folder. With `--duplicates keep`: exit 0; `profile.json` has
+  `input.duplicates == "keep"` and a count of at least 10; standard output
+  holds `holdout_copies_kept`. With `--duplicates error`: exit 3 again. With
+  `--duplicates drop`: exit 2. `profile --help` lists `--duplicates`.
+
+## B: whole numbers are compared exactly (task T33)
+
+### `tests/test_whole_numbers.py`
+
+Spec: steps 1a (its last points), 3, 4, 5; 2.4; 2.7; section 6. Red today,
+every test. **Typed columns only** in this file, and object columns only
+where they hold whole numbers too large for 64 bits: an object column of
+whole numbers that fit is the next file's. `START` is
+1,700,000,000,000,000,000; the stamps are `START + 100·k` for `k` from 0 to
+599, which as floats are fewer than 600 values (assert it, so the case is
+one that floats merge).
+
+- `test_read_time_keeps_integers_above_2_53`, one case per column type:
+  `int64`; `uint64` (the stamps plus 2⁶³); nullable `Int64`; nullable
+  `UInt64`. `stages.read_time` returns the form `numeric` and keys of type
+  `int64` (`uint64` for the two unsigned types), each equal to its value,
+  600 distinct. `stages.split_time` on those keys **in reverse order**: the
+  holdout is positions 0 to 149, the training rows 150 to 599, and each of
+  the five folds validates on 75 rows. `stages.previous_value(arange(600.0),
+  keys)` is NaN for the first key and `0.0 … 598.0` after it.
+- `test_the_boundary_is_a_magnitude_above_2_53`. D53. Float keys
+  (`float64`) for: `int64` `[5, 3, 9]`; `[2**53, 0, -2**53]`; nullable
+  `Int64` `[7, None, 2**53]` (the second key NaN); `uint8` `[1, 2]`. Integer
+  keys (`int64`), each equal to its value, for `[2**53 + 1, 0, 5]` and for
+  `[-2**53 - 1, 0, 5]`. Float keys for a float column `[2.0**60, 1.0, 3.0]`.
+  Keep these in one test: the first half passes today.
+- `test_nanosecond_stamps_are_distinct_timestamps`, one case per column type
+  as above. `nanosecond_walk(600)` with `t` in that type; target `level`,
+  `time_col="t"`, fast profile, the profile's own families. Assert: scheme
+  `time_ordered`, form `numeric`; 450 training and 150 holdout timestamps;
+  `timestamps_unique` true; `train_end`, `holdout_start` and `holdout_end`
+  are Python `int`s equal to the 450th, 451st and 600th stamp in order;
+  `baselines` is `training_mean` then `previous_value`, and the headline
+  baseline is `previous_value`; no `suspected_leak`; `level_prev` is a
+  feature. Then the twin: the same table with `t` as datetimes
+  (`pd.to_datetime` of the stamps) has the same holdout rows, the same
+  `headline.score` and `baseline_score`, and the same `baselines`.
+- `test_missing_and_repeated_integer_stamps`. `nanosecond_walk(600)` with `t`
+  as `Int64` and three cells missing: `dropped_missing_time == 3`, 597
+  timestamps in all, unique. Then `t = START + k // 2` over the 600 rows
+  (pairs one nanosecond apart): 300 timestamps in all, `timestamps_unique`
+  false, and `baselines` is `training_mean` alone.
+- `test_distinct_values_are_counted_exactly`. Spec step 5, rules 8 to 8b. 200
+  rows, a 0/1 target at random, **one ordinary normal column `x1`**, and the
+  columns below, judged by `stages.column_roles` and again by `profile()`,
+  which must agree. (`x1` is there for a reason. The columns below reach the
+  models as floats, where many of their values are one, so without it many
+  rows are alike to a model and the run stops for copies: measured, 12 of 50
+  holdout rows.) `wide`,
+  `uint64`, 50 distinct values `2**63 + 7·k` repeated at random (a feature;
+  as floats, one value); `pair`, `int64`, `2**53` and `2**53 + 1` (a
+  feature; as floats, one value: assert both, so the test says why it
+  exists); `same`, one value `2**60 + 1` (`constant`); `serial`, `2**53 + 1
+  + k` down the file (`id_like`: distinct and rising); `shuffled_serial`,
+  the same values in a random order (`id_like`: distinct and consecutive);
+  `rising`, a running sum of steps of 1 to 4 plus `2**62` (`id_like`);
+  `scattered`, 200 of the values `2**61 + 3·k`, `k` below 1,000, in random
+  order (a feature: distinct, neither ordered nor consecutive); `ends`, the
+  smallest and the largest `int64` alternating (a feature: two values, and
+  nothing overflows); `nullable`, `Int64` with a missing cell wherever the
+  draw is 0 and `2**53 + k` elsewhere (a feature). The run's result is
+  strict JSON.
+- `test_whole_numbers_beyond_64_bits_in_every_role`. Finding 1. Four shapes
+  of 200 whole numbers held in an object column: 200 consecutive 26-digit
+  numbers; `0 … 198` and then `2**64`; `(−1)^k · (2**63 + k)`; `−2**63 − 1`
+  and then `0 … 198`. Seven cases: all four from a DataFrame, and the first,
+  second and fourth from a CSV file (pandas loads the third as text, since a
+  value above the signed range and within the unsigned one stands beside a
+  negative one: spec section 6. Do not list it as a CSV case, and do not skip
+  it). Beside two normal features: as a spare
+  column with a 0/1 target, the run returns, the column is excluded with the
+  reason `unsupported_type`, exactly one `("unsupported_type", column)`
+  warning names it, and the result is strict JSON; as the target, under
+  `task` `auto`, `classification` and `regression` alike,
+  `TaskUnsupportedError`; as the time column, `TimeColumnError`. Assert the
+  class with `isinstance` after catching `ProfileError`, so that a raw
+  exception fails the test as itself.
+- `test_command_line_on_a_26_digit_column`. The review's case: a CSV with a
+  column `account` of 26-digit numbers. As a spare column: exit 0, and a line
+  of standard output holds `unsupported_type` and `account`. As `--target`:
+  exit 3 and one line `error: task_unsupported: …`. As `--time-col`: exit 3
+  and one line `error: time_column_invalid: …`.
+
+## C: number columns held as objects (task T34)
+
+### `tests/test_object_numbers.py`
+
+Spec: step 1a, 2.5, 2.6, 2.7, 5.1, 5.2, section 6. Red today, every test.
+`D` is `decimal.Decimal`. **Build a typed twin from the same text** as the
+object column (`D(text)` beside `float(text)`), never by rounding a float:
+`numpy.round` and the decimal's own conversion can differ in the last bit,
+and the twins must agree exactly.
+
+- `test_object_number_columns_give_the_result_of_their_typed_twins`. Finding
+  4. 300 rows. `amount`: numbers written with two decimals; `visits`: whole
+  numbers 0 to 39; `member`: booleans; a noise column; a 0/1 target that
+  depends on the three. The driver's table holds `amount` as `Decimal`
+  objects, `visits` as Python integers and `member` as Python booleans, each
+  in an `object` column with two or three cells `None`; the typed table holds
+  the same values as `float64`, `Int64` and `boolean`. Fast profile, the
+  profile's own families, both tables. In the driver's run each of the three
+  is a feature of kind `numeric` with a null reason, `dtype` `object`,
+  `n_missing` its count of `None`, and the `n_imputed` of its twin; there is
+  no `unsupported_type` warning. The two runs have the same holdout rows, the
+  same `headline` (the whole mapping), the same models table and the same
+  `y_pred`.
+- `test_a_step_is_handed_floats`. Spec 2.6. The same two tables through a
+  keeping step: in the final fit's frame each of the four feature columns is
+  `float64`, and the driver's and the twin's are equal cell for cell (NaN
+  where a cell was empty); `member` holds 0.0 and 1.0.
+- `test_which_mixtures_are_read_as_numbers`, one case per row of this table.
+  The values are repeated down a column `c` of 240 rows, held as `object`,
+  inserted first beside `h.clf_frame(240)`. `stages.column_roles` and
+  `profile()` must agree; `dtype` is `object` in both.
+
+  | Case | Values | Read as |
+  |---|---|---|
+  | `decimals` | `D("1.5")`, `D("2.25")`, `D("-3")` | numeric feature |
+  | `whole_decimals` | `D("1")`, `D("2E+1")`, `D("30")` | numeric feature |
+  | `ints_and_none` | `1`, `2`, `None`, `4` | numeric feature |
+  | `numpy_ints` | `np.int64(1)`, `np.int32(2)`, `3` | numeric feature |
+  | `bools_and_none` | `True`, `False`, `None` | numeric feature |
+  | `numpy_bools` | `np.bool_(True)`, `False` | numeric feature |
+  | `floats_and_none` | `1.5`, `None`, `2.5`, NaN | numeric feature |
+  | `ints_floats_decimals` | `1`, `2.5`, `D("3.75")`, `np.float32(4.5)` | numeric feature |
+  | `a_decimal_infinity` | `D("1.5")`, `D("Infinity")`, `D("2.5")`, `D("-Infinity")` | numeric feature; `n_infinite` 120, `n_missing` 0, an `infinite_values` warning |
+  | `a_decimal_not_a_number` | `D("1.5")`, `D("NaN")`, `D("2.5")`, `D("sNaN")` | numeric feature; `n_missing` 120, `n_infinite` 0 |
+  | `a_bool_beside_numbers` | `True`, `2`, `3.5` | excluded, `unsupported_type` |
+  | `a_bool_beside_decimals` | `False`, `D("2.5")` | excluded, `unsupported_type` |
+  | `text_beside_numbers` | `1`, `"two"`, `3.0` | excluded, `unsupported_type` |
+  | `a_complex_number` | `1.5`, `2 + 3j` | excluded, `unsupported_type` |
+  | `lists` | `[1, 2]`, `[3]` | excluded, `unsupported_type` |
+  | `bytes` | `b"a"`, `b"b"` | excluded, `unsupported_type` |
+
+  A numeric feature has no `unsupported_type` warning; an excluded column has
+  exactly one, naming it. Every run is strict JSON.
+- `test_every_unsupported_type_exclusion_is_warned_about`. D51.
+  `h.clf_frame(240)` with five more columns: durations (`timedelta64`),
+  complex numbers, monthly periods, tuples held as objects, and whole numbers
+  and text mixed. The columns excluded with the reason `unsupported_type` are
+  exactly those five, and the columns named by `unsupported_type` warnings
+  are exactly those five, once each, each with a message that is not empty.
+- `test_an_object_target_is_the_typed_target`. **One test, four kinds in a
+  loop**: an object target of booleans and one of whole numbers already work
+  today, one of decimal numbers does not, and all four must hold together.
+  For `False`/`True` (classes `[False, True]`, positive `True`); `0`/`1`
+  (`[0, 1]`, `1`); `D("1.50")`/`D("2.50")` (`[1.5, 2.5]`, `2.5`);
+  `D("0")`/`D("1")` (`[0, 1]`, `1`): the labels of `h.clf_frame(240)` mapped
+  onto the pair, held as `object`, with two cells `None`.
+  `stages.decide_task`: classification, by the rule, two distinct values,
+  those classes and that positive class. `stages.usable_rows`: two rows
+  dropped for a missing target. `profile()`: `task.classes` and
+  `positive_class` as above, **with those Python types** (`bool`, `int`,
+  `float`); `task.target_dtype` is `object`; two rows dropped; the values of
+  `y_true` are the classes.
+- `test_a_decimal_target_is_a_regression_target`. The target of
+  `h.reg_frame(240)` written with three decimals, as `Decimal` objects and as
+  floats. The object run is a regression decided by the rule, with
+  `target_dtype` `object`; its `headline` and its `y_true` equal the typed
+  run's.
+- `test_object_whole_numbers_are_exact`, one case for Python integers and one
+  for `Decimal`s with no fractional part, each held as `object`. D50 and D51
+  together. `stages.read_time` of the 600 stamps of `nanosecond_walk` gives
+  `int64` keys, each equal to its value; of `[5, 3, 2**53]` it gives
+  `float64` keys. `profile()` on `nanosecond_walk(600)` with `t` held so:
+  450 and 150 timestamps, unique; its `validation` and its `headline` equal
+  those of the `int64` table; the headline baseline is `previous_value`. And
+  in `stages.column_roles`: 50 distinct values `2**62 + 7·k` repeated at
+  random are a feature (as floats they are one value: assert it); `2**53 + 1
+  + k` down the file is `id_like`; one value throughout is `constant`.
+- `test_an_object_time_column_is_the_typed_time_column`.
+  `h.time_frame(240)` with its date column replaced by `D(0) … D(239)` held
+  as `object`, against the same with `int64` `0 … 239`: form `numeric`, the
+  holdout is rows 180 to 239 in both, the headlines are equal, `train_end`
+  is 179.
+
+## H: the type matrix (task T35)
+
+### `tests/test_type_matrix.py`
+
+Spec: 2.4 ("No input ends in an error that is not named"), section 7 ("The
+type matrix"). One test function, `test_a_result_or_a_named_error`,
+parametrised by kind, role and extreme, with the id `kind-role-extreme` so
+that a failure names its case. About 800 cases, 40 seconds.
+`docs/measurements/CP5/type_matrix.py` is the script this matrix was first
+run with; you may read it for the builders of each kind, and the case names
+below are its names. It is a measurement script, not a test: the contract is
+this section and spec section 7.
+
+**The table of a case.** 200 rows. `x1`, `z1` and a noise series are standard
+normal from `default_rng(0)`. The column under test is: as a `feature`, a
+column `c` beside `x1` and `z1`, with the target `y = (x1 + 0.5·noise > 0)`
+as 0/1; as the `target`, the column `y` beside `x1` and `z1`; as the `time`
+column, a first column `t` with `time_col="t"`, beside `x1` and `z1`, and the
+target `y = 2·x1 + noise`. Where the kind allows, the column's ordinary values
+depend on `x1` as a feature or a target and are distinct and rising as a time
+column. The kind `csv` writes the table to a file under `tmp_path` and passes
+the path.
+
+**Kinds** (54): `int8`, `int16`, `int32`, `int64`, `uint8`, `uint16`,
+`uint32`, `uint64`; `float32`, `float64`; nullable `Int8`, `Int64`, `UInt64`,
+`Float32`, `Float64`; `bool`, nullable `boolean`; text as an `object` column
+(`text_object`), as the default string type (`text_str`) and as the
+Python-backed string type (`text_string_python`); `category`,
+`category_ordered`; `bytes`; ISO 8601 dates as text (`iso_text`);
+`datetime_ns`, `datetime_s`, `datetime_utc`, `datetime_london`; `timedelta`;
+`period`; `interval`; `complex128`, `complex64`; `decimal` (`Decimal`
+objects); `object_int`, `object_bool`, `object_float`, `object_numbers`
+(integers, floats and `Decimal`s together), `object_bool_beside_numbers`;
+`mixed` (whole numbers and text); `list`, `tuple`, `dict`, `set`;
+`all_missing_float`, `all_missing_none`, `all_missing_NA`, `all_missing_NaT`,
+`all_missing_Int64`, `all_missing_str`; `sparse_float`, `sparse_int`,
+`sparse_bool`; `csv`.
+
+**Extremes** (11), each applied where the kind allows it and left out of the
+parameter list where it does not: `ordinary`; `two` (exactly two distinct
+values; the target role only); `one_value` (the column's first ordinary value
+in every row, in the same type); `max_min` (the largest and the smallest
+value of the type in four cells: for floats also the smallest normal and the
+smallest subnormal; for nanosecond datetimes `Timestamp.max` and
+`Timestamp.min`; for second datetimes and ISO text the years 9999 and 0001;
+for `object_int` the two ends of `int64` and the largest `uint64` together);
+`above_2p53` (whole numbers from 2⁵³ + 1: one each as a time column, 50
+values repeated as a feature or target); `e300` (±1e300 and ±1e-300 in four
+cells; ±1e38 for 32-bit floats; for `mixed`, 1e300, `D("1E+400")`, `10**30`
+and a complex number); `inf` (both infinities); `nan` (the empty values the
+kind has: NaN, `None`, `pd.NA`, `NaT`, and for `decimal` both `D("NaN")` and
+`D("sNaN")`); `neg_zero` (`-0.0` and `0.0`); `beyond_64` (whole numbers from
+10²⁵ throughout); `beyond_64_few` (ordinary whole numbers with `10**25`,
+`-10**25`, `2**64` and `10**30` in four cells). The text kinds and `csv`
+carry the number extremes as numbers written out as text.
+
+**The assertion.** Call `profile(data, profile="fast", seed=0, n_jobs=1,
+out_dir=<a folder under tmp_path>, **the role's arguments)`, inside
+`warnings.catch_warnings()` with the filter `ignore` (pandas and numpy warn
+while such columns are built and read; a `with` block puts the filters back).
+
+- If it raises a `ProfileError`: its class has a `code`, its message is not
+  empty, and the output folder holds no file. The case passes.
+- If it raises anything else, let it propagate: that is the failure this file
+  exists for. Do not catch `Exception`.
+- If it returns: the names in `columns` are the table's column names, in
+  order; `rows.loaded` is 200 and equals the other six counts added up;
+  `predictions` has one row per holdout row; `json.dumps(result.to_dict(),
+  allow_nan=False)` works; the written `profile.json` parses with a
+  `parse_constant` that raises, and its `columns` and `task` equal those of
+  `to_dict()`; `cp4_helpers.assert_raw_numbers(result)` holds (every number
+  finite, every null with its reason: third pass); and `rows`, `columns`,
+  `models`, `warnings` and `predictions` are DataFrames.
+
+The matrix does not assert which end a case has. The files of T32 to T34 do
+that for the rules they cover.
+
+**Red today: 37 cases**, from four causes (measured 2026-11-20). They are
+listed under "What must fail today" below. Every other case passes today and
+must go on passing. The green cases are not guards of a named fault, and no
+variant is named for them: they are the net for the class of fault, as D52
+asked. What shows the net can catch something: the application fails 37
+cases; the reference as it stood before this pass failed 18
+(`docs/measurements/CP5/README.md`); and the variant F6b, which drops a
+constant column from the accounting, fails the `one_value` cases of the
+feature role.
+
+## D: fractions of a second (task T36)
+
+### `tests/test_time_fraction.py`
+
+Spec: step 3, 11. Red today, every test.
+
+- `test_one_to_nine_digits_are_read_to_the_nanosecond`, one case for each
+  count of digits **1, 2, 4, 5, 6, 7, 8, 9** (three digits were accepted
+  before and the first pass holds them: leave 3 out, or that case is green)
+  with each of three endings: none, `Z`, `+02:00`. 24 cases. The fraction is
+  the first *n* digits of `123456789`. `stages.read_time` of
+  `["2024-01-05T09:15:00.<fraction><ending>", "2024-01-05 09:15:01.<fraction><ending>"]`
+  (one with `T`, one with a space): form `iso8601`, keys `datetime64[ns]`;
+  the first key is 09:15:00 plus the fraction as nanoseconds (the digits
+  padded with zeros to nine), two hours earlier under `+02:00`; the second is
+  one second later.
+- `test_digit_counts_may_be_mixed_in_one_column`. One column holding a value
+  with no fraction, with `.5`, `.25`, `.125000`, `.062500000`, and a missing
+  cell: form `iso8601`; the five keys are 0, 500,000,000, 250,000,000,
+  125,000,000 and 62,500,000 nanoseconds after the second; the sixth is
+  `NaT`.
+- `test_ten_digits_are_refused_and_the_message_names_the_fraction`, two
+  cases: `2024-01-05 09:15:00.1234567891` and
+  `2024-01-05T09:15:00.123456789012Z`. `stages.read_time` of a column holding
+  a good value and that one raises `TimeColumnError`; the message holds the
+  refused value, holds `fraction` (case ignored), and does not hold `not ISO
+  8601`. The same through `profile()`: a time column of 200 values with one
+  such value at row 17. And in the same test, so that it stays red as a
+  whole: a day-first column (`25/01/2024`) raises `TimeColumnError` with a
+  message that does not hold `fraction`.
+- `test_a_csv_pandas_wrote_from_microsecond_timestamps_runs`. Finding 10.
+  `h.time_frame(240)` with its dates replaced by timestamps 1,500
+  microseconds apart from `2024-03-01 08:00:00.000001`, written with
+  `to_csv`. Assert the first cell of the file is
+  `2024-03-01 08:00:00.000001`, so the test says why it exists. `profile()`
+  on the path with `time_col="date"`: form `iso8601`, unique timestamps, 180
+  and 60, the holdout rows 180 to 239, `holdout_start` equal as a timestamp
+  to the 181st date; the same holdout rows and (within 1e-9, relative) the
+  same score as the DataFrame itself. The command line on that file exits 0.
+
+## E: the fast profile's cap leaving too few rows (task T37)
+
+### `tests/test_fast_cap_error.py`
+
+Spec: 2.4, step 6, 11. Red today, every test. The new code is
+`fast_profile_too_few_rows`. Two table builders, local to the file: a time
+table with one numeric timestamp `t` per entry of a list of row counts, in
+order, two normal features and a regression target; and a table of `n` rows,
+two normal features, and a 0/1 target with exactly `k` rows of class 1 at
+random positions. Compare errors by `code` and by `type(...) is`.
+
+- `test_error_class_and_code`. `errors.FastProfileRowsError` subclasses
+  `ProfileError`, with the code above; `errors.FastProfileError.code` is
+  still `fast_profile_too_few_timestamps`.
+- `test_a_small_latest_timestamp_behind_a_large_one`. Finding 9. 30
+  timestamps of 100 rows, then one of 2,500, then one of 60. Under `fast`
+  with `time_col="t"`: `FastProfileRowsError`; its message holds `full`, and
+  `2000` or `2,000`. Under `full` (a constant family through the seam): the
+  run returns with 3,000 training rows, 2,560 holdout rows and
+  `dropped_row_cap` 0.
+- `test_too_few_of_a_class_in_the_sample`. 40,000 rows with 20 of class 1.
+  Under `fast`, for seeds 0, 1 and 2 (a sample of 2,000 holds about one such
+  row, whichever stream draws it): `FastProfileRowsError`, its message
+  holding `full`. Under `full` (a constant family): the run returns with
+  10,000 holdout rows.
+- `test_the_full_profiles_error_when_full_would_stop_too`. **One test, five
+  tables**: only the first is red today, the others hold what the application
+  already does, and all must hold once the new error exists. For each of:
+  seven timestamps of 100 rows then 2,500 then 60, with `gap=3`
+  (`gap_too_large`); three timestamps of 3,000, 2,500 and 60 rows
+  (`too_few_rows`); 40,000 rows with 8 of class 1 (`too_few_rows`): the call
+  under `full` raises that error; the call under `fast` raises an error of
+  **the same class and code**, not the new one. Then, for a table the cap
+  does not touch: 1,500 rows with 6 of class 1, and nine timestamps of 10
+  rows: `too_few_rows` under `fast`.
+
+## The README (task T38)
+
+### `tests/test_readme_duplicates.py`
+
+Spec: 1, 2.1, step 8a. Red today, both tests. It judges `README.md`, which
+the builder owns; do not edit it. Ideas are looked for in blocks (paragraphs,
+and each list item as a block of its own, as in the third pass's README
+test), never a sentence. Whole words, case ignored. Pin no wording beyond
+these.
+
+- `test_readme_names_the_argument_and_the_error`. The text holds
+  `--duplicates`; it holds `duplicates` followed by `=` (the Python
+  argument); it holds `holdout_copies_in_training`. In the blocks that hold
+  `--duplicates` or the error's code, joined: the word `keep`; `1%` (or
+  `1 %`) and `10` or `ten`, the two parts of the rule; and a word starting
+  `time`, for the scheme under which the rule does not apply.
+- `test_the_claim_about_unseen_holdout_rows_is_true_as_worded`. D49. Every
+  block that holds `no fitted step has seen` also holds a word of `copy`,
+  `copies`, `duplicate…`, `repeat…`. If no block holds that phrase any more,
+  some block holds one of those words together with `holdout`. Today the
+  README makes the claim in a paragraph that says nothing of copies.
+
+## What must fail today, and what must pass today
+
+Checked on 2026-11-20 with prototypes of every test below, run against the
+application as it stands, against the reference implementation, and against
+the reference carrying each of F9, F7c, F6b and M8 to M13
+(`docs/measurements/CP5/README.md`).
+
+**Red today: 37 tests in 99 cases, and 37 cases of the matrix.** They fail
+against the application until the build stage has done D49 to D53, and pass
+against the reference.
+
+| File | Tests |
+|---|---|
+| `test_duplicates.py` | `test_duplicates_is_the_tenth_parameter_and_defaults_to_error`, `test_error_class_and_code`, `test_any_other_value_is_an_input_error`, `test_every_row_twice_stops_the_run`, `test_keep_runs_and_says_so`, `test_the_rule_needs_a_share_and_a_count`, `test_the_rule_in_regression`, `test_values_are_compared_as_a_step_receives_them`, `test_the_rule_is_judged_before_any_model_is_fitted`, `test_time_order_has_no_rule`, `test_the_message_names_an_undeclared_date_column`, `test_command_line_takes_duplicates` |
+| `test_whole_numbers.py` | `test_read_time_keeps_integers_above_2_53`, `test_the_boundary_is_a_magnitude_above_2_53`, `test_nanosecond_stamps_are_distinct_timestamps`, `test_missing_and_repeated_integer_stamps`, `test_distinct_values_are_counted_exactly`, `test_whole_numbers_beyond_64_bits_in_every_role`, `test_command_line_on_a_26_digit_column` |
+| `test_object_numbers.py` | `test_object_number_columns_give_the_result_of_their_typed_twins`, `test_a_step_is_handed_floats`, `test_which_mixtures_are_read_as_numbers`, `test_every_unsupported_type_exclusion_is_warned_about`, `test_an_object_target_is_the_typed_target`, `test_a_decimal_target_is_a_regression_target`, `test_object_whole_numbers_are_exact`, `test_an_object_time_column_is_the_typed_time_column` |
+| `test_time_fraction.py` | `test_one_to_nine_digits_are_read_to_the_nanosecond`, `test_digit_counts_may_be_mixed_in_one_column`, `test_ten_digits_are_refused_and_the_message_names_the_fraction`, `test_a_csv_pandas_wrote_from_microsecond_timestamps_runs` |
+| `test_fast_cap_error.py` | `test_error_class_and_code`, `test_a_small_latest_timestamp_behind_a_large_one`, `test_too_few_of_a_class_in_the_sample`, `test_the_full_profiles_error_when_full_would_stop_too` |
+| `test_readme_duplicates.py` | `test_readme_names_the_argument_and_the_error`, `test_the_claim_about_unseen_holdout_rows_is_true_as_worded` |
+| `test_type_matrix.py` | `test_a_result_or_a_named_error`, in the 37 cases below |
+
+The two tests of `test_readme_duplicates.py` are red against the reference
+too, until T38 is built: they judge `README.md`, not the package.
+
+The 37 red cases of the matrix, by cause (`kind-role-extreme`):
+
+| Cause | Cases |
+|---|---|
+| Whole numbers beyond 64 bits: a raw `TypeError` (15) | `csv` and `object_int`, each in the three roles, each with `beyond_64` and `beyond_64_few` (12); `mixed` in the three roles with `e300`, whose cells include `10**30` (3) |
+| A target whose values cannot be compared: a raw `TypeError` (12) | `list-target`, `dict-target` and `set-target`, each with `ordinary`, `two`, `one_value` and `nan` |
+| A two-valued target of a type JSON cannot hold: the run finishes and `profile.json` cannot be written (7) | `bytes-target-two`, `complex128-target-two`, `complex64-target-two`, `decimal-target-two`, `interval-target-two`, `period-target-two`, `timedelta-target-two` |
+| A `Decimal` signalling not-a-number: a raw `decimal.InvalidOperation` from pandas (3) | `decimal-feature-nan`, `decimal-target-nan`, `decimal-time-nan` |
+
+**Green today: the six guards, 768 cases of the matrix, and the loosened
+test.** They pass against the application and against the reference, and
+must go on passing through every task of the build.
+
+| File | Test | Fails on |
+|---|---|---|
+| `test_guard_review3.py` | `test_m8_the_interval_is_the_middle_95_percent` | M8 |
+| `test_guard_review3.py` | `test_m9_the_leak_screen_uses_the_previous_value` | M9 |
+| `test_guard_review3.py` | `test_m10_the_fast_cap_is_a_sample_from_the_seed` | M10 |
+| `test_guard_review3.py` | `test_m11_cv_std_is_the_sample_deviation` | M11 |
+| `test_guard_review3.py` | `test_m12_tied_predictions_in_a_resample` | M12 |
+| `test_guard_review3.py` | `test_m13_n_imputed_counts_rows_that_reach_a_model` | M13 |
+| `test_type_matrix.py` | `test_a_result_or_a_named_error`, every case but the 37 | no variant is named for them (see H); the `one_value` cases of the feature role fail on F6b |
+| `test_skeleton.py` | `test_profile_signature_and_defaults`, as loosened | not a guard: it passes on nine parameters and on ten |
+
+**What the mutation check must then print**, run after your stage and before
+the build: the good reference fails 0 of 1313 (the 405 counted today and 908
+of this pass: 97 red cases, 6 guards, 805 of the matrix); each of F1 to F9,
+F6b, F6c, F6d, F7b, F7c and M1 to M13 fails at least one test; each of M8 to
+M13 fails its own guard (measured with the prototypes: that guard and no
+other test); F9 fails nine cases of `test_duplicates.py`; F7c fails ten
+cases of `test_whole_numbers.py` and both of
+`test_object_whole_numbers_are_exact`; on the README line, 2 failing of 8. **Before your
+stage it ends in `FAIL` for two reasons, both expected:** the good reference
+fails one case, `test_skeleton.py::test_profile_signature_and_defaults`
+(the reference has the tenth parameter and the test is not yet loosened),
+and it prints `NOT CAUGHT` for F9, F7c and M8 to M13. Your stage closes both.
+
+## Not tested in the fourth pass
+
+The wording of any message beyond what spec 11 pins. A particular resample,
+kept row or holdout row that a seed produces (rule 7). What `stages.read_time`
+returns for a whole-number column above 2⁵³ that also has a missing value
+(spec 11); `profile()` on such a column is tested. Whole numbers that pandas
+has already turned into floats before the tool sees them: a CSV whole-number
+column with an empty cell, and whole numbers written as text (spec section
+6); the tool cannot give back what was lost. That two whole numbers above
+2⁵³ can reach a model as one float (spec step 5): the roles are tested, the
+models' inputs stay floats. The text a class value of an unusual type is
+written as (spec 11). The rule on copies at 1% to 2% of repeated rows, where
+the count of 10 decides and the outcome varies with the seed (spec 10.6):
+the tests plant an exact number of copies instead. Run time at 100,000 rows.

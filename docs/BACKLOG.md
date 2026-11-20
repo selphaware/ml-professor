@@ -76,6 +76,17 @@ build loop: each item becomes work only through a decision in
 - **Not verified by any review:** seeds other than the gate's; whether a
   library warning can reach standard error beside a named error.
 
+## Found in the CP5 session (third review round)
+
+- **Large whole-number features and the models.** A feature of whole
+  numbers above 2 to the power 53 is counted exactly, but the models receive
+  floats, so distinct values can reach them as one. No warning says so
+  (D55).
+- **The grey zone of the copies rule.** With 1% to 2% of rows repeated, the
+  count of 10 decides and the outcome depends on the seed (D55).
+- **The type matrix's passing cases have no broken copy.** It is a contract
+  test over 805 cases; only its one-value cases are shown to fail, on F6b.
+
 ## Notes for the framework (ailoop-engineering), not for this repo
 
 - The tests stage does not lock `tests/`, so on a second pass the existing
@@ -86,5 +97,9 @@ build loop: each item becomes work only through a decision in
 - The self-test accepts a failure mode when any one check that names it
   fails, so a check can sit in the matrix without ever having been seen to
   fail (second review, finding 4).
+- When a test the driver has already passed fails, `reverify_done` reopens
+  every finished task that has tests, not only the task that owns the
+  failing file. Editing one old test for a changed contract can therefore
+  rebuild a whole project (D53, D54).
 - The driver counts `docs/` as application code, so measurement scripts
   appear as judge-awareness warnings in every build report.

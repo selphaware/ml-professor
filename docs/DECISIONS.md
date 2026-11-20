@@ -687,3 +687,74 @@ time (rejected: the last two reviews each found a different member of the
 same class).
 Consequence: a fifth change prompt (CP5), a fourth pass of tests and build,
 and a fourth review, judged again under D47.
+
+## D53 — 2026-11-20 — Rulings from the CP5 session's plan
+Decision: (1) The stop of D49 needs both a share and a count: more than 1%
+of the holdout rows, and at least 10 of them, have a copy in training.
+Below that the run goes ahead, the count and the share are reported, and
+the existing duplicate-rows warning stands; no new warning is added there.
+Both values are measured by the harness stage and reported for approval.
+(2) No locked test is edited. (3) When the run stops for copies and a date
+column was excluded because no time column was declared, the message says
+so. (4) The gate's own run of time-ordered data without a declared time
+column passes `duplicates="keep"`, since every one of its holdout rows has
+a copy in training. (5) Under D50, integer time keys are kept as exact
+integers only when the column holds a magnitude above 2 to the power 53;
+otherwise they stay 64-bit floats, as a locked test requires. (6) A target
+whose values cannot be compared for equality (lists, dictionaries, sets) is
+an unsupported task. A class value is written as a boolean, a number or
+text. (7) When the fast profile's cap leaves too few rows or too few of a
+class and the full profile would run, the error has its own code and does
+not reuse the one that names timestamps.
+Alternatives considered: for (1), a share alone at 1% (rejected: on a
+holdout under 100 rows a single copy is above it, and two locked tests with
+two or three repeated rows expect a finished run; editing them would make
+them fail against the built library until the new task is built, and the
+driver reopens every finished task when a test it has already passed
+fails); a share alone at 10% (rejected: a table with 7% of its rows written
+twice would run with only a count). The count of 10 mirrors the tool's
+existing floor of 10 rows of a class: below ten rows a count cannot tell
+coincidence from duplication.
+Consequence: a small table with a handful of repeated rows runs, with the
+count reported. A table with real duplication stops.
+
+## D54 — 2026-11-20 — One locked test is loosened for the new argument (amends D53)
+Decision: `tests\test_skeleton.py::test_profile_signature_and_defaults` pins
+the public function to exactly nine parameters, so D49's new `duplicates`
+argument cannot be added without changing it. The tests stage may loosen
+that one test, and nothing else in any existing test file: the first nine
+parameters stay pinned exactly as now, and a tenth, `duplicates` with the
+default `"error"`, is accepted when present. The loosened test passes
+against the library as built and after the change, so the driver reopens no
+finished task. A new test, failing today, requires the tenth parameter, so
+the signature is pinned exactly again once it is built. Separately, the
+gate check `time.undeclared_warns` moves from task T11 to the task that
+builds D49, because its run now passes `--duplicates keep`; if the driver
+would still reopen T11, the reopening is accepted.
+Alternatives considered: carrying the choice outside the signature, through
+a context manager (rejected: the public function would no longer say what
+it does); hiding the parameter from inspection (rejected outright: the test
+would pass on a signature that is not the real one).
+Consequence: the rule that existing tests are never edited has one recorded
+exception, checked by reading the diff of that file after the tests stage.
+
+## D55 — 2026-11-20 — Values approved after the CP5 session
+Decision: (1) The cut-off of D49 is approved as measured: the run stops when
+more than 1% of the holdout rows, and at least 10 of them, have a copy in
+training. Over 30 seeds, clean data (13 gate runs and the example table)
+had no copies and never stopped; with 5% of rows repeated every run
+stopped; with every row present twice every run stopped. Between 1% and 2%
+repeated the outcome depends on the seed, which is accepted: the inflation
+there is small and the count is reported. (2) A decimal object that holds a
+whole number is read as a whole number, not a float, so that D50 holds for
+decimal columns too. (3) Accepted as limits: a whole-number feature above 2
+to the power 53 is counted exactly but reaches the models as a float, so
+distinct values can become one, with no warning; and three shapes arrive
+already rounded before the tool sees them (digits held as text, a CSV
+whole-number column with an empty cell, and a CSV value above the signed
+range beside a negative one).
+Alternatives considered: for (2), reading every decimal as a float, as
+first agreed (rejected on measurement: a decimal column of nanosecond
+instants merged, 200 read as 76).
+Consequence: these values are part of the contract and change only by a new
+decision backed by a new measurement.

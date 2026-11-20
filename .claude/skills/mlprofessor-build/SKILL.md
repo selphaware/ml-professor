@@ -76,6 +76,30 @@ Change as little as each task needs. Every earlier test stays green.
     (T27)**, then **the fast profile's error (T28)**, then **the summary's
     significant digits (T29)**, then the **README (T30)**.
 
+### Fourth pass, after the third review (tasks T31 to T38)
+
+Change as little as each task needs. Every earlier test stays green.
+
+16. **The guards first (T31).** Six tests, one for each fault the third review
+    planted unseen: the interval's percentiles, the leak screen's
+    previous-value baseline, the fast profile's sample, `cv_std`, ties in a
+    resampled ROC AUC, `n_imputed`. Expect to change nothing.
+17. **Copies of holdout rows (T32).** The `duplicates` argument, the count, the
+    rule (more than 1% of the holdout rows and at least 10), the error, the
+    warning. Count after the leak screen and before any fit, on the values a
+    seam step would be handed.
+18. **Whole numbers (T33).** Integer time keys above 2**53 stay integers;
+    distinct values of an integer column are counted on the integers; whole
+    numbers too large for 64 bits are excluded or a named error, never a raw
+    one.
+19. **Object columns of numbers (T34).** Type them once, before any step, and
+    let every role read the typed column. Then one warning per column still
+    excluded as `unsupported_type`.
+20. **The type matrix (T35).** About 800 small tables. Run it, group what fails
+    by where the raw exception starts, and fix each place. No broad `except`.
+21. **Fractions of a second (T36)**, then **the fast profile's cap leaving too
+    few rows (T37)**, then the **README (T38)**.
+
 ## Rules that keep the number honest
 
 - The holdout rows are chosen before anything is fitted, and nothing fitted
@@ -136,6 +160,29 @@ Change as little as each task needs. Every earlier test stays green.
   point; otherwise it raises what the full profile would raise.
 - Check an argument's whole range before anything is loaded. A seed of 2³² or
   more reaches scikit-learn as a raw error from deep inside the run.
+- "No fitted step has seen the holdout rows" must be true of what the rows
+  hold, not only of their positions. A holdout row whose exact copy is among
+  the training rows can be scored by recall. Count such rows under the random
+  scheme, on the feature values a step is handed and the target as read, and
+  stop when more than 1% of the holdout rows and at least 10 of them have a
+  copy, unless the caller said `duplicates="keep"` (D49, D53). Under time
+  order the rule does not apply.
+- A whole number stays a whole number. A 64-bit float holds every whole number
+  only up to 2**53; above it, distinct integers become one float. Never send
+  an integer through a float to compare it, sort it or count it: integer time
+  keys above 2**53 are compared as integers, and the distinct values of an
+  integer column are counted on the integers (D50). Compare neighbours rather
+  than subtract them: `numpy.diff` overflows on the ends of the int64 range.
+- Type a column once, where it is loaded, and let every role read the typed
+  column. An object column that holds only numbers (`Decimal`, booleans or
+  whole numbers with `None`) is that typed column in every role (D51). Teaching
+  each rule about objects separately is how one role gets forgotten.
+- A run ends in a result or in a named error, whatever type a column has and
+  whatever it holds (D52). A raw `TypeError` or `OverflowError` is fixed where
+  it starts. A broad `except` round the run that renames it would hide the
+  next fault of the same class.
+- Nothing is excluded in silence: a column the tool cannot read is named in a
+  warning, so the caller who meant it as a feature finds out.
 
 ## Common failures and their real causes
 
@@ -182,6 +229,20 @@ Change as little as each task needs. Every earlier test stays green.
 | Extra lines on standard error before `error: non_finite_score: ...` | numpy printed its overflow warnings. Exit 3 carries exactly one line. | `numpy.errstate(over="ignore", invalid="ignore")` round the arithmetic that can overflow. |
 | `test_guard_header_lines.py` fails: a file whose first line is a form feed or a no-break space loads | The loader took a line for blank that pandas reads as the header (F6d's ground). `str.strip()` removes more than spaces and tabs. | The loader's reading of the header line, and its check for rows longer than the header. |
 | `test_a_prediction_that_is_not_finite_counts_as_raising` fails | A NaN prediction was scored and written. ROC AUC is a count of ranks, so the score looks fine and the NaN reaches `y_pred` (M6). | Check every prediction is finite before it is scored, in the folds and on the holdout. |
+| Skill near 0.9 on a table that should have none, with a `duplicate_rows` warning; or `data.holdout_copies_stop` fails with exit 0 | Rows are present more than once, so holdout rows have copies among the training rows and a tree recalls them (F9). | Spec step 8a: count the copies after the leak screen, before any fit, and stop with `holdout_copies_in_training` when the rule is met. |
+| `time.undeclared_warns` fails with exit 2 and "unrecognized arguments: --duplicates keep" | The command line does not take `--duplicates` yet. That run passes `keep` because every one of its holdout rows has a copy once the date column is excluded (D53). | The command line and `profile()`: the tenth parameter, `duplicates`. |
+| `holdout_copies_in_training` on a table with a date column and no repeated rows | The date was not declared, so it is excluded, and rows that differ only in their date are copies. The message names the column. | Not a fault: the caller declares `time_col`, or passes `duplicates="keep"`. |
+| `time.integer_keys_distinct` fails with 439 and 148 timestamps where the gate counts 1,125 and 375; or a random walk scores skill near 1 with no `previous_value` baseline | Whole-number time keys went through float64, which holds only every 256th whole number at 1.7e18 (F7c). | Where the time column becomes keys: integers above 2**53 stay `int64` or `uint64`, through the cap, the split, the previous value and the bootstrap blocks. |
+| A column of large distinct whole numbers is reported `constant`, or an id column above 2**53 is a feature | Distinct values were counted on floats (D50). | Rules 8, 8a and 8b of step 5, on the integers of an integer-typed column. |
+| A raw `TypeError` naming `isinf`, or any raw error on a CSV with a 26-digit number | pandas loads a whole number beyond 64 bits as a Python integer in an `object` column, and numpy's functions refuse it (D50). | Where object cells are first looked at: such a column is `unsupported_type` with a warning, `task_unsupported` as the target, `time_column_invalid` as the time column. |
+| A table read from a database scores no skill, and its number columns are `excluded` / `unsupported_type` | The driver returned `Decimal`, or booleans and whole numbers with `None`: object columns (D51). | Spec step 1a: type such a column once, before any step. |
+| A raw `decimal.InvalidOperation` | pandas' `isna` raises on `Decimal("sNaN")`. | Find the empty cells of an object column yourself before pandas is asked; a decimal not-a-number of either kind is an empty cell. |
+| A raw `TypeError: unhashable type` | The target holds lists, dictionaries or sets, and counting its distinct values hashes them (D53). | Step 4: `task_unsupported`. |
+| A run finishes and then a raw `TypeError` says an object "is not JSON serializable" | A class value of a type JSON cannot hold (bytes, a period, a complex number) was put into `task.classes` as it was (D53). | Where `task.classes` is built: a boolean, a number or text; anything else as `str(value)`. |
+| `time_column_invalid` on a CSV pandas wrote from microsecond timestamps | Exactly three digits of a fraction were accepted. One to nine are (D52). | The ISO 8601 pattern of the time column, and the refusal's message, which names the fraction when that is all that is wrong. |
+| `too_few_rows: 60 rows are left` under `fast` on a table the full profile runs | The cap kept whole timestamps holding at most 2,000 rows, and the latest one is small; or a rare class fell out of the sample (D52). | After the cap: if rows were left out and the full profile would get past this point and form its split, `fast_profile_too_few_rows`; otherwise the full profile's own error. |
+| `test_guard_review3.py` fails | One of six pinned details moved: the percentiles (2.5 and 97.5), the leak screen's previous-value baseline, the seeded sample of the fast cap, the sample deviation in `cv_std`, shared ranks for ties in every resample, `n_imputed` over training and holdout rows only (M8 to M13). The application is wrong, not the test. | The test's name says which. |
+| `test_type_matrix.py` fails with a raw exception in a case named kind-role-extreme | A kind of column, in that role, with that value, reached code not written for it. | The first frame of the traceback inside the package. Decide what the spec says of that kind (steps 1a to 5), and make that place do it. |
 
 ## How to debug a gate failure
 

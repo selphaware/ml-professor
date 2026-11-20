@@ -1,7 +1,7 @@
 """Reference implementation of spec.md, in the spec's order of operations.
 
-Judge fixture: the gate measures its bands on this code and breaks it in twelve
-named ways; the test suite is proved against those and against seven smaller
+Judge fixture: the gate measures its bands on this code and breaks it in fourteen
+named ways; the test suite is proved against those and against thirteen smaller
 faults (see _variant.py). One module on purpose, so each step of the
 methodology can be read top to bottom in `_run`.
 """
@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import codecs
 import csv
+import decimal
 import json
 import math
 import os
@@ -59,6 +60,14 @@ MAX_SEED = 2 ** 32 - 1      # the largest seed scikit-learn takes (D45)
 # read their input as 32-bit floats and raise on anything beyond; a feature value of
 # greater magnitude is read as an infinite one is: missing, counted, warned (D48).
 TOO_LARGE = float(np.finfo(np.float32).max)
+# Whole numbers up to this magnitude are exact as 64-bit floats; above it two
+# distinct integers can become one float, so integer time keys are kept as
+# integers there (D50, D53).
+EXACT_AS_FLOAT = 2 ** 53
+# D49, D53: the run stops when more than this share of the holdout rows, and at
+# least this many of them, have a copy among the training rows.
+COPY_SHARE = 0.01
+COPY_ROWS = 10
 
 LINEAR_C = [1.0, 0.001, 0.01, 0.1, 10.0, 100.0]
 LINEAR_ALPHA = [1.0, 0.01, 0.1, 10.0, 100.0, 1000.0]
@@ -84,6 +93,10 @@ DATE_RE = re.compile("(?:" + "|".join(DATE_FORMS) + ")", re.I)
 ISO_TIME_RE = re.compile(
     r"\d{4}-\d{2}-\d{2}(?:[T ]\d{2}:\d{2}(?::\d{2}(?:\.\d{1,9})?)?)?(?:Z|[+-]\d{2}:\d{2})?")
 ISO_TZ_RE = re.compile(r".*(?:Z|[+-]\d{2}:\d{2})")
+# ISO 8601 in every respect but one: more than nine fractional digits. Only used to
+# say what is wrong with a refused value (D52).
+ISO_LONG_FRACTION_RE = re.compile(
+    r"\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}\.\d{10,}(?:Z|[+-]\d{2}:\d{2})?")
 # D28: a number written with thousands separators. Never parsed: `1,200` is 1.2 in some locales.
 SEPARATED_RE = re.compile(r"[+-]?[0-9]{1,3}(?:,[0-9]{3})+(?:\.[0-9]+)?")
 
@@ -176,13 +189,15 @@ def summary(result):
 # -------------------------------------------------------------- public API --
 
 def profile(data, target, task="auto", time_col=None, gap=0, profile="full", seed=0,
-            out_dir=None, n_jobs=-1):
+            out_dir=None, n_jobs=-1, duplicates="error"):
     """Measure how predictable `target` is from the other columns of one table."""
     started = time.perf_counter()
     if task not in ("auto", "classification", "regression"):
         raise E.InputError(f"task must be auto, classification or regression, not {task!r}")
     if profile not in ("full", "fast"):
         raise E.InputError(f"profile must be full or fast, not {profile!r}")
+    if not isinstance(duplicates, str) or duplicates not in ("error", "keep"):
+        raise E.InputError(f"duplicates must be error or keep, not {duplicates!r}")
     if isinstance(gap, bool) or not isinstance(gap, (int, np.integer)) or gap < 0:
         raise E.InputError(f"gap must be a whole number of at least 0, not {gap!r}")
     _check_seed(seed)                       # before anything is loaded (D45)
@@ -198,7 +213,8 @@ def profile(data, target, task="auto", time_col=None, gap=0, profile="full", see
     threads = (os.cpu_count() or 1) if n_jobs == -1 else int(n_jobs)
     with threadpoolctl.threadpool_limits(limits=1, user_api="blas"), \
             threadpoolctl.threadpool_limits(limits=threads, user_api="openmp"):
-        doc, predictions = _run(data, target, task, time_col, int(gap), profile, int(seed), threads)
+        doc, predictions = _run(data, target, task, time_col, int(gap), profile, int(seed), threads,
+                                duplicates)
     doc["meta"]["timing"] = {"seconds": round(time.perf_counter() - started, 3)}
     result = ProfileResult(doc, predictions)
     if out_dir is not None:
@@ -338,6 +354,148 @@ def _load(data, warnings):
     return df.reset_index(drop=True), kind, label
 
 
+def _cell_missing(value):
+    """Whether one cell of an object column is empty.
+
+    None, NaN, `pd.NA`, `pd.NaT`, and a decimal not-a-number of either kind:
+    pandas itself raises on a signalling one, so it is asked about no decimal.
+    """
+    if isinstance(value, decimal.Decimal):
+        return value.is_nan()
+    gone = pd.isna(value)                   # an array for a list: a list is a value
+    return isinstance(gone, (bool, np.bool_)) and bool(gone)
+
+
+def _cell_kind(value):
+    """What a cell of an object column is, for D51: `bool`, `int`, `real`, or None
+    for anything else.
+
+    `int` is a whole number held exactly: a Python or numpy integer, or a decimal
+    number with no fractional part, which is how a database driver returns a
+    wide whole-number column (D50: such values are never merged). `real` is a
+    float, or a decimal number with a fractional part or an infinite one. A
+    complex number is not a number here (D48).
+    """
+    if isinstance(value, (bool, np.bool_)):
+        return "bool"
+    if isinstance(value, (int, np.integer)):
+        return "int"
+    if isinstance(value, decimal.Decimal):
+        return "int" if value.is_finite() and value == value.to_integral_value() else "real"
+    if isinstance(value, (float, np.floating)):
+        return "real"
+    return None
+
+
+def _whole(value):
+    """A cell of kind `int` as a Python integer. A decimal number of more than 30
+    digits is not spelled out: any value that large is beyond 64 bits already."""
+    if isinstance(value, decimal.Decimal) and value.adjusted() > 30:
+        return (-1 if value < 0 else 1) * 10 ** 31
+    return int(value)
+
+
+def _as_float(value):
+    """A number as a 64-bit float. One beyond the largest double is infinite, with its sign."""
+    try:
+        return float(value)
+    except OverflowError:
+        return math.inf if value > 0 else -math.inf
+
+
+def _object_numbers(series):
+    """D51: one column of generic objects, as the typed column it stands for.
+
+    Returns the column to use in its place, or None to leave it as it is.
+    - only booleans: the nullable boolean type;
+    - only whole numbers: the nullable 64-bit integer type, signed where every
+      value fits and unsigned where every value fits that instead. Where neither
+      holds them the column is left alone: it is too large for 64 bits (D50);
+    - whole numbers, floats and decimal numbers in any mixture: 64-bit floats;
+    - a boolean beside a number, or any other value: left alone.
+    An empty cell stays empty throughout.
+    """
+    cells = series.to_numpy(dtype=object)
+    missing = np.fromiter((_cell_missing(v) for v in cells), dtype=bool, count=len(cells))
+    kinds = {_cell_kind(v) for v in cells[~missing]}
+
+    def typed(values, dtype):
+        return pd.Series(pd.array(values, dtype=dtype), index=series.index, name=series.name)
+
+    if not kinds or None in kinds or (len(kinds) > 1 and "bool" in kinds):
+        if missing.any() and any(isinstance(v, decimal.Decimal) for v in cells[missing]):
+            # a decimal not-a-number is an empty cell, in a form pandas can ask about
+            return pd.Series([None if gone else v for v, gone in zip(cells, missing)],
+                             index=series.index, dtype=object, name=series.name)
+        return None
+    if kinds == {"bool"}:
+        return typed([None if gone else bool(v) for v, gone in zip(cells, missing)], "boolean")
+    if kinds == {"int"}:
+        whole = [None if gone else _whole(v) for v, gone in zip(cells, missing)]
+        low = min(v for v in whole if v is not None)
+        high = max(v for v in whole if v is not None)
+        if -2 ** 63 <= low and high <= 2 ** 63 - 1:
+            return typed(whole, "Int64")
+        if low >= 0 and high <= 2 ** 64 - 1:
+            return typed(whole, "UInt64")
+        return None
+    numbers = np.array([np.nan if gone else _as_float(v) for v, gone in zip(cells, missing)],
+                       dtype="float64")
+    return pd.Series(numbers, index=series.index, name=series.name)
+
+
+def _numbers_from_objects(df):
+    """D51, before any step: every object column that holds only numbers, typed.
+
+    Returns the frame to work on and the type of every column as it was loaded,
+    which is what the output reports.
+    """
+    loaded = {name: str(df[name].dtype) for name in df.columns}
+    out = df
+    for name in df.columns:
+        if df[name].dtype != object:
+            continue
+        typed = _object_numbers(df[name])
+        if typed is not None:
+            if out is df:
+                out = df.copy(deep=False)
+            out[name] = typed
+    return out, loaded
+
+
+def _beyond_64_bits(series):
+    """Whether a column holds whole numbers too large for 64 bits (D50).
+
+    After `_numbers_from_objects` an object column whose values are all whole
+    numbers is exactly that: one that fits has been given an integer type.
+    """
+    if series.dtype != object:
+        return False
+    kinds = {_cell_kind(v) for v in series.to_numpy(dtype=object) if not _cell_missing(v)}
+    return kinds == {"int"}
+
+
+def _exact_integers(series):
+    """An integer-typed column as exact 64-bit integers: (values, which are missing).
+
+    Unsigned where the type is, signed otherwise; 0 stands in a missing cell.
+    """
+    missing = series.isna().to_numpy().copy()
+    kind = "uint64" if pt.is_unsigned_integer_dtype(series.dtype) else "int64"
+    return series.to_numpy(dtype=kind, na_value=0), missing
+
+
+def _to_nanoseconds(series, name):
+    """A datetime column as nanosecond stamps, or the time-column error when a
+    date lies outside what nanoseconds since 1970 can hold."""
+    try:
+        return series.to_numpy("datetime64[ns]")
+    except (OverflowError, ValueError) as exc:
+        raise E.TimeColumnError(
+            f"time column {name!r} holds a date outside the range a nanosecond timestamp can "
+            "hold (1677-09-21 to 2262-04-11), so its order cannot be read") from exc
+
+
 def _time_keys(series, name):
     """Step 3 (D18): sortable keys for the time column. Returns (keys, missing, form, show)."""
     dtype = series.dtype
@@ -345,12 +503,25 @@ def _time_keys(series, name):
         s = series
         if getattr(dtype, "tz", None) is not None:
             s = s.dt.tz_convert("UTC").dt.tz_localize(None)
-        stamps = s.to_numpy("datetime64[ns]")
+        stamps = _to_nanoseconds(s, name)
         return stamps.astype("int64"), np.isnat(stamps), "datetime", _show_stamp
-    if pt.is_numeric_dtype(dtype) and not pt.is_bool_dtype(dtype):
-        keys = pd.to_numeric(series, errors="coerce").to_numpy(dtype="float64", na_value=np.nan)
+    if pt.is_numeric_dtype(dtype) and not pt.is_bool_dtype(dtype) \
+            and not pt.is_complex_dtype(dtype):
         whole = pt.is_integer_dtype(dtype)
+        if whole and BROKEN != "F7c":
+            # D50, D53: above 2**53 two distinct whole numbers can be one float, so
+            # there the keys stay the integers they are. F7c: always floats.
+            exact, missing = _exact_integers(series)
+            present = exact[~missing]
+            if len(present) and (int(present.max()) > EXACT_AS_FLOAT
+                                 or int(present.min()) < -EXACT_AS_FLOAT):
+                return exact, missing, "numeric", int
+        keys = pd.to_numeric(series, errors="coerce").to_numpy(dtype="float64", na_value=np.nan)
         return keys, ~np.isfinite(keys), "numeric", (lambda k: int(k) if whole else float(k))
+    if _beyond_64_bits(series):
+        raise E.TimeColumnError(
+            f"time column {name!r} holds whole numbers too large for 64 bits, which cannot be "
+            "ordered exactly here; pass the column as 64-bit integers, or as datetimes")
     present = series.dropna()
     if (pt.is_string_dtype(dtype) or dtype == object) and all(isinstance(v, str) for v in present):
         text = present.str.strip()
@@ -365,9 +536,18 @@ def _time_keys(series, name):
             stamps[series.notna().to_numpy()] = parsed.to_numpy("datetime64[ns]")
             return stamps.astype("int64"), np.isnat(stamps), "iso8601", _show_stamp
         if not ok.all():
+            first = text[~ok].iloc[0]
+            if ISO_LONG_FRACTION_RE.fullmatch(first):
+                # ISO 8601 but for the length of its fraction: say that, and nothing
+                # about the order of day and month (D52)
+                raise E.TimeColumnError(
+                    f"time column {name!r} holds a value with more than nine digits in its "
+                    f"fraction of a second (for example {first!r}). At most nine are read, "
+                    "which is a nanosecond: shorten the fraction, or parse the column "
+                    "yourself and pass a DataFrame")
             raise E.TimeColumnError(
                 f"time column {name!r} holds text that is not ISO 8601 with the year first "
-                f"(for example {text[~ok].iloc[0]!r}). Day-first and month-first dates are "
+                f"(for example {first!r}). Day-first and month-first dates are "
                 "never guessed: parse the column yourself and pass a DataFrame")
         zoned = text.map(lambda v: ISO_TZ_RE.fullmatch(v) is not None)
         if zoned.any() and not zoned.all():
@@ -380,7 +560,7 @@ def _time_keys(series, name):
         if zoned.all():
             parsed = parsed.dt.tz_localize(None)
         stamps = np.full(len(series), np.datetime64("NaT", "ns"), dtype="datetime64[ns]")
-        stamps[series.notna().to_numpy()] = parsed.to_numpy("datetime64[ns]")
+        stamps[series.notna().to_numpy()] = _to_nanoseconds(parsed, name)
         return stamps.astype("int64"), np.isnat(stamps), "iso8601", _show_stamp
     raise E.TimeColumnError(
         f"time column {name!r} has type {dtype}; accepted forms are a datetime column, a "
@@ -419,7 +599,18 @@ def _target_values(series):
 
 def _decide_task(y, name, requested):
     """Step 4 (D4, D21): classification or regression, and how that was decided."""
-    n_distinct = int(y.nunique())
+    if _beyond_64_bits(y):
+        raise E.TaskUnsupportedError(
+            f"target {name!r} holds whole numbers too large for 64 bits, which are not read "
+            "as numbers here; pass them as text if they are labels (D50)")
+    try:
+        n_distinct = int(y.nunique())
+    except TypeError as exc:
+        # lists, dictionaries, sets: values that cannot be compared for equality (D53)
+        kind = type(y.dropna().iloc[0]).__name__ if y.notna().any() else str(y.dtype)
+        raise E.TaskUnsupportedError(
+            f"target {name!r} holds values that cannot be compared for equality ({kind}), so "
+            "its distinct values cannot be counted") from exc
     numeric = _is_numeric(y.dtype)
     if n_distinct < 2:
         raise E.TargetConstantError(f"target {name!r} has {n_distinct} distinct value(s)")
@@ -465,13 +656,20 @@ def _classes(values):
         return sorted(distinct, key=str)
 
 
-def _whole_number_id(values):
-    """D19: every value distinct, and consecutive or strictly ordered in file order."""
-    x = values[~np.isnan(values)]
-    if len(x) < 2 or not np.all(x == np.floor(x)) or len(np.unique(x)) != len(x):
+def _whole_number_id(x):
+    """D19: every value distinct, and consecutive or strictly ordered in file order.
+
+    `x` holds the present values in file order: floats, or the exact integers of
+    an integer-typed column (D50). Neighbours are compared, never subtracted, and
+    the range is taken in Python integers, so nothing here can overflow.
+    """
+    if len(x) < 2 or len(np.unique(x)) != len(x):
         return False
-    step = np.diff(x)
-    return bool(np.all(step > 0) or np.all(step < 0) or x.max() - x.min() + 1 == len(x))
+    if x.dtype.kind == "f" and not np.all(x == np.floor(x)):
+        return False
+    if np.all(x[1:] > x[:-1]) or np.all(x[1:] < x[:-1]):
+        return True
+    return int(x.max()) - int(x.min()) + 1 == len(x)
 
 
 def _separated(text):
@@ -479,17 +677,20 @@ def _separated(text):
     return SEPARATED_RE.fullmatch(text) is not None
 
 
-def _roles(df, usable, target, time_col):
+def _roles(df, usable, target, time_col, loaded=None):
     """Step 5 (D19, D20, D28, D34): roles that need no target, judged on the usable rows.
 
     Returns the column records and, for each feature, its prepared values over
-    every loaded row: float64 for numeric, object for categorical.
+    every loaded row: float64 for numeric, object for categorical. `df` is the
+    table after `_numbers_from_objects`; `loaded` gives each column's type as it
+    was loaded, which is the type reported (D51).
     """
     records, prepared = [], {}
     n_rows = int(usable.sum())
     for position, name in enumerate(df.columns):
         series = df[name]
-        rec = dict(name=name, position=position, dtype=str(series.dtype), role="feature",
+        rec = dict(name=name, position=position,
+                   dtype=loaded[name] if loaded else str(series.dtype), role="feature",
                    kind=None, reason=None, leak_rule=None, n_missing=int(series.isna().sum()),
                    n_coerced=0, n_infinite=0, n_imputed=0)
         records.append(rec)
@@ -550,7 +751,14 @@ def _roles(df, usable, target, time_col):
             rec["n_infinite"] = int(infinite.sum())
             numbers = np.where(infinite, np.nan, numbers)
             seen = numbers[usable]
-            distinct = len(np.unique(seen[~np.isnan(seen)]))
+            seen = seen[~np.isnan(seen)]
+            if pt.is_integer_dtype(dtype):
+                # D50: the distinct values of a whole-number column are counted on
+                # the integers themselves. As floats, integers above 2**53 merge:
+                # fifty distinct ones can count as one, and the column as constant.
+                exact, gone = _exact_integers(series)
+                seen = exact[usable & ~gone]
+            distinct = len(np.unique(seen))
             if distinct == 0:
                 rec.update(role="excluded", reason="all_missing")
             elif distinct == 1:
@@ -620,6 +828,52 @@ def _fast_profile_stop(all_keys, gap, found):
         return type(exc)(f"{exc} (the fast profile kept fewer rows still: {found})")
     return E.FastProfileError(f"{found}. Every usable row together can form the split: "
                               "use profile='full'")
+
+
+def _fast_rows_stop(found, y_usable, classification, all_keys, gap):
+    """The error for a fast run whose capped rows are too few to profile (D52, D53).
+
+    The rows the cap kept are fewer than `MIN_ROWS`, or hold fewer than
+    `MIN_CLASS_ROWS` of a class. `y_usable` and `all_keys` are the target and the
+    time keys of every usable row: what the full profile would work on. If the
+    full profile gets past this step and can form its split, the error is the
+    fast profile's own, with a code that names rows, and its advice is true.
+    If it cannot, the error is the one the full profile would raise.
+    """
+    if classification and min(int(y_usable.sum()), int(len(y_usable) - y_usable.sum())) \
+            < MIN_CLASS_ROWS:
+        return E.TooFewRowsError(f"the rarer class has fewer than {MIN_CLASS_ROWS} usable rows "
+                                 f"(the fast profile kept fewer rows still: {found})")
+    if all_keys is not None:
+        try:
+            _split_time(all_keys, gap)
+        except (E.TooFewRowsError, E.GapError) as exc:
+            return type(exc)(f"{exc} (the fast profile kept fewer rows still: {found})")
+    return E.FastProfileRowsError(
+        f"{found}. Every usable row together is enough to profile: use profile='full'")
+
+
+def _holdout_copies(columns, y, train, holdout):
+    """D49: how many holdout rows have a copy among the training rows.
+
+    A copy is a training row with the same value in every feature column and the
+    same target. `columns` are the features left after the leak screen, as a
+    fitted step is handed them: 64-bit floats for a numeric column, where two
+    empty cells are equal and 0.0 equals -0.0; levels for a categorical column,
+    without the white space round them, an empty cell being the level
+    `(missing)`. `y` is the target as step 4 reads it.
+    """
+    used = np.concatenate([train, holdout])
+    code = np.zeros(len(used), dtype="int64")
+    for values in list(columns) + [y]:
+        cell = values[used]
+        if cell.dtype == object:
+            cell = cell.astype(str)
+        # numpy counts every not-a-number as one value, and 0.0 and -0.0 as one
+        _, part = np.unique(cell, return_inverse=True)
+        # one number per distinct pair so far; renumbered each time, so it stays small
+        _, code = np.unique(code * (int(part.max()) + 1) + part, return_inverse=True)
+    return int(np.isin(code[len(train):], code[:len(train)]).sum())
 
 
 def _split_random(n, y, classification, seed):
@@ -782,13 +1036,22 @@ def _fit_predict(family, model, x_fit, y_fit, x_new, classification, frames=None
     return np.asarray(model.predict(x_new)).astype("float64")
 
 
-def _auc(y, score):
-    """ROC AUC by ranks, ties averaged. None when only one class is present."""
+def _auc(y, score, ties_share=True):
+    """ROC AUC by ranks, ties averaged. None when only one class is present.
+
+    `ties_share=False` exists only for the broken variant M12: tied scores get
+    ranks in the order they come, so a tie counts for whichever row came first.
+    """
     n_pos = int(y.sum())
     n_neg = len(y) - n_pos
     if n_pos == 0 or n_neg == 0:
         return None
-    return float((_ranks(score)[y == 1].sum() - n_pos * (n_pos + 1) / 2) / (n_pos * n_neg))
+    if ties_share:
+        ranks = _ranks(score)
+    else:
+        ranks = np.empty(len(score))
+        ranks[np.argsort(score, kind="mergesort")] = np.arange(1, len(score) + 1)
+    return float((ranks[y == 1].sum() - n_pos * (n_pos + 1) / 2) / (n_pos * n_neg))
 
 
 def _ranks(score):
@@ -822,14 +1085,15 @@ def _mean_and_spread(scores):
     divided by the largest first, so that a number that exists is reported (D44).
     """
     a = np.asarray(scores, dtype="float64")
+    ddof = 0 if BROKEN == "M11" else 1      # M11: the population deviation
     with np.errstate(over="ignore", invalid="ignore"):
         mean = float(np.mean(a))
-        spread = float(np.std(a, ddof=1)) if len(a) > 1 else None
+        spread = float(np.std(a, ddof=ddof)) if len(a) > 1 else None
         scale = float(np.max(np.abs(a)))
         if scale > 0 and not math.isfinite(mean):
             mean = float(np.mean(a / scale) * scale)
         if scale > 0 and spread is not None and not math.isfinite(spread):
-            spread = float(np.std(a / scale, ddof=1) * scale)
+            spread = float(np.std(a / scale, ddof=ddof) * scale)
     return mean, spread
 
 
@@ -939,7 +1203,8 @@ def _uncertainty(y, pred, base_pred, classification, time_groups, n_resamples, s
         """(score, skill) of one resample. None when the score cannot be computed (one
         class); a skill of None when only the skill cannot (a zero baseline error: D36)."""
         if classification:
-            auc = _auc(y[rows], pred[rows])
+            # M12: in a resample, tied predictions do not share their rank
+            auc = _auc(y[rows], pred[rows], ties_share=BROKEN != "M12")
             return None if auc is None else (auc, 2 * auc - 1)
         mse, base = _mse(y[rows], pred[rows]), _mse(y[rows], base_pred[rows])
         return mse, (1 - mse / base if base > 0 else None)
@@ -973,12 +1238,14 @@ def _uncertainty(y, pred, base_pred, classification, time_groups, n_resamples, s
     # A resample with a zero baseline error is left out of the skill interval only (D40).
     skills = np.array([m[1] for m in results if m[1] is not None], dtype="float64")
     out["n_resamples_used"], out["n_resamples_skill_used"] = len(scores), len(skills)
+    # M8: the 5th and 95th percentiles, under a level that still says 0.95
+    ends = [5.0, 95.0] if BROKEN == "M8" else [2.5, 97.5]
     if out["interval_method"] and len(scores) * 2 >= n_resamples:
         out["interval_low"], out["interval_high"] = (float(v) for v in
-                                                     np.percentile(scores, [2.5, 97.5]))
+                                                     np.percentile(scores, ends))
         if len(skills) * 2 >= n_resamples:
             out["skill_low"], out["skill_high"] = (float(v) for v in
-                                                   np.percentile(skills, [2.5, 97.5]))
+                                                   np.percentile(skills, ends))
     elif out["interval_method"]:
         out.update(interval_method=None, block_length=None,
                    interval_reason="the score could be computed in fewer than half of the "
@@ -1006,7 +1273,11 @@ def _uncertainty(y, pred, base_pred, classification, time_groups, n_resamples, s
 
 
 def _plain(value):
-    """A JSON-ready copy of a target value."""
+    """A class value as it is written: a boolean, a number or text (D53).
+
+    Anything that is none of the three (bytes, a date, a period, an interval, a
+    complex number, a tuple) is written as its text form.
+    """
     if isinstance(value, (bool, np.bool_)):
         return bool(value)
     if isinstance(value, (int, np.integer)):
@@ -1018,7 +1289,7 @@ def _plain(value):
 
 # --------------------------------------------------------------------- run --
 
-def _run(data, target, requested, time_col, gap, profile, seed, n_jobs):
+def _run(data, target, requested, time_col, gap, profile, seed, n_jobs, duplicates="error"):
     warnings = []
     # 1. load; count the rows
     df, source_kind, source_label = _load(data, warnings)
@@ -1030,16 +1301,19 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs):
     n_loaded = len(df)
     try:
         duplicate_rows = int(df.duplicated().sum()) if n_loaded else 0
-    except TypeError:                               # unhashable cells: not comparable
+    except (TypeError, ArithmeticError):            # cells that cannot be hashed or compared
         duplicate_rows = 0
     if duplicate_rows:
         _warn(warnings, "duplicate_rows",
               f"{duplicate_rows} row(s) are exact copies of an earlier row; they are kept")
+    # An object column that holds only numbers is read as numbers from here on, in
+    # every role (D51). The output goes on reporting the type it was loaded with.
+    df, loaded = _numbers_from_objects(df)
 
     # 2. drop rows with a missing target, then rows with a missing time value. A text
     # target is read without the white space round it from here on, and a cell that
     # holds nothing else is a missing target (D46, D48).
-    target_dtype = str(df[target].dtype)
+    target_dtype = loaded[target]
     y_all = _target_values(df[target])
     no_target = _no_target(y_all)
     time_form, show = None, None
@@ -1057,7 +1331,8 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs):
     classification = task == "classification"
     if classification:
         classes = _classes(y_all[usable])
-        y_work_all = (y_all == classes[1]).to_numpy().astype("int64")
+        # a missing cell of a nullable type compares as missing, not as False
+        y_work_all = (y_all == classes[1]).fillna(False).to_numpy(dtype=bool).astype("int64")
     else:
         classes = None
         # The target is of integer or float type here (step 4), so every usable value
@@ -1071,9 +1346,21 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs):
                   target)
 
     # 5. column roles that need no target
-    records, prepared = _roles(df, usable, target, time_col)
+    records, prepared = _roles(df, usable, target, time_col, loaded)
     by_name = {r["name"]: r for r in records}
     for rec in records:
+        if rec["reason"] == "unsupported_type":
+            # never excluded in silence (D51): the caller may have meant it as a feature
+            if _beyond_64_bits(df[rec["name"]]):
+                why = "holds whole numbers too large for 64 bits (D50)"
+            else:
+                held = df[rec["name"]].dropna()
+                example = f"; for example a value of type {type(held.iloc[0]).__name__}" \
+                    if len(held) and rec["dtype"] == "object" else ""
+                why = f"has a type that is not read (stored as {rec['dtype']}{example})"
+            _warn(warnings, "unsupported_type",
+                  f"column {rec['name']!r} {why} and is excluded. Convert it to numbers, "
+                  "text or dates if it should be a feature", rec["name"])
         if rec["n_coerced"]:
             _warn(warnings, "values_coerced",
                   f"{rec['n_coerced']} text value(s) in numeric column {rec['name']!r} could not "
@@ -1126,12 +1413,26 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs):
         else:
             keep = np.sort(np.random.default_rng([seed, 1]).choice(len(rows), FAST_ROW_CAP,
                                                                    replace=False))
+            if BROKEN == "M10":             # the head of the file, not a sample from the seed
+                keep = np.arange(FAST_ROW_CAP)
             capped, rows = len(rows) - FAST_ROW_CAP, rows[keep]
-    if len(rows) < MIN_ROWS:
-        raise E.TooFewRowsError(f"{len(rows)} usable rows; at least {MIN_ROWS} are needed")
     y = y_work_all[rows]
-    if classification and min(int(y.sum()), int(len(y) - y.sum())) < MIN_CLASS_ROWS:
-        raise E.TooFewRowsError(f"the rarer class has fewer than {MIN_CLASS_ROWS} usable rows")
+    too_few = kept_too_few = None
+    if len(rows) < MIN_ROWS:
+        too_few = f"{len(rows)} usable rows; at least {MIN_ROWS} are needed"
+        kept_too_few = f"kept {len(rows)} rows, and at least {MIN_ROWS} are needed"
+    elif classification and min(int(y.sum()), int(len(y) - y.sum())) < MIN_CLASS_ROWS:
+        too_few = f"the rarer class has fewer than {MIN_CLASS_ROWS} usable rows"
+        kept_too_few = f"kept fewer than {MIN_CLASS_ROWS} rows of the rarer class"
+    if too_few and capped:
+        # The cap left too few rows. Say "use the full profile" only when the full
+        # profile would get past this point and form its split (D52, D53).
+        raise _fast_rows_stop(
+            f"the fast profile's cap of {FAST_ROW_CAP} rows {kept_too_few}",
+            y_work_all[usable_rows], classification,
+            keys_all[usable_rows] if time_col is not None else None, gap)
+    if too_few:
+        raise E.TooFewRowsError(too_few)
 
     # 7. split off the holdout, applying the gap
     time_ordered = time_col is not None
@@ -1177,7 +1478,8 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs):
               f"fold(s) {', '.join(map(str, unscored))} hold a single class and were not scored")
     used = np.concatenate([train, holdout])
     for name, values in prepared.items():
-        cell = values[rows[used]]
+        # counted over the rows that reach a model. M13: over every loaded row
+        cell = values if BROKEN == "M13" else values[rows[used]]
         by_name[name]["n_imputed"] = int(np.isnan(cell).sum()) if cell.dtype != object \
             else int((cell == MISSING_LEVEL).sum())
 
@@ -1226,9 +1528,12 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs):
                     rule = "missing_by_class"
             alone = None
             if rule is None:
-                # None: the skill cannot be computed, so the column is not flagged (D36)
+                # None: the skill cannot be computed, so the column is not flagged (D36).
+                # M9: the screen forgets the previous-value baseline, so the lag of a
+                # persistent series is measured against the training mean alone.
                 alone = _screen_column(values, numeric, y, split["folds"], classification,
-                                       seed, prev, holdout if BROKEN == "M3" else None)
+                                       seed, None if BROKEN == "M9" else prev,
+                                       holdout if BROKEN == "M3" else None)
                 if alone is not None and alone >= LEAK_SKILL:
                     rule = "predicts_target"
             if rule is None and alone is not None and alone >= STRONG_SKILL:  # kept, told (D30)
@@ -1250,6 +1555,38 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs):
                              if r["role"] == "excluded")
         raise E.NoFeaturesError("no usable feature column is left. Excluded, with the reason "
                                 "for each: " + (excluded or "none"))
+
+    # Copies of a holdout row among the training rows (D49, D53). Random scheme only:
+    # under time order rows at different times are different observations, and rows
+    # at one timestamp are on one side of the split. Judged on the features that are
+    # left, before any model is fitted, so a run that stops has cost nothing.
+    n_copies = copy_share = None
+    if time_col is None:
+        n_copies = _holdout_copies([values[rows] for values in prepared.values()], y,
+                                   train, holdout)
+        copy_share = n_copies / len(holdout)
+        if n_copies >= COPY_ROWS and copy_share > COPY_SHARE:
+            found = (f"{n_copies} of the {len(holdout)} holdout rows ({100 * copy_share:.1f}%) "
+                     "have a copy among the training rows: the same value in every feature "
+                     "column and the same target")
+            if duplicates == "error" and BROKEN != "F9":    # F9: the rule is never applied
+                dates = [r["name"] for r in records if r["reason"] == "datetime"]
+                raise E.HoldoutCopiesError(
+                    f"{found}. A model can score on such a row by recalling its copy, so the "
+                    "headline would overstate how predictable the target is. Remove the "
+                    "repeated rows, or pass duplicates='keep' (--duplicates keep) if they are "
+                    "separate observations that happen to agree; the output then records the "
+                    "count" + (
+                        ". Note: the column(s) " + ", ".join(repr(d) for d in dates)
+                        + " hold dates and were excluded because no time column was declared, "
+                        "so rows that differ only in their date count as copies. If the rows "
+                        "are ordered in time, declare time_col: under time order this rule "
+                        "does not apply" if dates else ""))
+            if duplicates == "keep":
+                _warn(warnings, "holdout_copies_kept",
+                      f"{found}, and were kept (duplicates='keep'). A model can score on such "
+                      "a row by recalling its copy, so the headline may overstate how "
+                      "predictable the target is")
     kinds = {name: by_name[name]["kind"] for name in prepared}
     index = pd.Index(rows, name="row")
     step_makers = extensions.active()["steps"] or []
@@ -1475,6 +1812,8 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs):
                    "validation_rows": int(len(f["valid"])), "gap_rows": int(f["gap_rows"]),
                    "scored": bool(f["scored"])} for i, f in enumerate(split["folds"])],
         "caveat": None if time_ordered else RANDOM_CAVEAT,
+        # holdout rows with a copy among the training rows; null under time order (D49)
+        "n_holdout_copies": n_copies, "holdout_copy_share": copy_share,
     }
     headline = {"metric": metric, "score": score, "model": chosen["config"],
                 "baseline": baseline["name"], "baseline_score": baseline["score"],
@@ -1488,7 +1827,8 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs):
                               "threadpoolctl": threadpoolctl.__version__}},
         "input": {"source": source_label, "kind": source_kind, "target": target,
                   "time_col": time_col, "task": requested, "gap": gap, "n_rows": n_loaded,
-                  "n_columns": int(df.shape[1]), "duplicate_rows": duplicate_rows},
+                  "n_columns": int(df.shape[1]), "duplicate_rows": duplicate_rows,
+                  "duplicates": duplicates},
         "rows": [{"item": k, "count": v} for k, v in row_items],
         "columns": records,
         "task": {"type": task, "decided_by": decided_by, "n_distinct": n_distinct,

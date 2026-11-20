@@ -18,20 +18,23 @@ def load_table(data):
 
 
 def _usable(frame, target, time_col):
+    """(no target, no time, the frame with its object number columns typed, loaded types)."""
     for name in (target, time_col):
         if name is not None and name not in frame.columns:
             raise E.ColumnNotFoundError(f"no column named {name!r}")
+    # an object column that holds only numbers is read as numbers, in every step (D51)
+    frame, loaded = core._numbers_from_objects(frame)
     # a text target cell that holds only white space is a missing target (D48)
     no_target = core._no_target(core._target_values(frame[target]))
     no_time = np.zeros(len(frame), dtype=bool)
     if time_col is not None:
         no_time = core._no_target(frame[time_col]) & ~no_target
-    return no_target, no_time
+    return no_target, no_time, frame, loaded
 
 
 def usable_rows(frame, target, time_col=None):
     """Step 2. The positions of the usable rows, and what was dropped, by reason."""
-    no_target, no_time = _usable(frame, target, time_col)
+    no_target, no_time, _, _ = _usable(frame, target, time_col)
     return {"usable": np.flatnonzero(~no_target & ~no_time),
             "dropped_missing_target": int(no_target.sum()),
             "dropped_missing_time": int(no_time.sum())}
@@ -39,9 +42,9 @@ def usable_rows(frame, target, time_col=None):
 
 def column_roles(frame, target, time_col=None):
     """Step 5. One record per column: the roles that need no target."""
-    no_target, no_time = _usable(frame, target, time_col)
+    no_target, no_time, frame, loaded = _usable(frame, target, time_col)
     records, _ = core._roles(frame.reset_index(drop=True), ~no_target & ~no_time, target,
-                             time_col)
+                             time_col, loaded)
     return pd.DataFrame(records, columns=core.COLUMN_KEYS)
 
 
@@ -49,8 +52,10 @@ def decide_task(values, task="auto"):
     """Step 4. Classification or regression, how it was decided, and the evidence."""
     if task not in ("auto", "classification", "regression"):
         raise E.InputError(f"task must be auto, classification or regression, not {task!r}")
-    # text is read without the white space round it (D46); only white space is missing (D48)
-    series = core._target_values(pd.Series(values).reset_index(drop=True))
+    # text is read without the white space round it (D46); only white space is missing (D48);
+    # objects that are all numbers are read as numbers (D51)
+    series = _typed(values)
+    series = core._target_values(series)
     series = series[~core._no_target(series)]
     kind, decided_by, n_distinct, numeric = core._decide_task(series, "target", task)
     classes = [core._plain(c) for c in core._classes(series)] if kind == "classification" else None
@@ -63,10 +68,30 @@ def decide_task(values, task="auto"):
             "positive_class": classes[1] if classes else None, "warnings": warnings}
 
 
+def _typed(values):
+    """`values` as a column, an object column that holds only numbers typed (D51)."""
+    series = pd.Series(values).reset_index(drop=True)
+    if series.dtype == object:
+        typed = core._object_numbers(series)
+        series = series if typed is None else typed
+    return series
+
+
 def read_time(values):
-    """Step 3. Returns (keys, form): sortable keys, NaT or NaN where the value is missing."""
-    keys, missing, form, _ = core._time_keys(pd.Series(values).reset_index(drop=True), "time")
+    """Step 3. Returns (keys, form): sortable keys, NaT or NaN where the value is missing.
+
+    The keys of a numeric column are 64-bit floats, with one exception (D50, D53):
+    an integer-typed column that holds a magnitude above 2**53 gives exact 64-bit
+    integers, since as floats two of its values could become one.
+    """
+    keys, missing, form, _ = core._time_keys(_typed(values), "time")
     if form == "numeric":
+        if keys.dtype.kind in "iu":             # exact whole numbers
+            if not missing.any():
+                return keys, form
+            exact = keys.astype(object)
+            exact[missing] = None
+            return exact, form
         return np.where(missing, np.nan, keys), form
     return keys.astype("datetime64[ns]"), form
 

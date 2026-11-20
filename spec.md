@@ -2,7 +2,7 @@
 
 This file is what the application is built from and what the tests are written
 against. It restates the owner's decisions (`docs/DECISIONS.md`, cited as D1 to
-D48) without changing them, pins every value they leave to this stage, and
+D54) without changing them, pins every value they leave to this stage, and
 defines the interface precisely enough to test without seeing the code.
 
 Words used throughout: **pinned** means part of the contract; **open** means
@@ -49,8 +49,12 @@ is the builder's.
 
 ```python
 mlprofessor.profile(data, target, task="auto", time_col=None, gap=0,
-                    profile="full", seed=0, out_dir=None, n_jobs=-1) -> ProfileResult
+                    profile="full", seed=0, out_dir=None, n_jobs=-1,
+                    duplicates="error") -> ProfileResult
 ```
+
+These ten parameters, in this order and with these defaults, are the whole
+signature (D49, D54).
 
 | Argument | Meaning |
 |---|---|
@@ -63,6 +67,7 @@ mlprofessor.profile(data, target, task="auto", time_col=None, gap=0,
 | `seed` | A whole number from 0 to 4,294,967,295 (2³² − 1), the range scikit-learn takes as a seed (D45). It drives the row cap, the split, the folds, every model and every resample. A larger seed is never folded down, since two seeds would then give one run: it is an `InputError`, like a negative one. The largest allowed seed runs. |
 | `out_dir` | A folder, or `None`. When given it is created if missing and `profile.json` and `predictions.csv` are written into it. It cannot be used when the path, or the nearest folder above it that exists, is something other than a folder (it names an existing file, for one): an `InputError` like any other invalid argument, found without creating anything (D39). |
 | `n_jobs` | `-1` for every core (`os.cpu_count()`), or a positive whole number (D17). |
+| `duplicates` | `"error"` or `"keep"` (D49). What happens under the random scheme when holdout rows have a copy among the training rows (step 8a): with `"error"` the run stops once there are too many; with `"keep"` it goes ahead and the output says so. Under the time-ordered scheme it changes nothing. Any other value, a value that is not text among them (`True`, `None`), is an `InputError`. |
 
 Any other value of an argument raises `InputError`, before anything is loaded:
 a table that would itself raise an error on loading (duplicate column names,
@@ -81,12 +86,14 @@ library's first import, which is not the tool's doing.
 ```
 python -m mlprofessor profile --data FILE.csv --target COLUMN --out FOLDER
        [--task auto|classification|regression] [--time-col COLUMN] [--gap N]
-       [--profile full|fast] [--seed N] [--n-jobs N]
+       [--profile full|fast] [--seed N] [--n-jobs N] [--duplicates error|keep]
 ```
 
 It is a thin wrapper: it calls `profile(...)` with `out_dir=FOLDER` and prints a
 short plain-text summary to standard output. Defaults are those of the function.
-`python -m mlprofessor --help` exits 0.
+`python -m mlprofessor --help` exits 0. `--duplicates` takes the two values of
+the function's `duplicates` and no other: anything else is refused when the
+command line is parsed, exit 2, as for `--task` and `--profile` (D49).
 
 | Exit code | When |
 |---|---|
@@ -166,22 +173,33 @@ command line prints. The message says what was found and what the caller can do.
 | `DuplicateColumnsError` | `duplicate_columns` | Two columns have the same name (D22). A name that holds only white space is a name like any other: two header cells of one space each are two columns of the same name (D42). |
 | `TargetConstantError` | `target_constant` | The target has fewer than two distinct values among the usable rows. |
 | `TaskAmbiguousError` | `task_ambiguous` | `task="auto"` and the rule cannot decide (D4). |
-| `TaskUnsupportedError` | `task_unsupported` | A declared task the target does not support: classification with other than two distinct values, regression on a non-numeric target. A complex-number target is not numeric (step 4; D48). |
-| `TimeColumnError` | `time_column_invalid` | The time column is not in an accepted form (D18). |
+| `TaskUnsupportedError` | `task_unsupported` | A declared task the target does not support: classification with other than two distinct values, regression on a non-numeric target. A complex-number target is not numeric (step 4; D48). Also, whatever task was asked for: a target that holds whole numbers too large for 64 bits (D50), and a target whose values cannot be compared for equality, such as lists, dictionaries or sets, so that its distinct values cannot be counted (D53). |
+| `TimeColumnError` | `time_column_invalid` | The time column is not in an accepted form (D18). That includes a column of whole numbers too large for 64 bits (D50), a complex-number column, and a datetime or ISO 8601 column holding a date that a nanosecond timestamp cannot hold (step 3). |
 | `TooFewRowsError` | `too_few_rows` | Fewer than 100 usable rows; fewer than 10 usable rows of a class; under time order, too few distinct timestamps to form the holdout and six blocks. |
+| `FastProfileRowsError` | `fast_profile_too_few_rows` | Under `profile="fast"`, the row cap left rows out and the rows it kept are fewer than 100, or hold fewer than 10 of a class, **and the same call with `profile="full"` would get past that point and form its split** (step 6; D52, D53). The message names the cap and tells the caller to use `profile="full"`. When the full profile would stop too, this error is not raised: the error the full profile would raise is. It has a code of its own because no timestamp need be involved: it arises under the random scheme as well. |
 | `FastProfileError` | `fast_profile_too_few_timestamps` | Under `profile="fast"` with a time column, the rows kept by the row cap cannot form the split (the most recent timestamp alone is over the cap, or the rows kept hold too few distinct timestamps for the holdout and six blocks), **and the same call with `profile="full"` would get past the split** (D20, D46). The message tells the caller to use `profile="full"`. When the full profile would stop there too, this error is not raised: the error the full profile would raise is, `too_few_rows` or `gap_too_large` (step 7). |
 | `GapError` | `gap_too_large` | The gap leaves fewer than six training timestamps, or no training rows before a validation block. |
 | `FeatureNameCollisionError` | `feature_name_collision` | Two feature columns would give the preprocessed matrix a column of the same name (step 5; D37). The message names every column involved. |
 | `NoFeaturesError` | `no_features` | No column has the role feature after the leak screen. An error returns no column accounting, so the message carries it: the name of every excluded column and, for each, its reason as `columns[].reason` spells it (D39). |
+| `HoldoutCopiesError` | `holdout_copies_in_training` | Under the random scheme with `duplicates="error"`: more than 1% of the holdout rows, and at least 10 of them, have a copy among the training rows (step 8a; D49, D53). The message gives the count and the share, and says that the caller can remove the repeated rows or pass `duplicates="keep"`. When a column was excluded as `datetime` because no time column was declared, the message also names that column and `time_col`. |
 | `OneClassError` | `one_class` | Classification, and the holdout or the training rows hold one class, or no fold can be scored. |
 | `AllModelsFailedError` | `all_models_failed` | Every configuration failed, during selection or after it was chosen (steps 9 and 10). The message carries each error text. |
 | `NonFiniteScoreError` | `non_finite_score` | A number the result rests on is infinite or not-a-number (D44; section 3, "Numbers that are not finite"): a baseline's score on the holdout; a baseline's error, or a column's own, in the leak screen; the chosen configuration's score on the holdout; the headline skill; or, when the result is assembled, any number of the output. The message names the number and the likely cause. It is not raised for a configuration's prediction or fold score: that configuration is failed (step 9). |
 
 An invalid argument is reported before anything is loaded. Beyond that, when a
 table breaks several rules at once, which of the named errors is raised is open,
-with one exception: a regression target too large for squared error stops with
+with two exceptions. A regression target too large for squared error stops with
 `non_finite_score` and never with `all_models_failed` ("Numbers that are not
-finite", rule 1).
+finite", rule 1). And the rule on copies is judged before any model is fitted
+(step 8a), so a table that breaks it stops with `holdout_copies_in_training`
+and never with `all_models_failed`.
+
+**No input ends in an error that is not named (D52).** Whatever type a column
+has and whatever values it holds, in any role, `profile()` returns a result or
+raises a subclass of `ProfileError`. A `TypeError`, an `OverflowError` or any
+other exception of Python or of a library that reaches the caller is a defect.
+Section 7, "The type matrix", lists the kinds of column and the values a test
+tries.
 
 ### 2.5 Warning codes
 
@@ -203,7 +221,9 @@ module only; they are always in the output.
 | `whole_number_regression_target` | the target | `task="auto"` picked regression and every target value is a whole number (D21). |
 | `blank_header` | pandas' name for it | One per CSV column whose header cell is blank, which means empty (D22). A cell that holds white space is a name, and gets no warning (D42). |
 | `infinite_values` | the column | One per numeric feature holding infinite values, or finite values too large for the tree models: a magnitude above 3.4028234663852886e+38 (step 5; D48). Both are read as missing and counted in `n_infinite`. |
-| `duplicate_rows` | `null` | The loaded table holds exact duplicate rows. They are kept. |
+| `duplicate_rows` | `null` | The loaded table holds exact duplicate rows. They are kept. This warning is about the table as loaded, every column of it; whether the run may go ahead is decided by step 8a, on the split, and has the code below. |
+| `holdout_copies_kept` | `null` | Exactly one, under the random scheme with `duplicates="keep"`, when the rule of step 8a is met: more than 1% of the holdout rows, and at least 10 of them, have a copy among the training rows (D49, D53). It tells the caller that the headline may be inflated; the count and the share are in `validation`. Never otherwise: not below the rule, where the count is reported in `validation` and nothing more is said, not with `duplicates="error"`, and not under time order. |
+| `unsupported_type` | the column | One per column excluded with the reason `unsupported_type` (step 5, rule 7; D51), a column of whole numbers too large for 64 bits among them (D50). So that no column a caller meant as a feature is left out without a word: the code shows in the console summary like any other. |
 | `fold_not_scored` | `null` | Classification, and a fold's training or validation rows hold one class. |
 | `no_interval` | `null` | No interval could be computed on the score; `headline.interval_reason` says why. |
 | `skill_undefined` | `null` | Regression. Exactly one when `headline.skill` is null, because the headline baseline's squared error on the holdout is exactly zero (D36). Never otherwise: it is the code for a headline skill that has no value, and for nothing else (D42). The message states the reason. |
@@ -249,8 +269,10 @@ with extensions.use(families=[...], steps=[...]):
   for the tree models are missing: step 5; D48); categorical columns as text, each
   cell its level, which is the text without the white space round it (step 5;
   D42), with `"(missing)"` for missing. So a step never sees `red ` or ` red`,
-  only `red`. An estimator receives the fully preprocessed matrix, in which a
-  level's column is named by that same stripped text (`colour=red`).
+  only `red`. A column of generic objects that holds only numbers is a numeric
+  column like any other here: floats (step 1a; D51). An estimator receives the
+  fully preprocessed matrix, in which a level's column is named by that same
+  stripped text (`colour=red`).
 - The estimator's `fit` is called inside the tool's thread limits, so
   `threadpoolctl.threadpool_info()` called there reports them.
 - When the block ends the previous state is restored, including after an
@@ -283,9 +305,9 @@ Section 3 defines what each step does; this table defines only the call.
 |---|---|---|
 | `load_table(data)` | `(frame, info)`. `frame` is the loaded table (step 1, section 6) with a default index 0..n−1, the rows' source positions, and string column names. `info` is `{"kind", "source", "warnings"}` as in `input.kind`, `input.source` and a list of warning records (only `blank_header` arises here). | `InputError`, `DuplicateColumnsError` |
 | `usable_rows(frame, target, time_col=None)` | Step 2 as a count: `{"usable", "dropped_missing_target", "dropped_missing_time"}`. `usable` is an array of the positions of the usable rows in increasing order; the two counts and its length add up to the rows of `frame`. A missing target is a missing cell, an infinite number, or a text cell that holds only white space (step 2; D48). A missing time value is a missing cell (or an infinite number); the time column's form is not checked here. | `ColumnNotFoundError` |
-| `column_roles(frame, target, time_col=None)` | A DataFrame with the eleven columns of `profile.json["columns"]` (5.2), one row per column of `frame` in order, as decided by step 5 alone: `leak_rule` is null and `n_imputed` is 0 throughout, since the leak screen and imputation come later. Usable rows are those with a target and, when `time_col` is given, a time value. It returns no warnings: those of step 5 (`values_coerced`, `infinite_values`, `numeric_with_separators`) are raised by `profile()`. | `ColumnNotFoundError` |
+| `column_roles(frame, target, time_col=None)` | A DataFrame with the eleven columns of `profile.json["columns"]` (5.2), one row per column of `frame` in order, as decided by step 5 alone: `leak_rule` is null and `n_imputed` is 0 throughout, since the leak screen and imputation come later. Usable rows are those with a target and, when `time_col` is given, a time value. It returns no warnings: those of step 5 (`values_coerced`, `infinite_values`, `numeric_with_separators`, `unsupported_type`) are raised by `profile()`. | `ColumnNotFoundError` |
 | `decide_task(values, task="auto")` | `{"type", "decided_by", "n_distinct", "classes", "positive_class", "warnings"}` for the target values given. They are read as step 4 reads them: a text value without the white space round it (D46); missing ones are ignored, a text value of only white space among them (D48). `warnings` is a list of warning codes: `["whole_number_regression_target"]` or `[]`. | `TargetConstantError`, `TaskAmbiguousError`, `TaskUnsupportedError`, `InputError` |
-| `read_time(values)` | `(keys, form)`. `keys` is a numpy array, one per value, that sorts in time order: `datetime64[ns]` with `NaT` for a missing value under the `datetime` and `iso8601` forms (in UTC if the values carried a zone), `float64` with NaN for a missing or infinite value under the `numeric` form. `form` is as in `validation.time_form`. | `TimeColumnError` |
+| `read_time(values)` | `(keys, form)`. `keys` is a numpy array, one per value, that sorts in time order: `datetime64[ns]` with `NaT` for a missing value under the `datetime` and `iso8601` forms (in UTC if the values carried a zone), `float64` with NaN for a missing or infinite value under the `numeric` form. One exception under the `numeric` form (D50, D53): for whole numbers held exactly (step 3) of which at least one has a magnitude above 2⁵³, `keys` are exact 64-bit integers, of type `int64`, or `uint64` when the values came in an unsigned type, each equal to its value; as floats two of them could become one key. What `keys` holds for such a column that also has a missing value is open: a caller passes `split_time` the keys of usable rows only. `form` is as in `validation.time_form`. | `TimeColumnError` |
 | `split_random(n_rows, classes=None, seed=0)` | `{"training", "holdout", "folds"}`: arrays of positions in 0..`n_rows`−1, each in increasing order; `folds` is a list of five `{"training", "validation"}`. `classes`, when given, is an array of `n_rows` labels with two distinct values and makes the split stratified (step 7); text labels are compared without the white space round them, so `yes` and `yes ` are one label and the split is the one their stripped forms give (D46). `seed` is in the range of 2.1. | `InputError` for a seed outside 0 to 4,294,967,295 (D45) |
 | `split_time(keys, gap=0)` | `{"training", "gap", "holdout", "folds"}`: arrays of positions into `keys`, each in increasing order; `folds` is a list of five `{"training", "gap", "validation"}`, fold *k* validating on block *k*+1. `keys` is as returned by `read_time`, in any order, with no missing value. | `TooFewRowsError`, `GapError` |
 | `roc_auc(y, score)` | ROC AUC of `score` for labels `y` of 0 and 1 (1 is positive); ties share their average rank. | `OneClassError` |
@@ -298,6 +320,13 @@ Section 3 defines what each step does; this table defines only the call.
 `profile()` turns that into `FastProfileError` when the fast profile's row cap
 was what left too few and the full profile would get past the split (D20,
 D46; step 7).
+
+Every function of this table that is handed a column reads it as `profile()`
+does. In particular a column of generic objects that holds only numbers is read
+as numbers (step 1a; D51): by `usable_rows`, `column_roles`, `decide_task` and
+`read_time` alike. `column_roles` reports the type the column came with, as
+`columns[].dtype` does. `split_time` and `previous_value` take the integer keys
+of `read_time` as they take its float keys, and never turn them into floats.
 
 How `profile()` uses the two split functions is pinned, so that a test can
 predict a run's rows. Take the usable rows that remain after the row cap, in
@@ -321,6 +350,51 @@ rules. `loaded` is the number of rows of the table: for a CSV, the data lines,
 not counting blank lines. A blank line is one that is empty or holds only
 spaces and tabs (section 6).
 
+**1a. Read number columns of generic objects as numbers (D51).** A database
+driver returns a column of numbers as Python objects: `decimal.Decimal`,
+`True`/`False` with `None`, whole numbers with `None`. pandas gives such a
+column the type `object`. Until D51 it was excluded as `unsupported_type` with
+nothing said; on the third review's table that cost the run its signal (skill
+−0.011, against 0.779 with the same values in typed columns). Now, before any
+other step, each `object` column is looked at once, over all its loaded rows,
+and read by what its non-missing cells are:
+
+| Every non-missing cell is | The column is read as |
+|---|---|
+| a boolean (`bool`, `numpy.bool_`) | a boolean column |
+| a whole number held exactly: a Python or numpy integer, or a `Decimal` with no fractional part (`Decimal("7")`, `Decimal("1E+3")`), and all of them fit in 64 bits (all within −2⁶³ to 2⁶³−1, or all within 0 to 2⁶⁴−1) | a whole-number column, every value exact |
+| a whole number held exactly, as above, and they do **not** all fit in 64 bits | **whole numbers too large for 64 bits** (D50): not a number column; see below |
+| a number: a whole number as above, a float (`float`, `numpy.floating`) or any `Decimal`, with at least one that is not a whole number held exactly | a column of 64-bit floats, each value converted with `float()`; a value beyond the largest double becomes infinite, with its sign |
+| anything else, **including a boolean beside a number** (`True` and `3`), text beside a number, a complex number | left as it is: steps 3, 4 and 5 treat it as they treat any object column |
+
+- **An empty cell stays empty.** `None`, NaN, `pd.NA`, `NaT`, and a `Decimal`
+  not-a-number of either kind (`Decimal("NaN")`, `Decimal("sNaN")`) are
+  missing cells, and are not looked at to decide the column. pandas itself
+  raises on a signalling not-a-number, so the tool must not hand one to it.
+- The column is then **the same as a typed column holding those values**, in
+  every role and in every step: as a feature (step 5, rule 3), as the target
+  (step 4), as the time column (step 3), in `stages` (2.7), and in what a
+  seam-supplied step receives (2.6). A table read straight from a database
+  gives the result its typed twin gives, number for number.
+- **The output reports the type the column came with:** `columns[].dtype` and
+  `task.target_dtype` say `object`. The values of the target are written as
+  they are read: `y_true` and `task.classes` hold numbers or booleans.
+- A `Decimal` infinity becomes an infinite float, and is then what an infinite
+  float is in that role: a missing cell that `n_infinite` counts, a missing
+  target, a missing time value.
+- **Whole numbers too large for 64 bits** arise from a DataFrame and from a CSV
+  file alike: pandas loads a CSV column holding a whole number beyond 64 bits
+  as an `object` column of Python integers (section 9). Until D50 such a column
+  ended in a raw `TypeError` in every role. Now: as a spare column it is
+  excluded with the reason `unsupported_type` and its warning (step 5, rule 7);
+  as the target it is `task_unsupported` (step 4); as the time column it is
+  `time_column_invalid` (step 3).
+- A float column is not looked at for whole numbers: 64-bit floats above 2⁵³
+  were merged before the tool saw them. Two cases reach the tool that way and
+  cannot be put right by it (section 9): a CSV whole-number column with an
+  empty cell, which pandas loads as floats, and whole numbers written as text
+  (rule 5 of step 5 reads text through `pandas.to_numeric`, as floats).
+
 **2. Drop rows with no target, then rows with no time value; count each.**
 A target is missing when the cell is missing (NaN, `None`, `pd.NA`, `NaT`); or,
 for a numeric target, infinite; or, for a text value, **when it holds only
@@ -338,14 +412,66 @@ the usable rows in time order.** Accepted forms:
 | Form | `validation.time_form` | Ordered |
 |---|---|---|
 | a datetime-typed DataFrame column, as it is (a time zone is allowed) | `datetime` | as instants |
-| a numeric column (not boolean) | `numeric` | as numbers |
-| text, every non-missing value matching ISO 8601 with the year first: `YYYY-MM-DD`, optionally followed by `T` or a space and `HH:MM`, `HH:MM:SS` or `HH:MM:SS.fff`, optionally followed by `Z` or `+HH:MM` / `-HH:MM` | `iso8601` | as instants |
+| a numeric column (integer or float; not boolean, not complex) | `numeric` | as numbers |
+| text, every non-missing value matching ISO 8601 with the year first: `YYYY-MM-DD`, optionally followed by `T` or a space and `HH:MM`, `HH:MM:SS` or `HH:MM:SS` with a point and **one to nine digits** of a fraction of a second (D52), optionally followed by `Z` or `+HH:MM` / `-HH:MM` | `iso8601` | as instants |
 
-Anything else raises `time_column_invalid`: a boolean column, text in any other
-form (`25/01/2024`, `01/12/2023`, `5-Jan-2024`, `2024-01`), a text column that
-mixes values with and without an offset, an impossible date (`2024-02-30`), an
-object column of mixed types. The tool never guesses between day-first and
-month-first. Rows with equal timestamps keep their file order.
+Anything else raises `time_column_invalid`: a boolean column, a complex-number
+column (ordering it as floats would drop its imaginary part in silence: D48),
+text in any other form (`25/01/2024`, `01/12/2023`, `5-Jan-2024`, `2024-01`), a
+text column that mixes values with and without an offset, an impossible date
+(`2024-02-30`), an object column of mixed types. The tool never guesses between
+day-first and month-first. Rows with equal timestamps keep their file order.
+
+**Fractions of a second (D52).** One to nine digits are accepted, each count
+on its own and in any mixture within a column: `09:15:00.5`, `09:15:00.123456`
+(what pandas writes for a microsecond timestamp), `09:15:00.123456789`. Each is
+read as the instant it names, to the nanosecond. Until D52 exactly three
+digits were accepted, so a CSV that pandas itself wrote from microsecond
+timestamps stopped with `time_column_invalid`. A fraction of ten digits or
+more is still refused, since a nanosecond timestamp cannot hold it and pandas
+would cut it short in silence.
+
+**A refused value's message says what is wrong with it (D52).** It quotes one
+refused value. When that value is ISO 8601 in every respect except that its
+fraction has more than nine digits, the message says so (it holds the word
+`fraction`) and does not say the value "is not ISO 8601 with the year first",
+which would be false. For text in another form the message is as before.
+
+**Whole-number timestamps are compared exactly (D50, D53).** Two distinct
+whole numbers are never one timestamp. *Whole numbers held exactly* are the
+values of an integer-typed column (any width, signed or unsigned, nullable or
+not, sparse or not) and of an object column that step 1a reads as whole
+numbers. A 64-bit float holds every whole number up to 2⁵³ in magnitude and
+only some above it: at 1.7 × 10¹⁸, where nanoseconds since 1970 now stand,
+only every 256th. So:
+
+- when such a column holds at least one value of magnitude **above 2⁵³**
+  (9,007,199,254,740,992), judged over its non-missing loaded values, its keys
+  are the 64-bit integers themselves, compared as integers, everywhere a key is
+  used: the order of the rows, the fast profile's cap, the count of distinct
+  timestamps, which rows share a timestamp, the split, the gap, the previous
+  value, the blocks of the bootstrap. `validation.train_end`,
+  `holdout_start` and `holdout_end` are then written as those integers,
+  exactly;
+- otherwise its keys are 64-bit floats, as for a float column and as before
+  D50: below 2⁵³ nothing is lost by it, and `stages.read_time` is pinned to
+  return floats there (2.7);
+- a float column is ordered as the floats it holds. If two of its values were
+  one number before the tool saw them, they are one timestamp;
+- whole numbers too large for 64 bits (step 1a) are `time_column_invalid`: the
+  message says that they are too large.
+
+Until D50, 600 distinct nanosecond instants 100 nanoseconds apart were read as
+235 timestamps: `timestamps_unique` was false, the previous-value baseline was
+gone, and a random walk with its own lag as a feature was reported at skill
+0.9994 against the training mean (third review, finding 3). That is F8's
+outcome with the baseline code intact, so the gate has a dataset for it
+(`time.integer_keys_distinct`, section 8).
+
+A datetime-typed or ISO 8601 column is ordered as nanosecond instants. A date
+outside what a nanosecond timestamp can hold (before 1677-09-21 or after
+2262-04-11: pandas 3 keeps such dates in a coarser unit) is
+`time_column_invalid`, never a raw `OverflowError`.
 
 **4. Decide the task (D4, D20, D21),** on the usable rows, before any row cap.
 
@@ -376,6 +502,24 @@ Let *k* be the number of distinct target values, read so.
 - *k* < 2 raises `target_constant` in every case.
 - When the rule picks regression and every target value is a whole number, the
   warning `whole_number_regression_target` is added.
+- **A target of whole numbers too large for 64 bits** (step 1a) is
+  `task_unsupported`, whatever `task` says (D50). They are not read as numbers,
+  and the caller who means them as labels can pass them as text.
+- **A target whose values cannot be compared for equality** (lists,
+  dictionaries, sets: Python cannot hash them) is `task_unsupported`, whatever
+  `task` says: its distinct values cannot be counted (D53). Both
+  implementations raised a raw `TypeError` here until D53. A tuple can be
+  compared, and is a value like any other.
+- An object column that step 1a reads as numbers is, for all of the above, the
+  typed column it stands for: `Decimal` values are a numeric target, `True` and
+  `False` with `None` are two classes.
+
+**A class value is written as a boolean, a number or text (D53).** That is
+what `task.classes` and `task.positive_class` can hold in JSON. A class value
+that is none of the three (bytes, a date, a duration, a period, an interval, a
+complex number, a tuple) is written as its text form, `str(value)`; the exact
+text is open. Until D53 a two-valued target of such a type made the
+application fail while writing `profile.json`, after the whole run.
 
 For classification the two classes are put in sorted order (by value; by their
 text if they cannot be compared). The second is the **positive class**: `1` of
@@ -404,15 +548,31 @@ rule that applies decides:
 | 6a | text, distinct values number more than 95% of the usable rows | excluded, `id_like` |
 | 6b | text, distinct values number more than 50% of the non-missing values | excluded, `free_text` |
 | 6c | any other text | feature, kind `categorical` |
-| 7 | any other type (mixed objects, complex numbers, durations, containers) | excluded, `unsupported_type` |
+| 7 | any other type (mixed objects, complex numbers, durations, containers, whole numbers too large for 64 bits) | excluded, `unsupported_type`, with an `unsupported_type` warning naming the column (D51) |
 | 8 | numeric, infinite and too-large values read as missing (below): no value left | excluded, `all_missing` |
 | 8a | numeric, one distinct value | excluded, `constant` |
 | 8b | numeric, every value a whole number, every value distinct, and the values consecutive or strictly ordered in file order (D19) | excluded, `id_like` |
 | 8c | any other numeric | feature, kind `numeric` |
 
+An object column that step 1a reads as numbers or booleans comes under rule 3,
+as the typed column it stands for.
+
 "Text" is a pandas string column or an object column in which every non-missing
 value is a `str`; a category-typed column is treated as text through the string
 form of its values. Text is compared after stripping surrounding white space.
+
+**The distinct values of a whole-number column are counted exactly (D50).** For
+whole numbers held exactly (step 3: an integer-typed column, or an object
+column that step 1a reads as whole numbers), rules 8, 8a and 8b are judged on
+the integers themselves, at any magnitude: how many distinct values there are,
+whether every value is distinct, whether they are strictly ordered, and
+whether the largest minus the smallest plus one equals their count, which is
+worked out in whole numbers of any size, so that the two ends of the 64-bit
+range cannot overflow it. Until D50 they were judged on 64-bit floats, where
+whole numbers above 2⁵³ merge: an unsigned column holding 50 distinct values
+near 2⁶³ was reported `constant`. The values handed to a step and to the
+models are 64-bit floats all the same (2.6), so two such values can reach a
+model as one number; the roles do not depend on that.
 
 **A categorical level is the cell's text without the white space round it
 (D42).** `red`, ` red` and `red ` are one level, `red`, everywhere a level is
@@ -546,8 +706,31 @@ Only under `profile="fast"` and only when there are more than 2,000 usable rows.
   error when it would not (D46).
 
 The rows left out are counted as `dropped_row_cap`. After the cap: fewer than
-100 rows is `too_few_rows`; for classification, fewer than 10 rows of either
-class is `too_few_rows`.
+100 rows is too few; for classification, fewer than 10 rows of either class is
+too few. Which error says so depends on whether the cap is the cause (D52,
+D53):
+
+- the cap left no row out (the full profile, or a table of at most 2,000
+  usable rows): `too_few_rows`, as ever;
+- the cap left rows out, and the same call with `profile="full"` would get
+  past this point and form its split: **`fast_profile_too_few_rows`**. The
+  message names the cap of 2,000 and tells the caller to use
+  `profile="full"`, and that advice is true;
+- the cap left rows out, and the full profile would stop too: the error the
+  full profile would raise (`too_few_rows`, or `gap_too_large`), so that
+  nobody is sent to a profile that stops as well.
+
+"Would get past this point and form its split" is judged on every usable row:
+for classification, at least 10 usable rows of each class; and, under time
+order, the split of step 7 can be formed from every usable row with the
+caller's gap. Nothing further is looked at. Two shapes arise in practice.
+Under time order, a latest timestamp of 60 rows behind one of 2,500: the cap
+keeps 60 rows, and the full profile would split the table (third review,
+finding 9; until D52 this was `too_few_rows: 60 rows are left`, naming neither
+the cap nor the full profile). Under the random scheme, a class with 20 rows in
+40,000: a sample of 2,000 holds about one of them, and the full profile has
+all 20. The code is separate from `fast_profile_too_few_timestamps` because it
+names what is too few: rows, where the other names timestamps.
 
 **7. Split off the holdout (D6, D7), applying the gap.**
 
@@ -663,6 +846,84 @@ accuse.
 Known limit (D31): in a panel (repeated timestamps) the only baseline is the
 training mean, so a lagged level of a persistent target can be excluded by rule
 2 or warned about by rule 3. Profile returns or changes there.
+
+**8a. Count the holdout rows that have a copy among the training rows (D49,
+D53).** Random scheme only. The headline is computed on rows no fitted step has
+seen; a holdout row whose exact copy sits among the training rows has been
+seen in all but name, and a model that can recall a row scores on it. On pure
+noise with every row present twice the third review measured skill 0.918,
+p = 0.001, under the full profile, against 0.009 without the copies.
+
+- **A copy.** A holdout row has a copy when some training row has **the same
+  value in every feature column and the same target**. The feature columns are
+  those with the role `feature` once the leak screen is done: an excluded
+  column (an identifier, a date, a suspected leak) plays no part, so two rows
+  that differ only there are copies. The rows are the training and holdout
+  rows of step 7, after any row cap.
+- **How values are compared.** As a seam-supplied step is handed them (2.6),
+  so a test can count for itself:
+  - a numeric feature as 64-bit floats. Two missing cells are equal, a missing
+    cell being an empty, coerced, infinite or too-large one (step 5). `0.0`
+    equals `-0.0`. `1`, `1.0` and the text `1.00` in a column read as numeric
+    are equal. Whole numbers above 2⁵³ are compared as the floats a model is
+    given, so two rows that differ only in such a value, by less than a float
+    can hold, are copies: no model could tell them apart (step 5 counts the
+    distinct values of such a column exactly; this step asks what a model
+    sees);
+  - a categorical feature by its level: the text without the white space
+    round it, and `(missing)` for an empty cell. `red` equals ` red `; `red`
+    does not equal `Red`;
+  - the target as step 4 reads it: the class for classification (so `yes`
+    equals `yes `), the number for regression.
+- **The count and the share are always reported** under the random scheme:
+  `validation.n_holdout_copies`, the number of holdout rows that have a copy,
+  and `validation.holdout_copy_share`, that number ÷ the holdout rows. Each
+  holdout row counts once, however many copies it has. Under time order both
+  are `null`.
+- **The rule (D53).** It is met when **more than 1% of the holdout rows, and
+  at least 10 of them, have a copy**: `n_holdout_copies ≥ 10` and
+  `holdout_copy_share > 0.01`. Both are needed. Ten copies in a holdout of
+  1,000 rows are exactly 1% and do not meet it; eleven do. Nine copies in a
+  holdout of 100 do not meet it, though they are 9%: below ten rows a count
+  cannot tell coincidence from duplication, which is the reasoning of the
+  10-rows-of-a-class floor (4.2).
+  - Met, `duplicates="error"` (the default): the run stops with
+    `holdout_copies_in_training` (2.4). Nothing is written.
+  - Met, `duplicates="keep"`: the run goes ahead exactly as it would have
+    before D49, and one `holdout_copies_kept` warning says the headline may be
+    inflated.
+  - Not met: the run goes ahead under either value, the count and the share
+    are reported, and no warning is added for them. The `duplicate_rows`
+    warning of the loaded table stands as it was (2.5).
+  `input.duplicates` records the value the caller passed, under either scheme.
+- **When it is judged.** After the leak screen and the `no_features` check,
+  and **before any preprocessing or model is fitted** (step 9). A run that
+  stops here has fitted nothing but the screen's own trees, and a table that
+  would also fail every model stops with this error (2.4). The baselines of
+  step 11 are scored earlier ("Numbers that are not finite", rule 1), so a
+  target too large for squared error still stops with `non_finite_score`.
+- **`duplicates="keep"` changes nothing else.** The same rows, split, folds,
+  models, predictions and numbers as `"error"` gives on a table that does not
+  meet the rule; only `input.duplicates` differs.
+- **Under time order the rule does not apply (D49),** and `duplicates` has no
+  effect: rows at different times are different observations even when their
+  values agree, and rows at one timestamp are on one side of the split. No
+  count is made.
+- **When a date column was left undeclared (D53).** A column excluded as
+  `datetime` because no `time_col` was given takes no part in the comparison,
+  so rows that differ only in their date are copies, and a table of repeated
+  measurements can stop here. The error's message then names each such column
+  and says that under `time_col` the rule does not apply.
+
+A table of a few categorical columns and no other feature will often meet the
+rule with no row repeated by mistake: with twelve combinations of levels,
+every holdout row has a training row like it. That is what `"keep"` is for
+(D49).
+
+The cut-off of 1% and the count of 10 were measured (10.6): over 30 data seeds
+every dataset of the gate, and the README's example table, has no holdout row
+with a copy, and a table with 5% or more of its rows repeated meets the rule
+on every seed.
 
 **Preprocessing, fitted on the rows of each fit only (D3).** One preprocessing
 is fitted for each fit, on that fit's training rows, and applied to the rows it
@@ -976,6 +1237,8 @@ exactly the grid arguments (`{}` for `tree-0`).
 | one-hot levels kept per column | 30 |
 | seed | a whole number from 0 to 4,294,967,295 (D45) |
 | digits of a number in the console summary | at least four significant: within 0.0005 × \|value\| (D46) |
+| digits of a fraction of a second in an ISO 8601 time value | one to nine (D52) |
+| whole-number time keys kept as integers | when the column holds a magnitude above 2⁵³ = 9,007,199,254,740,992 (D50, D53) |
 
 ### 4.3 Cut-offs (D23, D28, D30, D33, D34, D48; measurements in section 10)
 
@@ -994,6 +1257,7 @@ exactly the grid arguments (`{}` for `tree-0`).
 | no block-bootstrap interval | fewer than 30 distinct holdout timestamps |
 | autocorrelated panel target warning | lag-1 autocorrelation above 0.5 |
 | feature value too large for the tree models | a magnitude above 3.4028234663852886e+38, the largest 32-bit float: read as missing, like an infinite value (step 5; D48) |
+| copies of holdout rows among the training rows, random scheme | more than 1% of the holdout rows **and** at least 10 of them: the run stops, or with `duplicates="keep"` is warned about (step 8a; D49, D53; measured in 10.6) |
 
 ### 4.4 Missing-value spellings
 
@@ -1032,7 +1296,7 @@ row, in increasing `row`.
 | Column | Meaning |
 |---|---|
 | `row` | Zero-based position of the row in the loaded source, counted before any row is dropped. For a CSV, blank lines are not counted. For a DataFrame it is the position, not the index label. |
-| `y_true` | The target of that row, as it is in the source; a text value without the white space round it (step 4; D46), so a cell written `yes ` shows `yes`, in the file and in `ProfileResult.predictions`. |
+| `y_true` | The target of that row, as it is in the source; a text value without the white space round it (step 4; D46), so a cell written `yes ` shows `yes`, in the file and in `ProfileResult.predictions`. A target that step 1a reads as numbers or booleans shows the value read: the number `1.5` for `Decimal("1.50")` (D51). |
 | `y_pred` | Classification: predicted probability of the positive class. Regression: the predicted value. Always finite: a configuration whose prediction is not finite is failed and never written (steps 9 and 10; D44). |
 
 ### 5.2 `profile.json`
@@ -1080,6 +1344,7 @@ Top-level keys, all always present:
 | `n_rows` | integer | rows loaded |
 | `n_columns` | integer | columns loaded |
 | `duplicate_rows` | integer | rows that exactly repeat an earlier row; they are kept |
+| `duplicates` | string | the `duplicates` argument as passed: `"error"` or `"keep"` (D49) |
 
 **`rows`**: a list of exactly these seven records `{item, count}`, in this
 order: `loaded`, `dropped_missing_target`, `dropped_missing_time`,
@@ -1092,7 +1357,7 @@ order: `loaded`, `dropped_missing_target`, `dropped_missing_time`,
 |---|---|---|
 | `name` | string | |
 | `position` | integer | zero-based column position |
-| `dtype` | string | the pandas type as loaded (informative) |
+| `dtype` | string | the pandas type as loaded (informative). For an object column that step 1a reads as numbers it is still `object` (D51) |
 | `role` | string | `target`, `time`, `feature` or `excluded` |
 | `kind` | string or null | for a feature, `numeric` or `categorical` (pinned); for other roles informative |
 | `reason` | string or null | for an excluded column: `constant`, `id_like`, `datetime`, `free_text`, `numeric_with_separators`, `suspected_leak`, `all_missing` or `unsupported_type`; otherwise null |
@@ -1109,8 +1374,8 @@ order: `loaded`, `dropped_missing_target`, `dropped_missing_time`,
 | `type` | string | `classification` or `regression` |
 | `decided_by` | string | `rule` (from `task="auto"`) or `declared` |
 | `n_distinct` | integer | distinct target values among the usable rows, text read without the white space round it (step 4): the evidence |
-| `target_dtype` | string | pandas type of the target as loaded |
-| `classes` | list or null | the two classes in sorted order, text without the white space round it; null for regression |
+| `target_dtype` | string | pandas type of the target as loaded (`object` for one that step 1a reads as numbers) |
+| `classes` | list or null | the two classes in sorted order, each a boolean, a number or text (step 4; D53), text without the white space round it; null for regression |
 | `positive_class` | value or null | the second of `classes` |
 
 **`validation`**
@@ -1132,11 +1397,15 @@ order: `loaded`, `dropped_missing_target`, `dropped_missing_time`,
 | `timestamps_unique` | boolean or null | whether every timestamp holds one row |
 | `folds` | list | five records `{fold, training_rows, validation_rows, gap_rows, scored}`, `fold` 1 to 5 |
 | `caveat` | string or null | under the random scheme, the fixed caveat (5.4); null under time order |
+| `n_holdout_copies` | integer or null | under the random scheme, the holdout rows that have a copy among the training rows (step 8a; D49); null under time order, where no count is made |
+| `holdout_copy_share` | number or null | `n_holdout_copies` ÷ the holdout rows; null under time order |
 
 The seven time fields are null under the random scheme. A timestamp is written
 as `YYYY-MM-DDTHH:MM:SS` (with a fraction if it has one; in UTC if the column
 carried a zone) for the `datetime` and `iso8601` forms, and as a number for the
-`numeric` form.
+`numeric` form. Where the keys are 64-bit integers (step 3; D50) it is
+**exactly that whole number, written as an integer**, so that one above 2⁵³ is
+not written as the nearest float.
 
 **`headline`** (also `ProfileResult.headline`)
 
@@ -1298,11 +1567,27 @@ through `str()`; duplicates after that stop the run. Types a CSV cannot carry:
 | boolean, nullable boolean | numeric 0 and 1 as a feature; a two-valued target is classification with `True` positive |
 | category | text, through the string form of its values |
 | datetime, with or without a zone | excluded as `datetime`; or the time column, as it is |
-| duration, complex, mixed objects, containers | excluded as `unsupported_type` |
+| generic objects that are all booleans, all whole numbers that fit in 64 bits, or numbers of any mixture (whole, float, `Decimal`), with or without empty cells | the typed column they stand for: boolean, whole-number or float (step 1a; D51) |
+| generic objects that are all whole numbers, not all fitting in 64 bits (from a DataFrame, or from a CSV: pandas loads such a column so) | excluded as `unsupported_type`, with its warning; `task_unsupported` as the target; `time_column_invalid` as the time column (D50) |
+| duration, period, interval, complex, bytes, mixed objects (a boolean beside a number among them), containers | excluded as `unsupported_type`, with an `unsupported_type` warning naming the column (D51) |
+| sparse | as the dense column of its values |
 
 A DataFrame and a CSV path give the same result for the types a CSV can carry:
 integers and floats without missing values, floats with missing values, and
 text. `input.source` and `input.kind` differ.
+
+**What pandas does to whole numbers in a CSV** (measured on pandas 3.1.1,
+`docs/measurements/CP5`; section 9). A column of whole numbers loads as
+`int64` when every value fits, as `uint64` when every value is non-negative
+and fits that, and exact in both. A column with a value beyond 64 bits loads
+as generic objects holding Python integers, exact, which step 1a reads as
+"too large for 64 bits"; so does a column with a value below the signed
+range. Two shapes lose digits before the tool is handed them, and the tool
+cannot give them back: a whole-number column **with an empty cell** loads as
+64-bit floats, so values above 2⁵³ arrive rounded; and a column holding a
+value above the signed range but within the unsigned one, beside a negative
+value, loads as text, which rule 5 of step 5 reads as floats. A caller with
+such identifiers or timestamps passes a DataFrame with an integer type.
 
 **Stated as a limitation** (sentence 7 of 5.4): a CSV is read with pandas'
 types, so a text identifier such as `000123` loads as the number 123. A caller
@@ -1364,13 +1649,101 @@ None is skipped silently: each raises a named error or is reported in the output
 | a column of plain numbers with one cell or a few written with thousands separators | the same: excluded with reason `numeric_with_separators` and its warning, not read as numeric (D34) |
 | a column of plain numbers with a few cells of other text (`abc`) | numeric; those cells read as missing and counted in `n_coerced`; `values_coerced` warning |
 | a feature whose single-column skill is at least 0.90 and below 0.98 | kept as a feature; `strong_single_column` warning |
-| exact duplicate rows | kept; `input.duplicate_rows`; `duplicate_rows` warning |
-| an unknown column type | excluded with reason `unsupported_type` |
+| exact duplicate rows | kept; `input.duplicate_rows`; `duplicate_rows` warning. Whether the run goes ahead is the next three rows |
+| random scheme: more than 1% of the holdout rows, and at least 10 of them, have a copy among the training rows | `holdout_copies_in_training`, before any model is fitted; with `duplicates="keep"` the run goes ahead with one `holdout_copies_kept` warning (D49, D53) |
+| random scheme: fewer copies than that (nine of 100 holdout rows; ten of 1,000) | the run goes ahead; `validation.n_holdout_copies` and `holdout_copy_share` report them; no warning for them |
+| time order: rows that agree in every feature and the target | the rule does not apply; both fields null; `duplicates` has no effect |
+| an unknown column type | excluded with reason `unsupported_type`, and an `unsupported_type` warning naming it (D51) |
+| an object column of `Decimal` numbers, of booleans with `None`, of whole numbers with `None`, or of whole numbers, floats and `Decimal` numbers together | read as the typed column it stands for, in every role; `dtype` still says `object` (D51) |
+| an object column holding a boolean beside a number | `unsupported_type`, with its warning: not guessed |
+| a `Decimal` not-a-number, quiet or signalling | a missing cell |
+| whole numbers too large for 64 bits, from a CSV or a DataFrame | a spare column: excluded as `unsupported_type`, with its warning. The target: `task_unsupported`. The time column: `time_column_invalid`. Never a raw exception (D50) |
+| a whole-number time column with values above 2⁵³ (nanoseconds since 1970 as 64-bit integers) | every distinct value is its own timestamp; `train_end`, `holdout_start` and `holdout_end` are written exactly (D50) |
+| a whole-number feature whose distinct values are distinct only as integers (above 2⁵³) | counted exactly: not `constant`, and `id_like` only by rule 8b on the integers (D50) |
+| a time value with one to nine digits in its fraction of a second | accepted; read to the nanosecond (D52) |
+| a time value with ten or more digits in its fraction | `time_column_invalid`; the message names the fraction |
+| a date outside what a nanosecond timestamp can hold, in a datetime or ISO 8601 time column | `time_column_invalid` |
+| a complex-number time column | `time_column_invalid` |
+| a target of lists, dictionaries or sets | `task_unsupported` (D53) |
+| a two-valued target of bytes, durations, periods, intervals, complex numbers or tuples | classification; the classes are written as text (D53) |
+| the fast profile's cap leaving fewer than 100 rows, or fewer than 10 of a class, where the full profile would run | `fast_profile_too_few_rows` (D52, D53) |
+| the same, where the full profile would stop too | the error the full profile would raise |
 | a date column present with no `time_col` | random scheme; `date_column_undeclared` warning per column |
 | a whole-number target read as regression by the rule | runs; `whole_number_regression_target` warning |
 | a row missing a time value | dropped and counted as `dropped_missing_time` |
 | a feature all missing within one fit's training rows | imputed with 0 in that fit |
 | a categorical level unseen in a fit's training rows | encoded as all zeros |
+
+### The type matrix (D52)
+
+The second review found a feature value too large for the tree models; the
+third found whole numbers too large for 64 bits, whole numbers merged as
+floats, and number columns held as objects. Each is one member of one class:
+**a kind of column, in some role, holding some extreme value, that the code
+had not been written for.** The suite therefore holds the class, as a matrix,
+in one file (`tests/test_type_matrix.py`), parametrised by kind, role and
+extreme so that a failure names its case.
+
+**The contract.** For every case, `profile()` (fast profile, with an output
+folder) ends in one of two ways:
+
+1. **a named error:** an exception that is a subclass of
+   `mlprofessor.errors.ProfileError`. Then nothing was written; or
+2. **a result**, and then:
+   - every column of the table appears exactly once in `columns`, in order;
+   - the row counts add up (5.3, rule 1), and `predictions` has one row per
+     holdout row;
+   - `to_dict()` is strict JSON, and so is the `profile.json` that was
+     written: no NaN, no infinity, and no value JSON cannot hold;
+   - every field typed "number" in 5.2 holds a finite number, and every field
+     typed "number or null" holds a finite number or a null with its reason
+     beside it, as 5.2 lists them (`skill` with `skill_undefined`, the
+     interval with `interval_reason`, the p-value with `p_value_reason`);
+   - every `y_pred` is finite.
+
+Any other exception, a `TypeError`, a `ValueError`, an `OverflowError`, a
+`decimal.InvalidOperation` or one of pandas' or scikit-learn's own, is a
+failure of the case. The matrix does not say *which* of the two ends a case
+has, nor which named error: the tests of each rule do that
+(`tests/test_whole_numbers.py`, `tests/test_object_numbers.py` and the earlier
+files). It says that there is no third end.
+
+**Roles.** The column under test is, in turn: a spare column beside two
+ordinary numeric features, with a 0/1 target; the target, with those two
+features; the declared time column, with those two features and a numeric
+target. 200 rows.
+
+**Kinds.** Each signed and unsigned integer width (`int8` to `int64`, `uint8`
+to `uint64`); 32-bit and 64-bit floats; nullable integer (`Int8`, `Int64`,
+`UInt64`), nullable float (`Float32`, `Float64`) and nullable boolean; plain
+boolean; text as an `object` column, as the default string type and as the
+Python-backed string type; category, ordered and not; bytes; ISO 8601 dates
+as text; datetime in nanoseconds and in seconds, without a zone, in UTC and
+in a zone with daylight saving; timedelta; period; interval; complex, 128-bit
+and 64-bit; `Decimal` objects; object columns of Python integers, of booleans,
+of floats, of numbers mixed, and of a boolean beside numbers; mixed objects
+(numbers and text); lists, tuples, dictionaries and sets; an all-missing
+column of each of six types; sparse float, sparse integer and sparse boolean;
+and the same number columns written to a CSV file and read by the tool.
+
+**Extremes,** where the kind allows them: ordinary values; exactly two
+distinct values (as the target); one value in every row; the largest and the
+smallest value of the type; whole numbers just above 2⁵³; magnitudes near
+1e300 and 1e-300 (1e38 for 32-bit floats); infinities; not-a-number and the
+other empty values (`None`, `pd.NA`, `NaT`, a `Decimal` not-a-number of either
+kind); negative zero; whole numbers beyond 64 bits throughout the column; and
+a few whole numbers beyond 64 bits among ordinary ones.
+
+Measured on the application as it stood after the third pass
+(`docs/measurements/CP5`): of 805 cases, 37 ended in a raw exception, from
+four causes: whole numbers beyond 64 bits (15 cases, `TypeError`, the third
+review's finding 1); a target of lists, dictionaries or sets (12,
+`TypeError`); a two-valued target of a type JSON cannot hold (7: the run
+finished and `profile.json` could not be written); and a `Decimal` signalling
+not-a-number (3, `decimal.InvalidOperation` from pandas). The reference as it
+stood failed 18: the 12 and the 3, a nullable boolean target with a missing
+cell, and a date of the year 9999 in a time column, as text and as a
+datetime in seconds.
 
 ---
 
@@ -1388,6 +1761,7 @@ Each keeps its id through the gate, the tests and the review.
 | F6 | Something is lost without being reported: rows, a column, a model family. | Gate, for rows: `data.rows_reconcile`, `data.coercion_reported`. For its other forms, the table below. Tests: accounting on crafted tables; a family that raises. |
 | F7 | Time order is ignored: a shuffled split, a training row at or after the holdout, the gap not applied, or the time column misread. | Gate, for the split: `time.order_respected`, `time.no_skill_on_blocks`, `time.gap_applied`. For a misread time column, the table below. Tests: the split as a function of keys. |
 | F8 | Under time order a trending or random-walk target is scored against the training mean only. | Gate: `time.persistence_baseline`. Tests: baselines by hand. One gate check and one test catch it; that is accepted (D43). |
+| F9 | Holdout rows that have copies among the training rows are scored with no error and nothing said, so recall is reported as predictability (D49). | Gate: `data.holdout_copies_stop`, on noise with every row present twice. Tests: the rule of step 8a on tables with a known number of copies. |
 
 **The other forms of F6 and F7 (D46).** One broken copy of the reference cannot
 fail every check of its family: the copy that drops rows loses no column, and
@@ -1402,6 +1776,18 @@ check names the form it was seen to catch.
 | F6c | A model family is lost from the models table: only the chosen configuration's family is listed. | `models.all_accounted` | the families and configurations of each profile |
 | F6d | Data rows longer than the header are read silently, with no error. | `data.long_rows_stop` | rows longer than the header; lines pandas reads as a header |
 | F7b | A time column that is not ISO 8601 is parsed leniently, so a day-first date runs on the wrong order. | `time.dayfirst_stops` | the accepted forms of the time column |
+| F7c | Whole-number time keys are read as 64-bit floats, so distinct instants above 2⁵³ become one timestamp: the timestamps are no longer unique and the previous-value baseline is lost (D50). | `time.integer_keys_distinct` | integer keys through `read_time`, `split_time` and `profile()` |
+
+The two gate checks added with the fourth pass assert no score.
+`data.holdout_copies_stop` asserts the exit, the named error and the absence
+of a headline. `time.integer_keys_distinct` asserts that the counts of
+training and holdout timestamps equal the gate's own, that the timestamps are
+reported unique, that the holdout is the rows the gate expects, that
+`train_end` and `holdout_start` are the exact integers, and that both
+baselines carry the scores the gate recomputes, the previous value being the
+one used. One gate run changed with D49: the run of `time_blocks` with no time
+column passes `--duplicates keep`, because with the date column excluded every
+one of its holdout rows has a copy among the training rows (D53; 10.6).
 
 **Every gate check that names a failure mode is seen to fail on that mode's own
 broken copy, in every run of the gate's self-test**, which prints the table
@@ -1409,7 +1795,7 @@ that proves it and fails if one pair is missing. The checks that give a
 written reason in place of a failure mode are listed in the same output, with
 the copies they failed on, for information.
 
-### 8.1 Small faults the gate cannot see (D39, D44, D46)
+### 8.1 Small faults the gate cannot see (D39, D44, D46, D52)
 
 The first review found five faults that a build could carry while passing
 every gate check and all 308 tests of the first suite. Three are small forms of
@@ -1429,10 +1815,41 @@ one fault (`verify/mutation_check.py`; the switch is in the reference's
 | M6 | A prediction that is not finite is scored and written as it is, where it should fail its configuration (D44). ROC AUC is a count of ranks, so the score stays finite and a NaN reaches `y_pred`. | `test_non_finite.py::test_a_prediction_that_is_not_finite_counts_as_raising` |
 | M7 | The fast profile's own error is never raised: too few timestamps under the row cap is always the ordinary `too_few_rows`, also where the full profile would run (D46). | `test_fast_profile_error.py::test_fast_error_stands_when_the_full_profile_would_run`, and the first pass's `test_time_pipeline.py::test_wide_panel_under_fast_raises` |
 
+| M8 | The interval is the 5th to the 95th percentile of the resamples, and `interval_level` still says 0.95. | `test_guard_review3.py::test_m8_the_interval_is_the_middle_95_percent` |
+| M9 | The leak screen forgets the previous-value baseline, so under time order the lag of a persistent series is excluded as a leak. | `test_guard_review3.py::test_m9_the_leak_screen_uses_the_previous_value` |
+| M10 | The fast profile keeps the first 2,000 usable rows of the file, not a sample drawn from the seed. | `test_guard_review3.py::test_m10_the_fast_cap_is_a_sample_from_the_seed` |
+| M11 | `cv_std` is the population deviation of the fold scores, not the sample deviation. | `test_guard_review3.py::test_m11_cv_std_is_the_sample_deviation` |
+| M12 | In a resampled ROC AUC, tied predictions do not share their rank. | `test_guard_review3.py::test_m12_tied_predictions_in_a_resample` |
+| M13 | `n_imputed` is counted over every loaded row, not over the training and holdout rows. | `test_guard_review3.py::test_m13_n_imputed_counts_rows_that_reach_a_model` |
+
 M6 and M7 were added with the third pass (D44, D46), for two guards that pass
-against the application as it stood and must go on passing. The four forms
-F6b, F6c, F6d and F7b above are run through the suite in the same way, and
-each must fail at least one test.
+against the application as it stood and must go on passing. The forms F6b,
+F6c, F6d, F7b and F7c above, and F9, are run through the suite in the same
+way, and each must fail at least one test.
+
+M8 to M13 were added with the fourth pass (D52). The third review planted
+each of these six faults in a copy of the application and found that all 411
+tests still passed; the gate caught two of them (M12 and M13) and nothing
+caught the other four. The application has none of them. Each now has a guard
+that passes today and fails on its variant:
+
+- **M8.** The percentiles are pinned (step 12) and how the resamples are drawn
+  is not, so no single run can tell 2.5 and 97.5 from 5 and 95. The guard runs
+  the same fixed predictions, supplied through the seam, under 60 seeds, and
+  compares the mean of each end of the interval with the 2.5th and 97.5th
+  percentiles of a bootstrap of its own with many more resamples, in units of
+  that bootstrap's standard deviation. Measured on the reference: +0.03 at the
+  lower end and −0.04 at the upper; with the fault, +0.26 and −0.35. The
+  guard allows 0.18.
+- **M10.** Which 2,000 rows are kept is not pinned either, only that they are
+  a sample from the seed. The guard asks for what no head of the file can
+  give: a holdout row beyond position 2,000, and a different sample from a
+  different seed.
+- **M9, M11, M12, M13** are exact: a lagged column that must stay a feature
+  with no `suspected_leak`; `cv_std` against the sample deviation of
+  `fold_scores` by hand; a constant prediction, whose every resample scores
+  exactly 0.5, so that the interval is 0.5 to 0.5; and `n_imputed` on a table
+  whose missing cells sit partly in rows with no target.
 
 The gate goes on catching the large forms; the fake goes on catching, exactly,
 a model or a seam-supplied step that is handed a row it must not see.
@@ -1516,7 +1933,38 @@ threads, 192 GB. Default pools: OpenMP 64 threads, OpenBLAS 24.
 - A complex-number column counts as numeric to `pandas.api.types.is_numeric_dtype`,
   and turning it into floats drops the imaginary part with a warning nobody
   sees. Both implementations ran a regression on such a target (measured
-  2026-11-20). Hence D48.
+  2026-11-20). Hence D48. The reference went on ordering a complex time column
+  that way until the fourth pass; the application refused it.
+- **Whole numbers and 64-bit floats** (measured 2026-11-20 for the fourth
+  pass, `docs/measurements/CP5/facts.py`). A 64-bit float holds every whole
+  number up to 2⁵³ and only some above: 200 consecutive `int64` values from
+  2⁵³ + 1 are 101 distinct floats; 1,500 nanosecond stamps 100 apart at
+  1.7 × 10¹⁸ are 587, the spacing of floats there being 256; 50 distinct
+  `uint64` values near 2⁶³, 7 apart, are one float. `numpy.unique` and a sort
+  on the integers keep every one. `numpy.diff` of the two ends of the `int64`
+  range overflows without a word, so a "consecutive" test must not subtract
+  in 64 bits. Hence D50.
+- **How `read_csv` loads whole numbers** (same measurement): up to the largest
+  `int64`, as `int64`; above it and up to the largest `uint64`, with no
+  negative value, as `uint64`; beyond that in either direction, as an `object`
+  column of Python integers, exact (with an empty cell: Python integers and
+  NaN). A value above the `int64` range and within the `uint64` range, beside
+  a negative one, loads as text. A whole-number column with an empty cell
+  loads as `float64`, so 2⁵³ + 1 arrives as 2⁵³.
+  `numpy.isinf` raises `TypeError` on a Python integer beyond 64 bits, which
+  is where the application stopped on such a column in every role.
+- **Objects that are numbers** (same measurement): for an `object` column of
+  integers, `pandas.api.types.is_numeric_dtype` is false and `is_string_dtype`
+  is true, so a test by type calls it neither a number column nor, correctly,
+  text. `pandas.isna(Decimal("NaN"))` is true; on `Decimal("sNaN")` it raises
+  `decimal.InvalidOperation`, and so does `Series.isna()`. `float()` of a
+  `Decimal` beyond the largest double is infinite; `float()` of a Python
+  integer that large raises `OverflowError`. Hence D51 and step 1a.
+- **Dates beyond the nanosecond range** (same measurement): pandas 3 parses
+  `9999-12-31` and keeps it in a coarser unit, and turning that column into
+  nanoseconds raises `OverflowError`. pandas parses a fraction of ten digits
+  by cutting it to nine. It writes a microsecond timestamp to CSV with six
+  digits. Hence the fraction rule of step 3 (D52).
 
 **Run time (D16, D25).** Measured once; no check enforces the budget (D31). A
 full run on 100,000 rows × 100 columns with the grids of
@@ -1810,6 +2258,78 @@ On 2026-11-20; scripts and tables in `docs/measurements/CP4/`.
   splits, of 100 to 400 unique timestamps and every gap the split accepts,
   and 1,898,456 rows checked in each implementation; none without one.
 
+### 10.6 Measured for the fourth pass (D49 to D54)
+
+On 2026-11-20; scripts and tables in `docs/measurements/CP5/`.
+
+**The rule on copies (step 8a; D49, D53).** Holdout rows with a copy among the
+training rows, counted by the reference implementation with
+`duplicates="keep"` and again by the measurement script through the seam; the
+two counts agree on every run that has one (1,440 runs were made in all). 30
+data seeds (1115, 1215, ...), each dataset as the gate runs it.
+
+| Data | Holdout rows | Rows with a copy | Share | Runs that meet the rule |
+|---|---|---|---|---|
+| every gate dataset run under the random scheme but the two below (13 runs) | 100 to 500 | 0 | 0% | 0 of 390 |
+| the README's example table, 30 tool seeds, both profiles; the suite's copy of it | 100; 60 | 0 | 0% | 0 of 120 |
+| `int_stamps` with no time column declared (not a gate run) | 375 | 0 to 1 | 0% to 0.27% | 0 of 30 |
+| `time_blocks` with no time column declared (the gate run `time_blocks_undeclared`) | 500 | 494 to 500 | 98.8% to 100% | 30 of 30 |
+| `dup_noise`: noise with every row present twice | 375 | 263 to 305 | 70.1% to 81.3% | 30 of 30 |
+| `signal_clf` and `signal_reg` with 0.5% of their rows written twice | 377 | 0 to 6 | 0% to 1.59% | 0 of 60 |
+| the same, 1% | 379 | 1 to 10 | 0.26% to 2.64% | 1 of 60 |
+| the same, 2% | 383 | 4 to 15 | 1.04% to 3.92% | 47 of 60 |
+| the same, 5% | 394 | 20 to 37 | 5.08% to 9.39% | 60 of 60 |
+| the same, 10% | 413 | 46 to 71 | 11.1% to 17.2% | 60 of 60 |
+| the same, 25%, 50%, 100% | 469 to 500 | 121 to 285 | 25.8% to 57.0% | 180 of 180 |
+
+So data with no repeated rows sits at 0 to 1 rows and at most 0.27%, far below
+both parts of the rule, and data with 5% or more of its rows repeated sits at
+20 rows and 5.08% or more, above both. Between the two, at 1% to 2% repeated
+in a table of 1,500 rows, it is the count of 10 that decides, and the outcome
+varies with the seed. One existing gate run meets the rule: `time_blocks` with
+no time column, where the rows of a block of five dates differ in nothing but
+the date. It passes `--duplicates keep` (D53), and the message of the error it
+would otherwise raise names the undeclared date column.
+
+In the locked suite, two tests profile a table with repeated rows under the
+random scheme: 2 of 31 holdout rows have a copy in one, 2 of 38 in the other
+(by the reference's split). Neither meets the rule, by its count; a share
+alone at 1% would have stopped both, which is why D53 added the count.
+
+**Whole-number timestamps (step 3; D50).** `int_stamps`: 1,500 rows, one
+nanosecond stamp each, 100 apart from 1.7 × 10¹⁸. Read as integers: 1,125
+training and 375 holdout timestamps, unique, both baselines, the previous
+value used. Read as floats (the reference before the change, and its copy
+F7c): 439 and 148, not unique, no previous-value baseline.
+
+**No existing gate value moved.** Between the judge before CP5 and after it,
+at the gate's seed: the 19 datasets, 31 checks, 100 recorded values and
+14,302 values of 24 runs that existed before are identical but for two, both
+in the run `time_blocks_undeclared`: its command line, which gained
+`--duplicates keep`, and its console summary, which gained the line of the
+`holdout_copies_kept` warning. Every run that writes a `profile.json` gained
+the three new keys (`input.duplicates`, `validation.n_holdout_copies`,
+`validation.holdout_copy_share`) and that run its new warning. Two datasets,
+two runs and two checks were added, last in their lists, so no seed moved. No
+band was changed and none was added.
+
+**Each new gate check was seen failing before the reference was changed:**
+`data.holdout_copies_stop` (the run exited 0 with a headline) and
+`time.integer_keys_distinct` (439 and 148 timestamps against 1,125 and 375).
+Both pass on the changed reference, and each fails on its broken copy in the
+self-test, F9 and F7c.
+
+**The type matrix (section 7).** 805 cases. On the changed reference 484 end
+in a result and 321 in a named error; none in anything else. On the
+application as it stood, 37 end in a raw exception, from the four causes
+section 7 lists; on the reference as it stood, 18.
+
+**The changed reference against the 411 cases of the first three passes:** it
+fails one, `test_skeleton.py::test_profile_signature_and_defaults`, which pins
+the nine-parameter signature that D49 extends. D54 has the tests stage loosen
+that one test; with it loosened the reference fails none. Nothing else decided
+in D49 to D53 contradicts a locked test.
+
 ---
 
 ## 11. What is open
@@ -1826,11 +2346,23 @@ The builder decides these, and no test may pin them:
   `profile()` and `stages.split_random` must agree: 2.7.);
 - the wording of every warning `message`, every error message, the console
   summary and `interval_reason` / `p_value_reason` (their presence is pinned).
-  What a message must name is pinned in four places and nowhere else: the
+  What a message must name is pinned in seven places and nowhere else: the
   excluded columns and their reasons in `no_features` (2.4), the columns
   involved in `feature_name_collision` (step 5), the number that is not finite
-  in `non_finite_score` (section 3, "Numbers that are not finite"), and what
-  the console summary shows (2.2);
+  in `non_finite_score` (section 3, "Numbers that are not finite"), what
+  the console summary shows (2.2), and, since the fourth pass, three more.
+  The message of `holdout_copies_in_training` holds the count and the number
+  of holdout rows as whole numbers in digits, the share as a percentage (some
+  number in it is within 0.1 of 100 × the share), the word `keep`, and, when a
+  column was excluded as `datetime` with no time column declared, that
+  column's name and the text `time_col` (step 8a). The message of
+  `fast_profile_too_few_rows` holds the cap as `2000` or `2,000` and the word
+  `full` (step 6). The message of `time_column_invalid` for a value refused
+  only for the length of its fraction quotes that value and holds the word
+  `fraction` (step 3);
+- what `stages.read_time` returns for a whole-number column that holds a
+  magnitude above 2⁵³ and also a missing value (2.7);
+- the text a class value of an unusual type is written as (step 4; D53);
 - whether the preprocessing of the final fit is fitted again for a
   configuration tried after another one failed (step 10): each such try gets
   a fresh estimator, and that is all that is pinned;
@@ -1870,8 +2402,11 @@ rules of step 12 and which resamples each interval keeps, that a tie counts in
 the p-value, the fixed texts of 5.4, the range of the seed (2.1), the
 magnitude above which a feature value is read as missing (step 5), that the
 baselines are scored before any fit (section 3, "Numbers that are not
-finite"), and which error a fast run raises when the full profile would stop
-too (step 7).
+finite"), which error a fast run raises when the full profile would stop
+too (steps 6 and 7), how two rows are compared to be copies and both parts of
+the rule on them (step 8a), which mixtures of objects are read as numbers
+(step 1a), and the magnitude above which whole-number time keys stay integers
+(step 3).
 
 Not judged by any test or gate check, and left to a human: whether the
 limitations read well, whether the console summary is clear, whether a skill
@@ -1931,3 +2466,9 @@ figure on real data is believable.
 | D46 second review accepted | (1) the summary's significant digits: 2.2, 11. (2) every gate check seen to fail: 8, 8.1; `verify/smoke_test.py`, `verify/mutation_check.py`. (3) white space round a target value: 2.7, 3 (step 4), 5.1, 5.2, 5.3, 7, 9. (4) the fast profile's error: 2.4, 2.7, 3 (steps 6, 7), 7, 8.1 (M7). (5) the README: 1; `plan/test-plan.md`, task T30. (6) the self-test's own run folder: not in this spec; `verify/smoke_test.py`. (7) lines before a header: 6, 7, 9 |
 | D47 when phase 1 ships | not in this spec; `docs/BACKLOG.md` |
 | D48 three rulings from the CP4 session | (1) a feature value too large for the tree models: 2.5, 2.6, 2.7 (`Preprocessor`), 3 (steps 5, 8), 5.2 (`n_infinite`), 7, 9. (2) a complex-number target: 2.4, 3 (step 4), 7, 9. (3) a target cell of only white space: 2.7 (`usable_rows`, `decide_task`), 3 (steps 2, 4), 5.2 (`n_missing`), 7, 9 |
+| D49 copies of a holdout row in training stop the run | 2.1 (`duplicates`), 2.2, 2.4 (`holdout_copies_in_training`), 2.5 (`holdout_copies_kept`), 3 (step 8a), 4.3, 5.2 (`input.duplicates`, `validation.n_holdout_copies`, `holdout_copy_share`), 7, 8 (F9), 10.6, 11; the cut-off is refined by D53 |
+| D50 whole numbers are compared exactly | (1) integer time keys: 2.7 (`read_time`), 3 (step 3), 4.2, 5.2, 7, 8 (F7c), 9, 10.6. (2) distinct values counted exactly: 3 (step 5), 7, 9. (3) whole numbers too large for 64 bits: 2.4, 2.5, 3 (steps 1a, 3, 4, 5), 6, 7, 9; (1) is refined by D53 |
+| D51 number columns as a database driver returns them | 2.5 (`unsupported_type`), 2.6, 2.7, 3 (steps 1a, 4, 5), 5.1, 5.2 (`dtype`, `target_dtype`), 6, 7, 9 |
+| D52 third review accepted | (1) fractions of a second: 3 (step 3), 4.2, 7, 9, 11. (2) the six test gaps: 8.1 (M8 to M13); `verify/mutation_check.py`. (3) the fast profile's cap: 2.4 (`fast_profile_too_few_rows`), 3 (step 6), 7, 11. (4) the type matrix: 2.4, 7 ("The type matrix"), 10.6 |
+| D53 rulings from the CP5 session's plan | (1) the rule needs a share and a count: 3 (step 8a), 4.3, 10.6. (2) no locked test is edited: `plan/test-plan.md`; amended by D54. (3) the message names an undeclared date column: 2.4, 3 (step 8a), 11. (4) the gate's undeclared-date run passes `--duplicates keep`: 8, 10.6; `verify/smoke_test.py`. (5) integer keys only above 2⁵³: 2.7, 3 (step 3), 4.2. (6) a target that cannot be compared; class values as written: 2.4, 3 (step 4), 5.2, 7. (7) a code of its own for the fast profile's row floors: 2.4, 3 (step 6) |
+| D54 one locked test is loosened for the new argument | 2.1 (the ten parameters), 10.6; `plan/test-plan.md` ("Fourth pass"), tasks T32 and T11 in `plan/tasks.json` (the gate check `time.undeclared_warns` moves to T32) |

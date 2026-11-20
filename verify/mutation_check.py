@@ -1,10 +1,10 @@
 """Does the test suite catch what it is there to catch? (D39)
 
 The gate's self-test proves the gate against the reference implementation
-broken in twelve ways (F1 to F8, and the other forms F6b, F6c, F6d and F7b:
-D46). This script proves the test suite the same way, against those twelve
-and against seven smaller faults no gate check can see (M1 to M7;
-verify/reference/mlprofessor/_variant.py lists them all).
+broken in fourteen ways (F1 to F9, and the other forms F6b, F6c, F6d, F7b and
+F7c: D46, D49, D50). This script proves the test suite the same way, against
+those fourteen and against thirteen smaller faults no gate check is relied on
+to catch (M1 to M13; verify/reference/mlprofessor/_variant.py lists them all).
 
 For the known-good reference and for each variant it builds a throwaway
 project outside the repo and runs the whole suite there:
@@ -16,6 +16,13 @@ project outside the repo and runs the whole suite there:
 and prints one line per case: how many tests fail, and up to five of them.
 
     python verify/mutation_check.py [--jobs N] [--only good,M1,...] [--keep]
+                                    [--overlay FOLDER]
+
+`--overlay FOLDER` copies every `.py` file of FOLDER into each project's copy of
+tests/ after the repo's own, replacing a file of the same name. It is for a
+harness session, which may not write under tests/: the tests it plans can be
+proved as prototypes before the tests stage writes the real files. The verdict
+that counts is the one without it.
 
 Exit codes
     0  the good reference fails nothing, and every variant fails at least one
@@ -61,8 +68,8 @@ REPO = HERE.parent
 REFERENCE = HERE / "reference" / "mlprofessor"
 GATE_FILE = HERE / "smoke_test.py"
 GATE_DATA = "verify/artifacts/data/"
-CASES = (["good"] + [f"F{i}" for i in range(1, 9)] + ["F6b", "F6c", "F6d", "F7b"]
-         + [f"M{i}" for i in range(1, 8)])
+CASES = (["good"] + [f"F{i}" for i in range(1, 10)] + ["F6b", "F6c", "F6d", "F7b", "F7c"]
+         + [f"M{i}" for i in range(1, 14)])
 PROBE = "test_mutation_check_probe.py"
 README_TESTS = re.compile(r"^test_readme\w*\.py::")
 RUN_SECONDS = 1800
@@ -138,10 +145,16 @@ def place_readme_files(project, notes):
             notes.add(f"{rel}: copied from the repo")
 
 
-def build(root, case, notes):
+def build(root, case, notes, overlay=None):
     """One throwaway project. Returns its folder."""
     project = root / case
     shutil.copytree(REPO / "tests", project / "tests", ignore=_ignore)
+    if overlay is not None:
+        for path in sorted(Path(overlay).glob("*.py")):
+            replaced = (project / "tests" / path.name).exists()
+            shutil.copyfile(path, project / "tests" / path.name)
+            notes.add(f"overlay: tests/{path.name} "
+                      + ("replaced by" if replaced else "added from") + f" {overlay}")
     shutil.copytree(REFERENCE, project / "mlprofessor", ignore=_ignore)
     broken = None if case == "good" else case
     (project / "mlprofessor" / "_variant.py").write_text(f"BROKEN = {broken!r}\n",
@@ -187,10 +200,10 @@ def run_suite(project, case):
     return {t: o for t, o in outcome.items() if not t.startswith(PROBE)}
 
 
-def one_case(root, case, notes):
+def one_case(root, case, notes, overlay=None):
     started = time.perf_counter()
     try:
-        outcome = run_suite(build(root, case, notes), case)
+        outcome = run_suite(build(root, case, notes, overlay), case)
     except Harness as exc:
         return case, None, str(exc), time.perf_counter() - started
     except Exception as exc:  # noqa: BLE001  (a copy failing, a report that will not parse)
@@ -215,7 +228,13 @@ def main(argv=None):
     parser.add_argument("--jobs", type=int, default=4, help="cases run side by side (default 4)")
     parser.add_argument("--only", default=None, help="comma-separated cases, e.g. good,M1,M2")
     parser.add_argument("--keep", action="store_true", help="keep the throwaway projects")
+    parser.add_argument("--overlay", default=None,
+                        help="a folder of .py files copied over each project's copy of tests/ "
+                             "(prototypes of planned tests; see the docstring)")
     args = parser.parse_args(argv)
+    if args.overlay is not None and not Path(args.overlay).is_dir():
+        print(f"HARNESS ERROR: --overlay {args.overlay} is not a folder")
+        return EXIT_HARNESS
     cases = CASES if not args.only else [c.strip() for c in args.only.split(",") if c.strip()]
     unknown = [c for c in cases if c not in CASES]
     if unknown or args.jobs < 1:
@@ -238,7 +257,7 @@ def main(argv=None):
     try:
         with ThreadPoolExecutor(max_workers=args.jobs) as pool:
             for case, outcome, problem, seconds in pool.map(
-                    lambda c: one_case(root, c, notes), cases):
+                    lambda c: one_case(root, c, notes, args.overlay), cases):
                 if outcome is None:
                     problems.append(problem)
                 else:

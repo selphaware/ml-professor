@@ -43,6 +43,13 @@ class FastProfileError(ProfileError):
     code = "fast_profile_too_few_timestamps"
 
 
+class FastProfileRowsError(ProfileError):
+    """The fast profile's cap left too few rows, or too few of a class, and the
+    full profile would run (D52, D53)."""
+
+    code = "fast_profile_too_few_rows"
+
+
 class GapError(ProfileError):
     code = "gap_too_large"
 
@@ -53,6 +60,13 @@ class FeatureNameCollisionError(ProfileError):
 
 class NoFeaturesError(ProfileError):
     code = "no_features"
+
+
+class HoldoutCopiesError(ProfileError):
+    """Under the random scheme, too many holdout rows have a copy among the
+    training rows, and the caller has not said that they are genuine (D49, D53)."""
+
+    code = "holdout_copies_in_training"
 
 
 class OneClassError(ProfileError):

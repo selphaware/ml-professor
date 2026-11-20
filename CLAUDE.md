@@ -2,7 +2,7 @@
 
 A Python package, `mlprofessor`, that measures how predictable one target
 column of one table is. The contract is `spec.md`. The decisions behind it are
-`docs/DECISIONS.md` (D1 to D48). The build order is `plan/tasks.json`; what the
+`docs/DECISIONS.md` (D1 to D54). The build order is `plan/tasks.json`; what the
 tests prove is `plan/test-plan.md`. The method and the table of common failures
 are in the skill `mlprofessor-build`.
 
@@ -41,6 +41,26 @@ whose prediction or fold score is not finite is failed, like one that raised;
 a holdout score that is not finite stops the run, with no fallback. Spec
 section 3, "Numbers that are not finite", has the seven rules in order.
 
+**A holdout row whose copy is among the training rows has been seen in all but
+name (D49, D53).** Under the random scheme the tool counts the holdout rows
+that have a copy among the training rows: the same value in every feature
+column and the same target, compared as a seam step is handed them. When more
+than 1% of the holdout rows, and at least 10 of them, have one, the run stops
+with `holdout_copies_in_training`, before any model is fitted, unless the
+caller passed `duplicates="keep"` (`--duplicates keep`); then it runs, with a
+`holdout_copies_kept` warning. The count and the share are always reported.
+Under time order the rule does not apply. Spec step 8a.
+
+**No input ends in an error that is not named (D50 to D52).** Whatever type a
+column has and whatever it holds, in any role, the run ends in a result or in
+a subclass of `ProfileError`. Three rules carry most of it (spec steps 1a, 3
+and 5): an object column that holds only numbers (`Decimal`, booleans or whole
+numbers with `None`) is read as the typed column it stands for; whole numbers
+are compared exactly, as time keys above 2**53 and when distinct values are
+counted; whole numbers too large for 64 bits are excluded with a warning as a
+spare column and are a named error as the target or the time column. Every
+column excluded as `unsupported_type` gets a warning naming it.
+
 ## Output
 
 `profile(...)` returns a `ProfileResult`; with an output folder it writes
@@ -49,11 +69,11 @@ section 3, "Numbers that are not finite", has the seven rules in order.
 | Part of `profile.json` | Holds | On `ProfileResult` |
 |---|---|---|
 | `meta` | tool, schema version, profile, seed, `n_jobs`, library versions, `timing` | `to_dict()` |
-| `input` | source, kind, target, time column, task requested, gap, rows, columns, duplicate rows | `to_dict()` |
+| `input` | source, kind, target, time column, task requested, gap, rows, columns, duplicate rows, the `duplicates` argument (D49) | `to_dict()` |
 | `rows` | seven counts: loaded, four `dropped_` reasons, training, holdout | `.rows` |
-| `columns` | one record per input column: role, kind, reason, leak rule, four counts (`n_infinite` also counts feature values too large for the tree models, above 3.4028234663852886e+38: D48) | `.columns` |
-| `task` | type, decided by rule or declared, distinct values, classes, positive class (a text target is read without the white space round it: D46) | `to_dict()` |
-| `validation` | scheme, holdout share, folds, gap, time form, last training and first holdout timestamp, caveat | `to_dict()` |
+| `columns` | one record per input column: role, kind, reason, leak rule, four counts (`n_infinite` also counts feature values too large for the tree models, above 3.4028234663852886e+38: D48). `dtype` is the type as loaded: `object` for an object column read as numbers (D51) | `.columns` |
+| `task` | type, decided by rule or declared, distinct values, classes, positive class (a text target is read without the white space round it: D46; a class value is written as a boolean, a number or text: D53) | `to_dict()` |
+| `validation` | scheme, holdout share, folds, gap, time form, last training and first holdout timestamp (an exact whole number for integer keys above 2**53: D50), caveat, and under the random scheme the holdout rows with a copy among the training rows and their share (D49) | `to_dict()` |
 | `headline` | metric, score, model, baseline and its score, skill (null when the baseline's error is zero), the interval on the score and on skill, the resamples used for each, p-value, reasons | `.headline` |
 | `baselines` | each baseline scored on the holdout, and which one was used | `to_dict()` |
 | `cv` | metric, folds scored, configurations, the chosen one, its mean and spread | `to_dict()` |
@@ -78,12 +98,23 @@ section 3, "Numbers that are not finite", has the seven rules in order.
 | F6c | a model family is lost from the models table (only the chosen configuration's family is listed) | models.all_accounted |
 | F6d | data rows longer than the header are read silently, with no error | data.long_rows_stop |
 | F7b | a day-first time column is parsed leniently, so the run goes ahead on the wrong order | time.dayfirst_stops |
+| F7c | whole-number time keys are read as floats, so distinct instants above 2**53 become one timestamp and the previous-value baseline is lost (D50) | time.integer_keys_distinct |
+| F9 | holdout rows with copies among the training rows are scored with no error (D49) | data.holdout_copies_stop |
 
-F6b, F6c, F6d and F7b are the other forms of F6 and F7, each with a broken
-copy of the reference of its own (D46). **Every check in this table is seen to
-fail on the broken copy of the mode it names**, in every run of the gate's
-self-test (`verify/smoke_test.py --selftest`, eight to ten minutes), which
-prints the table that proves it and fails if one pair is missing.
+F6b, F6c, F6d, F7b and F7c are the other forms of F6 and F7, each with a
+broken copy of the reference of its own (D46, D50). **Every check in this table
+is seen to fail on the broken copy of the mode it names**, in every run of the
+gate's self-test (`verify/smoke_test.py --selftest`, nine to twelve minutes),
+which prints the table that proves it and fails if one pair is missing.
+
+Two checks came with the fourth pass and assert no score.
+`data.holdout_copies_stop` runs noise with every row present twice: exit 3,
+the error's code, no headline. `time.integer_keys_distinct` runs a random walk
+whose time column is 64-bit integer nanoseconds: the counts of timestamps equal
+the gate's own, the stamps are written exactly, and the baseline is the
+previous value. One older run changed: `time.undeclared_warns` passes
+`--duplicates keep`, because with its date column excluded every holdout row
+of that table has a copy among the training rows (D53).
 
 Ten gate checks name no failure mode and say why they exist instead
 (`--list` shows them). One is `time.flat_holdout_reported` (D36), on a target
@@ -111,6 +142,12 @@ suite, each in the way that can see it:
 | M5 | the permutation p-value counts shuffles strictly greater than the observed skill | `test_guard_uncertainty.py::test_m5_ties_count_in_the_p_value` (classification only: D43) |
 | M6 | a prediction that is not finite is scored and written as it is, where it should fail its configuration | `test_non_finite.py::test_a_prediction_that_is_not_finite_counts_as_raising` |
 | M7 | the fast profile's own error is never raised: too few timestamps under the row cap is always `too_few_rows` | `test_fast_profile_error.py::test_fast_error_stands_when_the_full_profile_would_run`, `test_time_pipeline.py::test_wide_panel_under_fast_raises` |
+| M8 | the interval is the 5th to the 95th percentile of the resamples, under a level that still says 0.95 | `test_guard_review3.py::test_m8_the_interval_is_the_middle_95_percent` |
+| M9 | the leak screen forgets the previous-value baseline, so the lag of a persistent series is excluded as a leak | `test_guard_review3.py::test_m9_the_leak_screen_uses_the_previous_value` |
+| M10 | the fast profile keeps the first 2,000 usable rows, not a sample from the seed | `test_guard_review3.py::test_m10_the_fast_cap_is_a_sample_from_the_seed` |
+| M11 | `cv_std` is the population deviation of the fold scores, not the sample deviation | `test_guard_review3.py::test_m11_cv_std_is_the_sample_deviation` |
+| M12 | in a resampled ROC AUC, tied predictions do not share their rank | `test_guard_review3.py::test_m12_tied_predictions_in_a_resample` |
+| M13 | `n_imputed` is counted over every loaded row | `test_guard_review3.py::test_m13_n_imputed_counts_rows_that_reach_a_model` |
 
 A guard that fails means the application is wrong, not the test. Three more
 tests of that kind hold what was decided and the application already does:
@@ -121,8 +158,21 @@ is never skipped, before a header of two columns as before one of three
 (`test_guard_header_lines.py`, which fails on F6d).
 
 The mutation check runs the whole suite against the reference and against
-each of nineteen variants of it: the twelve of the table above and M1 to M7.
-The good reference must fail nothing, and every variant at least one test.
+each of twenty-seven variants of it: the fourteen of the table above and M1 to
+M13. The good reference must fail nothing, and every variant at least one test.
+
+**The type matrix (D52).** `tests/test_type_matrix.py` runs `profile()` on
+about 800 small tables: every kind of pandas column (each integer and float
+width, nullable types, booleans, text, categories, bytes, dates, durations,
+periods, intervals, complex numbers, `Decimal` and other objects, containers,
+all-missing and sparse columns, and CSV), as a spare column, as the target and
+as the time column, with ordinary values and with extreme ones (the ends of
+the type, whole numbers above 2**53 and beyond 64 bits, 1e300, infinities,
+not-a-number, negative zero, one value throughout). Each case must end in a
+result that keeps the reconciliation rules or in a named error. A raw
+`TypeError`, `ValueError` or `OverflowError` is a failure of the case, and the
+remedy is at the place it starts, never a broad `except` round the run. Spec
+section 7, "The type matrix".
 
 ## Environment (measured 2026-11-15; interpreter base and process starts 2026-11-16)
 
@@ -145,6 +195,13 @@ The good reference must fail nothing, and every variant at least one test.
   overflow sooner than their answers do; scikit-learn's trees and forests read
   32-bit floats and raise on a value above 3.4028234663852886e+38. Hence D44
   and D48.
+- Whole numbers (measured 2026-11-20, `docs/measurements/CP5`): a 64-bit
+  float holds every whole number only up to 2**53. Above it, distinct
+  integers become one float: 1,500 nanosecond stamps 100 apart at 1.7e18 are
+  587 floats. `read_csv` loads a whole number beyond 64 bits as a Python
+  integer in an `object` column, on which `numpy.isinf` raises `TypeError`; a
+  whole-number column with an empty cell loads as floats, already rounded.
+  `pandas.isna` raises on `Decimal("sNaN")`. Hence D50 and D51.
 - Threads: `n_jobs=-1` (every core) is the default. BLAS is held to one thread
   always and OpenMP to `n_jobs`, with `threadpoolctl`; forests predict on one
   thread. The gate runs the tool with `--n-jobs 1` and the thread variables
@@ -181,9 +238,9 @@ The good reference must fail nothing, and every variant at least one test.
 - Do not edit the harness: `verify/`, `plan/`, `spec.md`, `CLAUDE.md`,
   `tests/`, `loop/`, `.claude/`. If a check, a test or the spec looks wrong,
   stop and say so plainly, with the evidence. Never widen a band.
-- `verify/reference/` is the judge's own fixture, with nineteen deliberate
-  faults wired into it (twelve the gate catches, seven only the tests do). It
-  is not a starting point: do not copy from it.
+- `verify/reference/` is the judge's own fixture, with twenty-seven deliberate
+  faults wired into it (fourteen the gate catches, thirteen only the tests are
+  relied on for). It is not a starting point: do not copy from it.
 - Application code never mentions the gate, the tests or the loop.
 - No git. The human owns every git operation.
 - Write only inside `mlprofessor/` and `examples/`, and `requirements.txt` and

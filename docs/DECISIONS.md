@@ -617,3 +617,73 @@ ambiguous, when an empty cell in the same place is simply dropped and
 counted).
 Consequence: three more tests in the third pass. Nothing is dropped or
 replaced without a count in the output.
+
+## D49 — 2026-11-20 — Copies of a holdout row in training stop the run
+Decision: Under the random scheme, a holdout row has a copy in training when
+a training row has the same value in every feature column and the same
+target. When more than a small share of the holdout rows have such a copy,
+the run stops with a new named error whose message gives the count and the
+share and says what the caller can do: remove the copies, or pass
+`duplicates="keep"` to state that they are independent observations. With
+`duplicates="keep"` the run goes ahead as before; the output records the
+choice, the count and the share, and carries a warning. Below the cut-off
+the run goes ahead and the count is reported. The cut-off is measured by
+the harness stage and reported for approval. The argument's default is
+`"error"`. Under time order the rule does not apply: rows at different
+times are different observations, and rows at one timestamp fall on one
+side of the split.
+Alternatives considered: keeping copies on one side of the split now
+(deferred to phase 2, where grouped validation belongs; value `"group"`);
+warning only (rejected: the third review measured skill 0.918 and p = 0.001
+on pure noise with every row present twice, against 0.009 without the
+copies); dropping copies automatically (rejected: repeats can be genuine,
+and dropping them changes the data).
+Consequence: no headline is inflated by copies unless the caller has said
+they are genuine. A table of a few categories will usually need
+`duplicates="keep"`.
+
+## D50 — 2026-11-20 — Whole numbers are compared exactly
+Decision: (1) Two distinct whole-number timestamps are never merged. Integer
+time keys are compared as integers, so nanosecond instants held as 64-bit
+integers stay distinct. If that cannot be done without contradicting a
+locked test, the run stops with the time-column error when two distinct
+integers would become one number. (2) Distinct values of a whole-number
+column are counted exactly, at any magnitude. (3) A column holding whole
+numbers too large for 64 bits is excluded with a reason when it is a spare
+column, and is a named error when it is the target or the time column.
+Alternatives considered: the behaviour the third review measured: 600
+distinct instants read as 235, the previous-value baseline lost, and a
+random walk scored at 0.9994; a 50-valued column reported as constant; a
+raw Python error on a 26-digit account number.
+Consequence: nanosecond timestamps work as a numeric time column.
+
+## D51 — 2026-11-20 — Number columns as a database driver returns them
+Decision: A DataFrame column of generic objects that holds only numbers
+(decimal numbers, booleans or whole numbers, with or without empty values)
+is read as numeric. Any column that is still excluded as an unsupported
+type gets a warning naming it, so it shows in the console summary.
+Alternatives considered: excluding such columns with no warning, as built
+(the third review measured skill of minus 0.011, against 0.779 with the
+same values in typed columns).
+Consequence: a table read straight from a database behaves like the same
+table with typed columns.
+
+## D52 — 2026-11-20 — Third review of phase 1: findings accepted
+Decision: The third review (`docs\reviews\phase1-review-3.md`, verdict FIX
+FIRST) is accepted in full. Under D47 its findings 1, 2 and 3 block
+shipping. Beside D49 to D51: (1) one to nine fractional digits are accepted
+in an ISO timestamp, and the refusal message says what is wrong. (2) The
+six test gaps are closed, each with a broken copy that proves the test: the
+interval's percentiles, the previous-value baseline inside the leak screen,
+the fast profile's row sample, the spread across folds, tied predictions in
+a resampled score, and the imputed count. (3) When the fast profile's cap
+leaves too few rows and the full profile would run, the error says so.
+(4) A type matrix is added to the suite: every kind of pandas column, as a
+feature, the target and the time column, with ordinary and extreme values,
+must end in a result or a named error, never a raw Python error, with every
+column in the accounting and every reported number finite.
+Alternatives considered: fixing type and magnitude faults one review at a
+time (rejected: the last two reviews each found a different member of the
+same class).
+Consequence: a fifth change prompt (CP5), a fourth pass of tests and build,
+and a fourth review, judged again under D47.

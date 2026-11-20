@@ -25,6 +25,9 @@ build loop: each item becomes work only through a decision in
   rule misses, or a measure it wrongly excludes (D31).
 - **Walk-forward validation** across the holdout, in place of a single
   cut-off (D7).
+- **Keeping copies of a row on one side of the split** (`duplicates="group"`):
+  the proper treatment of duplicated rows, with phase 2's grouped
+  validation (D49 stops the run in the meantime).
 - **Entity-aware baselines and sampling for panels:** phase 2, with grouped
   validation (D10, D20, D31).
 
@@ -63,6 +66,15 @@ build loop: each item becomes work only through a decision in
 - **The `infinite_values` warning** is raised for features only in the
   library and the spec; the gate's reference raises it for any numeric
   column. No test pins it.
+
+## Found by the third review
+
+- **Thin spots in the suite.** M1, M5 and M6 are each held by one test, as
+  are three faults the reviewer planted: a previous value that ignores the
+  gap, the panel autocorrelation warning removed, and the leak cut-off moved
+  to 0.999. A second test for each would make the suite less brittle.
+- **Not verified by any review:** seeds other than the gate's; whether a
+  library warning can reach standard error beside a named error.
 
 ## Notes for the framework (ailoop-engineering), not for this repo
 

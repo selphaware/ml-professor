@@ -537,3 +537,63 @@ and profile. (5) Undefined skill (D36) can arise under the random scheme
 too, when the training mean predicts the holdout exactly.
 Alternatives considered: none; each is recorded so it is not rediscovered.
 Consequence: none of these blocks the second build.
+
+## D44 — 2026-11-20 — No number that is not finite is ever written as empty
+Decision: An infinity or a not-a-number is never turned into an empty value
+in the output without a reason beside it. Three rules follow. (1) A
+configuration whose fold score is not finite is treated as failed, like one
+that raised. (2) If the chosen configuration's holdout score or a baseline's
+score is not finite, the run stops with a new named error, code
+`non_finite_score`, whose message says which number and the likely cause
+(for one, a target value too large for squared error). (3) A p-value is
+reported only when skill is a number. Quiet fallbacks that swallow a
+non-finite value are replaced by a named error or removed.
+Alternatives considered: the behaviour found by the second review, in which
+a target holding one value near 1.8e308 gave an empty score, baseline and
+skill, a p-value all the same, no warning, and a summary pointing at a
+warning that was not there.
+Consequence: an extreme target stops the run with a message the caller can
+act on. Tests assert on the raw values, before any step that maps
+not-a-number to empty.
+
+## D45 — 2026-11-20 — The seed's range
+Decision: `seed` is a whole number from 0 to 4,294,967,295 (2 to the power
+32, less one). Any other value is an input error, raised before anything is
+loaded.
+Alternatives considered: folding a larger seed down (rejected: two
+different seeds would give the same run, silently); no limit, as the spec
+had it (the second review found that a seed of 2 to the power 32 crashes
+inside scikit-learn with a raw error).
+Consequence: a timestamp-style seed such as 20261119123456 is refused with a
+clear message.
+
+## D46 — 2026-11-20 — Second review of phase 1: findings accepted
+Decision: The second review (`docs\reviews\phase1-review-2.md`, verdict FIX
+FIRST) is accepted in full. Beside D44 and D45: (1) the console summary
+prints four significant digits, so a small-scale target no longer shows as
+0.0000. (2) Each gate check listed against a failure mode is proven by a
+broken copy on which that check fails: a column lost from the accounting, a
+model family lost from the table, a long row read silently, and a day-first
+date parsed leniently. (3) Surrounding white space is not part of a target
+value, as D42 already rules for features: `yes` and `yes ` are one class.
+(4) The fast profile's "use the full profile" error is raised only when the
+full profile would run; otherwise the ordinary too-few-rows error is raised.
+(5) The README says correctly which rows the fast profile keeps under time
+order. (6) The gate's self-test no longer overwrites the run folder a
+builder is told to read. (7) Tests cover lines of form feed, no-break space
+and quoted space before a header.
+Alternatives considered: shipping with the first finding open (rejected: the
+output contradicted itself and nothing flagged it).
+Consequence: a fourth change prompt (CP4), a third pass of tests and build,
+and a third review.
+
+## D47 — 2026-11-20 — When phase 1 ships
+Decision: After the third review, phase 1 ships unless that review finds a
+High finding, or anything that misstates a number on plausible data. Every
+lower finding is recorded in `docs\BACKLOG.md` and taken up at the start of
+phase 2.
+Alternatives considered: reviewing until a review finds nothing (rejected:
+each review starts fresh and will always find something; the cost of a round
+no longer matches the size of what it finds).
+Consequence: the backlog file is part of the repo, and the phase 2 brief
+starts from it.

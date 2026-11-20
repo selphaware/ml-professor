@@ -13,6 +13,7 @@ import numpy as np
 import pandas as pd
 
 from mlprofessor import errors
+from mlprofessor.task import read_target_values
 
 DATAFRAME_SOURCE = "<DataFrame>"
 _CSV_FIELD_LIMIT = 2 ** 31 - 1   # the csv module refuses long cells otherwise
@@ -174,7 +175,8 @@ def usable_rows(frame, target, time_col=None):
             raise errors.ColumnNotFoundError(
                 f"No column named {name!r}. The columns are: "
                 f"{', '.join(repr(str(c)) for c in frame.columns)}.")
-    no_target = missing_mask(frame[target])
+    # A text target of only white space is a missing target (D48).
+    no_target = missing_mask(read_target_values(frame[target]))
     if time_col is None:
         no_time = np.zeros(len(frame), dtype=bool)
     else:

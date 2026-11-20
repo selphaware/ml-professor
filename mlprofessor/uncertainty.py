@@ -11,6 +11,7 @@ import math
 import numpy as np
 
 from mlprofessor import metrics
+from mlprofessor.errors import NonFiniteScoreError
 
 INTERVAL_LEVEL = 0.95
 MIN_BLOCK_TIMESTAMPS = 30
@@ -64,8 +65,9 @@ class _HoldoutScorer:
             self.negative = 1.0 - self.positive
         else:
             y = y.astype(float)
-            self.model_error = (y - self.pred) ** 2
-            self.base_error = (y - self.baseline_pred) ** 2
+            with np.errstate(over="ignore", invalid="ignore"):
+                self.model_error = (y - self.pred) ** 2
+                self.base_error = (y - self.baseline_pred) ** 2
 
     def score_and_skill(self, weights):
         """(score, skill) under `weights`, or None when the score cannot be computed.
@@ -87,9 +89,22 @@ class _HoldoutScorer:
         total = weights.sum()
         if total == 0:
             return None
-        score = float((weights * self.model_error).sum() / total)
-        base = float((weights * self.base_error).sum() / total)
-        return score, metrics.skill("mse", score, base)
+        with np.errstate(over="ignore", invalid="ignore"):
+            score = float((weights * self.model_error).sum() / total)
+            base = float((weights * self.base_error).sum() / total)
+        if not (np.isfinite(score) and np.isfinite(base)):
+            raise NonFiniteScoreError(
+                "headline.interval_low, headline.interval_high and headline.p_value: the "
+                "squared error of a resample or a shuffle of the holdout is not finite "
+                f"(model {score!r}, baseline {base!r}): the target values are likely too "
+                "large for squared error.")
+        skill = metrics.skill("mse", score, base)
+        if skill is not None and not np.isfinite(skill):
+            raise NonFiniteScoreError(
+                "headline.skill_low, headline.skill_high and headline.p_value: the skill of "
+                f"a resample or a shuffle of the holdout is not finite ({skill!r}): the "
+                "baseline's error on the rows drawn is too small beside the model's.")
+        return score, skill
 
 
 def _percentiles(values):

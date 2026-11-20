@@ -56,7 +56,7 @@ def main(argv=None):
 
 
 def _number(value):
-    return "n/a" if value is None else f"{value:.4f}"
+    return "n/a" if value is None else f"{value:.6g}"
 
 
 def _summary(document, out_dir):

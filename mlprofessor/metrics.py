@@ -47,7 +47,9 @@ def mse(y, pred):
     pred = np.asarray(pred, dtype=float)
     if y.shape != pred.shape:
         raise ValueError("y and pred must be the same length")
-    return float(np.mean((y - pred) ** 2))
+    with np.errstate(over="ignore", invalid="ignore"):
+        # Infinite when a squared error overflows; the caller decides what that means.
+        return float(np.mean((y - pred) ** 2))
 
 
 def skill(metric, score, baseline_score):
@@ -60,7 +62,8 @@ def skill(metric, score, baseline_score):
     if metric == "mse":
         if baseline_score == 0:
             return None
-        return float(1.0 - score / baseline_score)
+        with np.errstate(over="ignore", invalid="ignore", divide="ignore"):
+            return float(1.0 - np.float64(score) / np.float64(baseline_score))
     raise ValueError(f"unknown metric {metric!r}; expected one of {METRICS}")
 
 
@@ -95,14 +98,19 @@ def _missing(keys):
 
 
 def lag1_autocorrelation(values):
-    """Lag-1 autocorrelation of a series in order (the usual estimator); NaN if undefined."""
+    """Lag-1 autocorrelation of a series in order (the usual estimator).
+
+    NaN when it has no value (fewer than two values, or none that vary) and
+    when it cannot be computed because a number on the way is not finite.
+    """
     values = np.asarray(values, dtype=float)
     if values.ndim != 1:
         raise ValueError("values must be one-dimensional")
     if len(values) < 2:
         return float("nan")
-    centred = values - values.mean()
-    spread = float((centred ** 2).sum())
-    if spread == 0.0:
-        return float("nan")
-    return float((centred[:-1] * centred[1:]).sum() / spread)
+    with np.errstate(over="ignore", invalid="ignore", divide="ignore"):
+        centred = values - values.mean()
+        spread = float((centred ** 2).sum())
+        if spread == 0.0 or not np.isfinite(spread):
+            return float("nan")
+        return float((centred[:-1] * centred[1:]).sum() / spread)

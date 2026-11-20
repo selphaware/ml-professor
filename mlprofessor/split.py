@@ -1,11 +1,14 @@
 """Step 7: split off the holdout and form the selection folds (D6, D7)."""
 import math
+from numbers import Integral
 
 import numpy as np
 import pandas as pd
 
 from mlprofessor import errors
+from mlprofessor.task import read_target_values
 
+MAX_SEED = 2**32 - 1
 N_FOLDS = 5
 HOLDOUT_SHARE_DENOMINATOR = 4
 
@@ -14,7 +17,8 @@ def _class_groups(n_rows, classes):
     """Positions 0..n_rows-1 grouped by class label, one array per class; one group if unstratified."""
     if classes is None:
         return [np.arange(n_rows)]
-    labels = pd.Series(np.asarray(classes, dtype=object)).reset_index(drop=True)
+    # Text labels are compared without the white space round them (D46).
+    labels = read_target_values(pd.Series(np.asarray(classes, dtype=object))).reset_index(drop=True)
     if len(labels) != n_rows:
         raise ValueError(f"classes has {len(labels)} labels for {n_rows} rows")
     codes, _ = pd.factorize(labels, use_na_sentinel=False)
@@ -49,7 +53,11 @@ def split_random(n_rows, classes=None, seed=0):
     With `classes` the holdout and the folds are stratified on them. Every draw
     comes from `seed`. All position arrays are in increasing order.
     """
-    rng = np.random.default_rng(seed)
+    if (isinstance(seed, bool) or not isinstance(seed, Integral)
+            or not 0 <= seed <= MAX_SEED):
+        raise errors.InputError(
+            f"seed must be a whole number from 0 to {MAX_SEED}; got {seed!r}.")
+    rng = np.random.default_rng(int(seed))
     groups = _class_groups(n_rows, classes)
     holdout_size = math.ceil(n_rows / HOLDOUT_SHARE_DENOMINATOR)
     quotas = _holdout_quotas([len(g) for g in groups], holdout_size)

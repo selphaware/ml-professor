@@ -1,8 +1,9 @@
 """Preprocessing of step 8, fitted on the rows of one fit only.
 
-Numeric columns: missing (and infinite) cells take the median of the fit rows
-(0 if the column is all missing there), then are standardised with the mean and
-standard deviation of the fit rows (a zero deviation is read as 1).
+Numeric columns: missing, infinite and too-large cells (magnitude above the
+largest 32-bit float, D48) take the median of the fit rows (0 if the column is
+all missing there), then are standardised with the mean and standard deviation
+of the fit rows (a zero deviation is read as 1).
 Categorical columns: a missing cell is the level `(missing)`; one 0/1 column per
 kept level, at most the 30 most frequent in the fit rows (ties by level text),
 in sorted order; any other level is all zeros.
@@ -10,6 +11,7 @@ in sorted order; any other level is all zeros.
 import numpy as np
 import pandas as pd
 
+from .columns import feature_numbers
 from .errors import FeatureNameCollisionError
 
 MISSING_LEVEL = "(missing)"
@@ -17,10 +19,8 @@ MAX_LEVELS = 30
 
 
 def numeric_values(column):
-    """Float copy of a column with NaN for missing and infinite cells."""
-    values = pd.to_numeric(column, errors="coerce").to_numpy(dtype=float, copy=True)
-    values[~np.isfinite(values)] = np.nan
-    return values
+    """Float copy of a column with NaN for missing, infinite and too-large cells."""
+    return feature_numbers(pd.to_numeric(column, errors="coerce").to_numpy(dtype=float))
 
 
 def level_values(column):
@@ -88,7 +88,7 @@ class Preprocessor:
             deviation = float(imputed.std()) if imputed.size else 0.0
             self.medians[col] = median
             self.means[col] = mean
-            self.scales[col] = deviation if deviation > 0 and np.isfinite(deviation) else 1.0
+            self.scales[col] = deviation if deviation > 0 else 1.0
         for col in self.categorical_cols:
             self.levels[col] = kept_levels(level_values(frame[col]))
         check_feature_names(self.kinds, self.levels)

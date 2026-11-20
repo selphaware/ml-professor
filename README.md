@@ -51,7 +51,7 @@ Options (`python -m mlprofessor profile` takes these):
 | `--time-col` | the time column; enables the time-ordered scheme | none (random scheme) |
 | `--gap` | whole timestamps left out between training and holdout (needs `--time-col`) | 0 |
 | `--profile` | `full` or `fast` (see below) | `full` |
-| `--seed` | the random seed; the same seed gives the same output | 0 |
+| `--seed` | the random seed, a whole number from 0 to 4,294,967,295; the same seed gives the same output | 0 |
 | `--n-jobs` | threads; `-1` uses every core | -1 |
 
 The command prints a short plain-text summary to standard output, in this order:
@@ -65,6 +65,9 @@ The command prints a short plain-text summary to standard output, in this order:
 - the p-value and the number of shuffles, or, when there is none, the reason;
 - one line per warning, with its code and, when it has one, its column;
 - the output folder.
+
+Numbers in the summary are printed to at least four significant digits;
+`profile.json` holds them as computed.
 
 Exit codes: `0` finished and both files written; `2` the command line could not
 be parsed; `3` a named error, with one line `error: <code>: <message>` on
@@ -103,7 +106,7 @@ result = profile(
     time_col=None,        # name of a time column, or None for the random scheme
     gap=0,                # whole distinct timestamps between training and holdout
     profile="full",       # "full" or "fast"
-    seed=0,
+    seed=0,               # a whole number from 0 to 4,294,967,295
     out_dir="runs/customers",   # optional: writes profile.json and predictions.csv
     n_jobs=-1,
 )
@@ -202,11 +205,14 @@ only against the training mean.
   random forest, gradient boosting), five-fold cross-validation inside the
   training rows, 1,000 resamples for the interval and p-value.
 - `fast`: two configurations (a linear model and a single decision tree), no
-  grid, 200 resamples, and a cap of 2,000 usable rows (the rows kept are
-  chosen from the seed, and the rows left out are counted in `rows`). Use it
-  to look at a table quickly. Under the time-ordered scheme with a wide panel,
-  the cap can leave too few timestamps, which raises `fast_profile_too_few_timestamps`;
-  use `full` then.
+  grid, 200 resamples, and a cap of 2,000 usable rows. Under the random scheme
+  the 2,000 rows kept are drawn at random from the seed; under the time-ordered
+  scheme they are the most recent whole timestamps whose rows together number
+  at most 2,000. The rows left out are counted in `rows`. Use it to look at a
+  table quickly. Under the time-ordered scheme with a wide panel, the cap can
+  leave too few timestamps for the split: that raises
+  `fast_profile_too_few_timestamps` when `full` would get past that point, and
+  otherwise the error `full` would raise. Use `full` then.
 
 ## What it measures, and what it does not
 
@@ -265,6 +271,26 @@ column named `colour=red` beside a categorical column `colour` with a level
 nothing. A column whose numbers are written with thousands separators, such
 as `1,200`, is excluded rather than read as a number, and the column record says
 why. The full list of error codes is in `spec.md` section 2.4.
+
+A text target is read without the white space round its values, so `yes ` and
+`yes` are the same class; `classes`, `positive_class` and `y_true` show the value
+without it. A target cell that holds only white space is a missing target: its
+row is dropped and counted in `dropped_missing_target`.
+
+A numeric feature value that is infinite, or finite but larger than 3.4028234663852886e+38
+in magnitude (too large for the tree models), is read as missing. It is counted in
+`n_infinite` for its column, and an `infinite_values` warning names the column.
+
+## Numbers that are not finite
+
+No number that is not finite is ever written, and none is written as `null`.
+A `null` means "does not apply", or "cannot be computed" with the reason beside
+it, and nothing else. A regression target with a value too large for squared
+error (for example one cell of 1.7976931348623157e308) stops the run with
+`non_finite_score`, naming the baseline, before any model is fitted. A
+configuration whose prediction or fold score is not finite fails, as one that
+raises does. If the chosen configuration's holdout score is not finite, the run
+stops with `non_finite_score`, with no fallback to another configuration.
 
 ## Files and reproducibility
 

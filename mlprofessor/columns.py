@@ -1,7 +1,8 @@
 """Step 5: the column roles that need no target (spec 3 step 5, 4.3, 4.5, D19, D28, D34).
 
 Roles are judged on the usable rows; the counts `n_missing`, `n_coerced` and
-`n_infinite` are kept over every loaded row. Whole numbers are judged by value,
+`n_infinite` are kept over every loaded row; `n_infinite` of a numeric column
+also counts the values too large for the tree models (D48). Whole numbers are judged by value,
 never by type. A number written with thousands separators is never parsed,
 and dates are recognised by a fixed list of forms, never by pandas' parser.
 """
@@ -22,6 +23,10 @@ DATE_SHARE = 0.95          # rule 4: share of values in a date form
 NUMERIC_SHARE = 0.90       # rules 4a and 5: share of values that parse (or match)
 ID_TEXT_SHARE = 0.95       # rule 6a: distinct values over usable rows
 FREE_TEXT_SHARE = 0.50     # rule 6b: distinct values over non-missing values
+
+# The largest 32-bit float (D48): the tree models read features as 32-bit
+# floats, so a feature value of greater magnitude is read as an infinite one.
+FEATURE_LIMIT = float(np.finfo(np.float32).max)
 
 SEPARATED_NUMBER = re.compile(r"[+-]?[0-9]{1,3}(?:,[0-9]{3})+(?:\.[0-9]+)?")
 
@@ -148,6 +153,20 @@ def numeric_values(series):
     return series.to_numpy(dtype=float, na_value=np.nan)
 
 
+def beyond_limit(values):
+    """True where a number is infinite or of magnitude above `FEATURE_LIMIT` (D48)."""
+    values = np.asarray(values, dtype=float)
+    with np.errstate(invalid="ignore"):
+        return np.abs(values) > FEATURE_LIMIT
+
+
+def feature_numbers(values):
+    """Floats with NaN for every missing, infinite or too-large cell (step 5, D48)."""
+    values = np.array(values, dtype=float, copy=True)
+    values[beyond_limit(values)] = np.nan
+    return values
+
+
 def _whole(values):
     return bool(np.all(np.isfinite(values)) and np.all(np.floor(values) == values))
 
@@ -156,7 +175,7 @@ def _whole(values):
 
 def _numeric_rule(values):
     """Rules 8 to 8c on the usable rows' values; returns (role, kind, reason)."""
-    values = values[np.isfinite(values)]
+    values = values[np.isfinite(values) & ~beyond_limit(values)]
     if values.size == 0:
         return "excluded", "numeric", "all_missing"
     distinct = np.unique(values)
@@ -212,8 +231,10 @@ def _judge_column(series, usable):
     if family == "other":
         return "excluded", None, "unsupported_type", 0, 0
     if family == "numeric":
-        role, kind, reason = _numeric_rule(numeric_values(series)[usable])
-        return role, kind, reason, 0, 0
+        values = numeric_values(series)
+        n_too_large = int((np.isfinite(values) & beyond_limit(values)).sum())
+        role, kind, reason = _numeric_rule(values[usable])
+        return role, kind, reason, 0, n_too_large
 
     text_all = stripped_text(series)
     role, kind, reason, read_as_numeric = _text_rule(text_all, usable, len(usable))
@@ -221,7 +242,7 @@ def _judge_column(series, usable):
         return role, kind, reason, 0, 0
     parsed = parse_numbers(text_all)
     n_coerced = int((text_all.notna().to_numpy(dtype=bool) & np.isnan(parsed)).sum())
-    n_parsed_infinite = int(np.isinf(parsed).sum())
+    n_parsed_infinite = int(beyond_limit(parsed).sum())
     role, kind, reason = _numeric_rule(parsed[usable])
     return role, kind, reason, n_coerced, n_parsed_infinite
 

@@ -7,6 +7,8 @@ import os
 import numpy as np
 import pandas as pd
 
+from mlprofessor.errors import NonFiniteScoreError
+
 ROWS_ITEMS = [
     "loaded", "dropped_missing_target", "dropped_missing_time", "dropped_gap",
     "dropped_row_cap", "training", "holdout",
@@ -41,6 +43,37 @@ LIMITATIONS = [
     "Negative skill means the models did worse than the baseline on the holdout; read "
     "it as no evidence of predictability.",
 ]
+
+
+CHECKED_PARTS = ("validation", "headline", "baselines", "cv", "models")
+
+
+def _non_finite_numbers(value, path):
+    """`(path, value)` of every float of `value` that is infinite or not-a-number."""
+    if isinstance(value, dict):
+        return [found for key, item in value.items()
+                for found in _non_finite_numbers(item, f"{path}.{key}")]
+    if isinstance(value, (list, tuple, np.ndarray)):
+        return [found for i, item in enumerate(value)
+                for found in _non_finite_numbers(item, f"{path}[{i}]")]
+    if isinstance(value, (float, np.floating)) and not math.isfinite(float(value)):
+        return [(path, value)]
+    return []
+
+
+def check_finite(document):
+    """Raise `NonFiniteScoreError` naming each number of the scored parts that is not finite.
+
+    Spec 3, "Numbers that are not finite", rule 6: run before anything is
+    returned or written, so that no such number leaves as a null.
+    """
+    found = [hit for part in CHECKED_PARTS if part in document
+             for hit in _non_finite_numbers(document[part], part)]
+    if found:
+        named = ", ".join(f"{path} ({value!r})" for path, value in found)
+        raise NonFiniteScoreError(
+            f"Numbers of the output are not finite: {named}. Likely cause: a target value "
+            "too large for squared error, whose arithmetic overflows.")
 
 
 def plain(value):
@@ -84,6 +117,7 @@ class ProfileResult:
     """The outcome of `profile()`: the headline, the tables and the output."""
 
     def __init__(self, document, predictions):
+        check_finite(document)
         self._document = plain(document)
         self._predictions = predictions.reset_index(drop=True).copy()
 

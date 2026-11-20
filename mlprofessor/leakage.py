@@ -10,6 +10,8 @@ import numpy as np
 import pandas as pd
 
 from mlprofessor import metrics
+from mlprofessor.columns import feature_numbers
+from mlprofessor.errors import NonFiniteScoreError
 
 LEAK_SKILL = 0.98
 WARN_SKILL = 0.90
@@ -35,7 +37,7 @@ def missing_by_class(missing, y, training_rows):
 def _column_matrix(values, kind, train_rows, predict_rows):
     """One column as the tree sees it: numbers as they are, or codes of sorted training levels."""
     if kind == "numeric":
-        column = np.asarray(values, dtype=float)
+        column = feature_numbers(values)
         return column[train_rows].reshape(-1, 1), column[predict_rows].reshape(-1, 1)
     column = np.asarray(values, dtype=object).astype(str)
     levels = np.unique(column[train_rows])
@@ -55,16 +57,68 @@ def _make_tree(task_type, seed):
     return DecisionTreeRegressor(random_state=seed, **TREE_PARAMS)
 
 
-def single_column_skill(values, kind, y, folds, scored, task_type, seed, previous=None):
+def _not_finite(what, value, cause):
+    return NonFiniteScoreError(
+        f"The leak screen's {what} over the pooled validation rows of the selection "
+        f"folds is not finite ({value!r}): {cause}")
+
+
+TARGET_TOO_LARGE = ("a target value is likely too large for squared error (its square is "
+                    "beyond the largest double, about 1.8e308).")
+
+
+def baseline_errors(y, folds, scored, previous=None):
+    """The screen's regression baselines over the pooled validation rows of the scored folds.
+
+    Returns `{"training_mean": error}`, with `"previous_value"` too when
+    `previous` is given. Raises `NonFiniteScoreError` when an error is not
+    finite, and `RuntimeError` when a previous value is missing: every row of
+    every validation block has one (spec step 8).
+    """
+    y = np.asarray(y, dtype=float)
+    truth, mean_base, previous_base = [], [], []
+    with np.errstate(over="ignore", invalid="ignore"):
+        for fold, is_scored in zip(folds, scored):
+            if not is_scored:
+                continue
+            train_rows, validation_rows = fold["training"], fold["validation"]
+            truth.append(y[validation_rows])
+            mean_base.append(np.full(len(validation_rows), float(np.mean(y[train_rows]))))
+            if previous is not None:
+                previous_base.append(np.asarray(previous, dtype=float)[validation_rows])
+    truth = np.concatenate(truth)
+    errors = {"training_mean": metrics.mse(truth, np.concatenate(mean_base))}
+    if previous is not None:
+        previous_pred = np.concatenate(previous_base)
+        if np.isnan(previous_pred).any():
+            raise RuntimeError(
+                "the previous-value baseline has no value for a validation row of the "
+                "selection folds; the split or the baseline is wrong")
+        errors["previous_value"] = metrics.mse(truth, previous_pred)
+    bad = [name for name, error in errors.items() if not np.isfinite(error)]
+    if bad:
+        raise NonFiniteScoreError(
+            "The leak screen's " + " and ".join(
+                f"{name} baseline ({errors[name]!r})" for name in bad)
+            + " squared error over the pooled validation rows of the selection folds is "
+            "not finite: " + TARGET_TOO_LARGE)
+    return errors
+
+
+def single_column_skill(values, kind, y, folds, scored, task_type, seed, previous=None,
+                        name=None, base_errors=None):
     """Pooled cross-validated skill of one column over the scored selection folds.
 
     `previous`, when given (regression, time order, unique timestamps), holds
     for every row position the previous-value baseline; the baseline used is
     whichever of it and each fold's training mean has the lower pooled error.
     None when that baseline's pooled error is exactly zero: skill has no value.
+    Raises `NonFiniteScoreError` when an error or the skill is not finite.
     """
     y = np.asarray(y)
-    truth, predicted, mean_base, previous_base = [], [], [], []
+    if task_type != "classification" and base_errors is None:
+        base_errors = baseline_errors(y, folds, scored, previous=previous)
+    truth, predicted = [], []
     for fold, is_scored in zip(folds, scored):
         if not is_scored:
             continue
@@ -79,21 +133,23 @@ def single_column_skill(values, kind, y, folds, scored, task_type, seed, previou
                            else np.zeros(len(validation_rows)))
         else:
             values_pred = tree.predict(predict_x)
-            mean_base.append(np.full(len(validation_rows), float(np.mean(y[train_rows]))))
-            if previous is not None:
-                previous_base.append(previous[validation_rows])
         truth.append(y[validation_rows])
         predicted.append(np.asarray(values_pred, dtype=float))
     truth = np.concatenate(truth)
     predicted = np.concatenate(predicted)
     if task_type == "classification":
         return metrics.skill("roc_auc", metrics.roc_auc(truth, predicted), 0.5)
-    baseline_error = metrics.mse(truth, np.concatenate(mean_base))
-    if previous_base:
-        previous_pred = np.concatenate(previous_base)
-        if np.all(np.isfinite(previous_pred)):
-            baseline_error = min(baseline_error, metrics.mse(truth, previous_pred))
-    return metrics.skill("mse", metrics.mse(truth, predicted), baseline_error)
+    column = "a column" if name is None else f"column {name!r}"
+    own_error = metrics.mse(truth, predicted)
+    if not np.isfinite(own_error):
+        raise _not_finite(f"{column}'s own squared error", own_error, TARGET_TOO_LARGE)
+    skill = metrics.skill("mse", own_error, min(base_errors.values()))
+    if skill is not None and not np.isfinite(skill):
+        raise _not_finite(
+            f"single-column skill of {column}", skill,
+            "the baseline's error is too small beside the column's own for their ratio "
+            "to be held.")
+    return skill
 
 
 def screen(features, kinds, missing, y, training_rows, folds, scored, task_type, seed,
@@ -104,6 +160,10 @@ def screen(features, kinds, missing, y, training_rows, folds, scored, task_type,
     `leak_rule` being `missing_by_class`, `predicts_target` or None.
     """
     records = []
+    base_errors = None
+    if task_type != "classification":
+        # Measured before any column, so a target too large stops the screen first.
+        base_errors = baseline_errors(y, folds, scored, previous=previous)
     for name in features.columns:
         kind = kinds[name]
         record = {"name": name, "leak_rule": None, "skill": None, "warn": False}
@@ -113,7 +173,7 @@ def screen(features, kinds, missing, y, training_rows, folds, scored, task_type,
             continue
         values = features[name].to_numpy()
         skill = single_column_skill(values, kind, y, folds, scored, task_type, seed,
-                                    previous=previous)
+                                    previous=previous, name=name, base_errors=base_errors)
         if skill is None:
             # The baseline is exact on the pooled rows: no skill, so no rule applies.
             records.append(record)
@@ -127,4 +187,4 @@ def screen(features, kinds, missing, y, training_rows, folds, scored, task_type,
     return records
 
 
-__all__ = ["screen", "single_column_skill", "missing_by_class", "LEAK_SKILL", "WARN_SKILL"]
+__all__ = ["screen", "single_column_skill", "baseline_errors", "missing_by_class", "LEAK_SKILL", "WARN_SKILL"]

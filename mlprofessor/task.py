@@ -14,10 +14,36 @@ def _native(value):
     return value.item() if isinstance(value, np.generic) else value
 
 
+def _is_text_like(dtype):
+    """A column whose cells may hold text: object, pandas string, or category."""
+    return (dtype == object or pd.api.types.is_string_dtype(dtype)
+            or isinstance(dtype, pd.CategoricalDtype))
+
+
+def read_target_values(values):
+    """Target values as step 4 reads them (D46, D48).
+
+    A text value loses the white space round it, as a categorical level does,
+    and a text value of only white space is missing (None). A value that is not
+    text is as it is; a column of no text type is returned unchanged.
+    """
+    series = values if isinstance(values, pd.Series) else pd.Series(values)
+    if not _is_text_like(series.dtype):
+        return series
+    cells = series.to_numpy(dtype=object, na_value=None)
+    read = np.empty(len(cells), dtype=object)
+    for position, value in enumerate(cells):
+        if isinstance(value, str):
+            value = value.strip() or None
+        read[position] = value
+    return pd.Series(read, index=series.index, dtype=object)
+
+
 def _is_numeric(target_values):
-    """Integer or float type; a boolean type is not numeric here."""
+    """Integer or float type; a boolean or complex type is not numeric here (D48)."""
     dtype = target_values.dtype
-    return pd.api.types.is_numeric_dtype(dtype) and not pd.api.types.is_bool_dtype(dtype)
+    return (pd.api.types.is_numeric_dtype(dtype) and not pd.api.types.is_bool_dtype(dtype)
+            and not pd.api.types.is_complex_dtype(dtype))
 
 
 def _sorted_classes(distinct_values):
@@ -37,7 +63,8 @@ def _all_whole_numbers(present_values):
 def decide_task(values, task="auto"):
     """Decide classification or regression for the target values given.
 
-    Missing values are ignored. Returns the type, how it was decided, the
+    Text is read without the white space round it, and missing values are
+    ignored, text of only white space among them. Returns the type, how it was decided, the
     number of distinct values, the classes in sorted order with the second as
     the positive class, and a list of warning codes.
     """
@@ -45,7 +72,7 @@ def decide_task(values, task="auto"):
         raise errors.InputError(
             f"task must be one of {', '.join(TASKS)}; got {task!r}.")
 
-    target_values = values if isinstance(values, pd.Series) else pd.Series(values)
+    target_values = read_target_values(values)
     present_values = target_values.dropna()
     distinct_values = present_values.unique()
     n_distinct = len(distinct_values)

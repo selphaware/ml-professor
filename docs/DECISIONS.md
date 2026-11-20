@@ -597,3 +597,23 @@ each review starts fresh and will always find something; the cost of a round
 no longer matches the size of what it finds).
 Consequence: the backlog file is part of the repo, and the phase 2 brief
 starts from it.
+
+## D48 — 2026-11-20 — Three rulings from the CP4 session
+Decision: (1) A feature value too large for the 32-bit numbers the tree
+models read (a magnitude above about 3.4e38) is treated as an infinite
+value already is: missing, counted, and named in the `infinite_values`
+warning. (2) A complex-number target is not numeric: a declared regression
+on it is `task_unsupported`, and under `task="auto"` the ordinary rule
+applies. (3) A target cell holding only white space is a missing target,
+like an empty cell: the row is dropped and counted. It is not a class of
+empty text.
+Alternatives considered: for (1), leaving the raw scikit-learn error the
+session measured in both implementations (rejected: a sentinel such as the
+largest double is as plausible in a feature as in a target, which D44
+already covers). For (2), the behaviour measured, in which the imaginary
+part was silently lost. For (3), an empty-text class, as features have
+(rejected: a yes/no target with a few blank-looking cells would stop as
+ambiguous, when an empty cell in the same place is simply dropped and
+counted).
+Consequence: three more tests in the third pass. Nothing is dropped or
+replaced without a count in the output.

@@ -2,7 +2,7 @@
 
 This file is what the application is built from and what the tests are written
 against. It restates the owner's decisions (`docs/DECISIONS.md`, cited as D1 to
-D43) without changing them, pins every value they leave to this stage, and
+D48) without changing them, pins every value they leave to this stage, and
 defines the interface precisely enough to test without seeing the code.
 
 Words used throughout: **pinned** means part of the contract; **open** means
@@ -35,7 +35,11 @@ repo root. It is never installed into the interpreter.
 The repo also carries one small synthetic table, `examples/customers.csv`, for
 the commands the README shows (D41). The README names no file under
 `verify/` or `tests/`: those folders belong to the judge, and part of
-`verify/` exists only after the gate has run.
+`verify/` exists only after the gate has run. Where the README describes the
+fast profile's cap of 2,000 rows it says which rows are kept under each
+scheme, as step 6 has it: drawn at random from the seed when there is no time
+column, the most recent whole timestamps when there is one (D46). Its wording
+is the builder's.
 
 ---
 
@@ -56,12 +60,14 @@ mlprofessor.profile(data, target, task="auto", time_col=None, gap=0,
 | `time_col` | Name of the time column, or `None`. Never inferred (D7). When given, the time-ordered scheme is used; when `None`, the random scheme. |
 | `gap` | A whole number of distinct timestamps, at least 0 (D7). A gap above 0 without `time_col` is an `input_error`. |
 | `profile` | `"full"` or `"fast"` (D12). |
-| `seed` | A whole number, at least 0. It drives the row cap, the split, the folds, every model and every resample. |
+| `seed` | A whole number from 0 to 4,294,967,295 (2³² − 1), the range scikit-learn takes as a seed (D45). It drives the row cap, the split, the folds, every model and every resample. A larger seed is never folded down, since two seeds would then give one run: it is an `InputError`, like a negative one. The largest allowed seed runs. |
 | `out_dir` | A folder, or `None`. When given it is created if missing and `profile.json` and `predictions.csv` are written into it. It cannot be used when the path, or the nearest folder above it that exists, is something other than a folder (it names an existing file, for one): an `InputError` like any other invalid argument, found without creating anything (D39). |
 | `n_jobs` | `-1` for every core (`os.cpu_count()`), or a positive whole number (D17). |
 
-Any other value of an argument raises `InputError`. Nothing is written when an
-error is raised.
+Any other value of an argument raises `InputError`, before anything is loaded:
+a table that would itself raise an error on loading (duplicate column names,
+for one) still gives the `InputError` of the argument. Nothing is written when
+an error is raised.
 
 **Process-wide settings are left as the caller had them** (D39), whether
 `profile()` returns or raises; the same holds for every function of `stages`.
@@ -86,12 +92,18 @@ short plain-text summary to standard output. Defaults are those of the function.
 |---|---|
 | 0 | The run finished and both files were written. |
 | 2 | The command line could not be parsed (argparse's own behaviour). |
-| 3 | A named error (2.4). Standard error carries one line `error: <code>: <message>`. No file is written. |
+| 3 | A named error (2.4). Standard error carries one line `error: <code>: <message>`, and nothing else: no traceback, and no warning of a library beside it. No file is written. |
 
 Any other failure is a defect and exits with the interpreter's own non-zero code.
 
-The summary's wording and layout are open. What it shows is pinned (D39):
+An argument the function refuses is refused the same way here. `--seed
+4294967296` is parsed (it is a whole number), then refused by `profile()`:
+exit 3, the one line `error: input_error: ...`, no traceback (D45).
 
+The summary's wording and layout are open. What it shows is pinned (D39, D46):
+
+- the headline's `score` and `baseline_score`, each as a number, and its
+  `skill` as a number unless it is null;
 - the interval on the score, `interval_low` and `interval_high`, and the
   interval on skill, `skill_low` and `skill_high`, each as a number; when
   there is no interval (`interval_method` is null), the text of
@@ -101,11 +113,21 @@ The summary's wording and layout are open. What it shows is pinned (D39):
 - one line per warning, holding that warning's `code` and, when it has one,
   its `column`. Two warnings never share a line.
 
-A value counts as shown when some decimal number printed in the summary is
-within 0.0005 × max(1, |value|) of the value in `profile.json`: four
-significant digits are enough. A null `skill`, `skill_low` or `skill_high`
-needs no number; the line of the `skill_undefined` or the `no_skill_interval`
-warning covers it.
+**A value counts as shown when some number printed in the summary agrees with
+it to four significant digits (D46):** the printed number, read as a decimal
+number with its exponent if it has one (`9.371e-09`), is within 0.0005 × |value|
+of the value in `profile.json`. The tolerance is relative, so it holds at any
+scale: a squared error of 9.37e-09 printed as `0.0000` is not shown, and nor
+is a p-value of 0.004975 printed as `0.0050`. A value of exactly zero is shown
+by a printed number that is zero (`0`, `0.0000`). How the numbers are
+formatted is open; four significant digits is the least, and more is allowed.
+
+Until D46 the tolerance was 0.0005 × max(1, |value|), under which every value
+below 0.0005 could print as zero. The rule above is the stricter of the two at
+every value, so a summary that meets it meets the old one as well.
+
+A null `skill`, `skill_low` or `skill_high` needs no number; the line of the
+`skill_undefined` or the `no_skill_interval` warning covers it.
 
 ### 2.3 `ProfileResult`
 
@@ -139,23 +161,27 @@ command line prints. The message says what was found and what the caller can do.
 
 | Class | `code` | Raised when |
 |---|---|---|
-| `InputError` | `input_error` | An argument has an invalid value; `out_dir` cannot be used (2.1); `data` is neither a DataFrame nor a path; the file is missing, empty, not valid UTF-8 or not parseable as CSV; data rows have more fields than the header; `gap` above 0 without `time_col`; `time_col` equals `target`. |
+| `InputError` | `input_error` | An argument has an invalid value, a `seed` outside 0 to 4,294,967,295 among them (D45); `out_dir` cannot be used (2.1); `data` is neither a DataFrame nor a path; the file is missing, empty, not valid UTF-8 or not parseable as CSV; data rows have more fields than the header; `gap` above 0 without `time_col`; `time_col` equals `target`. |
 | `ColumnNotFoundError` | `column_not_found` | `target` or `time_col` is not a column. |
 | `DuplicateColumnsError` | `duplicate_columns` | Two columns have the same name (D22). A name that holds only white space is a name like any other: two header cells of one space each are two columns of the same name (D42). |
 | `TargetConstantError` | `target_constant` | The target has fewer than two distinct values among the usable rows. |
 | `TaskAmbiguousError` | `task_ambiguous` | `task="auto"` and the rule cannot decide (D4). |
-| `TaskUnsupportedError` | `task_unsupported` | A declared task the target does not support: classification with other than two distinct values, regression on a non-numeric target. |
+| `TaskUnsupportedError` | `task_unsupported` | A declared task the target does not support: classification with other than two distinct values, regression on a non-numeric target. A complex-number target is not numeric (step 4; D48). |
 | `TimeColumnError` | `time_column_invalid` | The time column is not in an accepted form (D18). |
 | `TooFewRowsError` | `too_few_rows` | Fewer than 100 usable rows; fewer than 10 usable rows of a class; under time order, too few distinct timestamps to form the holdout and six blocks. |
-| `FastProfileError` | `fast_profile_too_few_timestamps` | Under `profile="fast"` with a time column, the rows kept by the row cap hold too few distinct timestamps to form the holdout and six blocks (D20). The message tells the caller to use `profile="full"`. |
+| `FastProfileError` | `fast_profile_too_few_timestamps` | Under `profile="fast"` with a time column, the rows kept by the row cap cannot form the split (the most recent timestamp alone is over the cap, or the rows kept hold too few distinct timestamps for the holdout and six blocks), **and the same call with `profile="full"` would get past the split** (D20, D46). The message tells the caller to use `profile="full"`. When the full profile would stop there too, this error is not raised: the error the full profile would raise is, `too_few_rows` or `gap_too_large` (step 7). |
 | `GapError` | `gap_too_large` | The gap leaves fewer than six training timestamps, or no training rows before a validation block. |
 | `FeatureNameCollisionError` | `feature_name_collision` | Two feature columns would give the preprocessed matrix a column of the same name (step 5; D37). The message names every column involved. |
 | `NoFeaturesError` | `no_features` | No column has the role feature after the leak screen. An error returns no column accounting, so the message carries it: the name of every excluded column and, for each, its reason as `columns[].reason` spells it (D39). |
 | `OneClassError` | `one_class` | Classification, and the holdout or the training rows hold one class, or no fold can be scored. |
 | `AllModelsFailedError` | `all_models_failed` | Every configuration failed, during selection or after it was chosen (steps 9 and 10). The message carries each error text. |
+| `NonFiniteScoreError` | `non_finite_score` | A number the result rests on is infinite or not-a-number (D44; section 3, "Numbers that are not finite"): a baseline's score on the holdout; a baseline's error, or a column's own, in the leak screen; the chosen configuration's score on the holdout; the headline skill; or, when the result is assembled, any number of the output. The message names the number and the likely cause. It is not raised for a configuration's prediction or fold score: that configuration is failed (step 9). |
 
 An invalid argument is reported before anything is loaded. Beyond that, when a
-table breaks several rules at once, which of the named errors is raised is open.
+table breaks several rules at once, which of the named errors is raised is open,
+with one exception: a regression target too large for squared error stops with
+`non_finite_score` and never with `all_models_failed` ("Numbers that are not
+finite", rule 1).
 
 ### 2.5 Warning codes
 
@@ -171,12 +197,12 @@ module only; they are always in the output.
 | `small_holdout` | `null` | Classification: fewer than 50 holdout rows of the rarer class. Regression: fewer than 50 holdout rows (D23). |
 | `date_column_undeclared` | the column | One per column excluded as `datetime` when `time_col` is `None` (D7). |
 | `autocorrelated_panel_target` | the target | Regression under time order with repeated timestamps, and the lag-1 autocorrelation of the per-timestamp mean of the target over the training rows is above 0.5 (D10, D23; section 10). |
-| `model_failed` | `null` | One per configuration with status `failed`, whether it failed during selection or after it was chosen (D38). |
+| `model_failed` | `null` | One per configuration with status `failed`, whether it failed during selection or after it was chosen (D38), and whether it raised, predicted a value that is not finite or scored a fold with a number that is not finite (D44). |
 | `values_coerced` | the column | One per numeric column in which text cells were turned into missing (D22). |
 | `numeric_with_separators` | the column | One per column excluded with the reason `numeric_with_separators` (step 5, rule 4a; D28, D34). It has this one form: a column that is kept never carries it. |
 | `whole_number_regression_target` | the target | `task="auto"` picked regression and every target value is a whole number (D21). |
 | `blank_header` | pandas' name for it | One per CSV column whose header cell is blank, which means empty (D22). A cell that holds white space is a name, and gets no warning (D42). |
-| `infinite_values` | the column | One per numeric feature holding infinite values. |
+| `infinite_values` | the column | One per numeric feature holding infinite values, or finite values too large for the tree models: a magnitude above 3.4028234663852886e+38 (step 5; D48). Both are read as missing and counted in `n_infinite`. |
 | `duplicate_rows` | `null` | The loaded table holds exact duplicate rows. They are kept. |
 | `fold_not_scored` | `null` | Classification, and a fold's training or validation rows hold one class. |
 | `no_interval` | `null` | No interval could be computed on the score; `headline.interval_reason` says why. |
@@ -219,7 +245,8 @@ with extensions.use(families=[...], steps=[...]):
   source** (the same numbers as `predictions.row`). `y` is a Series with the
   same index: 0 and 1 for classification (1 is the positive class), floats for
   regression. A step receives the feature columns as loaded and typed: numeric
-  columns as floats with NaN for missing; categorical columns as text, each
+  columns as floats with NaN for missing (an infinite cell and one too large
+  for the tree models are missing: step 5; D48); categorical columns as text, each
   cell its level, which is the text without the white space round it (step 5;
   D42), with `"(missing)"` for missing. So a step never sees `red ` or ` red`,
   only `red`. An estimator receives the fully preprocessed matrix, in which a
@@ -255,27 +282,29 @@ Section 3 defines what each step does; this table defines only the call.
 | Call | Returns | Raises |
 |---|---|---|
 | `load_table(data)` | `(frame, info)`. `frame` is the loaded table (step 1, section 6) with a default index 0..n−1, the rows' source positions, and string column names. `info` is `{"kind", "source", "warnings"}` as in `input.kind`, `input.source` and a list of warning records (only `blank_header` arises here). | `InputError`, `DuplicateColumnsError` |
-| `usable_rows(frame, target, time_col=None)` | Step 2 as a count: `{"usable", "dropped_missing_target", "dropped_missing_time"}`. `usable` is an array of the positions of the usable rows in increasing order; the two counts and its length add up to the rows of `frame`. A missing time value is a missing cell (or an infinite number); the time column's form is not checked here. | `ColumnNotFoundError` |
+| `usable_rows(frame, target, time_col=None)` | Step 2 as a count: `{"usable", "dropped_missing_target", "dropped_missing_time"}`. `usable` is an array of the positions of the usable rows in increasing order; the two counts and its length add up to the rows of `frame`. A missing target is a missing cell, an infinite number, or a text cell that holds only white space (step 2; D48). A missing time value is a missing cell (or an infinite number); the time column's form is not checked here. | `ColumnNotFoundError` |
 | `column_roles(frame, target, time_col=None)` | A DataFrame with the eleven columns of `profile.json["columns"]` (5.2), one row per column of `frame` in order, as decided by step 5 alone: `leak_rule` is null and `n_imputed` is 0 throughout, since the leak screen and imputation come later. Usable rows are those with a target and, when `time_col` is given, a time value. It returns no warnings: those of step 5 (`values_coerced`, `infinite_values`, `numeric_with_separators`) are raised by `profile()`. | `ColumnNotFoundError` |
-| `decide_task(values, task="auto")` | `{"type", "decided_by", "n_distinct", "classes", "positive_class", "warnings"}` for the target values given (missing ones are ignored). `warnings` is a list of warning codes: `["whole_number_regression_target"]` or `[]`. | `TargetConstantError`, `TaskAmbiguousError`, `TaskUnsupportedError`, `InputError` |
+| `decide_task(values, task="auto")` | `{"type", "decided_by", "n_distinct", "classes", "positive_class", "warnings"}` for the target values given. They are read as step 4 reads them: a text value without the white space round it (D46); missing ones are ignored, a text value of only white space among them (D48). `warnings` is a list of warning codes: `["whole_number_regression_target"]` or `[]`. | `TargetConstantError`, `TaskAmbiguousError`, `TaskUnsupportedError`, `InputError` |
 | `read_time(values)` | `(keys, form)`. `keys` is a numpy array, one per value, that sorts in time order: `datetime64[ns]` with `NaT` for a missing value under the `datetime` and `iso8601` forms (in UTC if the values carried a zone), `float64` with NaN for a missing or infinite value under the `numeric` form. `form` is as in `validation.time_form`. | `TimeColumnError` |
-| `split_random(n_rows, classes=None, seed=0)` | `{"training", "holdout", "folds"}`: arrays of positions in 0..`n_rows`−1, each in increasing order; `folds` is a list of five `{"training", "validation"}`. `classes`, when given, is an array of `n_rows` labels with two distinct values and makes the split stratified (step 7). | |
+| `split_random(n_rows, classes=None, seed=0)` | `{"training", "holdout", "folds"}`: arrays of positions in 0..`n_rows`−1, each in increasing order; `folds` is a list of five `{"training", "validation"}`. `classes`, when given, is an array of `n_rows` labels with two distinct values and makes the split stratified (step 7); text labels are compared without the white space round them, so `yes` and `yes ` are one label and the split is the one their stripped forms give (D46). `seed` is in the range of 2.1. | `InputError` for a seed outside 0 to 4,294,967,295 (D45) |
 | `split_time(keys, gap=0)` | `{"training", "gap", "holdout", "folds"}`: arrays of positions into `keys`, each in increasing order; `folds` is a list of five `{"training", "gap", "validation"}`, fold *k* validating on block *k*+1. `keys` is as returned by `read_time`, in any order, with no missing value. | `TooFewRowsError`, `GapError` |
 | `roc_auc(y, score)` | ROC AUC of `score` for labels `y` of 0 and 1 (1 is positive); ties share their average rank. | `OneClassError` |
 | `mse(y, pred)` | Mean squared error. | |
 | `skill(metric, score, baseline_score)` | For `"roc_auc"`: (score − baseline) ÷ (1 − baseline), which is 2 × AUC − 1 at the baseline 0.5. For `"mse"`: 1 − score ÷ baseline; and `None`, not an error, when `baseline_score` is 0, where skill has no value (D36). | `ValueError` for any other metric |
 | `previous_value(y, keys, gap=0)` | An array aligned with `y`: for each row the target of the row `gap + 1` timestamps earlier, NaN where there is none. | `ValueError` if `keys` are not unique |
-| `Preprocessor(kinds)` | The built-in preprocessing of step 8 for one fit. `kinds` maps a column name to `"numeric"` or `"categorical"`. `fit(frame)` learns from the rows given and returns the object. `transform(frame)` returns a DataFrame with the same index: one column per numeric column, under its own name, then for each categorical column one column per kept level named `<column>=<level>`, levels in sorted order, holding 0.0 and 1.0. A missing categorical cell is the level `(missing)`. No two columns of the result ever share a name (D37). | `FeatureNameCollisionError` from `fit`, when two of the names it would give are the same, judged on the levels it keeps from the rows given |
+| `Preprocessor(kinds)` | The built-in preprocessing of step 8 for one fit. `kinds` maps a column name to `"numeric"` or `"categorical"`. `fit(frame)` learns from the rows given and returns the object. `transform(frame)` returns a DataFrame with the same index: one column per numeric column, under its own name, then for each categorical column one column per kept level named `<column>=<level>`, levels in sorted order, holding 0.0 and 1.0. A missing categorical cell is the level `(missing)`. A numeric cell that is infinite, or too large for the tree models (step 5), is a missing cell to it, in `fit` and in `transform` alike, so every statistic it learns and every value it returns is finite (D48). No two columns of the result ever share a name (D37). | `FeatureNameCollisionError` from `fit`, when two of the names it would give are the same, judged on the levels it keeps from the rows given |
 
 `split_time` raises `TooFewRowsError` when there are too few timestamps;
 `profile()` turns that into `FastProfileError` when the fast profile's row cap
-was what left too few (D20).
+was what left too few and the full profile would get past the split (D20,
+D46; step 7).
 
 How `profile()` uses the two split functions is pinned, so that a test can
 predict a run's rows. Take the usable rows that remain after the row cap, in
 file order, and call them 0 to *n*−1. Under the random scheme the run's holdout
 rows and folds are `split_random(n, classes, seed)` applied to them, `classes`
-being their target values for classification and `None` for regression. Under
+being their target values, as step 4 reads them, for classification and `None`
+for regression. Under
 the time-ordered scheme they are `split_time(keys, gap)`, `keys` being those
 rows' keys from `read_time`.
 
@@ -293,9 +322,13 @@ not counting blank lines. A blank line is one that is empty or holds only
 spaces and tabs (section 6).
 
 **2. Drop rows with no target, then rows with no time value; count each.**
-A target is missing when the cell is missing (NaN, `None`, `pd.NA`, `NaT`) or,
-for a numeric target, infinite. Under time order a row with a target and a
-missing (or infinite) time value is dropped next. A row missing both counts
+A target is missing when the cell is missing (NaN, `None`, `pd.NA`, `NaT`); or,
+for a numeric target, infinite; or, for a text value, **when it holds only
+white space (D48)**. A cell of spaces or tabs looks blank and is treated as a
+blank: its row is dropped and counted in `dropped_missing_target`, exactly as
+the row of an empty cell is. It is never a class of its own (the empty text of
+a DataFrame cell, `""`, is the same case). Under time order a row with a
+target and a missing (or infinite) time value is dropped next. A row missing both counts
 under the target. The rows left are the **usable rows**. Fewer than 100 usable
 rows: `too_few_rows`.
 
@@ -315,11 +348,28 @@ object column of mixed types. The tool never guesses between day-first and
 month-first. Rows with equal timestamps keep their file order.
 
 **4. Decide the task (D4, D20, D21),** on the usable rows, before any row cap.
-Let *k* be the number of distinct target values.
+
+**A text target value is read without the white space round it (D46).** `yes`,
+` yes` and `yes ` are one value, `yes`, everywhere the target is used: in the
+count of distinct values and so in the task; in `task.classes` and
+`task.positive_class`; in the 0 and 1 handed to the models; in the
+stratification of the split (2.7); and in `y_true` (5.1), which shows `yes`
+for all three. A value that is not text is as it is. White space is what it is
+for a categorical level (step 5). A text value that holds nothing but white
+space is not a value: it is a missing target (step 2; D48). Until D46 a yes/no
+target with a few trailing spaces stopped with `task_ambiguous` and "4
+distinct values".
+
+Let *k* be the number of distinct target values, read so.
 
 - `task="auto"`: *k* = 2 is classification, whatever the type. A numeric target
   (integer or float type, not boolean) with *k* > 20 is regression. Anything
   else raises `task_ambiguous`.
+- **A complex-number target is not numeric (D48).** Turning it into the floats
+  a regression needs would drop its imaginary part with nothing said, which
+  both implementations did until D48. So `task="regression"` on it is
+  `task_unsupported`, and under `task="auto"` the ordinary rule applies: two
+  distinct values are classification, anything else is `task_ambiguous`.
 - `task="classification"` is honoured when *k* = 2, else `task_unsupported`.
 - `task="regression"` is honoured when the target is numeric, else
   `task_unsupported`.
@@ -330,7 +380,12 @@ Let *k* be the number of distinct target values.
 For classification the two classes are put in sorted order (by value; by their
 text if they cannot be compared). The second is the **positive class**: `1` of
 `0`/`1`, `"yes"` of `"no"`/`"yes"`, `True` of `False`/`True`. `y_pred` is the
-predicted probability of the positive class.
+predicted probability of the positive class. A target written `no` and `yes `
+has the classes `no` and `yes`, and `yes` is positive.
+
+For regression the target is of integer or float type by the rule above, so
+every usable value is a finite number as it stands. Nothing is coerced and
+nothing can fail to parse: an implementation has no fallback to write here.
 
 **5. Assign the column roles that need no target (D3, D19, D20),** on the
 usable rows, in file order, before any row cap. The target has role `target`
@@ -350,7 +405,7 @@ rule that applies decides:
 | 6b | text, distinct values number more than 50% of the non-missing values | excluded, `free_text` |
 | 6c | any other text | feature, kind `categorical` |
 | 7 | any other type (mixed objects, complex numbers, durations, containers) | excluded, `unsupported_type` |
-| 8 | numeric, infinite values read as missing: no value left | excluded, `all_missing` |
+| 8 | numeric, infinite and too-large values read as missing (below): no value left | excluded, `all_missing` |
 | 8a | numeric, one distinct value | excluded, `constant` |
 | 8b | numeric, every value a whole number, every value distinct, and the values consecutive or strictly ordered in file order (D19) | excluded, `id_like` |
 | 8c | any other numeric | feature, kind `numeric` |
@@ -416,9 +471,35 @@ Rule 4a adds a `numeric_with_separators` warning naming the column it excludes
 
 Counts are kept per column over **every loaded row** (section 5.3): `n_missing`,
 `n_coerced` (rule 5: non-missing text cells that did not parse, which become
-missing, with a `values_coerced` warning), `n_infinite` (which become missing,
-with an `infinite_values` warning). `n_coerced` is 0 for a column that rule 5
-did not read as numeric, including one excluded by rule 4a.
+missing, with a `values_coerced` warning), `n_infinite` (infinite cells and
+too-large ones, which become missing, with an `infinite_values` warning).
+`n_coerced` is 0 for a column that rule 5 did not read as numeric, including
+one excluded by rule 4a.
+
+**A finite value too large for the tree models is read as an infinite one is
+(D48).** scikit-learn's trees and forests read their input as 32-bit floats and
+raise on a value beyond that range; the leak screen's tree reads the column as
+it is, so such a cell in a row a tree was fitted on stopped the run with a raw
+`ValueError` until D48, in both implementations (section 9). The rule:
+
+- a numeric feature cell whose magnitude is **greater than
+  3.4028234663852886e+38**, the largest 32-bit float
+  (`numpy.finfo(numpy.float32).max`), is treated exactly as an infinite cell:
+  read as missing, counted in `n_infinite`, named by the column's one
+  `infinite_values` warning, imputed like any missing cell (step 8);
+- a value of exactly that magnitude, or smaller, is kept as it is;
+- it is judged by value, for every numeric feature, whatever its type, and
+  whether the cell was a number on load or text read by rule 5 (`1e39`);
+- it is everywhere a feature value is read: in the counts and rules of this
+  step (a column with no other value is `all_missing`, one with a single other
+  value `constant`), in the leak screen, in what a step receives (NaN: 2.6),
+  in `n_imputed`, and in `stages.Preprocessor` (2.7);
+- it applies to features only. A target value of that size is not missing; a
+  target too large for squared error is D44's case ("Numbers that are not
+  finite"). A time value is ordered as the number it is.
+
+A sentinel such as 1.7976931348623157e308 in a feature is therefore a missing
+cell that the output counts, not a crash and not a value.
 
 **Feature names must be distinct (D37).** The preprocessed matrix names a
 numeric feature by its own name and each level of a categorical feature
@@ -458,8 +539,11 @@ Only under `profile="fast"` and only when there are more than 2,000 usable rows.
 - No time column: a simple random sample of 2,000 usable rows, without
   replacement, drawn from the seed.
 - Time column: the most recent whole timestamps whose rows together number at
-  most 2,000. If the most recent timestamp alone holds more than 2,000 rows:
-  `fast_profile_too_few_timestamps`.
+  most 2,000. If the most recent timestamp alone holds more than 2,000 rows
+  the cap can keep nothing, and the run stops as step 7 says for a cap that
+  left too few timestamps: with `fast_profile_too_few_timestamps` when the
+  full profile would get past the split, and with the full profile's own
+  error when it would not (D46).
 
 The rows left out are counted as `dropped_row_cap`. After the cap: fewer than
 100 rows is `too_few_rows`; for classification, fewer than 10 rows of either
@@ -483,8 +567,8 @@ from the seed, stratified for classification; fold sizes differ by at most one.
 - The **gap** removes the `gap` distinct timestamps immediately before the
   holdout from the training side. Their rows are counted as `dropped_gap`.
 - The remaining earlier timestamps are the **training timestamps**. Fewer than
-  six before the gap is taken: `too_few_rows`, or under the fast profile's cap
-  `fast_profile_too_few_timestamps`. Fewer than six after: `gap_too_large`.
+  six before the gap is taken: `too_few_rows`. Fewer than six after:
+  `gap_too_large`. (Under the fast profile's cap, see below.)
 - The training timestamps are cut into **six contiguous blocks** of timestamps,
   as equal as possible, the earlier blocks taking the extra ones (the cut of
   `numpy.array_split`). **Fold *k*** (1 to 5) validates on block *k*+1 and
@@ -494,6 +578,26 @@ from the seed, stratified for classification; fold sizes differ by at most one.
   validation block: `gap_too_large`.
 
 `validation.holdout_share` is holdout rows ÷ (training + holdout + gap rows).
+
+**When the fast profile's cap is what left too few timestamps (D20, D46).**
+Under `profile="fast"`, when the cap left rows out and the rows kept cannot
+form the split for want of timestamps (the cap could keep nothing, step 6; or
+fewer than six timestamps stand before the holdout), the tool works out what
+this step would do with **every usable row**, as `profile="full"` would, with
+the caller's `gap`:
+
+- that split can be formed: `fast_profile_too_few_timestamps`. Its message
+  tells the caller to use `profile="full"`, and the advice is true;
+- it cannot: the error the full profile would raise there, `too_few_rows` or
+  `gap_too_large`. Nobody is sent to a profile that stops too.
+
+So five dates of 600 rows each stop with `too_few_rows` under either profile;
+nine dates of 450 rows with `gap=2` stop with `gap_too_large` under either;
+and eight dates of 450 rows stop with `fast_profile_too_few_timestamps` under
+`fast` and run under `full`. Until D46 all three gave the fast profile's error.
+One case is left as it was: when the rows kept do have six timestamps before
+the holdout and the caller's gap leaves fewer than six, the error is
+`gap_too_large`, whatever the full profile would do.
 
 For classification, a holdout or a set of training rows with one class raises
 `one_class`. A fold whose training or validation rows hold one class is not
@@ -532,7 +636,20 @@ being each fold's training mean and, under time order with unique timestamps,
 whichever of that and the previous value has the lower error. When that
 baseline's squared error over the pooled rows is exactly zero, the column's
 skill cannot be computed (D36): rules 2 and 3 do not apply to it, it stays a
-feature and it gets no warning.
+feature and it gets no warning. When a baseline's pooled squared error, or the
+column's own, is not finite, the run stops with `non_finite_score` (D44;
+"Numbers that are not finite", rule 2): a number that is not finite is never
+read as "not flagged".
+
+**The previous value exists for every row it is asked for.** Under time order
+with unique timestamps, the first validation block starts at least `gap + 1`
+timestamps after the first training timestamp: step 7 stops with
+`gap_too_large` otherwise. So every row of every validation block, and every
+holdout row, has a row `gap + 1` timestamps before it, here and in step 11.
+There is no rule for a row without one, because there is no such row: an
+implementation that meets one has a defect in its split or its baseline and
+must fail loudly. It may not drop the previous-value baseline and carry on
+with the training mean.
 
 A column excluded by rule 1 or 2 gets role `excluded`, reason `suspected_leak`,
 its `leak_rule`, and a `suspected_leak` warning. It reaches no model. If no
@@ -551,10 +668,13 @@ training mean, so a lagged level of a persistent target can be excluded by rule
 is fitted for each fit, on that fit's training rows, and applied to the rows it
 predicts:
 
-- numeric features: missing values (including coerced and infinite cells) are
-  replaced by the median of the fit's training rows (0 if the column is all
-  missing there), then standardised with the mean and standard deviation of
-  the fit's training rows (a zero deviation is read as 1);
+- numeric features: missing values (including coerced, infinite and too-large
+  cells: step 5) are replaced by the median of the fit's training rows (0 if
+  the column is all missing there), then standardised with the mean and
+  standard deviation of the fit's training rows (a zero deviation is read as
+  1). Every value left after step 5 is within ±3.4028234663852886e+38, so the
+  mean and the deviation are always finite: a zero deviation is the only
+  special case, and there is none for a deviation that is not finite (D48);
 - categorical features: a missing value is the level `"(missing)"`; one-hot
   columns for the levels seen in the fit's training rows, at most the 30 most
   frequent (ties by level text); any other level is all zeros. The levels are
@@ -578,6 +698,13 @@ first-pass test requires it, and D38 covers only a failure after the choice.
 It is never dropped from the table and never chosen. All failing:
 `all_models_failed`.
 
+**A configuration is failed in exactly the same way when a number it gives is
+not finite (D44):** a prediction for a fold's validation rows that is infinite
+or not-a-number, or a fold score that is. Status `failed`, an error text that
+says which, a `model_failed` warning, five null fold scores, a null `cv_mean`
+and `cv_std`, never chosen. A score that is not finite is never written as
+null beside the status `fitted`, and such a configuration can never be chosen.
+
 The configurations that have a `cv_mean` are **ranked**, best first: the
 highest ROC AUC, the lowest squared error. Ties go to the earlier family, then
 the earlier grid position. The first in the ranking is chosen.
@@ -585,7 +712,8 @@ the earlier grid position. The first in the ranking is chosen.
 **10. Refit the chosen configuration on all training rows, and predict the
 holdout with it (D38),** with its preprocessing fitted on all training rows.
 
-If that fit or that prediction raises, the configuration was chosen in vain.
+If that fit or that prediction raises, or the prediction holds a value that is
+not finite (D44), the configuration was chosen in vain.
 It gets status `failed`, its error text and a `model_failed` warning, and its
 `chosen` stays false. Its `fold_scores`, `cv_mean` and `cv_std` **stay as they
 were measured**: the table reports what was tried. The next configuration in
@@ -594,7 +722,11 @@ none is left: `all_models_failed`, its message carrying each error text.
 
 The holdout plays no part in the choice. A configuration is passed over only
 for raising, never for its score, so the headline is not inflated by the
-fallback.
+fallback. A prediction that is not finite counts as raising because it depends
+on the model and the features alone, not on the holdout targets. A holdout
+*score* that is not finite, from predictions that are finite, is a score: the
+configuration is not passed over for it, and the run stops with
+`non_finite_score` ("Numbers that are not finite", rule 4).
 
 **11. Score it once on the holdout; score the baselines on the holdout (D5,
 D10).** **The headline comes from exactly one configuration**, the chosen
@@ -630,7 +762,15 @@ and in every case each other configuration that received one has status
 - Regression under time order with **repeated timestamps**: the baseline is
   `training_mean`, with the warning `autocorrelated_panel_target` when the
   lag-1 autocorrelation of the per-timestamp mean of the target, over the
-  training timestamps in order, is above 0.5.
+  training timestamps in order, is above 0.5. When those means do not vary
+  the autocorrelation has no value and there is no warning. When it cannot be
+  computed because a value overflows, the run stops with `non_finite_score`
+  (D44): a number that is not finite is never read as "not above 0.5".
+
+A baseline needs no model, so it is scored on the holdout as soon as step 7 has
+made the split, and a baseline score that is not finite stops the run before
+any fit; a holdout score or a skill that is not finite stops it here ("Numbers
+that are not finite", rules 1, 4 and 5; D44).
 
 Accuracy is never the headline. Skill may be negative and is reported as
 measured, never clipped at zero (D5); the limitations statement says how to
@@ -688,11 +828,96 @@ Nothing is refitted. *R* is 1,000 under `full` and 200 under `fast`.
     resamples miss every row on which it errs.
 - *No p-value without skill.* When `headline.skill` is null there is nothing
   to compare the shuffles with: `p_value` and `n_permutations` are `null` and
-  `p_value_reason` says why.
+  `p_value_reason` says why. **A p-value is reported only when skill is a
+  number (D44).** Skill is a finite number or null by the time this step runs:
+  one that is not finite has already stopped the run.
 
 Also added here: `small_holdout` (2.5).
 
-**13. Assemble the result; write the files** (section 5).
+**13. Assemble the result; write the files** (section 5). Before anything is
+returned or written, every number of the output is checked to be finite
+("Numbers that are not finite", rule 6).
+
+### Numbers that are not finite (D44)
+
+**No number that is infinite or not-a-number is ever written, and none is ever
+turned into `null`.** A squared error can overflow: the square of 1e155 is
+beyond the largest double (about 1.8e308). So one target cell of that size, a
+sentinel such as 1.7976931348623157e308 among ordinary values, or a target on
+the scale of 1e160 makes a mean squared error infinite, and what is computed
+from it not-a-number. The second review found such a run finishing normally
+with a null score, a null baseline, a null skill, a p-value all the same, and
+no warning. `null` has two meanings in the output and no others: a value that
+does not apply (the time fields under the random scheme), and a value that
+cannot be computed for a reason the output states (D36, D40). The rules, in
+the order they apply:
+
+1. **The baselines first, before any fit.** A baseline needs only the target
+   and the split. Every baseline of step 11 is scored on the holdout as soon
+   as step 7 has made the split: before the leak screen, before any step or
+   model is fitted. If a baseline's score is not finite, the run stops there
+   with `non_finite_score`. Under time order with unique timestamps both are
+   checked, the one that would not be the headline baseline too: its score is
+   a number in `baselines`. **This is what gives the caller one clear error
+   when the target itself is the cause.** The run never goes on to fail every
+   configuration in turn and end in `all_models_failed` with a list of them.
+   The two inputs of the second review stop here under both schemes: one cell
+   of 1.7976931348623157e308, wherever the split puts it, and a target
+   multiplied by 1e160.
+2. **The leak screen.** In regression the screen scores baselines of its own
+   over the pooled validation rows of the selection folds (step 8): each
+   fold's training mean, and under time order with unique timestamps the
+   previous value. If either error is not finite, or a column's own pooled
+   squared error is not, the run stops with `non_finite_score`, still before
+   any configuration is fitted. This catches the value that harms only the
+   folds: in a series of 400 rows, one cell of 1e155 at row 120 leaves both
+   holdout baselines finite (the training mean is about 3.3e152, and its
+   squared error about 1.1e305), while the fold that validates on row 120
+   cannot score it against anything: its own square is beyond the largest
+   double.
+3. **A configuration during selection (step 9).** A prediction that is not
+   finite, or a fold score that is not finite, fails the configuration as
+   raising would: status `failed`, error text, `model_failed` warning, null
+   fold scores, never chosen. With rules 1 and 2 passed, the target is not the
+   cause, the configuration is: a model whose predictions are 1e200 where the
+   target is near 20. If every configuration fails so, the error is
+   `all_models_failed`, and rightly: the list of them is the information.
+4. **The chosen configuration (steps 10 and 11).** A prediction for the holdout
+   that is not finite counts as raising: the configuration is failed, keeps
+   its fold scores, and the next in the ranking takes its place (D38). If its
+   predictions are finite and its score on the holdout is not, the run stops
+   with `non_finite_score`, and **the next configuration is not tried**: that
+   would pass a configuration over for its holdout score, which D38 forbids.
+   For classification this cannot arise: ROC AUC of finite predictions is a
+   count of ranks, always finite.
+5. **Skill.** `headline.skill` is null in exactly one case, a baseline score of
+   exactly zero (D36). If it comes out not finite from a score and a baseline
+   score that are both finite (their quotient can overflow when the baseline's
+   error is tiny beside the model's), the run stops with `non_finite_score`.
+6. **Every other number, at the latest when the result is assembled.** Before
+   anything is returned or written, every number of `validation`, `headline`,
+   `baselines`, `cv` and `models` must be finite: `cv_mean` and `cv_std`, both
+   ends of both intervals, the p-value. One that is not stops the run with
+   `non_finite_score`. This is the backstop: whatever arithmetic produced the
+   number, it does not leave as a null.
+7. **The p-value** is reported only when skill is a number (step 12).
+
+`y_pred` needs no rule of its own: by rules 3 and 4 a prediction that is not
+finite never reaches the output.
+
+What the message of `non_finite_score` names is pinned; its wording is open.
+It names the number: a baseline by its name as `baselines[].name` spells it
+(`training_mean`, `previous_value`), under rule 1 and rule 2 alike; a
+configuration by its name as `models[].config` spells it, under rule 4; a
+field of the output by its key, under rules 5 and 6. And it gives the likely
+cause, for one a target value too large for squared error. Nothing is written
+when it is raised.
+
+Where the outcome is open: at scales where every reported number can be held
+but arithmetic on the way overflows (squared errors above about 1e154, whose
+own squares cannot be held, as on a target of the scale of 1e80), a run may
+finish with finite numbers or stop with `non_finite_score` under rule 6. It
+may not write a null, and it may not end in `all_models_failed`.
 
 ### Seeds and threads (D17, D25)
 
@@ -749,8 +974,10 @@ exactly the grid arguments (`{}` for `tree-0`).
 | interval level | 95%, percentile |
 | too small to profile | fewer than 100 usable rows; fewer than 10 of a class |
 | one-hot levels kept per column | 30 |
+| seed | a whole number from 0 to 4,294,967,295 (D45) |
+| digits of a number in the console summary | at least four significant: within 0.0005 × \|value\| (D46) |
 
-### 4.3 Cut-offs (D23, D28, D30, D33, D34; measurements in section 10)
+### 4.3 Cut-offs (D23, D28, D30, D33, D34, D48; measurements in section 10)
 
 | Cut-off | Value |
 |---|---|
@@ -766,6 +993,7 @@ exactly the grid arguments (`{}` for `tree-0`).
 | small holdout warning | fewer than 50 holdout rows of the rarer class (classification) or in all (regression) |
 | no block-bootstrap interval | fewer than 30 distinct holdout timestamps |
 | autocorrelated panel target warning | lag-1 autocorrelation above 0.5 |
+| feature value too large for the tree models | a magnitude above 3.4028234663852886e+38, the largest 32-bit float: read as missing, like an infinite value (step 5; D48) |
 
 ### 4.4 Missing-value spellings
 
@@ -804,13 +1032,26 @@ row, in increasing `row`.
 | Column | Meaning |
 |---|---|
 | `row` | Zero-based position of the row in the loaded source, counted before any row is dropped. For a CSV, blank lines are not counted. For a DataFrame it is the position, not the index label. |
-| `y_true` | The target of that row, as it is in the source. |
-| `y_pred` | Classification: predicted probability of the positive class. Regression: the predicted value. Always finite. |
+| `y_true` | The target of that row, as it is in the source; a text value without the white space round it (step 4; D46), so a cell written `yes ` shows `yes`, in the file and in `ProfileResult.predictions`. |
+| `y_pred` | Classification: predicted probability of the positive class. Regression: the predicted value. Always finite: a configuration whose prediction is not finite is failed and never written (steps 9 and 10; D44). |
 
 ### 5.2 `profile.json`
 
 UTF-8 JSON. NaN and infinity never appear: a value that cannot be computed is
-`null` and something nearby says why. Top-level keys, all always present:
+`null` and something nearby says why.
+
+**A null stands only where this section says one may, for the reason given
+there (D44).** A field typed "number" below always holds a finite number. A
+field typed "number or null" is null only in the cases listed beside it. A
+number that comes out infinite or not-a-number is never written as null: its
+configuration is failed, or the run stops with `non_finite_score` (section 3,
+"Numbers that are not finite"). `ProfileResult.headline` and `to_dict()` hold
+these values as they are: a number is a finite number and a null is `None`,
+never NaN, so a test reads them without converting anything first. (In the
+DataFrames a null cell is NaN or `None`, as 2.3 says; an infinity appears in
+none of them.)
+
+Top-level keys, all always present:
 `meta`, `input`, `rows`, `columns`, `task`, `validation`, `headline`,
 `baselines`, `cv`, `models`, `warnings`, `limitations`.
 
@@ -856,9 +1097,9 @@ order: `loaded`, `dropped_missing_target`, `dropped_missing_time`,
 | `kind` | string or null | for a feature, `numeric` or `categorical` (pinned); for other roles informative |
 | `reason` | string or null | for an excluded column: `constant`, `id_like`, `datetime`, `free_text`, `numeric_with_separators`, `suspected_leak`, `all_missing` or `unsupported_type`; otherwise null |
 | `leak_rule` | string or null | for a suspected leak: `predicts_target` or `missing_by_class`; otherwise null |
-| `n_missing` | integer | missing cells among all loaded rows, as loaded |
+| `n_missing` | integer | missing cells among all loaded rows, as loaded. A target cell that holds only white space loaded as text and is not counted here; its row is counted in `rows.dropped_missing_target` (step 2) |
 | `n_coerced` | integer | non-missing text cells that did not parse, among all loaded rows, in a column read as numeric by rule 5 of step 5; otherwise 0 |
-| `n_infinite` | integer | infinite cells among all loaded rows |
+| `n_infinite` | integer | among all loaded rows of a numeric column, the infinite cells and the finite cells too large for the tree models, a magnitude above 3.4028234663852886e+38 (step 5; D48); otherwise 0 |
 | `n_imputed` | integer | for a feature, its missing cells (as loaded, coerced or infinite) among the training and holdout rows; otherwise 0 |
 
 **`task`**
@@ -867,9 +1108,9 @@ order: `loaded`, `dropped_missing_target`, `dropped_missing_time`,
 |---|---|---|
 | `type` | string | `classification` or `regression` |
 | `decided_by` | string | `rule` (from `task="auto"`) or `declared` |
-| `n_distinct` | integer | distinct target values among the usable rows: the evidence |
+| `n_distinct` | integer | distinct target values among the usable rows, text read without the white space round it (step 4): the evidence |
 | `target_dtype` | string | pandas type of the target as loaded |
-| `classes` | list or null | the two classes in sorted order; null for regression |
+| `classes` | list or null | the two classes in sorted order, text without the white space round it; null for regression |
 | `positive_class` | value or null | the second of `classes` |
 
 **`validation`**
@@ -916,7 +1157,7 @@ carried a zone) for the `datetime` and `iso8601` forms, and as a number for the
 | `n_resamples_skill_used` | integer | of those, the resamples in which skill could be computed too: the ones whose baseline error was not zero. Equal to `n_resamples_used` for classification |
 | `block_length` | integer or null | under `bootstrap_blocks` |
 | `interval_reason` | string or null | why there is no interval on the score |
-| `p_value` | number or null | step 12; null under time order, and when `skill` is null |
+| `p_value` | number or null | step 12; null under time order, and when `skill` is null. A p-value is reported only when `skill` is a number (D44) |
 | `n_permutations` | integer or null | shuffles used; null when there is no p-value |
 | `p_value_reason` | string or null | why there is no p-value |
 
@@ -944,10 +1185,10 @@ headline baseline. A score of 0 is reported as it was measured.
 | `config` | string | `<family>-<index>` |
 | `family` | string | |
 | `params` | object | the grid arguments of this configuration |
-| `status` | string | `fitted` or `failed`: failed when it raised during selection (step 9) or after it was chosen (step 10) |
+| `status` | string | `fitted` or `failed`: failed when it raised, predicted a value that is not finite or scored a fold with a number that is not finite during selection (step 9), or raised or predicted a value that is not finite after it was chosen (step 10) |
 | `error` | string or null | the error text of a failed configuration |
 | `fold_scores` | list | five entries, a number or null. Null where the fold was not scored; all five null for a configuration that failed during selection. One that failed after it was chosen keeps the scores it had (D38) |
-| `cv_mean` | number or null | mean of the scored folds; null for a configuration that failed during selection |
+| `cv_mean` | number or null | mean of the scored folds; null for a configuration that failed during selection, and for no other: a configuration with status `fitted` always has a finite `cv_mean` |
 | `cv_std` | number or null | their sample standard deviation; null with fewer than two, and for a configuration that failed during selection |
 | `chosen` | boolean | true for exactly one, which has status `fitted` |
 
@@ -961,7 +1202,8 @@ headline baseline. A score of 0 is reported as it was measured.
    counts plus training plus holdout.
 2. Every source column appears exactly once in `columns`.
 3. `predictions.csv` has one row per holdout row, and each `y_true` equals the
-   target of that row in the source.
+   target of that row in the source (text compared without the white space
+   round it).
 4. `headline.score` equals the metric recomputed from `predictions.csv`;
    `headline.skill` follows from it and the baseline as in step 11, and is
    null when the baseline's score is 0.
@@ -1001,11 +1243,13 @@ other argument. Consequences, all measured on pandas 3.1.1 (section 9):
 - **The header is the first line that is not blank (D39).** Leading blank
   lines are skipped when the header is read, as pandas skips them, so the tool
   and pandas agree on which line is the header. Any other first line is
-  content, to pandas and to the tool: a line of two quotes, or of white space
-  other than spaces and tabs (a form feed, a no-break space), is read as a
-  header of one column. In a table of two columns or more the lines after it,
-  the real header among them, then have more fields than the header:
-  `input_error`, by the rule below.
+  content, to pandas and to the tool: a line of two quotes, of two quotes
+  round a space, or of white space other than spaces and tabs (a form feed, a
+  no-break space), is read as a header of one column. In a table of two
+  columns or more the lines after it, the real header among them, then have
+  more fields than the header: `input_error`, by the rule below. That holds
+  before a header of two columns as before one of three, where pandas makes a
+  plain index of the one leading field (measured 2026-11-20, section 9; D46).
 - **A file that is not valid UTF-8 is an `input_error` wherever the first bad
   byte sits (D39):** in the header line, in the first data row, deep in a
   large file or in its last cell. An optional byte-order mark is ignored.
@@ -1072,8 +1316,19 @@ None is skipped silently: each raises a named error or is reported in the output
 
 | Edge | Outcome |
 |---|---|
+| a `seed` outside 0 to 4,294,967,295 | `input_error`, before anything is loaded; from the command line exit 3 and one line, no traceback (D45) |
 | the target column is absent | `column_not_found` |
 | the target has one distinct value | `target_constant` |
+| a text target written with white space round some values (`yes `) | the same class as without it; `classes`, `positive_class` and `y_true` show the value without it (D46) |
+| a text target cell that holds only white space | a missing target: the row is dropped and counted in `dropped_missing_target` (D48) |
+| a complex-number target | not numeric: `task_unsupported` when regression is declared; under `task="auto"` the ordinary rule (D48) |
+| a regression target with a value too large for squared error (one cell of 1.7976931348623157e308; the whole column times 1e160) | `non_finite_score`, naming the baseline, before any fit; never a result with nulls in it and never `all_models_failed` (D44) |
+| a baseline's error, or a column's own, that is not finite in the leak screen | `non_finite_score`, before any configuration is fitted |
+| a configuration whose prediction, or whose fold score, is not finite | status `failed`, like one that raised; `model_failed` warning; never chosen |
+| the chosen configuration predicting a value that is not finite on the holdout | status `failed`, fold scores kept, the next best by `cv_mean` is chosen: it counts as raising |
+| the chosen configuration's holdout score not finite, from finite predictions | `non_finite_score`; no other configuration is tried |
+| any other number of the output that is not finite | `non_finite_score`, naming it; never written as null |
+| a numeric feature cell that is finite and above 3.4028234663852886e+38 in magnitude | read as missing, counted in `n_infinite`, `infinite_values` warning: as an infinite cell is (D48) |
 | a declared task the target does not support | `task_unsupported` |
 | an ambiguous target under `task="auto"` | `task_ambiguous` |
 | no usable feature column | `no_features`; the message names each excluded column and its reason |
@@ -1081,13 +1336,15 @@ None is skipped silently: each raises a named error or is reported in the output
 | an output folder that cannot be used (the path, or a folder above it, is a file) | `input_error`, before anything is loaded |
 | a CSV that is not valid UTF-8, wherever the bad byte sits | `input_error` |
 | blank lines (empty, or only spaces and tabs) before the header of a CSV | skipped, as pandas skips them; the header is the first line that is not blank |
+| a line of a form feed, of a no-break space, of two quotes or of two quotes round a space, before a header of two columns or more | `input_error`: pandas reads that line as a header of one column, and the lines after it are longer |
 | too few rows to split (fewer than 100 usable, or fewer than 10 of a class) | `too_few_rows` |
 | a holdout, or the training rows, with one class | `one_class` |
 | a fold with one class | that fold is not scored; `fold_not_scored` warning; `validation.folds[].scored` false; `fold_scores` null there. No fold scored: `one_class` |
 | a time column not in an accepted form | `time_column_invalid` |
 | a gap that leaves no training rows | `gap_too_large` |
 | too few timestamps for the holdout and six blocks | `too_few_rows` |
-| the fast profile on a panel too wide for its row cap | `fast_profile_too_few_timestamps` |
+| the fast profile on a panel too wide for its row cap, where the full profile would get past the split | `fast_profile_too_few_timestamps` |
+| the same, where the full profile would stop at the split too | the error the full profile would raise: `too_few_rows` or `gap_too_large` (D46) |
 | duplicate column names, two header cells of the same white space among them | `duplicate_columns` |
 | a blank header (an empty cell) | kept under pandas' name; `blank_header` warning |
 | a header cell that holds only white space | a name like any other: kept as written, no warning |
@@ -1128,11 +1385,31 @@ Each keeps its id through the gate, the tests and the review.
 | F3 | The headline is the best cross-validation score, not the holdout score. | Gate: `model.headline_recomputed`, `model.selection_full`. Tests: a fake family whose fold scores and holdout score differ by construction. |
 | F4 | Accuracy is the headline on a rare class. | Gate: `model.metric_clf`, `model.headline_recomputed`. Tests: metrics by hand. |
 | F5 | The task is misread from the column's type. | Gate: `task.binary_numeric`, `task.ambiguous_stops`. Tests: the rule on every loaded shape. |
-| F6 | Something is lost without being reported: rows, a column, a model family. | Gate: `data.rows_reconcile`, `data.columns_accounted`, `data.coercion_reported`, `data.long_rows_stop`, `models.all_accounted`. Tests: accounting on crafted tables; a family that raises. |
-| F7 | Time order is ignored: a shuffled split, a training row at or after the holdout, the gap not applied, or the time column misread. | Gate: `time.order_respected`, `time.no_skill_on_blocks`, `time.gap_applied`, `time.dayfirst_stops`. Tests: the split as a function of keys. |
+| F6 | Something is lost without being reported: rows, a column, a model family. | Gate, for rows: `data.rows_reconcile`, `data.coercion_reported`. For its other forms, the table below. Tests: accounting on crafted tables; a family that raises. |
+| F7 | Time order is ignored: a shuffled split, a training row at or after the holdout, the gap not applied, or the time column misread. | Gate, for the split: `time.order_respected`, `time.no_skill_on_blocks`, `time.gap_applied`. For a misread time column, the table below. Tests: the split as a function of keys. |
 | F8 | Under time order a trending or random-walk target is scored against the training mean only. | Gate: `time.persistence_baseline`. Tests: baselines by hand. One gate check and one test catch it; that is accepted (D43). |
 
-### 8.1 Small faults the gate cannot see (D39)
+**The other forms of F6 and F7 (D46).** One broken copy of the reference cannot
+fail every check of its family: the copy that drops rows loses no column, and
+the copy that shuffles the split parses no date. The second review found four
+checks listed against F6 and F7 that had never been seen to fail. Each form
+now has a broken copy of its own, under an id that shows its family, and each
+check names the form it was seen to catch.
+
+| Id | The form | Gate check | Tests |
+|---|---|---|---|
+| F6b | A column is lost from the accounting: a constant column is dropped with no record. | `data.columns_accounted` | every column appears once, by its rule |
+| F6c | A model family is lost from the models table: only the chosen configuration's family is listed. | `models.all_accounted` | the families and configurations of each profile |
+| F6d | Data rows longer than the header are read silently, with no error. | `data.long_rows_stop` | rows longer than the header; lines pandas reads as a header |
+| F7b | A time column that is not ISO 8601 is parsed leniently, so a day-first date runs on the wrong order. | `time.dayfirst_stops` | the accepted forms of the time column |
+
+**Every gate check that names a failure mode is seen to fail on that mode's own
+broken copy, in every run of the gate's self-test**, which prints the table
+that proves it and fails if one pair is missing. The checks that give a
+written reason in place of a failure mode are listed in the same output, with
+the copies they failed on, for information.
+
+### 8.1 Small faults the gate cannot see (D39, D44, D46)
 
 The first review found five faults that a build could carry while passing
 every gate check and all 308 tests of the first suite. Three are small forms of
@@ -1149,6 +1426,13 @@ one fault (`verify/mutation_check.py`; the switch is in the reference's
 | M3 | The leak screen's trees are fitted on rows that include the holdout, and its missing-by-class rule counts every row. | `test_guard_leak_screen.py::test_m3_single_column_skill_is_fitted_on_fold_training_rows_only`, `::test_m3_missing_by_class_counts_training_rows_only` |
 | M4 | The block bootstrap draws timestamps independently and still reports `bootstrap_blocks`. | `test_guard_uncertainty.py::test_m4_block_bootstrap_draws_whole_blocks` |
 | M5 | The permutation p-value counts shuffles strictly greater than the observed skill. | `test_guard_uncertainty.py::test_m5_ties_count_in_the_p_value`, for classification only: for regression a tie is a tie only up to rounding (D43) |
+| M6 | A prediction that is not finite is scored and written as it is, where it should fail its configuration (D44). ROC AUC is a count of ranks, so the score stays finite and a NaN reaches `y_pred`. | `test_non_finite.py::test_a_prediction_that_is_not_finite_counts_as_raising` |
+| M7 | The fast profile's own error is never raised: too few timestamps under the row cap is always the ordinary `too_few_rows`, also where the full profile would run (D46). | `test_fast_profile_error.py::test_fast_error_stands_when_the_full_profile_would_run`, and the first pass's `test_time_pipeline.py::test_wide_panel_under_fast_raises` |
+
+M6 and M7 were added with the third pass (D44, D46), for two guards that pass
+against the application as it stood and must go on passing. The four forms
+F6b, F6c, F6d and F7b above are run through the suite in the same way, and
+each must fail at least one test.
 
 The gate goes on catching the large forms; the fake goes on catching, exactly,
 a model or a seam-supplied step that is handed a row it must not see.
@@ -1189,6 +1473,9 @@ threads, 192 GB. Default pools: OpenMP 64 threads, OpenBLAS 24.
 | a row longer than the first data row | `ParserError` | the first data row is the only long row pandas reads silently; a line of only spaces or tabs before it is skipped like a blank line |
 | lines before the header (measured 2026-11-17) | an empty line and a line of only spaces and tabs are skipped. A line of a form feed, a vertical tab, a no-break space, an em space, two quotes or a quoted space is read as a header of one column; a line of only commas as a header of blank names | Python's `str.strip()` calls all of the first four white space, and pandas only spaces and tabs: a loader that strips with the default would take a different line for the header than pandas does |
 | a byte that is not valid UTF-8 | `UnicodeDecodeError` from `read_csv`, when it reaches the byte | a loader that reads the header line itself meets a bad byte in the first few kilobytes before pandas does, outside any handler written around `read_csv` |
+| a line of a form feed, a no-break space, a vertical tab, an em space, two quotes or a quoted space, before a header of **two** columns (measured 2026-11-20) | a header of one column; the real header and every row after it give their first field to an `Index` and keep one column | with two columns the leading field becomes a plain index, where three give a `MultiIndex`; both implementations stop with `input_error` on all six, as before a header of three (D46) |
+| a text cell that holds only spaces or tabs | text, as written (`'  '`), never missing | in the target it looks like a blank and is a missing target (D48); in a feature it is the level of empty text (D42) |
+| a text cell written `yes ` | text, with its space | in the target, as in a feature, the white space is not part of the value (D46) |
 
 **Other traps.**
 
@@ -1204,6 +1491,32 @@ threads, 192 GB. Default pools: OpenMP 64 threads, OpenBLAS 24.
   dates. Integers passed to it become nanoseconds since 1970. Hence D18 and
   the fixed list of 4.5.
 - `Int64`, `category` and datetime types do not survive a CSV round trip.
+- **A squared error overflows long before a value does** (measured 2026-11-20).
+  The largest double is about 1.8e308, so the square of anything above about
+  1.34e154 is infinite, and what is computed from it is not-a-number. One
+  target cell of 1.7976931348623157e308 among values near 20, or the target
+  times 1e160, gave the application a null score, a null baseline and a null
+  skill with a p-value of 1/201 and no warning; the reference stopped with a
+  raw `ValueError` from `json.dumps`. `numpy.mean` and `numpy.std` also
+  overflow on the way to an answer that can be held: `numpy.std` of five
+  values near 1e160 is infinite. Hence D44.
+- **scikit-learn's trees and forests read their input as 32-bit floats** and
+  raise `ValueError: Input X contains infinity or a value too large for
+  dtype('float32')` on a finite value above 3.4028234663852886e+38 (measured
+  2026-11-20). The leak screen's tree reads a column as it is, so such a cell
+  in any row a tree is fitted on stopped both implementations with that raw
+  error: the application on a single cell of 1e39, the reference on a column
+  of them. Where the cell fell only in the holdout the run finished, with a
+  linear model's prediction for that row, and a squared error, to match.
+  Hence D48.
+- **A seed of 2³² or more is refused by scikit-learn** with a raw
+  `InvalidParameterError` (measured 2026-11-20: from the leak screen's tree in
+  the application, from `train_test_split` in the reference), which the
+  command line turned into a traceback and exit 1. Hence D45.
+- A complex-number column counts as numeric to `pandas.api.types.is_numeric_dtype`,
+  and turning it into floats drops the imaginary part with a warning nobody
+  sees. Both implementations ran a regression on such a target (measured
+  2026-11-20). Hence D48.
 
 **Run time (D16, D25).** Measured once; no check enforces the budget (D31). A
 full run on 100,000 rows × 100 columns with the grids of
@@ -1473,6 +1786,30 @@ interval (step 12), and sentence 8 of the limitations on every run (5.4).
 See section 9: full runs of 178.6 and 205.6 seconds at 100,000 × 100 on all
 cores; identical files at `n_jobs` 1, 2, 4, 16 and 64.
 
+### 10.5 Measured for the third pass (D44 to D48)
+
+On 2026-11-20; scripts and tables in `docs/measurements/CP4/`.
+
+- **No gate value moved.** Between the judge before CP4 and after it, at the
+  gate's seed: 19 datasets, 31 checks, 100 recorded values and all 14,302
+  values of 24 runs on the reference are identical. The only differences are
+  the failure modes four checks name (F6b, F6c, F6d, F7b in place of F6 and
+  F7). No band, seed or dataset was changed, and none was added: everything
+  A to E decided can be caught by a test.
+- **Every pair of a gate check and a failure mode it names was seen failing:**
+  22 of 22, over 12 broken copies of the reference, each run twice. Before,
+  four pairs had never been (section 8).
+- **The changed reference fails none of the 370 cases of the first two
+  passes**, so nothing decided in D44 to D48 contradicts a locked test. Each
+  of F6b, F6c, F6d and F7b fails existing tests (8, 15, 3 and 6 cases).
+- **The cut-off of D48** is the largest 32-bit float, 3.4028234663852886e+38.
+  A value just above it rounds to it and would pass scikit-learn's own check;
+  the rule is the simpler "greater than", so nothing the trees refuse is ever
+  handed to them. 1e38 is kept and 1e39 is missing.
+- **The previous value** exists for every validation and holdout row: 8,175
+  splits, of 100 to 400 unique timestamps and every gap the split accepts,
+  and 1,898,456 rows checked in each implementation; none without one.
+
 ---
 
 ## 11. What is open
@@ -1489,15 +1826,26 @@ The builder decides these, and no test may pin them:
   `profile()` and `stages.split_random` must agree: 2.7.);
 - the wording of every warning `message`, every error message, the console
   summary and `interval_reason` / `p_value_reason` (their presence is pinned).
-  What a message must name is pinned in three places and nowhere else: the
+  What a message must name is pinned in four places and nowhere else: the
   excluded columns and their reasons in `no_features` (2.4), the columns
-  involved in `feature_name_collision` (step 5), and what the console summary
-  shows (2.2);
+  involved in `feature_name_collision` (step 5), the number that is not finite
+  in `non_finite_score` (section 3, "Numbers that are not finite"), and what
+  the console summary shows (2.2);
 - whether the preprocessing of the final fit is fitted again for a
   configuration tried after another one failed (step 10): each such try gets
   a fresh estimator, and that is all that is pinned;
 - what `stages.skill("roc_auc", ...)` does with a baseline of 1, which no run
-  can produce;
+  can produce; and what `stages.skill`, `stages.mse` and `stages.roc_auc`
+  return when the arithmetic overflows (`profile()` checks every number it
+  reports: section 3, "Numbers that are not finite");
+- how the numbers of the console summary are formatted, as long as each agrees
+  with `profile.json` to four significant digits (2.2);
+- at scales where every reported number can be held but arithmetic on the way
+  overflows (a target near 1e80), whether the run finishes with finite numbers
+  or stops with `non_finite_score`. It never writes a null there and never
+  ends in `all_models_failed`;
+- which of the leak screen's two baselines is named when both are not finite;
+- what `stages.split_random` does with a `classes` value that is missing;
 - how close two skills must be to count as a tie in the regression p-value
   (step 12; D43);
 - what `stages.Preprocessor` does with white space round a level in a frame
@@ -1519,7 +1867,11 @@ decide a name collision (step 5), the preprocessing of step 8, the
 single-column screen of step 8 and both of its cut-offs, the order in which
 configurations are tried after selection (step 10), the percentile and block
 rules of step 12 and which resamples each interval keeps, that a tie counts in
-the p-value, the fixed texts of 5.4.
+the p-value, the fixed texts of 5.4, the range of the seed (2.1), the
+magnitude above which a feature value is read as missing (step 5), that the
+baselines are scored before any fit (section 3, "Numbers that are not
+finite"), and which error a fast run raises when the full profile would stop
+too (step 7).
 
 Not judged by any test or gate check, and left to a human: whether the
 limitations read well, whether the console summary is clear, whether a skill
@@ -1574,3 +1926,8 @@ figure on real data is believable.
 | D41 README examples use a table kept in the repo | 1; `examples/customers.csv` |
 | D42 three small rulings | (1) `no_skill_interval`: 2.2, 2.5, 3 (step 12), 5.2, 7. (2) white space is not part of a level: 2.6, 3 (steps 5, 8), 7, 9, 11. (3) a header cell of white space is a name: 2.4, 2.5, 6, 7, 9 |
 | D43 limits accepted after CP3 | (1) the p-value's tie in regression: 3 (step 12), 8.1, 11. (2) F8: 8. (3) fold scores lost by a failure during selection: 3 (step 9). (4) a collision outside the rows or columns used: 3 (step 5). (5) undefined skill under the random scheme: 3 (step 11) |
+| D44 no number that is not finite is written as empty | 2.4 (`non_finite_score`), 2.5 (`model_failed`), 3 (steps 8 to 13 and "Numbers that are not finite"), 5.1, 5.2, 7, 8.1 (M6), 9, 11 |
+| D45 the seed's range | 2.1, 2.2, 2.4, 2.7 (`split_random`), 7, 9, 11 |
+| D46 second review accepted | (1) the summary's significant digits: 2.2, 11. (2) every gate check seen to fail: 8, 8.1; `verify/smoke_test.py`, `verify/mutation_check.py`. (3) white space round a target value: 2.7, 3 (step 4), 5.1, 5.2, 5.3, 7, 9. (4) the fast profile's error: 2.4, 2.7, 3 (steps 6, 7), 7, 8.1 (M7). (5) the README: 1; `plan/test-plan.md`, task T30. (6) the self-test's own run folder: not in this spec; `verify/smoke_test.py`. (7) lines before a header: 6, 7, 9 |
+| D47 when phase 1 ships | not in this spec; `docs/BACKLOG.md` |
+| D48 three rulings from the CP4 session | (1) a feature value too large for the tree models: 2.5, 2.6, 2.7 (`Preprocessor`), 3 (steps 5, 8), 5.2 (`n_infinite`), 7, 9. (2) a complex-number target: 2.4, 3 (step 4), 7, 9. (3) a target cell of only white space: 2.7 (`usable_rows`, `decide_task`), 3 (steps 2, 4), 5.2 (`n_missing`), 7, 9 |

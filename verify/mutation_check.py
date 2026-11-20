@@ -1,9 +1,10 @@
 """Does the test suite catch what it is there to catch? (D39)
 
 The gate's self-test proves the gate against the reference implementation
-broken in eight ways (F1 to F8). This script proves the test suite the same
-way, against those eight and against five smaller faults no gate check can
-see (M1 to M5; verify/reference/mlprofessor/_variant.py lists them).
+broken in twelve ways (F1 to F8, and the other forms F6b, F6c, F6d and F7b:
+D46). This script proves the test suite the same way, against those twelve
+and against seven smaller faults no gate check can see (M1 to M7;
+verify/reference/mlprofessor/_variant.py lists them all).
 
 For the known-good reference and for each variant it builds a throwaway
 project outside the repo and runs the whole suite there:
@@ -60,7 +61,8 @@ REPO = HERE.parent
 REFERENCE = HERE / "reference" / "mlprofessor"
 GATE_FILE = HERE / "smoke_test.py"
 GATE_DATA = "verify/artifacts/data/"
-CASES = ["good"] + [f"F{i}" for i in range(1, 9)] + [f"M{i}" for i in range(1, 6)]
+CASES = (["good"] + [f"F{i}" for i in range(1, 9)] + ["F6b", "F6c", "F6d", "F7b"]
+         + [f"M{i}" for i in range(1, 8)])
 PROBE = "test_mutation_check_probe.py"
 README_TESTS = re.compile(r"^test_readme\w*\.py::")
 RUN_SECONDS = 1800

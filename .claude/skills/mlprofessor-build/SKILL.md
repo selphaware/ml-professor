@@ -60,6 +60,22 @@ The package exists. Change as little as each task needs.
     (T20)**, then **a configuration that fails after it is chosen (T21)**, then
     the **small defects (T22)**, then the **README's examples (T23)**.
 
+### Third pass, after the second review (tasks T24 to T30)
+
+Change as little as each task needs. Every earlier test stays green.
+
+13. **The guard first (T24).** A line pandas reads as the header, before a
+    header of two columns. Expect to change nothing.
+14. **No number that is not finite (T25).** The largest task of the pass. Work
+    through spec section 3, "Numbers that are not finite", in its order: the
+    baselines before any fit, the leak screen, a configuration's predictions
+    and fold scores, the chosen configuration, skill, the check when the
+    result is assembled. Then the feature values too large for the tree
+    models, and the complex target (D48).
+15. **White space round a target value (T26)**, then **the seed's range
+    (T27)**, then **the fast profile's error (T28)**, then **the summary's
+    significant digits (T29)**, then the **README (T30)**.
+
 ## Rules that keep the number honest
 
 - The holdout rows are chosen before anything is fitted, and nothing fitted
@@ -91,6 +107,35 @@ The package exists. Change as little as each task needs.
   own. Two that would share a name stop the run.
 - Leave the caller's process as you found it: put back any process-wide
   setting in a `finally`.
+- A null is "does not apply" or "cannot be computed, and the output says
+  why". It is never what became of an infinity or a not-a-number (D44). A
+  squared error overflows above about 1e154, and `numpy.mean` and `numpy.std`
+  overflow sooner than their answers do. So: check a number where it is
+  computed; never convert a number that is not finite into `None` on the way
+  out; and do arithmetic that can overflow under `numpy.errstate(...)`, so
+  that no warning reaches standard error and the caller's settings stay as
+  they were.
+- When the target is the cause, the caller gets one error that says so. The
+  baselines need no model: score them on the holdout before anything is
+  fitted, and stop there with `non_finite_score` if one is not finite. Never
+  let an extreme target fail every configuration in turn and end in
+  `all_models_failed`.
+- Which thing a non-finite number belongs to decides what happens. A
+  prediction that is not finite is the model's doing: the configuration is
+  failed, like one that raised, and after the choice the next best takes its
+  place. A holdout score that is not finite, from finite predictions, is a
+  score: the run stops, and the next configuration is not tried, because the
+  holdout never chooses.
+- A value is read one way everywhere it is used. A text target value is
+  without the white space round it (`yes ` is `yes`), and one that holds only
+  white space is a missing target. A feature value that is infinite, or too
+  large for the 32-bit floats the tree models read (above
+  3.4028234663852886e+38), is a missing cell: counted, warned, imputed.
+- An error that tells the caller what to do must be true. The fast profile
+  says "use the full profile" only when the full profile would get past that
+  point; otherwise it raises what the full profile would raise.
+- Check an argument's whole range before anything is loaded. A seed of 2³² or
+  more reaches scikit-learn as a raw error from deep inside the run.
 
 ## Common failures and their real causes
 
@@ -126,13 +171,25 @@ The package exists. Change as little as each task needs.
 | `output.same_at_any_n_jobs` fails in the last digits | Forest predictions were summed across threads, or BLAS was not held to one thread. `n_jobs=-1` or unset thread variables make a score move between runs. | `threadpoolctl.threadpool_limits`; `n_jobs=1` at predict time for forests. |
 | A score moves after `pip install` | A library changed version. | `requirements.txt` against `meta.versions`. |
 | Several commands started together each take 35 or 70 seconds longer than they should; or a gate run reports "the tool did not finish" and passes when repeated | Not the code. Until D32 the interpreter's base was on a mapped drive, and Python processes started at the same instant blocked each other for exactly 35 or 70 seconds. The base is a local path now and the wait was not seen in 60 rounds of eight simultaneous starts. The gate still spaces its own runs and retries once. | Run the check again before changing anything. If it comes back, check `home` in `mlprof_env\pyvenv.cfg` and tell the human. |
-| NaN in `profile.json` | A score that could not be computed was written as it was. Write `null` and a reason. | `json.dumps(..., allow_nan=False)` will find it. |
+| NaN in `profile.json` | A number that is not finite was written as it was. If it has no value for a stated reason (skill over a baseline error of exactly zero), write `null` and the reason. If it overflowed, do not write `null`: fail the configuration or stop with `non_finite_score` (D44). | `json.dumps(..., allow_nan=False)` will find it. |
+| `score`, `baseline_score` or `cv_mean` is null on a run that finished; or a p-value beside a null skill | A number that was infinite or not-a-number was turned into `None` on the way out, where the result is built. A target value near 1e155 or more does it: its square is beyond the largest double (D44). | Where each number is computed, not where the result is built. Baselines first, before any fit. |
+| `all_models_failed` on a table with one huge target value | Every configuration's squared error overflowed, one after another, and nobody said the target was the cause. | Score the baselines on the holdout before the leak screen and the models; stop there with `non_finite_score`. |
+| A raw `ValueError: Input X contains infinity or a value too large for dtype('float32')` | A finite feature value above 3.4028234663852886e+38 reached a tree: scikit-learn's trees and forests read 32-bit floats. The leak screen's tree reads the column as it is. | Read such a cell as an infinite one is, where features are typed: missing, counted in `n_infinite`, warned (D48). |
+| A raw `InvalidParameterError` about `random_state`, or a traceback from the command line for a large `--seed` | The seed was checked for "at least 0" only. scikit-learn takes 0 to 4,294,967,295 (D45). | The argument checks, before anything is loaded; `stages.split_random` too. |
+| `task_ambiguous` with "4 distinct values" on a yes/no target; or a positive class reported as `yes ` | Target text was taken as written. White space round a target value is not part of it, and a cell of only white space is a missing target (D46, D48). | Strip once, where the target is first read, so the task, the classes, the split and `y_true` all see one value. |
+| The fast profile says "use profile='full'" and the full profile then stops too | The fast error was raised whenever the cap had dropped a row. It is raised only when the split of every usable row can be formed (D46). | Try the split on all usable rows with the caller's gap; raise what it raises, or the fast error if it succeeds. |
+| The summary shows `mse 0.0000` or a p-value of `0.0050` | Fixed decimals. A number in the summary agrees with `profile.json` to four significant digits at any scale (D46). | The number format of the summary: significant digits, not decimals. |
+| Extra lines on standard error before `error: non_finite_score: ...` | numpy printed its overflow warnings. Exit 3 carries exactly one line. | `numpy.errstate(over="ignore", invalid="ignore")` round the arithmetic that can overflow. |
+| `test_guard_header_lines.py` fails: a file whose first line is a form feed or a no-break space loads | The loader took a line for blank that pandas reads as the header (F6d's ground). `str.strip()` removes more than spaces and tabs. | The loader's reading of the header line, and its check for rows longer than the header. |
+| `test_a_prediction_that_is_not_finite_counts_as_raising` fails | A NaN prediction was scored and written. ROC AUC is a count of ranks, so the score looks fine and the NaN reaches `y_pred` (M6). | Check every prediction is finite before it is scored, in the folds and on the holdout. |
 
 ## How to debug a gate failure
 
 1. Read the whole message. It names the dataset, the value and the likely cause.
 2. Open the files the gate just read: `verify/artifacts/runs/<run>/profile.json`
    and `predictions.csv`. The dataset is `verify/artifacts/data/<name>.csv`.
+   That folder is always the last gate run on the build: the gate's self-test
+   writes to `verify/artifacts/selftest_runs/` instead.
 3. Re-run the one check: `python verify/smoke_test.py mlprofessor --only <id>`.
 4. Fix the code. Never the band, the dataset or the check: they are locked, and
    a band you could widen proves nothing.

@@ -1,9 +1,11 @@
 # Test plan: what the suite must prove (phase 1)
 
-> **If `mlprofessor/` already exists at the repo root, this is the second
-> pass. Go straight to "Second pass (CP3)" at the end of this file and read
-> its ground rules before anything else. They override your role prompt and
-> the first pass's rules wherever they differ.**
+> **If `mlprofessor/` already exists at the repo root, this is not the first
+> pass. Go straight to the last section of this file, "Third pass (CP4)", and
+> read its ground rules before anything else. They override your role prompt
+> and the rules of the earlier passes wherever they differ.** The section
+> "Second pass (CP3)" above it describes the pass before: its tests are
+> written, built and final.
 
 Written for the test author. You write the suite from `spec.md` alone, before
 any application code exists. Section and step numbers below are those of
@@ -1022,3 +1024,488 @@ written for another reason, such as permissions. Process settings other than
 the CSV field limit and the thread limits. The run time of the built library
 at 100,000 rows by 100 columns, which was measured once
 (`docs/measurements/CP3/`).
+
+---
+
+# Third pass (CP4): the second review's findings
+
+Written on 2026-11-20, after the second build and its review
+(`docs/reviews/phase1-review-2.md`; D44 to D48). Everything above describes
+the first two passes and stays as it is. This section is the whole of your
+work in the third pass.
+
+## Ground rules of the third pass
+
+1. **The application already exists, and this is the third pass.**
+   `mlprofessor/` is built and passes all 370 cases of the first two passes.
+   Your role prompt says you write the suite before the application exists
+   and that every test must fail now. In this pass that is not so: most of
+   your tests must fail today and three must pass today, and rule 4 says
+   which.
+
+2. **The first two passes are final. Do not edit them in any way.** That means
+   the 27 existing test files, `tests/conftest.py`, `tests/mlp_helpers.py`,
+   `tests/cp3_helpers.py` and everything under `tests/fixtures/`: not a line,
+   not a blank, not a rename, not a new fixture file. New shared helpers go in
+   one new file, `tests/cp4_helpers.py`, which may import `mlp_helpers` and
+   `cp3_helpers`. The driver does not lock `tests/` during your stage, so
+   nothing will stop you; the owner compares the folder with the committed
+   one afterwards, and any change to an existing file sends the whole stage
+   back.
+
+3. **You write seven new test files and the helper file, and nothing else.**
+   The files are listed below, each with the tests it must hold, **under the
+   names given**: the lists of rule 4 and the mutation check go by name. Split
+   a named test into parameter cases as the text says. If you add a test of
+   your own, say so in your final report, with the list of rule 4 it belongs
+   to.
+
+4. **Which tests fail today and which pass today is fixed, by name.** The
+   lists are at the end of this section. A test on the red list fails against
+   the application as it stands, in every one of its parameter cases, because
+   the application does not yet do what D44 to D48 decided. A test on the
+   green list passes today in every case: it guards something the application
+   already gets right. Run the new files before you finish and compare with
+   the lists. **Do not weaken a guard to make it fail, and do not weaken a red
+   test to make it pass.** If a test on the green list fails, or one on the red
+   list passes, and you believe your test is what the spec says, stop and
+   report it with the output.
+
+5. **Every guard must fail on its variant, and `verify/mutation_check.py` is
+   how that will be judged.** The owner runs it after your stage. It runs the
+   whole suite against a copy of the reference implementation
+   (`verify/reference/`, a second correct implementation, whose random split
+   differs from the application's), and again with the reference broken in
+   one way at a time: twelve forms the gate also catches (F1 to F8, F6b, F6c,
+   F6d, F7b) and seven smaller faults (M1 to M7; spec 8 and 8.1). It passes
+   only if:
+   - **the good reference fails none of your tests.** A test that passes
+     against the application and fails against the reference has pinned
+     something the spec leaves open (spec 11): row numbers a seed produces,
+     the wording of a message, the order of warnings, how a number is
+     formatted;
+   - **every variant fails at least one test.** The three guards of this pass
+     are each named for one: the guard of `test_guard_header_lines.py` must
+     fail on F6d, `test_a_prediction_that_is_not_finite_counts_as_raising` on
+     M6, and `test_fast_error_stands_when_the_full_profile_would_run` on M7.
+     M6 is caught by no other test.
+
+   You may run it yourself, from the repo root, with the project interpreter:
+   `E:\CODE\ml-professor\mlprof_env\Scripts\python.exe verify/mutation_check.py --jobs 7`,
+   about five minutes. It writes nothing inside the repo. Do not read the
+   reference implementation to tune a test to it. The README test of this pass
+   goes in a file named `tests/test_readme_fast_profile.py`: files named
+   `tests/test_readme*.py` are shown on a line of their own and not counted.
+
+6. **Assert on the values as the application produced them (D44).** The fault
+   this pass exists for was a number that was not finite, written as null,
+   and no test could see it: `h.plain`, `h.records`, `h.models_of` and
+   `c.assert_strict_json` all read NaN as null before anything is asserted.
+   In this pass, where a test asserts that a number is a number, or that a
+   field is null, it reads `result.headline`, `result.to_dict()` or the parsed
+   `profile.json` **directly**, and asserts the type: a finite `float` or
+   `int` that is not a `bool`, or `None`. It never passes the result through
+   a helper that turns NaN into `None` first. The earlier helpers stay in use
+   for what they are good at: row positions, warning codes, column records of
+   whole numbers.
+
+7. **The rules of the earlier passes still hold**: the documented surface only
+   (spec 2.1 to 2.7); pin what the spec pins and nothing else; recompute, do
+   not trust; no skipped or expected-to-fail test; nothing written outside
+   `tmp_path`; the application imported inside test functions; the command
+   line run one process at a time through `mlp_helpers.run_cli`. Tiny tables,
+   with two exceptions this pass needs: the fast profile's cap is 2,000 rows,
+   so the tables of `test_fast_profile_error.py` have 3,000 to 30,000 rows
+   (one numeric feature, a recording family through the seam: under two
+   seconds each); and `test_non_finite.py` uses 400 rows where the text says
+   so. The seven files start five processes between them and run in under
+   twenty seconds. For "white space" use spaces and tabs only, as in the
+   second pass.
+
+## Files of the third pass
+
+Each file belongs to exactly one task of `plan/tasks.json`.
+
+| File | Task | About | Today |
+|---|---|---|---|
+| `tests/test_guard_header_lines.py` | T24 | G: a line pandas reads as the header, before a two-column header | green |
+| `tests/test_non_finite.py` | T25 | A: no number that is not finite (D44); a feature value too large, a complex target (D48) | red, one test green |
+| `tests/test_target_white_space.py` | T26 | D: white space round a target value (D46); a target cell of only white space (D48) | red |
+| `tests/test_seed_range.py` | T27 | B: the seed's range (D45) | red |
+| `tests/test_fast_profile_error.py` | T28 | E: the fast profile's error (D46) | one test red, one green |
+| `tests/test_summary_digits.py` | T29 | C: the console summary's significant digits (D46) | red |
+| `tests/test_readme_fast_profile.py` | T30 | F: which rows the fast profile keeps (D46) | red |
+| `tests/cp4_helpers.py` | none | shared helpers of the third pass; holds no test | |
+
+### `tests/cp4_helpers.py`
+
+Import `mlp_helpers as h` and `cp3_helpers as c` and build on them; do not copy
+from them. What the new files need, so build it once here:
+
+- **`assert_raw_numbers(result)`**: every number of a finished run is finite,
+  and a null stands only where spec 5.2 says one may. It reads
+  `result.to_dict()` and `result.headline` as they are (rule 6). In detail:
+  no `float` anywhere in `to_dict()` is NaN or infinite, and
+  `json.dumps(result.to_dict(), allow_nan=False)` works without any
+  conversion; `headline.score`, `baseline_score` and `interval_level` are
+  numbers; `headline.skill` is a number, or it is `None` and then
+  `baseline_score == 0` and there is exactly one `skill_undefined` warning;
+  `interval_low` and `interval_high` are numbers when `interval_method` is
+  not `None`, and otherwise both `None` with a non-empty `interval_reason`;
+  `skill_low` and `skill_high` are both numbers or both `None`; `p_value` is
+  a number **only if `skill` is a number**, and when it is `None` so is
+  `n_permutations` and `p_value_reason` is a non-empty string; every
+  `baselines[].score` is a number; every configuration with status `fitted`
+  has a number for `cv_mean`, a number for each fold that
+  `validation.folds[].scored` marks as scored (and `None` for the others),
+  and a number for `cv_std` when two folds or more were scored; every
+  configuration with status `failed` has a non-empty `error`;
+  `cv.chosen_mean` and `validation.holdout_share` are numbers; every `y_pred`
+  of `result.predictions` is finite. "A number" is an `int` or a `float`
+  (numpy's included), not a `bool`, and finite.
+- **`shown4(value, text)`**: the console summary's rule (spec 2.2). A value
+  counts as shown when some number in `text` (found with
+  `c.numbers_in`, which reads an exponent) is within 0.0005 × |value| of it.
+  For a value of exactly 0 that asks for a printed number equal to 0.
+- **Table builders**: `reg_table(n, seed)`, `h.reg_frame` with 20.0 added to
+  the target and a first column `t` of `0.0, 1.0, …` (a numeric time column,
+  unique, in file order); `panel(n_times, per_time, seed)`, a regression table
+  of `per_time` rows on each of `n_times` numeric timestamps `t`, one numeric
+  feature `x1` and a target `y = x1 + noise` (**draw `x1` and the noise from
+  one generator, one after the other**: two generators from the same seed
+  give the same numbers, the target becomes twice the feature, and the run
+  stops with `no_features`); and the constants `LARGEST_DOUBLE =
+  1.7976931348623157e308` and `LARGEST_FLOAT32 = 3.4028234663852886e38`.
+
+## G: lines pandas reads as the header (task T24; green today)
+
+### `tests/test_guard_header_lines.py`
+
+Spec: section 6, section 9. The second pass tested a line of two quotes and a
+line of a form feed before a header of three names. The second review asked
+for the three lines below before a header of **two**, where pandas makes a
+plain index of the one leading field. The application and the reference both
+stop with `input_error` on all three (measured 2026-11-20).
+
+- `test_a_line_pandas_reads_as_the_header_before_a_two_column_header_is_an_input_error`,
+  one case each for a first line of: a form feed (`\f`); a no-break space
+  (U+00A0, written as UTF-8); two quotes round a space (`" "`). After it, a
+  header `a,y` and 160 rows of two fields. Assert first what pandas does with
+  the file, so that the test says why it exists: `pandas.read_csv` returns
+  one column and 161 rows. Then `stages.load_table` raises `InputError`, and
+  `profile()` raises `InputError` and writes nothing into `out_dir`.
+
+  This guard fails on F6d, the reference with its check for long rows taken
+  out: there the file loads with one column, and `profile()` ends in
+  `column_not_found`. To pandas these files *are* files whose rows are longer
+  than the header.
+
+## A: no number that is not finite (task T25)
+
+### `tests/test_non_finite.py`
+
+Spec: section 3 ("Numbers that are not finite", steps 4, 5, 8 to 13), 2.4,
+2.5, 2.7, 5.1, 5.2. Regression unless stated; fast profile; a recording family
+through the seam (`h.family("rec", log)`) wherever the default models are not
+the point. `k` below is `cp4_helpers`.
+
+- `test_error_class_and_code`: `errors.NonFiniteScoreError` subclasses
+  `ProfileError` and its `code` is `non_finite_score`.
+- `test_extreme_target_stops_with_one_named_error_before_any_fit`, six cases:
+  three targets by two schemes. On `k.reg_table(400)`: the cell at row 5 set
+  to `k.LARGEST_DOUBLE`; the cell at row 395 set to it; the whole target
+  multiplied by 1e160. Each under the random scheme and under time order
+  (`time_col="t"`). With a recording family and a recording step: the run
+  raises `NonFiniteScoreError`; the message holds `training_mean` or
+  `previous_value` (the baseline is named as `baselines[].name` spells it);
+  **the log holds no event at all** (the baselines are scored before any
+  fit); nothing is written into `out_dir`. These are the two inputs of the
+  review's first finding. Wherever a split puts the cell the error is the
+  same: the square of a value that size, or of the training mean it makes, is
+  beyond the largest double.
+- `test_extreme_target_through_the_command_line`: the row-395 table as a CSV:
+  exit 3; standard error holds **exactly one line that is not blank**, and it
+  starts `error: non_finite_score:`; nothing is written. (A numpy overflow
+  warning on standard error fails this.)
+- `test_a_target_cell_that_spoils_only_the_folds_stops_before_any_fit`:
+  `k.reg_table(400)` under time order, with the cell at row 120 set to 1e155.
+  The holdout is rows 300 to 399 and row 120 is in the third training block.
+  Assert in the test that both holdout baselines can be scored with room to
+  spare (the squared errors of the training mean add up to less than 1e308;
+  the previous value's error is finite) and that the square of row 120
+  against the mean of rows 0 to 99 is not finite. Then the run raises
+  `NonFiniteScoreError`, its message holds `training_mean` or
+  `previous_value` (which of the screen's two baselines is named is open),
+  and the log holds no event. Use this cell and this row: a cell in the first
+  block overflows only where squared errors are *added up*, which a careful
+  implementation avoids and the spec leaves open.
+- `test_a_fold_score_that_is_not_finite_fails_the_configuration`:
+  `h.reg_frame(240)`, random scheme, two `h.LookupEstimator` families:
+  `far`, which predicts 1e200 for every row, and `sound`, which predicts the
+  target plus a little noise. Read the models from `result.to_dict()`.
+  `far-0`: status `failed`, a non-empty `error`, `fold_scores` five `None`,
+  `cv_mean` and `cv_std` `None`, `chosen` false. `sound-0`: `fitted` and
+  chosen; `headline.model` is `sound-0`; exactly one `model_failed` warning;
+  `k.assert_raw_numbers(result)`.
+- `test_every_fold_score_not_finite_is_all_models_failed`: the `far` family
+  alone: `AllModelsFailedError`, nothing written. Here the cause is the
+  model, not the target, and the list of configurations is the right answer.
+- `test_a_holdout_score_that_is_not_finite_stops_the_run_without_a_fallback`:
+  `h.reg_frame(240)`. Find the holdout rows with a first run. Two
+  `h.LookupEstimator` families sharing one log, given in the order `sound`,
+  `wild`: `wild` predicts the target exactly on every row outside the holdout
+  (so its `cv_mean` is 0, the best) and 1e200 on every holdout row; `sound`
+  predicts the target plus noise. The run raises `NonFiniteScoreError`; the
+  message holds `wild-0`; nothing is written; and the `predict` calls that
+  include a holdout row come from `wild` alone: `sound` is never tried.
+- `test_a_prediction_that_is_not_finite_counts_as_raising` (**green today**;
+  fails on M6). Classification, `h.clf_frame(240)`, random scheme. Find the
+  holdout rows with a first run. Three `h.LookupEstimator` families, in the
+  order `folds_nan`, `sound`, `holdout_nan`: `holdout_nan` predicts
+  0.8 × the target plus noise, so that it ranks first, with NaN on three
+  holdout rows; `folds_nan` predicts NaN on three training rows; `sound`
+  predicts 0.3 × the target plus noise. Run `holdout_nan`'s values without
+  the NaN once, alone, to have its fold scores. Then: `folds_nan-0` is
+  `failed` with five `None` fold scores and a `None` `cv_mean`;
+  `holdout_nan-0` is `failed`, not chosen, with a non-empty `error` and **the
+  same `fold_scores` and `cv_mean` as in the clean run** (D38);
+  `sound-0` is chosen; two `model_failed` warnings; every `y_pred` is finite
+  and equals `sound`'s value for its row; `k.assert_raw_numbers(result)`. Use
+  classification: ROC AUC is a count of ranks and stays finite whatever is
+  predicted, so only this rule keeps a NaN out of `y_pred`.
+- `test_feature_values_too_large_for_the_tree_models_are_read_as_missing`
+  (D48). `h.clf_frame(300)` with two more numeric columns: `big`, normal
+  values with the cells of rows 10, 77 and 150 set to 1e39, −1e200 and
+  `k.LARGEST_DOUBLE`, and row 201 set to infinity; `edge`, normal values with
+  rows 11 and 78 set to 1e38 and −1e38. Run with `c.MatrixEstimator` and
+  `c.keep_step_factory` on one `c.KeepLog`. The run finishes. `big` is a
+  numeric feature with `n_infinite` 4 and `n_imputed` 4; `edge` is a feature
+  with `n_infinite` 0; the `infinite_values` warnings name `big` and nothing
+  else; in every frame a step was fitted on, `big` is NaN at those four rows
+  (where the frame holds them) and `edge` holds 1e38 and −1e38 as they are;
+  every matrix handed to a model's `fit` is finite; `k.assert_raw_numbers`.
+  Stay away from the cut-off, 3.4028234663852886e+38: 1e38 and 1e39 are on
+  either side of it.
+- `test_column_roles_count_too_large_values_with_the_infinite_ones` (D48): the
+  same table through `stages.column_roles`: `big` has `n_infinite` 4 and the
+  role `feature`; `edge` has `n_infinite` 0.
+- `test_preprocessor_reads_infinite_and_too_large_cells_as_missing` (D48):
+  `stages.Preprocessor({"a": "numeric"})` fitted on and applied to a frame
+  whose column `a` is 1, 2, 3, 4, 1e200, infinity, −1e39. The three last
+  cells are missing cells: they take the median of the four, 2.5. The result
+  equals, to 1e-12, the seven values 1, 2, 3, 4, 2.5, 2.5, 2.5 less their
+  mean, divided by their deviation (`numpy.std`), and every value is finite.
+- `test_a_complex_target_is_not_numeric` (D48):
+  `stages.decide_task(pd.Series(np.arange(40) + 2j), task="regression")`
+  raises `TaskUnsupportedError`; the same with `task="auto"` raises
+  `TaskAmbiguousError`; a series of two distinct complex values is
+  classification with `n_distinct` 2. And through `profile()`, on
+  `h.reg_frame(160)` with its target made complex: `task="regression"` raises
+  `TaskUnsupportedError`, `task="auto"` raises `TaskAmbiguousError`.
+- `test_a_target_on_a_very_large_scale_gives_finite_numbers_or_the_named_error`:
+  `h.reg_frame(240)` with the target multiplied by 1e80, default families.
+  Squared errors are near 1e160, which a double holds, and their own squares
+  are not. The spec leaves open whether such a run finishes (spec 11): the
+  test accepts `NonFiniteScoreError`, **or** a result that passes
+  `k.assert_raw_numbers`. Any other error fails it, `AllModelsFailedError`
+  among them, and so does a result with a null where a number belongs. Write
+  it without an early `return`: catch the named error, and call the helper
+  only when there is a result.
+
+## D: white space round a target value (task T26)
+
+### `tests/test_target_white_space.py`
+
+Spec: steps 2 and 4, 2.7, 5.1, 5.2. Classification, `no` and `yes`, random
+scheme, a recording family. All red today.
+
+- `test_a_target_written_with_stray_white_space_has_two_classes`:
+  `h.clf_frame(240, labels=("no", "yes"))`, with every fourth target cell
+  written with white space round it (leading spaces, a trailing space, some
+  with a trailing tab), so that as written the column has more than two
+  values: assert that. With `task="auto"` the run finishes: `task.type` is
+  `classification`, `decided_by` `rule`, `n_distinct` 2, `classes`
+  `["no", "yes"]`, `positive_class` `"yes"`. Every `y_true` equals the clean
+  value of its row. The holdout is `stages.split_random(n, clean values,
+  seed)["holdout"]` (spec 2.7). And the `y` every `fit` of the recording
+  family received is 1 exactly where the clean value is `yes`.
+- `test_every_cell_of_one_class_written_with_a_trailing_space`: every `yes`
+  written `yes `, through a CSV file and `out_dir`: `classes` is
+  `["no", "yes"]` and `positive_class` `"yes"`, in the result and in
+  `profile.json`; the `y_true` cells of `predictions.csv`, read as text, are
+  `no` and `yes` and nothing else.
+- `test_a_target_cell_of_only_white_space_is_a_missing_target` (D48), one case
+  for a DataFrame and one for the same table as a CSV. Five target cells hold
+  only white space (two spaces, a tab, a space-tab-space, three spaces, one
+  space) and two are empty (`None`). Assert that the five load as text
+  (`stages.load_table`). Then `stages.usable_rows` reports
+  `dropped_missing_target` 7 and none of the seven among `usable`; the run
+  finishes with `rows.dropped_missing_target` 7, `classes`
+  `["no", "yes"]`, and none of the seven rows in the predictions.
+- `test_decide_task_reads_text_without_the_white_space_round_it`:
+  `stages.decide_task` on a series of `yes`, `yes `, `no`, ` no`, two spaces,
+  a tab and `yes`, and `None`, repeated: classification by the rule,
+  `n_distinct` 2, `classes` `["no", "yes"]`, `positive_class` `"yes"`.
+- `test_split_random_compares_text_labels_without_white_space`: 200 labels,
+  about 30% `yes`; a second array with white space round every label, so that
+  it has more than two distinct values. `stages.split_random(200, labels,
+  seed)` gives the same holdout, the same training rows and the same five
+  validation parts for both arrays, and the holdout's share of `yes` is
+  within one row of a quarter of them.
+
+A target cell of only white space is a missing target; a *feature* cell of
+only white space is still the level of empty text (D42). Do not test the
+feature side again: `test_guard_final_fit.py` holds it.
+
+## B: the seed's range (task T27)
+
+### `tests/test_seed_range.py`
+
+Spec: 2.1, 2.2, 2.4, 2.7. All red today.
+
+- `test_a_seed_above_the_range_is_an_input_error_before_anything_is_loaded`,
+  one case each for 2³², 2⁶³ and a timestamp-style 20261119123456. With a
+  table whose column names are duplicated (which would raise
+  `DuplicateColumnsError` as soon as it was loaded): `InputError`. With a
+  good table, a recording family and a recording step: `InputError`, no call
+  recorded, nothing written into `out_dir`.
+- `test_the_largest_seed_runs_and_the_next_one_is_refused`: with the seed
+  4,294,967,295 the run finishes, `meta.seed` is that number, and a second
+  run gives the same `to_dict()` apart from `meta.timing`; with 4,294,967,296
+  it raises `InputError`. One test, both sides of the edge.
+- `test_command_line_refuses_a_seed_out_of_range`: `--seed 4294967296`: exit
+  3; standard error holds exactly one line that is not blank, starting
+  `error: input_error:`; the word `Traceback` is nowhere in it; nothing is
+  written.
+- `test_split_random_refuses_a_seed_out_of_range`, one case for 2³² and one
+  for −1: `stages.split_random(120, None, seed)` raises `InputError`.
+
+## E: the fast profile's error (task T28)
+
+### `tests/test_fast_profile_error.py`
+
+Spec: steps 6 and 7, 2.4. Tables from `k.panel`, time order on `t`, a
+recording family, `n_jobs=1`. Compare errors by their `code` and by
+`type(...) is`, never with `pytest.raises` of a parent class alone.
+
+- `test_fast_raises_the_full_profiles_error_when_full_would_stop_too`, three
+  cases: 5 timestamps of 600 rows (`too_few_rows`); 3 timestamps of 2,500
+  rows, where the cap can keep nothing (`too_few_rows`); 9 timestamps of 450
+  rows with `gap=2` (`gap_too_large`). In each: the call with
+  `profile="full"` raises that error; the same call with `profile="fast"`
+  raises an error of **the same class and code**, not
+  `fast_profile_too_few_timestamps`. Red today in every case: the fast call
+  says "use the full profile", and the full profile stops too.
+- `test_fast_error_stands_when_the_full_profile_would_run` (**green today**;
+  fails on M7), two cases: 8 timestamps of 450 rows (too few timestamps after
+  the cap) and 12 timestamps of 2,500 rows (the latest timestamp alone is
+  over the cap). The call with `profile="fast"` raises `FastProfileError`,
+  code `fast_profile_too_few_timestamps`; the same call with
+  `profile="full"` returns a result under the time-ordered scheme with
+  `rows.dropped_row_cap` 0.
+
+Not tested, and left as it was: a fast run whose kept rows do hold six
+training timestamps and whose gap leaves fewer raises `gap_too_large`
+whatever the full profile would do (spec step 7).
+
+## C: the console summary's significant digits (task T29)
+
+### `tests/test_summary_digits.py`
+
+Spec: 2.2. One test, three runs of the command line, fast profile,
+`--n-jobs 1`; read `profile.json` and compare with standard output, using
+`k.shown4`. Red today.
+
+- `test_summary_numbers_agree_with_profile_json_to_four_significant_digits`.
+  For each run, every one of `score`, `baseline_score`, `skill`,
+  `interval_low`, `interval_high`, `skill_low`, `skill_high` and `p_value`
+  that is not null is shown.
+  - `h.reg_frame(240)` with the target multiplied by 1e-4: assert the score
+    is below 1e-6, so the table is doing its job. This is the review's case:
+    today the summary prints `mse 0.0000 … baseline 0.0000`.
+  - the same with the target multiplied by 1e6: the score is above 1e9.
+  - a flat holdout under time order (`h.time_frame(240)` with the target 0.0
+    from row 150 on and a numeric time column): `baseline_score` is exactly 0
+    and is shown as a zero; `skill` is null and needs no number.
+
+  Keep it one test: the second and third runs alone would pass today on some
+  of their numbers, and rule 4 wants a red test red in every case. (Today the
+  p-value fails at every scale too: 0.004975 is printed `0.0050`.)
+
+The second pass's `test_console_summary.py` uses the older, weaker rule and
+stays as it is: a summary that meets the new rule meets the old one.
+
+## F: the README (task T30)
+
+### `tests/test_readme_fast_profile.py`
+
+Spec: step 6. The README says of the fast profile's 2,000 rows that "the rows
+kept are chosen from the seed". That is the random scheme only: under time
+order they are the most recent whole timestamps. Red today.
+
+- `test_readme_says_which_rows_the_fast_profile_keeps_under_each_scheme`.
+  Take the blocks of `README.md` (paragraphs, and each list item as a block
+  of its own) that mention the cap: `2,000` or `2000`. Assert there is one.
+  In the text of those blocks, joined, look for two ideas, not for a
+  sentence: the random rule, a word of `seed`, `random`, `randomly`; and the
+  time-ordered rule, a word of `most recent`, `latest`, `newest`, `last`
+  together with a word of `timestamp(s)`, `date(s)`, `day(s)`. Both must be
+  there. Today the first is and the second is not. Match whole words, case
+  ignored. Pin no wording beyond these.
+
+Do not edit `README.md`: it belongs to the builder.
+
+## What must fail today, and what must pass today
+
+Checked on 2026-11-20 with prototypes of every test below, run against the
+application as it stands, against the reference implementation, and against
+the reference carrying F6d, M6 and M7 (`docs/measurements/CP4/README.md`).
+
+**Red today: 24 tests, 35 cases.** They fail against the application until
+the build stage has done D44 to D48, and pass against the reference.
+
+| File | Tests |
+|---|---|
+| `test_non_finite.py` | `test_error_class_and_code`, `test_extreme_target_stops_with_one_named_error_before_any_fit`, `test_extreme_target_through_the_command_line`, `test_a_target_cell_that_spoils_only_the_folds_stops_before_any_fit`, `test_a_fold_score_that_is_not_finite_fails_the_configuration`, `test_every_fold_score_not_finite_is_all_models_failed`, `test_a_holdout_score_that_is_not_finite_stops_the_run_without_a_fallback`, `test_feature_values_too_large_for_the_tree_models_are_read_as_missing`, `test_column_roles_count_too_large_values_with_the_infinite_ones`, `test_preprocessor_reads_infinite_and_too_large_cells_as_missing`, `test_a_complex_target_is_not_numeric`, `test_a_target_on_a_very_large_scale_gives_finite_numbers_or_the_named_error` |
+| `test_target_white_space.py` | `test_a_target_written_with_stray_white_space_has_two_classes`, `test_every_cell_of_one_class_written_with_a_trailing_space`, `test_a_target_cell_of_only_white_space_is_a_missing_target`, `test_decide_task_reads_text_without_the_white_space_round_it`, `test_split_random_compares_text_labels_without_white_space` |
+| `test_seed_range.py` | `test_a_seed_above_the_range_is_an_input_error_before_anything_is_loaded`, `test_the_largest_seed_runs_and_the_next_one_is_refused`, `test_command_line_refuses_a_seed_out_of_range`, `test_split_random_refuses_a_seed_out_of_range` |
+| `test_fast_profile_error.py` | `test_fast_raises_the_full_profiles_error_when_full_would_stop_too` |
+| `test_summary_digits.py` | `test_summary_numbers_agree_with_profile_json_to_four_significant_digits` |
+| `test_readme_fast_profile.py` | `test_readme_says_which_rows_the_fast_profile_keeps_under_each_scheme` |
+
+The test of `test_readme_fast_profile.py` is red against the reference too,
+until T30 is built: it judges `README.md`, not the package. Several tests of
+`test_non_finite.py` fail today only because `errors.NonFiniteScoreError`
+does not exist yet; once it does they fail for their real reason, a run that
+finishes where it must stop.
+
+**Green today: 3 tests, 6 cases.** They pass against the application and
+against the reference, and must go on passing through every task of the
+build.
+
+| File | Test | Fails on |
+|---|---|---|
+| `test_guard_header_lines.py` | `test_a_line_pandas_reads_as_the_header_before_a_two_column_header_is_an_input_error` | F6d, in all three cases |
+| `test_non_finite.py` | `test_a_prediction_that_is_not_finite_counts_as_raising` | M6 |
+| `test_fast_profile_error.py` | `test_fast_error_stands_when_the_full_profile_would_run` | M7, in both cases |
+
+**What the mutation check must then print**, run after your stage and before
+the build: the good reference fails 0 of 405 (the 365 counted today and 40 of
+the 41 new cases); each of F1 to F8, F6b, F6c, F6d, F7b and M1 to M7 fails at
+least one test, the three guards above among them; on the README line, 1
+failing of 6. Before your stage it prints `M6 … NOT CAUGHT` and ends in
+`FAIL`: that is the hole this pass's guard closes.
+
+## Not tested in the third pass
+
+That the summary reads well, and how it formats a number beyond four
+significant digits. The wording of any message. A number that is not finite
+arising in the panel's autocorrelation, in a column's own error in the leak
+screen, or in the skill of a run whose baseline error is tiny: each stops the
+run by the spec, and each needs a table at the very edge of the double range
+whose outcome depends on how an implementation adds up (spec 11). That the
+previous value exists for every validation and holdout row: it follows from
+the split's own rule (spec step 8) and no input reaches the other case. The
+fast profile's `gap_too_large` on rows that do hold six training timestamps.
+A missing value among the `classes` handed to `stages.split_random`. The
+gate's self-test and its run folder, which are the gate's own business.

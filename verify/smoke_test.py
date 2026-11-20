@@ -15,11 +15,25 @@ Named silent failures (docs/DECISIONS.md D13; spec.md "Failure modes"):
   F3 the headline is a cross-validation score F7 time order is ignored
   F4 accuracy is the headline                F8 only the training-mean baseline
 
+F6 and F7 each have more than one form, and one broken fixture cannot fail
+every check of its family. The other forms have fixtures of their own (D46):
+  F6b a column is lost from the accounting    F6d a long row is read silently
+  F6c a model family is lost from the table   F7b a day-first date is parsed leniently
+
+The self-test proves more than gatekit asks. gatekit accepts a failure mode as
+soon as one check that names it fails on its fixture. Here every check that
+names a mode must fail on that mode's own fixture, and the self-test prints
+the table that shows it (see `ProvenGate`).
+
 The judge's own arithmetic (ROC AUC, squared error, row counts, which rows are
 the holdout) is standard library only, so it shares no bug with pandas, numpy
 or scikit-learn. Every score is asserted as a band; every band was measured on
 the reference implementation in verify/reference/ over 30 data seeds, and the
 measurements are written beside it.
+
+The files a run reads are kept: verify/artifacts/runs/<run>/ for a gate run on
+a build, verify/artifacts/selftest_runs/<fixture>/<run>/ for the self-test, so
+that a self-test never overwrites the files a builder is told to read (D46).
 
 Usage
     python verify/smoke_test.py mlprofessor [--only id,id] [--fast] [--json]
@@ -33,6 +47,7 @@ import json
 import math
 import os
 import random
+import re
 import shutil
 import subprocess
 import sys
@@ -42,9 +57,143 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from gatekit import CheckFailed, Gate, HarnessError  # noqa: E402
+from gatekit import EXIT_FAIL, EXIT_PASS, CheckFailed, Gate, HarnessError  # noqa: E402
 
-gate = Gate("mlprofessor")
+
+def fixture_name(deliverable):
+    """Which fixture a deliverable is: `good`, a failure-mode id, or None for a build.
+
+    A fixture is a copy of the reference implementation, and its `_variant.py`
+    says which fault it carries. A build has no such file.
+    """
+    try:
+        text = (Path(deliverable) / "_variant.py").read_text(encoding="utf-8")
+    except OSError:
+        return None
+    found = re.search(r"^BROKEN\s*=\s*(None|'[^']*'|\"[^\"]*\")\s*$", text, re.M)
+    if not found:
+        return None
+    return "good" if found.group(1) == "None" else found.group(1)[1:-1]
+
+
+class _HeldVerdict:
+    """Standard output for the length of a self-test.
+
+    Every line goes straight through, except gatekit's verdict, its last line,
+    which is kept back: the proof table is printed above it, and the verdict
+    stays the last line of the self-test, where the loop's doctor reads it.
+    """
+
+    def __init__(self, stream):
+        self.stream, self.verdict, self._partial = stream, [], ""
+
+    def write(self, text):
+        self._partial += text
+        while "\n" in self._partial:
+            line, self._partial = self._partial.split("\n", 1)
+            if line.startswith("SELFTEST: "):
+                self.verdict.append(line)
+            else:
+                self.stream.write(line + "\n")
+        return len(text)
+
+    def flush(self):
+        self.stream.flush()
+
+    def release(self):
+        if self._partial:
+            self.stream.write(self._partial)
+            self._partial = ""
+        self.stream.flush()
+
+
+class ProvenGate(Gate):
+    """gatekit's gate, with a self-test that also proves every `catches`.
+
+    gatekit's self-test passes a failure mode when any one check that names it
+    fails on its fixture. A check could therefore name a mode and never have
+    been seen to fail: the second review found four (D46). This self-test adds
+    the stricter rule: **every check that names a failure mode fails on that
+    mode's own fixture, in every run of it** (a fixture is run from a temporary
+    folder and from the project folder). It prints the table that proves it,
+    and a second table, for information only, of the checks that give a `why`
+    in place of a failure mode and the fixtures they failed on.
+
+    gatekit is a kit file and is not changed: this class only watches the runs
+    the self-test makes, and keeps gatekit's verdict line back so that it is
+    still the last line printed.
+    """
+
+    _watching = None        # fixture name -> the checks that failed, one set per full run
+
+    def run(self, deliverable, only=None, fast=False):
+        results = super().run(deliverable, only=only, fast=fast)
+        if self._watching is not None and only is None and not fast:
+            self._watching.setdefault(fixture_name(deliverable), []).append(
+                {r["id"] for r in results if not r["ok"]})
+        return results
+
+    def selftest(self):
+        self._watching = {}
+        held = _HeldVerdict(sys.stdout)
+        sys.stdout = held
+        try:
+            code = super().selftest()
+        finally:
+            sys.stdout = held.stream
+            held.release()
+            seen, self._watching = self._watching, None
+        unproved = self._print_proof(seen) if seen else []
+        if code == EXIT_PASS and unproved:
+            for check_id, mode in unproved:
+                print(f"SELFTEST DEFECT: check '{check_id}' names {mode} and did not fail on "
+                      f"the {mode} fixture in every run of it. A check that names a failure "
+                      "mode must be seen to fail on it: fix the check, give the form a "
+                      "fixture of its own, or correct catches=[...].")
+            print(f"SELFTEST: FAIL ({len(unproved)} defect(s))")
+            return EXIT_FAIL
+        for line in held.verdict:
+            print(line)
+        return code
+
+    def _print_proof(self, seen):
+        """Print both tables. Returns the (check, mode) pairs that were not proved."""
+        modes = list(self._modes)
+        runs = {mode: seen.get(mode, []) for mode in modes}
+        always = {m: set.intersection(*runs[m]) if runs[m] else set() for m in modes}
+        ever = {m: set().union(*runs[m]) if runs[m] else set() for m in modes}
+        unproved = []
+        print("\nPROOF: every check that names a failure mode, run on that mode's own fixture")
+        print("| Check | Names | Failed on that fixture | Also failed on the fixture of |")
+        print("|---|---|---|---|")
+        for entry in self._checks.values():
+            if not entry["catches"]:
+                continue
+            verdicts = []
+            for mode in entry["catches"]:
+                proved = bool(runs[mode]) and entry["id"] in always[mode]
+                verdicts.append(f"{mode}: yes, {len(runs[mode])} of {len(runs[mode])} runs"
+                                if proved else f"{mode}: NO")
+                if not proved:
+                    unproved.append((entry["id"], mode))
+            others = [m for m in modes if m not in entry["catches"] and entry["id"] in ever[m]]
+            print(f"| {entry['id']} | {', '.join(entry['catches'])} | {'; '.join(verdicts)} | "
+                  f"{', '.join(others) or '-'} |")
+        pairs = sum(len(c["catches"]) for c in self._checks.values())
+        print(f"{pairs - len(unproved)} of {pairs} pairs of a check and a failure mode it names "
+              f"were seen failing, over {len(modes)} broken fixtures.")
+        print("\nFOR INFORMATION: checks that give a reason in place of a failure mode, and the "
+              "broken fixtures they failed on (no part of the verdict)")
+        print("| Check | Failed on the fixture of |")
+        print("|---|---|")
+        for entry in self._checks.values():
+            if not entry["catches"]:
+                on = [m for m in modes if entry["id"] in ever[m]]
+                print(f"| {entry['id']} | {', '.join(on) or 'none: never seen to fail here'} |")
+        return unproved
+
+
+gate = ProvenGate("mlprofessor")
 
 HERE = Path(__file__).resolve().parent
 REFERENCE = HERE / "reference" / "mlprofessor"
@@ -868,13 +1017,28 @@ def recomputed_auc(result, positive):
                [guess for _, _, guess in result["predictions"]])
 
 
+def _runs_dir(ctx):
+    """The folder this invocation's tool runs write into.
+
+    A gate run on a build writes to verify/artifacts/runs, the folder a failure
+    message and CLAUDE.md send the builder to. The self-test runs the reference
+    and twelve broken copies of it through the same checks; it writes to a folder
+    per fixture under verify/artifacts/selftest_runs, so that after it `runs/`
+    still holds the last gate run on the build and not a broken fixture's output
+    (D46; second review, finding 6).
+    """
+    if "--selftest" in sys.argv[1:]:
+        return ctx.artifacts / "selftest_runs" / (fixture_name(ctx.deliverable) or "unnamed")
+    return ctx.artifacts / "runs"
+
+
 @gate.setup
 def prepare(ctx):
     for module in ("pandas", "numpy", "sklearn", "threadpoolctl"):
         if importlib.util.find_spec(module) is None:
             ctx.harness_error(f"the interpreter {sys.executable} cannot import {module}; the "
                               "modelling stack recorded in CLAUDE.md is not installed")
-    data, runs_dir = ctx.artifacts / "data", ctx.artifacts / "runs"
+    data, runs_dir = ctx.artifacts / "data", _runs_dir(ctx)
     try:
         for folder in (data, runs_dir):
             folder.mkdir(parents=True, exist_ok=True)
@@ -997,7 +1161,7 @@ ROLE_HINTS = {
 }
 
 
-@gate.check("data.columns_accounted", catches=["F6"],
+@gate.check("data.columns_accounted", catches=["F6b"],
             doc="every source column appears exactly once, with the expected role and reason")
 def data_columns_accounted(ctx):
     result = outputs(ctx, "messy")
@@ -1087,7 +1251,7 @@ def _parses(cell):
         return False
 
 
-@gate.check("data.long_rows_stop", catches=["F6"],
+@gate.check("data.long_rows_stop", catches=["F6d"],
             doc="data rows one field longer than the header stop with the named input error")
 def data_long_rows_stop(ctx):
     stopped(ctx, "long_rows", "input_error",
@@ -1098,7 +1262,7 @@ def data_long_rows_stop(ctx):
             "and that column is lost with nothing said. The index cannot show the fault")
 
 
-@gate.check("models.all_accounted", catches=["F6"],
+@gate.check("models.all_accounted", catches=["F6c"],
             doc="the models table lists every family of the profile, each with a status")
 def models_all_accounted(ctx):
     result = outputs(ctx, "signal_clf")
@@ -1523,7 +1687,7 @@ def time_gap_applied(ctx):
                 "to the folds as well as to the holdout")
 
 
-@gate.check("time.dayfirst_stops", catches=["F7"],
+@gate.check("time.dayfirst_stops", catches=["F7b"],
             doc="a day/month/year time column stops with the named time-column error")
 def time_dayfirst_stops(ctx):
     stopped(ctx, "time_dayfirst", "time_column_invalid",
@@ -1994,6 +2158,35 @@ def broken_shuffled_split(tmp):
 @gate.failure_mode("F8", "the regression baseline is always the training mean")
 def broken_mean_baseline(tmp):
     return _fixture(tmp, "F8")
+
+
+# The other forms of F6 and F7 (D46). The F6 fixture loses rows and the F7 fixture
+# shuffles the split; neither fails the four checks below, which had therefore never
+# been seen to fail (second review, finding 4). Each form has a fixture of its own,
+# under an id that shows its family, and each check names the form it was seen to
+# catch. Registered after F1 to F8, so the order of those in the matrix stays.
+
+@gate.failure_mode("F6b", "a column is lost from the accounting (constant columns are dropped "
+                          "with no record)")
+def broken_column_lost(tmp):
+    return _fixture(tmp, "F6b")
+
+
+@gate.failure_mode("F6c", "a model family is lost from the models table (only the chosen "
+                          "configuration's family is listed)")
+def broken_family_lost(tmp):
+    return _fixture(tmp, "F6c")
+
+
+@gate.failure_mode("F6d", "data rows longer than the header are read silently, with no error")
+def broken_long_rows_read(tmp):
+    return _fixture(tmp, "F6d")
+
+
+@gate.failure_mode("F7b", "a day-first time column is parsed leniently, so the run goes ahead "
+                          "on the wrong order")
+def broken_lenient_dates(tmp):
+    return _fixture(tmp, "F7b")
 
 
 if __name__ == "__main__":

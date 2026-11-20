@@ -1,15 +1,16 @@
 """Reference implementation of spec.md, in the spec's order of operations.
 
-Judge fixture: the gate measures its bands on this code and breaks it in eight
-named ways; the test suite is proved against five smaller faults (see
-_variant.py). One module on purpose, so each step of the methodology can be
-read top to bottom in `_run`.
+Judge fixture: the gate measures its bands on this code and breaks it in twelve
+named ways; the test suite is proved against those and against seven smaller
+faults (see _variant.py). One module on purpose, so each step of the
+methodology can be read top to bottom in `_run`.
 """
 from __future__ import annotations
 
 import codecs
 import csv
 import json
+import math
 import os
 import platform
 import re
@@ -53,6 +54,11 @@ AUTOCORR = 0.5              # lag-1 autocorrelation of the per-timestamp mean ta
 MAX_LEVELS = 30             # one-hot levels kept per categorical column
 RESAMPLES = {"full": 1000, "fast": 200}
 MISSING_LEVEL = "(missing)"
+MAX_SEED = 2 ** 32 - 1      # the largest seed scikit-learn takes (D45)
+# The largest 32-bit float, 3.4028234663852886e+38. scikit-learn's trees and forests
+# read their input as 32-bit floats and raise on anything beyond; a feature value of
+# greater magnitude is read as an infinite one is: missing, counted, warned (D48).
+TOO_LARGE = float(np.finfo(np.float32).max)
 
 LINEAR_C = [1.0, 0.001, 0.01, 0.1, 10.0, 100.0]
 LINEAR_ALPHA = [1.0, 0.01, 0.1, 10.0, 100.0, 1000.0]
@@ -177,9 +183,9 @@ def profile(data, target, task="auto", time_col=None, gap=0, profile="full", see
         raise E.InputError(f"task must be auto, classification or regression, not {task!r}")
     if profile not in ("full", "fast"):
         raise E.InputError(f"profile must be full or fast, not {profile!r}")
-    for name, value, low in (("gap", gap, 0), ("seed", seed, 0)):
-        if isinstance(value, bool) or not isinstance(value, (int, np.integer)) or value < low:
-            raise E.InputError(f"{name} must be a whole number of at least {low}, not {value!r}")
+    if isinstance(gap, bool) or not isinstance(gap, (int, np.integer)) or gap < 0:
+        raise E.InputError(f"gap must be a whole number of at least 0, not {gap!r}")
+    _check_seed(seed)                       # before anything is loaded (D45)
     if isinstance(n_jobs, bool) or not isinstance(n_jobs, (int, np.integer)) \
             or not (n_jobs == -1 or n_jobs >= 1):
         raise E.InputError(f"n_jobs must be -1 or a positive whole number, not {n_jobs!r}")
@@ -207,6 +213,27 @@ def profile(data, target, task="auto", time_col=None, gap=0, profile="full", see
 
 def _warn(warnings, code, message, column=None):
     warnings.append({"code": code, "column": column, "message": message})
+
+
+def _check_seed(seed):
+    """D45: a whole number from 0 to 2**32 - 1. A larger seed is never folded down:
+    two seeds would then give one run, silently."""
+    if isinstance(seed, bool) or not isinstance(seed, (int, np.integer)) \
+            or not 0 <= seed <= MAX_SEED:
+        raise E.InputError(f"seed must be a whole number from 0 to {MAX_SEED} (2**32 - 1), "
+                           f"not {seed!r}")
+
+
+def _not_finite(what, value, cause):
+    """D44: the named error for a number the result rests on that is not finite."""
+    return E.NonFiniteScoreError(
+        f"{what} is not a finite number ({value!r}), so it is not reported. Likely cause: "
+        f"{cause}. Nothing was written")
+
+
+TARGET_CAUSE = ("a target value too large for squared error: the square of a value of about "
+                "1e154 or more is beyond the largest number a double can hold. Look for a "
+                "sentinel such as 1.8e308 in the target, or rescale it")
 
 
 def _check_out_dir(out_dir):
@@ -287,7 +314,8 @@ def _load(data, warnings):
             # than the header and names the fields after them. The index it returns
             # does not show that: for row numbers it is a RangeIndex, like the default.
             # A later row longer than the first data row is pandas' own ParserError.
-            if len(first) > len(header):
+            # F6d: the check is gone, and pandas reads the file without a word.
+            if len(first) > len(header) and BROKEN != "F6d":
                 raise E.InputError(
                     f"{data}: the first data row has {len(first)} fields and the header has "
                     f"{len(header)}; a data row may not have more fields than the header")
@@ -327,6 +355,15 @@ def _time_keys(series, name):
     if (pt.is_string_dtype(dtype) or dtype == object) and all(isinstance(v, str) for v in present):
         text = present.str.strip()
         ok = text.map(lambda v: ISO_TIME_RE.fullmatch(v) is not None)
+        if not ok.all() and BROKEN == "F7b":
+            # Parsed leniently, value by value: 01/12/2023 becomes 12 January and
+            # 13/12/2023 becomes 13 December, so the rows are in the wrong order.
+            with _pywarnings.catch_warnings():
+                _pywarnings.simplefilter("ignore")
+                parsed = pd.to_datetime(text, format="mixed", dayfirst=False)
+            stamps = np.full(len(series), np.datetime64("NaT", "ns"), dtype="datetime64[ns]")
+            stamps[series.notna().to_numpy()] = parsed.to_numpy("datetime64[ns]")
+            return stamps.astype("int64"), np.isnat(stamps), "iso8601", _show_stamp
         if not ok.all():
             raise E.TimeColumnError(
                 f"time column {name!r} holds text that is not ISO 8601 with the year first "
@@ -354,10 +391,36 @@ def _show_stamp(key):
     return pd.Timestamp(int(key)).isoformat()
 
 
+def _is_numeric(dtype):
+    """Integer or float type. Boolean is not numeric here, and nor is complex (D48):
+    turning a complex number into a float would drop its imaginary part in silence."""
+    return pt.is_numeric_dtype(dtype) and not pt.is_bool_dtype(dtype) \
+        and not pt.is_complex_dtype(dtype)
+
+
+def _target_values(series):
+    """The target as every step reads it.
+
+    A text value is taken without the white space round it, so `yes` and `yes `
+    are one class (D46). A text value that holds only white space is a missing
+    target, like an empty cell (D48). A value that is not text is as it is.
+    """
+    cells = series.to_numpy(dtype=object)
+    if not any(isinstance(v, str) for v in cells):
+        return series
+    if pt.is_string_dtype(series.dtype) and not isinstance(series.dtype, pd.CategoricalDtype) \
+            and series.dtype != object:
+        stripped = series.str.strip()
+        return stripped.mask(stripped == "")
+    read = [v.strip() if isinstance(v, str) else v for v in cells]
+    return pd.Series([None if isinstance(v, str) and v == "" else v for v in read],
+                     index=series.index, dtype=object, name=series.name)
+
+
 def _decide_task(y, name, requested):
     """Step 4 (D4, D21): classification or regression, and how that was decided."""
     n_distinct = int(y.nunique())
-    numeric = pt.is_numeric_dtype(y.dtype) and not pt.is_bool_dtype(y.dtype)
+    numeric = _is_numeric(y.dtype)
     if n_distinct < 2:
         raise E.TargetConstantError(f"target {name!r} has {n_distinct} distinct value(s)")
     if requested == "auto":
@@ -382,11 +445,14 @@ def _decide_task(y, name, requested):
 
 
 def _no_target(series):
-    """Step 2: which target cells are missing or, for a numeric target, infinite."""
+    """Step 2: which target cells are missing or, for a numeric target, infinite.
+
+    `series` is the target as `_target_values` reads it, so a text cell of only
+    white space is already missing here.
+    """
     gone = series.isna().to_numpy().copy()
-    if pt.is_numeric_dtype(series.dtype) and not pt.is_bool_dtype(series.dtype):
-        gone |= ~np.isfinite(pd.to_numeric(series, errors="coerce")
-                             .to_numpy(dtype="float64", na_value=np.nan))
+    if _is_numeric(series.dtype):
+        gone |= ~np.isfinite(series.to_numpy(dtype="float64", na_value=np.nan))
     return gone
 
 
@@ -478,7 +544,9 @@ def _roles(df, usable, target, time_col):
             rec.update(role="excluded", reason="unsupported_type")
         if numbers is not None:
             rec["kind"] = "numeric"
-            infinite = np.isinf(numbers)
+            # Infinite, or finite and too large for the 32-bit floats the tree models
+            # read: one rule, by value. Read as missing, and counted (D48).
+            infinite = np.abs(numbers) > TOO_LARGE
             rec["n_infinite"] = int(infinite.sum())
             numbers = np.where(infinite, np.nan, numbers)
             seen = numbers[usable]
@@ -493,10 +561,12 @@ def _roles(df, usable, target, time_col):
                 prepared[name] = numbers
         elif levels is not None:
             prepared[name] = levels
+    if BROKEN == "F6b":                     # a constant column vanishes from the accounting
+        records = [r for r in records if r["reason"] != "constant"]
     return records, prepared
 
 
-def _split_time(keys, gap, capped):
+def _split_time(keys, gap):
     """Step 7 under time order (D7). `keys` is sorted. Returns index arrays."""
     stamps, first, counts = np.unique(keys, return_index=True, return_counts=True)
     n, total = len(keys), len(stamps)
@@ -505,12 +575,8 @@ def _split_time(keys, gap, capped):
         h -= 1
         held += counts[h]
     if h < N_BLOCKS:
-        if capped:
-            raise E.FastProfileError(
-                f"the {n} most recent rows hold {total} distinct timestamps, too few to form "
-                "the holdout and six training blocks. Use profile='full'")
-        raise E.TooFewRowsError(f"{total} distinct timestamps are too few to form the holdout "
-                                "and six training blocks")
+        raise E.TooFewRowsError(f"{n} rows hold {total} distinct timestamps, too few to form "
+                                "the holdout and six training blocks")
     if h - gap < N_BLOCKS:
         raise E.GapError(f"gap={gap} leaves {max(h - gap, 0)} training timestamps; six blocks "
                          "need at least six")
@@ -535,6 +601,25 @@ def _split_time(keys, gap, capped):
         "n_train_stamps": int(h - gap), "n_holdout_stamps": int(total - h),
         "unique": bool(counts.max() == 1),
     }
+
+
+def _fast_profile_stop(all_keys, gap, found):
+    """The error for a fast run whose capped rows cannot form the split (D20, D46).
+
+    `all_keys` are the keys of every usable row, in time order: what the full
+    profile would split. If that split can be formed, with the caller's gap, the
+    fast profile's own error tells the caller to use `profile="full"`, and the
+    advice is true. If it cannot, the error is the one the full profile would
+    raise, so that nobody is sent to a profile that stops too.
+    """
+    if BROKEN == "M7":
+        return E.TooFewRowsError(f"{found}")
+    try:
+        _split_time(all_keys, gap)
+    except (E.TooFewRowsError, E.GapError) as exc:
+        return type(exc)(f"{exc} (the fast profile kept fewer rows still: {found})")
+    return E.FastProfileError(f"{found}. Every usable row together can form the split: "
+                              "use profile='full'")
 
 
 def _split_random(n, y, classification, seed):
@@ -590,6 +675,10 @@ class _Prep:
     def _parts(self, frame):
         num = frame[self.numeric].to_numpy(dtype="float64", na_value=np.nan) if self.numeric \
             else np.empty((len(frame), 0))
+        # An infinite cell and a too-large one are missing cells (D48). Every value
+        # left is within the 32-bit range, so the mean and the deviation learned
+        # below are always finite: there is no "deviation that is not finite" case.
+        num = np.where(np.abs(num) > TOO_LARGE, np.nan, num)
         cats = [frame[c].astype(object).where(frame[c].notna(), MISSING_LEVEL).to_numpy()
                 for c in self.categorical]
         return num, cats
@@ -713,14 +802,77 @@ def _ranks(score):
 
 
 def _mse(y, pred):
-    return float(np.mean((y - pred) ** 2))
+    """Mean squared error. It can overflow to infinity; the caller decides what that means."""
+    with np.errstate(over="ignore", invalid="ignore"):
+        return float(np.mean((y - pred) ** 2))
+
+
+def _mean(values):
+    """The mean, with numpy's overflow warning kept off standard error: a result
+    that is not finite is dealt with by the caller, under its own name (D44)."""
+    with np.errstate(over="ignore", invalid="ignore"):
+        return values.mean()
+
+
+def _mean_and_spread(scores):
+    """The mean and the sample standard deviation of finite fold scores.
+
+    Computed as numpy computes them. Where that overflows although the answer can
+    be held (fold scores above about 1e154, whose squares cannot), the scores are
+    divided by the largest first, so that a number that exists is reported (D44).
+    """
+    a = np.asarray(scores, dtype="float64")
+    with np.errstate(over="ignore", invalid="ignore"):
+        mean = float(np.mean(a))
+        spread = float(np.std(a, ddof=1)) if len(a) > 1 else None
+        scale = float(np.max(np.abs(a)))
+        if scale > 0 and not math.isfinite(mean):
+            mean = float(np.mean(a / scale) * scale)
+        if scale > 0 and spread is not None and not math.isfinite(spread):
+            spread = float(np.std(a / scale, ddof=1) * scale)
+    return mean, spread
+
+
+def _require_finite(doc):
+    """D44, the backstop: no number of the output may be infinite or not-a-number.
+
+    The rules of `_run` stop the run, or fail a configuration, where such a number
+    first appears. This looks at every number about to be written, so that none
+    can leave as a null, whatever arithmetic produced it.
+    """
+    def walk(node, path):
+        if isinstance(node, dict):
+            for key, value in node.items():
+                walk(value, f"{path}.{key}")
+        elif isinstance(node, list):
+            for i, value in enumerate(node):
+                label = value.get("config", value.get("name")) if isinstance(value, dict) else None
+                walk(value, f"{path}[{label if label is not None else i}]")
+        elif isinstance(node, (float, np.floating)) and not math.isfinite(node):
+            raise _not_finite(f"`{path}`", node, "values too large for the arithmetic behind "
+                              "this number: " + TARGET_CAUSE)
+    for part in ("validation", "headline", "baselines", "cv", "models"):
+        walk(doc[part], part)
+
+
+def _previous_of(prev, rows, where):
+    """The previous value of each of `rows`. Every one exists: step 7 leaves at least
+    `gap + 1` timestamps before the first validation block, or stops with
+    `gap_too_large`. One that is missing is a defect here, never a reason to fall
+    back to the training mean."""
+    before = prev[rows]
+    if np.isnan(before).any():
+        raise RuntimeError(f"a row of {where} has no previous value: the split's own rule "
+                           "excludes this, so the split or the baseline is wrong")
+    return before
 
 
 def _screen_column(values, numeric, y, folds, classification, seed, prev, also_fit=None):
     """D11: one column's cross-validated skill over the selection folds.
 
     None when it cannot be computed: the baseline's error over the pooled
-    validation rows is zero (D36). `also_fit` exists only for the broken
+    validation rows is zero (D36). A baseline's error, or the column's own, that
+    is not finite stops the run (D44). `also_fit` exists only for the broken
     variant M3: rows added to every fold's training rows for the tree.
     """
     cls = DecisionTreeClassifier if classification else DecisionTreeRegressor
@@ -729,7 +881,7 @@ def _screen_column(values, numeric, y, folds, classification, seed, prev, also_f
         if not fold["scored"]:
             continue
         a, b = fold["train"], fold["valid"]
-        fold_mean = y[a].mean()
+        fold_mean = _mean(y[a])
         if also_fit is not None:
             a = np.concatenate([a, also_fit])
         if numeric:
@@ -748,13 +900,21 @@ def _screen_column(values, numeric, y, folds, classification, seed, prev, also_f
     if classification:
         auc = _auc(truth, guess)
         return None if auc is None else 2 * auc - 1
-    base = _mse(truth, np.concatenate(mean_guess))
+    bases = [("training_mean", _mse(truth, np.concatenate(mean_guess)))]
     if prev is not None:
-        before = prev[np.concatenate(rows)]
-        known = ~np.isnan(before)
-        if known.any():
-            base = min(base, _mse(truth[known], before[known]))
-    return 1 - _mse(truth, guess) / base if base > 0 else None
+        before = _previous_of(prev, np.concatenate(rows), "a validation block")
+        bases.append(("previous_value", _mse(truth, before)))
+    for name, error in bases:
+        if not math.isfinite(error):
+            raise _not_finite(f"In the leak screen, the squared error of the baseline {name} "
+                              "over the validation rows of the selection folds", error,
+                              TARGET_CAUSE)
+    own = _mse(truth, guess)
+    if not math.isfinite(own):
+        raise _not_finite("In the leak screen, the squared error of a single-column tree over "
+                          "the validation rows of the selection folds", own, TARGET_CAUSE)
+    base = min(error for _, error in bases)
+    return 1 - own / base if base > 0 else None
 
 
 def _cube_root_up(n):
@@ -876,8 +1036,11 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs):
         _warn(warnings, "duplicate_rows",
               f"{duplicate_rows} row(s) are exact copies of an earlier row; they are kept")
 
-    # 2. drop rows with a missing target, then rows with a missing time value
-    y_all = df[target]
+    # 2. drop rows with a missing target, then rows with a missing time value. A text
+    # target is read without the white space round it from here on, and a cell that
+    # holds nothing else is a missing target (D46, D48).
+    target_dtype = str(df[target].dtype)
+    y_all = _target_values(df[target])
     no_target = _no_target(y_all)
     time_form, show = None, None
     no_time = np.zeros(n_loaded, dtype=bool)
@@ -897,8 +1060,9 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs):
         y_work_all = (y_all == classes[1]).to_numpy().astype("int64")
     else:
         classes = None
-        y_work_all = pd.to_numeric(y_all, errors="coerce").to_numpy(dtype="float64",
-                                                                    na_value=np.nan)
+        # The target is of integer or float type here (step 4), so every usable value
+        # is a number as it stands: nothing is coerced, and nothing can be.
+        y_work_all = y_all.to_numpy(dtype="float64", na_value=np.nan)
         whole = y_work_all[usable]
         if decided_by == "rule" and np.all(whole == np.floor(whole)):
             _warn(warnings, "whole_number_regression_target",
@@ -923,8 +1087,9 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs):
                   "a DataFrame", rec["name"])
         if rec["n_infinite"]:
             _warn(warnings, "infinite_values",
-                  f"{rec['n_infinite']} infinite value(s) in {rec['name']!r} are treated as "
-                  "missing", rec["name"])
+                  f"{rec['n_infinite']} value(s) in {rec['name']!r} are infinite, or too large "
+                  f"for the tree models (a magnitude above {TOO_LARGE!r}, the largest 32-bit "
+                  "float), and are treated as missing", rec["name"])
         if rec["reason"] == "datetime" and time_col is None:
             _warn(warnings, "date_column_undeclared",
                   f"column {rec['name']!r} holds dates but no time_col was declared, so the "
@@ -944,6 +1109,7 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs):
     if time_col is not None:
         rows = rows[np.argsort(keys_all[rows], kind="stable")]
     capped = 0
+    usable_rows = rows                      # every usable row: what the full profile splits
     if profile == "fast" and len(rows) > FAST_ROW_CAP:
         if time_col is not None:
             stamps, counts = np.unique(keys_all[rows], return_counts=True)
@@ -952,9 +1118,10 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs):
                 t -= 1
                 kept += counts[t]
             if kept == 0:
-                raise E.FastProfileError(
+                raise _fast_profile_stop(
+                    keys_all[usable_rows], gap,
                     f"the most recent timestamp alone holds {counts[-1]} rows, more than the "
-                    f"fast profile's cap of {FAST_ROW_CAP}. Use profile='full'")
+                    f"fast profile's cap of {FAST_ROW_CAP}")
             capped, rows = len(rows) - kept, rows[len(rows) - kept:]
         else:
             keep = np.sort(np.random.default_rng([seed, 1]).choice(len(rows), FAST_ROW_CAP,
@@ -970,7 +1137,16 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs):
     time_ordered = time_col is not None
     if time_ordered and BROKEN != "F7":
         keys = keys_all[rows]
-        split = _split_time(keys, gap, capped > 0)
+        try:
+            split = _split_time(keys, gap)
+        except E.TooFewRowsError as exc:
+            if not capped:
+                raise
+            # The cap left too few timestamps. Say "use the full profile" only when
+            # the full profile would get past this step (D46).
+            raise _fast_profile_stop(keys_all[usable_rows], gap,
+                                     f"under the fast profile's cap of {FAST_ROW_CAP}, {exc}") \
+                from exc
     else:
         split = _split_random(len(rows), y, classification, seed)   # F7: shuffled regardless
         if time_ordered:
@@ -1011,6 +1187,30 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs):
         order = np.argsort(keys, kind="stable")
         prev = np.full(len(y), np.nan)
         prev[order[gap + 1:]] = y[order[:len(y) - gap - 1]]
+
+    # The baselines of step 11 need no model, only the target and the split, so they
+    # are scored on the holdout here, before the leak screen and before any fit. One
+    # whose score is not finite stops the run at once: when the target itself is the
+    # cause, the caller gets one clear error, and never a list of configurations that
+    # failed one after another (D44). Both are checked, the unused one too: its score
+    # is a number in the output.
+    truth = y[holdout]
+    if classification:
+        baselines, base_pred = [{"name": "chance", "score": 0.5, "used": True}], None
+    else:
+        base_pred = np.full(len(holdout), _mean(y[train]))
+        baselines = [{"name": "training_mean", "score": _mse(truth, base_pred), "used": True}]
+        if prev is not None:
+            before = _previous_of(prev, holdout, "the holdout")
+            previous = _mse(truth, before)
+            baselines.append({"name": "previous_value", "score": previous, "used": False})
+            if previous < baselines[0]["score"] and BROKEN != "F8":
+                baselines[0]["used"], baselines[1]["used"] = False, True
+                base_pred = before
+        for b in baselines:
+            if not math.isfinite(b["score"]):
+                raise _not_finite(f"The squared error of the baseline {b['name']} on the "
+                                  "holdout", b["score"], TARGET_CAUSE)
 
     # 8. from here on every fitted step sees training rows only: the leak screen first
     if BROKEN != "F2":
@@ -1077,6 +1277,13 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs):
                   pd.DataFrame(x_new, index=new_frame.index, columns=names), y_fit)
         return x_fit, x_new, frames
 
+    def finite(guess):
+        """A prediction that is not finite fails its configuration, as raising would
+        (D44). M6: it is scored and written as it is."""
+        if BROKEN != "M6" and not np.isfinite(guess).all():
+            raise ValueError("the model predicted a value that is not finite")
+        return guess
+
     # 9. select by five folds inside the training rows, preprocessing refitted in each
     families = _families(profile, classification)
     fold_data = [matrices(f["train"], f["valid"]) if f["scored"] else None
@@ -1088,16 +1295,20 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs):
                           params=dict(params), status="fitted", error=None, fold_scores=[],
                           cv_mean=None, cv_std=None, chosen=False)
             try:
-                for fold, mats in zip(split["folds"], fold_data):
+                for k, (fold, mats) in enumerate(zip(split["folds"], fold_data), 1):
                     if mats is None:
                         record["fold_scores"].append(None)
                         continue
                     model = family["make"](task, params, seed, n_jobs)
-                    guess = _fit_predict(family, model, mats[0], y[fold["train"]], mats[1],
-                                         classification, mats[2])
-                    truth = y[fold["valid"]]
-                    record["fold_scores"].append(_auc(truth, guess) if classification
-                                                 else _mse(truth, guess))
+                    guess = finite(_fit_predict(family, model, mats[0], y[fold["train"]],
+                                                mats[1], classification, mats[2]))
+                    fold_truth = y[fold["valid"]]
+                    fold_score = _auc(fold_truth, guess) if classification \
+                        else _mse(fold_truth, guess)
+                    if not math.isfinite(fold_score):
+                        # failed, like one that raised: never a null where a score belongs
+                        raise ValueError(f"its score on fold {k} is not finite ({fold_score!r})")
+                    record["fold_scores"].append(fold_score)
             except Exception as exc:        # a family that raises is recorded, never dropped
                 record.update(status="failed", error=f"{type(exc).__name__}: {exc}",
                               fold_scores=[None] * len(split["folds"]))
@@ -1105,8 +1316,12 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs):
                       f"configuration {record['config']} failed: {record['error']}")
             scored = [s for s in record["fold_scores"] if s is not None]
             if record["status"] == "fitted" and scored:
-                record["cv_mean"] = float(np.mean(scored))
-                record["cv_std"] = float(np.std(scored, ddof=1)) if len(scored) > 1 else None
+                record["cv_mean"], record["cv_std"] = _mean_and_spread(scored)
+                for key in ("cv_mean", "cv_std"):
+                    if record[key] is not None and not math.isfinite(record[key]):
+                        raise _not_finite(f"`{key}` of configuration {record['config']}, from "
+                                          "fold scores that are each finite", record[key],
+                                          "squared errors too large to average: " + TARGET_CAUSE)
             models.append(record)
             makers.append((family, params))
     # best mean first; a tie goes to the earlier family, then the earlier grid position
@@ -1122,7 +1337,9 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs):
 
     # 10. refit the chosen configuration on all training rows, and predict the holdout.
     # One that raises here is marked failed and keeps its fold scores; the next best
-    # by cv_mean takes its place (D38). The holdout plays no part in the choice.
+    # by cv_mean takes its place (D38). So is one whose prediction is not finite (D44):
+    # that depends on the model and the features alone, never on the holdout targets.
+    # The holdout plays no part in the choice.
     fit_rows = np.concatenate([train, holdout]) if BROKEN == "F1" else train
     x_fit, x_holdout, frames = matrices(fit_rows, holdout, final=True)
     chosen = pred = None
@@ -1130,8 +1347,8 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs):
         family, params = makers[i]
         try:
             model = family["make"](task, params, seed, n_jobs)
-            pred = _fit_predict(family, model, x_fit, y[fit_rows], x_holdout, classification,
-                                frames)
+            pred = finite(_fit_predict(family, model, x_fit, y[fit_rows], x_holdout,
+                                       classification, frames))
         except Exception as exc:            # recorded, never dropped, and never the headline
             models[i].update(status="failed", error=f"{type(exc).__name__}: {exc}")
             _warn(warnings, "model_failed",
@@ -1144,22 +1361,19 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs):
         raise all_failed()
     chosen["chosen"] = True
 
-    # 11. score it once on the holdout; score the baselines on the holdout
-    truth = y[holdout]
+    # 11. score it once on the holdout. The baselines were scored on the holdout above.
     if classification:
         metric, score = "roc_auc", _auc(truth, pred)
-        baselines = [{"name": "chance", "score": 0.5, "used": True}]
-        base_pred = None
     else:
         metric, score = "mse", _mse(truth, pred)
-        base_pred = np.full(len(holdout), y[train].mean())
-        baselines = [{"name": "training_mean", "score": _mse(truth, base_pred), "used": True}]
-        if prev is not None:
-            previous = _mse(truth, prev[holdout])
-            baselines.append({"name": "previous_value", "score": previous, "used": False})
-            if previous < baselines[0]["score"] and BROKEN != "F8":
-                baselines[0]["used"], baselines[1]["used"] = False, True
-                base_pred = prev[holdout]
+    if not math.isfinite(score):
+        # The predictions are finite, so this is the size of an error, not a model
+        # that misbehaved. The run stops: the next configuration is not tried, because
+        # one is passed over only for raising, never for its score (D38, D44).
+        raise _not_finite(f"The score of the chosen configuration {chosen['config']} on the "
+                          "holdout", score,
+                          "a prediction or a target value so far from the other that its "
+                          "squared error is beyond the largest number a double can hold")
     baseline = next(b for b in baselines if b["used"])
     if BROKEN == "F3":
         score = chosen["cv_mean"]                   # the best cross-validation score
@@ -1176,6 +1390,12 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs):
         # With a baseline error of exactly zero skill has no value: null, never an
         # error, an infinity or a zero in its place (D36).
         skill = 1 - score / baseline["score"] if baseline["score"] > 0 else None
+    if skill is not None and not math.isfinite(skill):
+        # null is for a baseline error of exactly zero and for nothing else (D44)
+        raise _not_finite("`headline.skill`, from a score and a baseline score that are each "
+                          "finite", skill, "a baseline error so small beside the model's "
+                          "error that their quotient is beyond the largest number a double "
+                          "can hold")
 
     # 12. the interval and the p-value, from the holdout predictions alone
     groups = None
@@ -1212,8 +1432,15 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs):
         stamps_train = keys[train]
         _, inverse = np.unique(stamps_train, return_inverse=True)
         means = np.bincount(inverse, weights=y[train]) / np.bincount(inverse)
-        if len(means) > 2 and means[1:].std() > 0 and means[:-1].std() > 0:
-            lag1 = float(np.corrcoef(means[1:], means[:-1])[0, 1])
+        with np.errstate(over="ignore", invalid="ignore", divide="ignore"):
+            varies = len(means) > 2 and means[1:].std() > 0 and means[:-1].std() > 0
+            lag1 = float(np.corrcoef(means[1:], means[:-1])[0, 1]) if varies else None
+        # Means that do not vary have no autocorrelation, and there is no warning. One
+        # that cannot be computed because a value overflows is not passed over (D44).
+        if lag1 is not None and not math.isfinite(lag1):
+            raise _not_finite("The lag-1 autocorrelation of the per-timestamp mean of the "
+                              "target over the training timestamps", lag1, TARGET_CAUSE)
+        if lag1 is not None:
             if lag1 > AUTOCORR:
                 _warn(warnings, "autocorrelated_panel_target",
                       f"the per-timestamp mean of the target has lag-1 autocorrelation "
@@ -1265,7 +1492,7 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs):
         "rows": [{"item": k, "count": v} for k, v in row_items],
         "columns": records,
         "task": {"type": task, "decided_by": decided_by, "n_distinct": n_distinct,
-                 "target_dtype": str(y_all.dtype),
+                 "target_dtype": target_dtype,
                  "classes": [_plain(c) for c in classes] if classes else None,
                  "positive_class": _plain(classes[1]) if classes else None},
         "validation": validation,
@@ -1276,8 +1503,11 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs):
                "n_scored_folds": N_FOLDS - len(unscored), "n_configurations": len(models),
                "chosen": chosen["config"], "chosen_mean": chosen["cv_mean"],
                "chosen_std": chosen["cv_std"]},
-        "models": models,
+        # F6c: a family none of whose configurations was chosen is left out of the table
+        "models": models if BROKEN != "F6c"
+        else [m for m in models if m["family"] == chosen["family"]],
         "warnings": warnings,
         "limitations": list(LIMITATIONS),
     }
+    _require_finite(doc)
     return doc, predictions

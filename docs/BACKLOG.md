@@ -38,6 +38,32 @@ build loop: each item becomes work only through a decision in
 - **The p-value's tie in regression** has no pinned tolerance, so its guard
   covers classification only (D43).
 
+## Found in the CP4 session (second review round)
+
+- **Seven gate checks have never been seen to fail on any broken copy.**
+  They carry a written reason in place of a failure mode:
+  `model.signal_clf`, `model.signal_reg`, `time.undeclared_warns`,
+  `result.matches_json`, `output.complete`, `output.deterministic` and
+  `output.same_at_any_n_jobs`. Each should get a broken copy that proves it
+  fires. The self-test prints this list on every run.
+- **One extreme value can dominate a squared-error skill.** A feature cell
+  of 1e38 in a holdout row gave a linear model a skill of about minus 7e73:
+  finite, and reported as measured. Candidates: a warning for extreme
+  outliers in features and target, or a robust second metric.
+- **Targets on a scale near 1e80.** Every reported number can be held, but
+  an intermediate step overflows. The spec allows the run either to finish
+  or to stop with `non_finite_score`; it may never write an empty value.
+  Worth pinning one outcome.
+- **The fast profile and the gap.** When the capped rows hold six training
+  timestamps and the gap leaves fewer, the fast profile raises
+  `gap_too_large` whatever the full profile would do (D46 covers only the
+  too-few-timestamps case).
+- **A white-space-only target cell** is counted in the rows dropped for a
+  missing target, but not in the target column's own missing count.
+- **The `infinite_values` warning** is raised for features only in the
+  library and the spec; the gate's reference raises it for any numeric
+  column. No test pins it.
+
 ## Notes for the framework (ailoop-engineering), not for this repo
 
 - The tests stage does not lock `tests/`, so on a second pass the existing

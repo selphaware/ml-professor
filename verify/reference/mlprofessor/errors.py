@@ -61,3 +61,9 @@ class OneClassError(ProfileError):
 
 class AllModelsFailedError(ProfileError):
     code = "all_models_failed"
+
+
+class NonFiniteScoreError(ProfileError):
+    """A number the result rests on is infinite or not-a-number (D44)."""
+
+    code = "non_finite_score"

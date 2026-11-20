@@ -21,7 +21,8 @@ def _usable(frame, target, time_col):
     for name in (target, time_col):
         if name is not None and name not in frame.columns:
             raise E.ColumnNotFoundError(f"no column named {name!r}")
-    no_target = core._no_target(frame[target])
+    # a text target cell that holds only white space is a missing target (D48)
+    no_target = core._no_target(core._target_values(frame[target]))
     no_time = np.zeros(len(frame), dtype=bool)
     if time_col is not None:
         no_time = core._no_target(frame[time_col]) & ~no_target
@@ -48,13 +49,14 @@ def decide_task(values, task="auto"):
     """Step 4. Classification or regression, how it was decided, and the evidence."""
     if task not in ("auto", "classification", "regression"):
         raise E.InputError(f"task must be auto, classification or regression, not {task!r}")
-    series = pd.Series(values).reset_index(drop=True)
+    # text is read without the white space round it (D46); only white space is missing (D48)
+    series = core._target_values(pd.Series(values).reset_index(drop=True))
     series = series[~core._no_target(series)]
     kind, decided_by, n_distinct, numeric = core._decide_task(series, "target", task)
     classes = [core._plain(c) for c in core._classes(series)] if kind == "classification" else None
     warnings = []
     if kind == "regression" and decided_by == "rule":
-        numbers = pd.to_numeric(series, errors="coerce").to_numpy(dtype="float64", na_value=np.nan)
+        numbers = series.to_numpy(dtype="float64", na_value=np.nan)
         if np.all(numbers == np.floor(numbers)):
             warnings.append("whole_number_regression_target")
     return {"type": kind, "decided_by": decided_by, "n_distinct": n_distinct, "classes": classes,
@@ -70,11 +72,16 @@ def read_time(values):
 
 
 def split_random(n_rows, classes=None, seed=0):
-    """Step 7, random scheme. Positions 0..n_rows-1; `classes` makes it stratified."""
+    """Step 7, random scheme. Positions 0..n_rows-1; `classes` makes it stratified.
+
+    The seed is in the range of `profile()` (D45). Text labels are compared without
+    the white space round them, as the target is read everywhere (D46).
+    """
+    core._check_seed(seed)
     y = None
     if classes is not None:
-        labels = np.asarray(classes)
-        y = (labels == core._classes(pd.Series(labels))[1]).astype("int64")
+        labels = core._target_values(pd.Series(np.asarray(classes, dtype=object)))
+        y = (labels == core._classes(labels)[1]).to_numpy().astype("int64")
     split = core._split_random(int(n_rows), y, classes is not None, int(seed))
     return {"training": split["train"], "holdout": split["holdout"],
             "folds": [{"training": np.sort(f["train"]), "validation": np.sort(f["valid"])}
@@ -85,7 +92,7 @@ def split_time(keys, gap=0):
     """Step 7, time-ordered scheme. Positions into `keys`, which may be in any order."""
     keys = np.asarray(keys)
     order = np.argsort(keys, kind="stable")
-    split = core._split_time(keys[order], int(gap), False)
+    split = core._split_time(keys[order], int(gap))
     back = lambda part: np.sort(order[part])  # noqa: E731
     folds = []
     for fold in split["folds"]:
@@ -138,7 +145,9 @@ class Preprocessor:
     """Step 8's built-in preprocessing for one fit: fit on some rows, apply to any.
 
     `fit` raises `FeatureNameCollisionError` when two of the columns it would
-    give the matrix have the same name (D37).
+    give the matrix have the same name (D37). An infinite cell and one too large
+    for the tree models are missing cells to it (D48), so every statistic it
+    learns is finite.
     """
 
     def __init__(self, kinds):

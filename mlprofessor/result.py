@@ -26,6 +26,8 @@ PREDICTION_KEYS = ["row", "y_true", "y_pred"]
 
 RANDOM_CAVEAT = ("Random split: this number is optimistic if the rows are ordered in "
                  "time or one entity appears on many rows.")
+GROUPED_CAVEAT = ("Random split of whole entities: this number is optimistic if the rows "
+                  "are ordered in time.")
 LIMITATIONS = [
     "Predictability here means how well these model families did on this data under "
     "this validation scheme.",
@@ -45,9 +47,6 @@ LIMITATIONS = [
 ]
 
 
-CHECKED_PARTS = ("validation", "headline", "baselines", "cv", "models")
-
-
 def _non_finite_numbers(value, path):
     """`(path, value)` of every float of `value` that is infinite or not-a-number."""
     if isinstance(value, dict):
@@ -62,18 +61,19 @@ def _non_finite_numbers(value, path):
 
 
 def check_finite(document):
-    """Raise `NonFiniteScoreError` naming each number of the scored parts that is not finite.
+    """Raise `NonFiniteScoreError` naming each number of the document that is not finite.
 
-    Spec 3, "Numbers that are not finite", rule 6: run before anything is
-    returned or written, so that no such number leaves as a null.
+    Spec 3, "Numbers that are not finite", rule 6: every part of the document,
+    lists and nested records included, is read before anything is returned or
+    written, so that no such number leaves as a null.
     """
-    found = [hit for part in CHECKED_PARTS if part in document
-             for hit in _non_finite_numbers(document[part], part)]
+    found = [hit for part, value in document.items()
+             for hit in _non_finite_numbers(value, str(part))]
     if found:
         named = ", ".join(f"{path} ({value!r})" for path, value in found)
         raise NonFiniteScoreError(
-            f"Numbers of the output are not finite: {named}. Likely cause: a target value "
-            "too large for squared error, whose arithmetic overflows.")
+            f"Numbers of the output are not finite: {named}. Likely cause, for a score: a "
+            "target value too large for squared error, whose arithmetic overflows.")
 
 
 def plain(value):

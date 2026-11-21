@@ -14,7 +14,8 @@ import re
 import numpy as np
 import pandas as pd
 
-from mlprofessor.load import missing_mask, read_number_columns, usable_rows
+from mlprofessor import errors
+from mlprofessor.load import _is_empty_cell, missing_mask, read_number_columns, usable_rows
 
 COLUMN_KEYS = [
     "name", "position", "dtype", "role", "kind", "reason", "leak_rule",
@@ -275,18 +276,99 @@ def _judge_column(series, usable):
     return role, kind, reason, n_coerced, n_parsed_infinite
 
 
-def column_roles(frame, target, time_col=None):
+def column_roles(frame, target, time_col=None, group_col=None):
     """Step 5 alone: one record per column of `frame`, in order (spec 2.7).
 
     Object columns of numbers are read as numbers first (step 1a); `dtype` is
     the type each column came with.
     """
+    if isinstance(group_col, str) and group_col not in frame.columns:
+        raise errors.ColumnNotFoundError(
+            f"No column named {group_col!r}. The columns are: "
+            f"{', '.join(repr(str(c)) for c in frame.columns)}.")
     loaded_dtypes = {name: str(frame[name].dtype) for name in frame.columns}
-    return roles_of_read_columns(read_number_columns(frame), target, time_col, loaded_dtypes)
+    return roles_of_read_columns(read_number_columns(frame), target, time_col, loaded_dtypes,
+                                 group_col)
 
 
-def roles_of_read_columns(frame, target, time_col, loaded_dtypes):
+# ------------------------------------------------------------ the entity column (D57)
+
+def _entity_cell_key(value):
+    """The key one object cell of an entity column is compared by; None for an empty cell.
+
+    Text without the white space round it; whole numbers exactly; 0.0 and -0.0
+    one value; anything else as the value it is. Raises `TypeError` for a value
+    that cannot be compared for equality (a list, a dictionary, a set).
+    """
+    if _is_empty_cell(value):
+        return None
+    if isinstance(value, str):
+        text = value.strip()
+        return text if text else None
+    if isinstance(value, (bool, np.bool_)):
+        return bool(value)
+    if isinstance(value, (int, np.integer)):
+        return int(value)
+    if isinstance(value, (float, np.floating)):
+        return float(value) + 0.0
+    if isinstance(value, (complex, np.complexfloating)):
+        return complex(value) + 0j
+    hash(value)
+    return value
+
+
+def read_entities(values, name=None):
+    """Step 5, "How an entity column is read": one code per cell, -1 for an empty cell.
+
+    Cells that are equal share a code; codes number the entities in the order
+    they first appear. Raises `GroupColumnError` when a value cannot be compared.
+    """
+    series = values if isinstance(values, pd.Series) else pd.Series(values)
+    series = series.reset_index(drop=True)
+    label = "the entity column" if name is None else f"the entity column {name!r}"
+    dtype = series.dtype
+    if isinstance(dtype, pd.SparseDtype):
+        series = series.sparse.to_dense()
+        dtype = series.dtype
+    if isinstance(dtype, pd.CategoricalDtype):
+        present = series.notna().to_numpy(dtype=bool)
+        cells = series.astype(object).to_numpy()
+        series = pd.Series([str(v).strip() if p else None for v, p in zip(cells, present)],
+                           dtype=object)
+        dtype = series.dtype
+    if dtype == object:
+        keys, empty = [], np.zeros(len(series), dtype=bool)
+        for position, value in enumerate(series.to_numpy()):
+            try:
+                key = _entity_cell_key(value)
+            except TypeError as exc:
+                raise errors.GroupColumnError(
+                    f"{label} holds a value that cannot be compared for equality "
+                    f"(a {type(value).__name__}); an entity column holds values that can "
+                    "be told equal or not, such as names or numbers.") from exc
+            if key is None:
+                empty[position] = True
+            keys.append(key)
+        codes = np.full(len(series), -1, dtype=np.int64)
+        seen = {}
+        for position, key in enumerate(keys):
+            if not empty[position]:
+                codes[position] = seen.setdefault(key, len(seen))
+        return codes
+    if pd.api.types.is_string_dtype(dtype):
+        series = series.str.strip()
+        series = series.where(series.str.len() > 0)
+    elif pd.api.types.is_complex_dtype(dtype):
+        series = series + 0j
+    elif pd.api.types.is_float_dtype(dtype):
+        series = series + 0.0
+    codes, _ = pd.factorize(series, use_na_sentinel=True)
+    return np.asarray(codes, dtype=np.int64)
+
+
+def roles_of_read_columns(frame, target, time_col, loaded_dtypes, group_col=None):
     """Step 5 on a table already read by step 1a; `loaded_dtypes` names each column's type as loaded."""
+    group_col = group_col if isinstance(group_col, str) else None
     usable = usable_rows(frame, target, time_col)["usable"]
     records = []
     for position, name in enumerate(frame.columns):
@@ -297,6 +379,9 @@ def roles_of_read_columns(frame, target, time_col, loaded_dtypes):
             role, kind, reason, n_coerced = "target", None, None, 0
         elif time_col is not None and name == time_col:
             role, kind, reason, n_coerced = "time", None, None, 0
+        elif group_col is not None and name == group_col:
+            # Never a feature, and no rule of step 5 is applied to it.
+            role, kind, reason, n_coerced, n_infinite = "group", None, None, 0, 0
         else:
             role, kind, reason, n_coerced, extra_infinite = _judge_column(series, usable)
             n_infinite += extra_infinite

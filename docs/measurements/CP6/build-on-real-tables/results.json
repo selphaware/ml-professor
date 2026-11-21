@@ -1,0 +1,929 @@
+[
+ {
+  "case": "VIX level, lag features, nothing said",
+  "expect": "stops: time_order_undeclared (was skill 0.939 with a warning)",
+  "args": {
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "named error",
+  "code": "time_order_undeclared",
+  "message": "The column(s) 'date' hold dates, and nothing was said about time order. A table that holds dates is often ordered in time, and a random split of it can report as predictable what is not. Pass the time column as time_col (--time-col COLUMN) for a time-ordered split, or pass time_col=False (--no-time-order) to state that the order of the rows in time does not matter.",
+  "seconds": 0.1,
+  "py_warnings": []
+ },
+ {
+  "case": "VIX level, time_col=date",
+  "expect": "previous_value baseline, skill small (was 0.023)",
+  "args": {
+   "time_col": "date",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "time_ordered",
+  "metric": "mse",
+  "baseline": "previous_value",
+  "skill": 0.023365871559325457,
+  "ci": [
+   -0.0772565468355973,
+   0.10533902952923947
+  ],
+  "interval": "bootstrap_blocks",
+  "p": null,
+  "model": "linear-0",
+  "groups": [
+   null,
+   null
+  ],
+  "copies": [
+   null,
+   null
+  ],
+  "input": {
+   "time_col": "date",
+   "group_col": null,
+   "duplicates": "error"
+  },
+  "warnings": [
+   "interval_approximate"
+  ],
+  "excluded": {},
+  "seconds": 0.9,
+  "py_warnings": []
+ },
+ {
+  "case": "VIX level, time_col=False",
+  "expect": "runs on the caller's word, with the warning and the caveat",
+  "args": {
+   "time_col": "False",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "random",
+  "metric": "mse",
+  "baseline": "training_mean",
+  "skill": 0.9385787348922929,
+  "ci": [
+   0.9073180947339669,
+   0.9580154809793341
+  ],
+  "interval": "bootstrap_rows",
+  "p": 0.004975124378109453,
+  "model": "linear-0",
+  "groups": [
+   null,
+   null
+  ],
+  "copies": [
+   0,
+   null
+  ],
+  "input": {
+   "time_col": false,
+   "group_col": null,
+   "duplicates": "error"
+  },
+  "warnings": [
+   "date_column_undeclared",
+   "strong_single_column"
+  ],
+  "excluded": {
+   "date": "datetime"
+  },
+  "seconds": 0.2,
+  "py_warnings": []
+ },
+ {
+  "case": "weather.csv as shipped, target temp_max, nothing said",
+  "expect": "stops: time_order_undeclared, naming `date`",
+  "args": {
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "named error",
+  "code": "time_order_undeclared",
+  "message": "The column(s) 'date' hold dates, and nothing was said about time order. A table that holds dates is often ordered in time, and a random split of it can report as predictable what is not. Pass the time column as time_col (--time-col COLUMN) for a time-ordered split, or pass time_col=False (--no-time-order) to state that the order of the rows in time does not matter.",
+  "seconds": 0.0,
+  "py_warnings": []
+ },
+ {
+  "case": "stocks price level, time_col=date, nothing said about entities",
+  "expect": "stops: entities_undeclared (was skill 0.979)",
+  "args": {
+   "time_col": "date",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "named error",
+  "code": "entities_undeclared",
+  "message": "The timestamps repeat, so the table is a panel of several series, and the per-timestamp mean of 'price' has lag-1 autocorrelation 0.94 over the training timestamps (above 0.5). Against the training mean, skill on such a table shows only that one period resembles the last, and nothing says which row belongs to which series. Pass the column that names each row's series as group_col (--group-col COLUMN), so that each se",
+  "seconds": 0.0,
+  "py_warnings": []
+ },
+ {
+  "case": "stocks price level, time_col=date, group_col=symbol",
+  "expect": "each stock's own previous value is the baseline; skill about 0",
+  "args": {
+   "time_col": "date",
+   "group_col": "symbol",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "time_ordered",
+  "metric": "mse",
+  "baseline": "previous_value",
+  "skill": -0.1388548810989172,
+  "ci": [
+   null,
+   null
+  ],
+  "interval": null,
+  "p": null,
+  "model": "linear-0",
+  "groups": [
+   5,
+   5
+  ],
+  "copies": [
+   null,
+   null
+  ],
+  "input": {
+   "time_col": "date",
+   "group_col": "symbol",
+   "duplicates": "error"
+  },
+  "warnings": [
+   "no_interval"
+  ],
+  "excluded": {},
+  "seconds": 0.0,
+  "py_warnings": []
+ },
+ {
+  "case": "stocks price level, time_col=date, group_col=False",
+  "expect": "runs on the caller's word, with autocorrelated_panel_target",
+  "args": {
+   "time_col": "date",
+   "group_col": "False",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "time_ordered",
+  "metric": "mse",
+  "baseline": "training_mean",
+  "skill": 0.9789203067770266,
+  "ci": [
+   null,
+   null
+  ],
+  "interval": null,
+  "p": null,
+  "model": "linear-0",
+  "groups": [
+   null,
+   null
+  ],
+  "copies": [
+   null,
+   null
+  ],
+  "input": {
+   "time_col": "date",
+   "group_col": false,
+   "duplicates": "error"
+  },
+  "warnings": [
+   "autocorrelated_panel_target",
+   "no_interval"
+  ],
+  "excluded": {},
+  "seconds": 0.0,
+  "py_warnings": []
+ },
+ {
+  "case": "stocks next-month return, time_col=date, nothing said",
+  "expect": "runs: returns are not persistent, so nothing to ask",
+  "args": {
+   "time_col": "date",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "time_ordered",
+  "metric": "mse",
+  "baseline": "training_mean",
+  "skill": -0.05225252424089266,
+  "ci": [
+   null,
+   null
+  ],
+  "interval": null,
+  "p": null,
+  "model": "linear-0",
+  "groups": [
+   null,
+   null
+  ],
+  "copies": [
+   null,
+   null
+  ],
+  "input": {
+   "time_col": "date",
+   "group_col": null,
+   "duplicates": "error"
+  },
+  "warnings": [
+   "no_interval"
+  ],
+  "excluded": {},
+  "seconds": 0.1,
+  "py_warnings": []
+ },
+ {
+  "case": "stocks next-month return, time_col=date, group_col=symbol",
+  "expect": "runs; skill about 0",
+  "args": {
+   "time_col": "date",
+   "group_col": "symbol",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "time_ordered",
+  "metric": "mse",
+  "baseline": "training_mean",
+  "skill": -0.0037587695500806984,
+  "ci": [
+   null,
+   null
+  ],
+  "interval": null,
+  "p": null,
+  "model": "linear-0",
+  "groups": [
+   5,
+   5
+  ],
+  "copies": [
+   null,
+   null
+  ],
+  "input": {
+   "time_col": "date",
+   "group_col": "symbol",
+   "duplicates": "error"
+  },
+  "warnings": [
+   "no_interval"
+  ],
+  "excluded": {},
+  "seconds": 0.0,
+  "py_warnings": []
+ },
+ {
+  "case": "taxis payment, nothing said (two timestamp columns)",
+  "expect": "stops: time_order_undeclared, naming pickup and dropoff",
+  "args": {
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "named error",
+  "code": "time_order_undeclared",
+  "message": "The column(s) 'pickup', 'dropoff' hold dates, and nothing was said about time order. A table that holds dates is often ordered in time, and a random split of it can report as predictable what is not. Pass the time column as time_col (--time-col COLUMN) for a time-ordered split, or pass time_col=False (--no-time-order) to state that the order of the rows in time does not matter.",
+  "seconds": 0.1,
+  "py_warnings": []
+ },
+ {
+  "case": "taxis payment, time_col=False",
+  "expect": "random scheme",
+  "args": {
+   "time_col": "False",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "random",
+  "metric": "roc_auc",
+  "baseline": "chance",
+  "skill": 0.9692666342884895,
+  "ci": [
+   0.9501298047644006,
+   0.9860709692038935
+  ],
+  "interval": "bootstrap_rows",
+  "p": 0.004975124378109453,
+  "model": "linear-0",
+  "groups": [
+   null,
+   null
+  ],
+  "copies": [
+   0,
+   null
+  ],
+  "input": {
+   "time_col": false,
+   "group_col": null,
+   "duplicates": "error"
+  },
+  "warnings": [
+   "date_column_undeclared"
+  ],
+  "excluded": {
+   "pickup": "datetime",
+   "dropoff": "datetime"
+  },
+  "seconds": 0.4,
+  "py_warnings": []
+ },
+ {
+  "case": "taxis payment, time_col=False, group_col=pickup_zone",
+  "expect": "grouped scheme; interval from whole zones; no p-value",
+  "args": {
+   "time_col": "False",
+   "group_col": "pickup_zone",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "named error",
+  "code": "group_column_invalid",
+  "message": "The entity column 'pickup_zone' is empty in 25 usable row(s) (missing, or text of only white space); every row with a target must name its entity. Fill the cells in or remove the rows.",
+  "seconds": 0.0,
+  "py_warnings": []
+ },
+ {
+  "case": "mpg, group_col=name (a model name can repeat across years)",
+  "expect": "grouped scheme; `name` is not a feature",
+  "args": {
+   "group_col": "name",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "grouped",
+  "metric": "mse",
+  "baseline": "training_mean",
+  "skill": 0.7825182689383684,
+  "ci": [
+   0.709826583770013,
+   0.8375594678119185
+  ],
+  "interval": "bootstrap_groups",
+  "p": null,
+  "model": "linear-0",
+  "groups": [
+   230,
+   75
+  ],
+  "copies": [
+   0,
+   null
+  ],
+  "input": {
+   "time_col": null,
+   "group_col": "name",
+   "duplicates": "error"
+  },
+  "warnings": [],
+  "excluded": {},
+  "seconds": 0.1,
+  "py_warnings": []
+ },
+ {
+  "case": "mpg, nothing said",
+  "expect": "random; `name` excluded as free text or id-like",
+  "args": {
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "random",
+  "metric": "mse",
+  "baseline": "training_mean",
+  "skill": 0.8216442703470115,
+  "ci": [
+   0.7786588097350451,
+   0.8734200145893151
+  ],
+  "interval": "bootstrap_rows",
+  "p": 0.004975124378109453,
+  "model": "linear-0",
+  "groups": [
+   null,
+   null
+  ],
+  "copies": [
+   0,
+   null
+  ],
+  "input": {
+   "time_col": null,
+   "group_col": null,
+   "duplicates": "error"
+  },
+  "warnings": [],
+  "excluded": {
+   "name": "free_text"
+  },
+  "seconds": 0.1,
+  "py_warnings": []
+ },
+ {
+  "case": "stocks return as a plain table, time_col=False, group_col=symbol",
+  "expect": "named error: too_few_groups (five stocks)",
+  "args": {
+   "time_col": "False",
+   "group_col": "symbol",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "named error",
+  "code": "too_few_groups",
+  "message": "The rows split hold 5 entities; a split of whole entities needs at least 6.",
+  "seconds": 0.0,
+  "py_warnings": []
+ },
+ {
+  "case": "penguins sex, group_col=island (three islands)",
+  "expect": "named error: too_few_groups",
+  "args": {
+   "group_col": "island",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "named error",
+  "code": "too_few_groups",
+  "message": "The rows split hold 3 entities; a split of whole entities needs at least 6.",
+  "seconds": 0.0,
+  "py_warnings": []
+ },
+ {
+  "case": "penguins sex, group_col=nobody",
+  "expect": "named error: column not found",
+  "args": {
+   "group_col": "nobody",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "named error",
+  "code": "column_not_found",
+  "message": "No column named 'nobody'. The columns are: 'species', 'island', 'bill_length_mm', 'bill_depth_mm', 'flipper_length_mm', 'body_mass_g', 'sex'.",
+  "seconds": 0.0,
+  "py_warnings": []
+ },
+ {
+  "case": "titanic, default",
+  "expect": "stops: holdout_copies_in_training, naming keep and group",
+  "args": {
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "named error",
+  "code": "holdout_copies_in_training",
+  "message": "37 of the 223 holdout rows (16.6%) have a copy among the training rows: the same value in every feature column and the same target. A model that recalls a row scores on them, so the headline would be inflated. Remove the repeated rows; or pass duplicates='group' (--duplicates group) to keep each set of copies on one side of the split and of every fold; or pass duplicates='keep' (--duplicates keep) to go ahead with a ",
+  "seconds": 0.1,
+  "py_warnings": []
+ },
+ {
+  "case": "titanic, duplicates=keep",
+  "expect": "runs; random scheme; warning",
+  "args": {
+   "duplicates": "keep",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "random",
+  "metric": "roc_auc",
+  "baseline": "chance",
+  "skill": 0.744865048378883,
+  "ci": [
+   0.6558292825410376,
+   0.8290082009677876
+  ],
+  "interval": "bootstrap_rows",
+  "p": 0.004975124378109453,
+  "model": "linear-0",
+  "groups": [
+   null,
+   null
+  ],
+  "copies": [
+   37,
+   null
+  ],
+  "input": {
+   "time_col": null,
+   "group_col": null,
+   "duplicates": "keep"
+  },
+  "warnings": [
+   "duplicate_rows",
+   "holdout_copies_kept"
+  ],
+  "excluded": {},
+  "seconds": 0.2,
+  "py_warnings": []
+ },
+ {
+  "case": "titanic, duplicates=group",
+  "expect": "grouped; copies counted; no p-value; skill near the keep figure",
+  "args": {
+   "duplicates": "group",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "grouped",
+  "metric": "roc_auc",
+  "baseline": "chance",
+  "skill": 0.7410684192787327,
+  "ci": [
+   0.6383310761184325,
+   0.8379378167861133
+  ],
+  "interval": "bootstrap_groups",
+  "p": null,
+  "model": "linear-0",
+  "groups": [
+   575,
+   209
+  ],
+  "copies": [
+   0,
+   160
+  ],
+  "input": {
+   "time_col": null,
+   "group_col": null,
+   "duplicates": "group"
+  },
+  "warnings": [
+   "copies_grouped",
+   "duplicate_rows"
+  ],
+  "excluded": {},
+  "seconds": 0.2,
+  "py_warnings": []
+ },
+ {
+  "case": "titanic, target shuffled, every row twice, duplicates=keep",
+  "expect": "inflated: this is what keep permits",
+  "args": {
+   "duplicates": "keep",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "random",
+  "metric": "roc_auc",
+  "baseline": "chance",
+  "skill": 0.7329080276448698,
+  "ci": [
+   0.6743142304065028,
+   0.7989427030185661
+  ],
+  "interval": "bootstrap_rows",
+  "p": 0.004975124378109453,
+  "model": "tree-0",
+  "groups": [
+   null,
+   null
+  ],
+  "copies": [
+   366,
+   null
+  ],
+  "input": {
+   "time_col": null,
+   "group_col": null,
+   "duplicates": "keep"
+  },
+  "warnings": [
+   "duplicate_rows",
+   "holdout_copies_kept"
+  ],
+  "excluded": {},
+  "seconds": 0.3,
+  "py_warnings": []
+ },
+ {
+  "case": "titanic, target shuffled, every row twice, duplicates=group",
+  "expect": "skill about 0: the copies cannot be on both sides",
+  "args": {
+   "duplicates": "group",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "grouped",
+  "metric": "roc_auc",
+  "baseline": "chance",
+  "skill": -0.15436467812605326,
+  "ci": [
+   -0.3012640598878505,
+   0.03551719675820441
+  ],
+  "interval": "bootstrap_groups",
+  "p": null,
+  "model": "tree-0",
+  "groups": [
+   604,
+   205
+  ],
+  "copies": [
+   0,
+   1782
+  ],
+  "input": {
+   "time_col": null,
+   "group_col": null,
+   "duplicates": "group"
+  },
+  "warnings": [
+   "copies_grouped",
+   "duplicate_rows"
+  ],
+  "excluded": {},
+  "seconds": 0.3,
+  "py_warnings": []
+ },
+ {
+  "case": "titanic, target shuffled, every row twice + batch column, default",
+  "expect": "KNOWN OPEN DEFECT (D60): not detected; stops only on Titanic's natural repeats",
+  "args": {
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "named error",
+  "code": "holdout_copies_in_training",
+  "message": "62 of the 446 holdout rows (13.9%) have a copy among the training rows: the same value in every feature column and the same target. A model that recalls a row scores on them, so the headline would be inflated. Remove the repeated rows; or pass duplicates='group' (--duplicates group) to keep each set of copies on one side of the split and of every fold; or pass duplicates='keep' (--duplicates keep) to go ahead with a ",
+  "seconds": 0.1,
+  "py_warnings": []
+ },
+ {
+  "case": "breast cancer, target shuffled, every row twice + batch column, default",
+  "expect": "KNOWN OPEN DEFECT (D60): runs with an inflated skill and no stop",
+  "args": {
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "random",
+  "metric": "roc_auc",
+  "baseline": "chance",
+  "skill": 0.7408032043849477,
+  "ci": [
+   0.6456198510507214,
+   0.8168891031236304
+  ],
+  "interval": "bootstrap_rows",
+  "p": 0.004975124378109453,
+  "model": "tree-0",
+  "groups": [
+   null,
+   null
+  ],
+  "copies": [
+   0,
+   null
+  ],
+  "input": {
+   "time_col": null,
+   "group_col": null,
+   "duplicates": "error"
+  },
+  "warnings": [],
+  "excluded": {},
+  "seconds": 0.4,
+  "py_warnings": []
+ },
+ {
+  "case": "breast cancer, target shuffled, every row twice, default",
+  "expect": "stops: exact copies",
+  "args": {
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "named error",
+  "code": "holdout_copies_in_training",
+  "message": "213 of the 285 holdout rows (74.7%) have a copy among the training rows: the same value in every feature column and the same target. A model that recalls a row scores on them, so the headline would be inflated. Remove the repeated rows; or pass duplicates='group' (--duplicates group) to keep each set of copies on one side of the split and of every fold; or pass duplicates='keep' (--duplicates keep) to go ahead with a",
+  "seconds": 0.2,
+  "py_warnings": []
+ },
+ {
+  "case": "breast cancer, target shuffled, every row twice, duplicates=group",
+  "expect": "skill about 0",
+  "args": {
+   "duplicates": "group",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "grouped",
+  "metric": "roc_auc",
+  "baseline": "chance",
+  "skill": -0.03312368972746327,
+  "ci": [
+   -0.23074188745554414,
+   0.149474634073484
+  ],
+  "interval": "bootstrap_groups",
+  "p": null,
+  "model": "linear-0",
+  "groups": [
+   426,
+   143
+  ],
+  "copies": [
+   0,
+   1138
+  ],
+  "input": {
+   "time_col": null,
+   "group_col": null,
+   "duplicates": "group"
+  },
+  "warnings": [
+   "copies_grouped",
+   "duplicate_rows"
+  ],
+  "excluded": {},
+  "seconds": 0.4,
+  "py_warnings": []
+ },
+ {
+  "case": "breast cancer",
+  "expect": "as before: skill about 0.98",
+  "args": {
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "random",
+  "metric": "roc_auc",
+  "baseline": "chance",
+  "skill": 0.9945492662473794,
+  "ci": [
+   0.9846483795917167,
+   1.0
+  ],
+  "interval": "bootstrap_rows",
+  "p": 0.004975124378109453,
+  "model": "linear-0",
+  "groups": [
+   null,
+   null
+  ],
+  "copies": [
+   0,
+   null
+  ],
+  "input": {
+   "time_col": null,
+   "group_col": null,
+   "duplicates": "error"
+  },
+  "warnings": [],
+  "excluded": {},
+  "seconds": 0.3,
+  "py_warnings": []
+ },
+ {
+  "case": "diabetes",
+  "expect": "as before",
+  "args": {
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "random",
+  "metric": "mse",
+  "baseline": "training_mean",
+  "skill": 0.4900337428923588,
+  "ci": [
+   0.3429073414453271,
+   0.6022836720838429
+  ],
+  "interval": "bootstrap_rows",
+  "p": 0.004975124378109453,
+  "model": "linear-0",
+  "groups": [
+   null,
+   null
+  ],
+  "copies": [
+   0,
+   null
+  ],
+  "input": {
+   "time_col": null,
+   "group_col": null,
+   "duplicates": "error"
+  },
+  "warnings": [
+   "whole_number_regression_target"
+  ],
+  "excluded": {},
+  "seconds": 0.1,
+  "py_warnings": []
+ },
+ {
+  "case": "penguins sex",
+  "expect": "as before",
+  "args": {
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "random",
+  "metric": "roc_auc",
+  "baseline": "chance",
+  "skill": 0.937641723356009,
+  "ci": [
+   0.8554348974438261,
+   0.9864422693123771
+  ],
+  "interval": "bootstrap_rows",
+  "p": 0.004975124378109453,
+  "model": "linear-0",
+  "groups": [
+   null,
+   null
+  ],
+  "copies": [
+   0,
+   null
+  ],
+  "input": {
+   "time_col": null,
+   "group_col": null,
+   "duplicates": "error"
+  },
+  "warnings": [
+   "small_holdout"
+  ],
+  "excluded": {},
+  "seconds": 0.1,
+  "py_warnings": []
+ },
+ {
+  "case": "customers example CSV",
+  "expect": "stops or runs? it has signup_date: expect time_order_undeclared",
+  "args": {
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "named error",
+  "code": "time_order_undeclared",
+  "message": "The column(s) 'signup_date' hold dates, and nothing was said about time order. A table that holds dates is often ordered in time, and a random split of it can report as predictable what is not. Pass the time column as time_col (--time-col COLUMN) for a time-ordered split, or pass time_col=False (--no-time-order) to state that the order of the rows in time does not matter.",
+  "seconds": 0.0,
+  "py_warnings": []
+ },
+ {
+  "case": "diamonds 53,940 rows",
+  "expect": "as before: skill about 0.97",
+  "args": {
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "random",
+  "metric": "mse",
+  "baseline": "training_mean",
+  "skill": 0.9333271016396157,
+  "ci": [
+   0.9178300342913184,
+   0.951217262163137
+  ],
+  "interval": "bootstrap_rows",
+  "p": 0.004975124378109453,
+  "model": "tree-0",
+  "groups": [
+   null,
+   null
+  ],
+  "copies": [
+   0,
+   null
+  ],
+  "input": {
+   "time_col": null,
+   "group_col": null,
+   "duplicates": "error"
+  },
+  "warnings": [
+   "duplicate_rows",
+   "whole_number_regression_target"
+  ],
+  "excluded": {},
+  "seconds": 0.5,
+  "py_warnings": []
+ }
+]

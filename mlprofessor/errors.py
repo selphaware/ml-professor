@@ -77,3 +77,27 @@ class HoldoutCopiesError(ProfileError):
     """Too many holdout rows have a copy among the training rows (step 8a)."""
 
     code = "holdout_copies_in_training"
+
+
+class TimeOrderUndeclaredError(ProfileError):
+    """A column holds dates and nothing was said about time order (step 5)."""
+
+    code = "time_order_undeclared"
+
+
+class EntitiesUndeclaredError(ProfileError):
+    """A persistent panel under time order, and nothing said about entities (step 11)."""
+
+    code = "entities_undeclared"
+
+
+class GroupColumnError(ProfileError):
+    """The entity column cannot be used as it is (D57)."""
+
+    code = "group_column_invalid"
+
+
+class TooFewGroupsError(ProfileError):
+    """Too few entities to split as whole entities (step 7; D57)."""
+
+    code = "too_few_groups"

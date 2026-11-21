@@ -15,15 +15,18 @@ from threadpoolctl import threadpool_limits
 
 from mlprofessor import errors, extensions, leakage, metrics, models, uncertainty
 from mlprofessor.columns import (feature_numbers, numeric_values, parse_numbers,
-                                 roles_of_read_columns, stripped_text, type_family)
+                                 read_entities, roles_of_read_columns, stripped_text,
+                                 type_family)
 from mlprofessor.load import load_table, read_number_columns, usable_rows
 from mlprofessor.preprocess import MISSING_LEVEL, Preprocessor, check_feature_names
-from mlprofessor.result import LIMITATIONS, RANDOM_CAVEAT, ROWS_ITEMS, ProfileResult
-from mlprofessor.split import MAX_SEED, N_FOLDS, read_time, split_random, split_time
+from mlprofessor.result import (GROUPED_CAVEAT, LIMITATIONS, RANDOM_CAVEAT, ROWS_ITEMS,
+                                ProfileResult)
+from mlprofessor.split import (MAX_SEED, N_FOLDS, read_time, split_random, split_time,
+                               units_of)
 from mlprofessor.task import TASKS, class_value, decide_task, read_target_values
 
 PROFILES = ("full", "fast")
-DUPLICATES = ("error", "keep")
+DUPLICATES = ("error", "keep", "group")
 COPIES_MIN_ROWS = 10
 COPIES_MAX_SHARE = 0.01
 MIN_USABLE_ROWS = 100
@@ -48,7 +51,7 @@ def _is_whole(value):
 
 
 def check_arguments(data, target, task, time_col, gap, profile, seed, out_dir, n_jobs,
-                    duplicates="error"):
+                    duplicates="error", group_col=None):
     """Raise `InputError` for any argument value outside spec 2.1, before loading."""
     if not isinstance(data, (pd.DataFrame, str, os.PathLike)):
         raise errors.InputError(
@@ -58,14 +61,15 @@ def check_arguments(data, target, task, time_col, gap, profile, seed, out_dir, n
         raise errors.InputError(f"target must be a column name (text); got {target!r}.")
     if task not in TASKS:
         raise errors.InputError(f"task must be one of {', '.join(TASKS)}; got {task!r}.")
-    if time_col is not None and not isinstance(time_col, str):
-        raise errors.InputError(f"time_col must be a column name or None; got {time_col!r}.")
+    if time_col is not None and time_col is not False and not isinstance(time_col, str):
+        raise errors.InputError(
+            f"time_col must be a column name, None or False; got {time_col!r}.")
     if not _is_whole(gap) or gap < 0:
         raise errors.InputError(f"gap must be a whole number, at least 0; got {gap!r}.")
-    if gap > 0 and time_col is None:
+    if gap > 0 and not isinstance(time_col, str):
         raise errors.InputError(
             f"gap={gap} needs a time column; pass time_col, or leave gap at 0.")
-    if time_col is not None and time_col == target:
+    if isinstance(time_col, str) and time_col == target:
         raise errors.InputError("time_col and target name the same column; name two columns.")
     if profile not in PROFILES:
         raise errors.InputError(f"profile must be 'full' or 'fast'; got {profile!r}.")
@@ -78,7 +82,16 @@ def check_arguments(data, target, task, time_col, gap, profile, seed, out_dir, n
         raise errors.InputError(
             f"n_jobs must be -1 (every core) or a positive whole number; got {n_jobs!r}.")
     if not isinstance(duplicates, str) or duplicates not in DUPLICATES:
-        raise errors.InputError(f"duplicates must be 'error' or 'keep'; got {duplicates!r}.")
+        raise errors.InputError(
+            f"duplicates must be 'error', 'keep' or 'group'; got {duplicates!r}.")
+    if group_col is not None and group_col is not False and not isinstance(group_col, str):
+        raise errors.InputError(
+            f"group_col must be a column name, None or False; got {group_col!r}.")
+    if isinstance(group_col, str) and group_col == target:
+        raise errors.InputError("group_col and target name the same column; name two columns.")
+    if isinstance(group_col, str) and isinstance(time_col, str) and group_col == time_col:
+        raise errors.InputError(
+            "group_col and time_col name the same column; name two columns.")
     if out_dir is not None:
         _check_out_dir(os.fspath(out_dir))
 
@@ -94,6 +107,21 @@ def _check_out_dir(path):
     if not os.path.isdir(probe):
         raise errors.InputError(
             f"out_dir {path!r} cannot be used: {probe!r} exists and is not a folder.")
+
+
+def _date_columns(roles):
+    """The columns excluded as dates, in file order."""
+    return [r["name"] for r in roles.to_dict(orient="records") if r["reason"] == "datetime"]
+
+
+def _time_order_message(dates):
+    return (
+        "The column(s) " + ", ".join(repr(name) for name in dates) + " hold dates, and "
+        "nothing was said about time order. A table that holds dates is often ordered in "
+        "time, and a random split of it can report as predictable what is not. Pass the "
+        "time column as time_col (--time-col COLUMN) for a time-ordered split, or pass "
+        "time_col=False (--no-time-order) to state that the order of the rows in time "
+        "does not matter.")
 
 
 def _excluded_text(roles):
@@ -193,21 +221,70 @@ def count_holdout_copies(features, y, training_rows, holdout_rows):
     return int(np.isin(holdout_keys, training_keys).sum())
 
 
-def _copies_message(n_copies, n_holdout, roles):
+def copy_sets(features, rows, y_rows):
+    """Step 7 under `duplicates="group"`: each of `rows`' set of exact copies (step 8a's
+    comparison, on `features` and the target values `y_rows`), numbered 0..; and the
+    number of those rows that have a copy among them."""
+    columns = [features[name].to_numpy()[rows] for name in features.columns]
+    columns.append(np.asarray(y_rows))
+    codes = np.column_stack([_comparable_codes(values) for values in columns])
+    _, key = np.unique(codes, axis=0, return_inverse=True)
+    key = key.reshape(-1)
+    sizes = np.bincount(key)
+    return key, int((sizes[key] > 1).sum())
+
+
+def joined_units(first, second):
+    """Two rows in one unit when they share a label of `first` or of `second`, directly
+    or through other rows; units numbered 0.. by their first row."""
+    parent = list(range(len(first)))
+
+    def root(r):
+        while parent[r] != r:
+            parent[r] = parent[parent[r]]
+            r = parent[r]
+        return r
+
+    for labels in (first, second):
+        leader = {}
+        for r, label in enumerate(np.asarray(labels).tolist()):
+            if label in leader:
+                a, b = root(leader[label]), root(r)
+                if a != b:
+                    parent[max(a, b)] = min(a, b)
+            else:
+                leader[label] = r
+    roots = np.array([root(r) for r in range(len(first))], dtype=np.int64)
+    _, units = np.unique(roots, return_inverse=True)
+    return units.reshape(-1).astype(np.int64)
+
+
+def _copies_message(n_copies, n_holdout, roles, duplicates="error"):
     share = 100.0 * n_copies / n_holdout
+    if duplicates == "group":
+        leaks = roles.loc[roles["reason"] == "suspected_leak", "name"].tolist()
+        return (
+            f"{n_copies} of the {n_holdout} holdout rows ({share:.1f}%) have a copy among "
+            "the training rows. duplicates='group' kept each set of copies on one side of "
+            "the split, but these rows became copies of one another only when the leak "
+            "screen excluded the column(s) "
+            + ", ".join(repr(str(name)) for name in leaks)
+            + " as suspected leaks: they differed in nothing else. Remove the column(s) "
+            "from the table and run again.")
     message = (
         f"{n_copies} of the {n_holdout} holdout rows ({share:.1f}%) have a copy among the "
         "training rows: the same value in every feature column and the same target. A model "
         "that recalls a row scores on them, so the headline would be inflated. Remove the "
-        "repeated rows, or pass duplicates='keep' (--duplicates keep) to go ahead with a "
-        "warning.")
-    dates = [r["name"] for r in roles.to_dict(orient="records") if r["reason"] == "datetime"]
+        "repeated rows; or pass duplicates='group' (--duplicates group) to keep each set of "
+        "copies on one side of the split and of every fold; or pass duplicates='keep' "
+        "(--duplicates keep) to go ahead with a warning.")
+    dates = _date_columns(roles)
     if dates:
         message += (
             " The column(s) " + ", ".join(repr(name) for name in dates) + " were excluded "
-            "as dates because no time column was declared, so rows that differ only in "
-            "their date count as copies; pass it as time_col for a time-ordered split, "
-            "under which this rule does not apply.")
+            "as dates because time_col=False was passed, so rows that differ only in "
+            "their date count as copies; if the rows are ordered in time, pass the column "
+            "as time_col for a time-ordered split, under which this rule does not apply.")
     return message
 
 
@@ -230,6 +307,33 @@ def encode_target(values, task_info):
         return np.array([value == positive for value in values], dtype=np.int64)
     # Step 4 has made sure the target is of integer or float type: nothing to coerce.
     return np.asarray(values, dtype=float)
+
+
+def _entity_row_cap(usable, units, profile, seed):
+    """Step 6 with an entity column: whole entities, in an order drawn from the seed,
+    each kept when all of its rows still fit under the cap; file order kept."""
+    if profile != "fast" or len(usable) <= ROW_CAP:
+        return usable
+    sizes = np.bincount(units)
+    keep_unit = np.zeros(len(sizes), dtype=bool)
+    total = 0
+    for u in _stream(seed, _ROW_CAP_STREAM).permutation(len(sizes)):
+        if total + sizes[u] <= ROW_CAP:
+            keep_unit[u] = True
+            total += int(sizes[u])
+    return usable[keep_unit[units]]
+
+
+def _read_entity_column(values, name, usable):
+    """The entity codes of every loaded row (-1 where empty); an empty usable cell stops."""
+    codes = read_entities(values, name=name)
+    n_empty = int((codes[usable] < 0).sum())
+    if n_empty:
+        raise errors.GroupColumnError(
+            f"The entity column {name!r} is empty in {n_empty} usable row(s) (missing, or "
+            "text of only white space); every row with a target must name its entity. "
+            "Fill the cells in or remove the rows.")
+    return codes
 
 
 def _row_cap(usable, profile, seed):
@@ -298,6 +402,30 @@ def _panel_autocorrelation(keys, y):
             "training timestamps cannot be computed: a number on the way is not finite. "
             "Likely cause: target values too large for squared error.")
     return r
+
+
+def _entities_message(target, r):
+    return (
+        f"The timestamps repeat, so the table is a panel of several series, and the "
+        f"per-timestamp mean of {target!r} has lag-1 autocorrelation {r:.2f} over the "
+        f"training timestamps (above {PANEL_AUTOCORRELATION}). Against the training mean, "
+        "skill on such a table shows only that one period resembles the last, and nothing "
+        "says which row belongs to which series. Pass the column that names each row's "
+        "series as group_col (--group-col COLUMN), so that each series is scored against "
+        "its own previous value; or pass group_col=False (--no-entities) to state that "
+        "the rows belong to no entities, and go ahead against the training mean with a "
+        "warning.")
+
+
+def _check_one_row_per_stamp(keys, codes, group_col):
+    """Under time order in a regression, an entity has at most one row per timestamp."""
+    n_repeated = int(metrics.repeated_in_groups(keys, codes).sum())
+    if n_repeated:
+        raise errors.GroupColumnError(
+            f"{n_repeated} of the rows split share their entity of {group_col!r} and their "
+            "timestamp with another row; under time order each entity must be one series, "
+            "with one row per timestamp, to have one previous value. Remove or combine the "
+            "repeated rows.")
 
 
 TARGET_TOO_LARGE = ("a target value is likely too large for squared error (its square is "
@@ -388,8 +516,11 @@ def _mean_and_std(scores):
     return mean, spread
 
 
-class _NonFiniteFoldScore(Exception):
-    """A fold score that is infinite or not-a-number: its configuration fails (D44)."""
+def _fail(record, error):
+    """Record a configuration as failed in selection: no fold score is kept (D44)."""
+    record["status"] = "failed"
+    record["error"] = error
+    record["fold_scores"] = [None] * N_FOLDS
 
 
 def _fold_is_scored(task_type, y, fold):
@@ -413,22 +544,24 @@ def select(configs, features, kinds, y, folds, scored, task_type, metric, seed, 
         for config, record in zip(configs, records):
             if record["status"] == "failed":
                 continue
+            # Only what the model does can fail it: making it, its fit, its
+            # prediction and the reading of what it handed back (step 9). The
+            # scoring below is the tool's own; if it raises, the run ends.
             try:
                 values = fit_and_predict(config, task_type, data, seed, n_jobs)
-                fold_score = _score(metric, data.predict_y, values)
-                if not np.isfinite(fold_score):
-                    raise _NonFiniteFoldScore(
-                        f"its {metric} on fold {k + 1} is not finite ({fold_score!r}), from "
-                        "predictions that are finite; its predictions are likely too large "
-                        "for squared error")
-                record["fold_scores"][k] = fold_score
             except errors.ProfileError:
                 raise
             except Exception as exc:  # a configuration that raises is recorded, never dropped
-                record["status"] = "failed"
-                record["error"] = (str(exc) if isinstance(exc, _NonFiniteFoldScore)
-                                   else _error_text(exc))
-                record["fold_scores"] = [None] * N_FOLDS
+                _fail(record, _error_text(exc))
+                continue
+            fold_score = _score(metric, data.predict_y, values)
+            if not np.isfinite(fold_score):
+                _fail(record,
+                      f"its {metric} on fold {k + 1} is not finite ({fold_score!r}), from "
+                      "predictions that are finite; its predictions are likely too large "
+                      "for squared error")
+                continue
+            record["fold_scores"][k] = fold_score
     for record in records:
         if record["status"] != "fitted":
             continue
@@ -440,17 +573,21 @@ def select(configs, features, kinds, y, folds, scored, task_type, metric, seed, 
 # ------------------------------------------------------------ the run
 
 def run(data, target, task="auto", time_col=None, gap=0, profile="full", seed=0,
-        out_dir=None, n_jobs=-1, duplicates="error"):
+        out_dir=None, n_jobs=-1, duplicates="error", group_col=None):
     """`profile()` itself: see spec 2.1 and section 3."""
     check_arguments(data, target, task, time_col, gap, profile, seed, out_dir, n_jobs,
-                    duplicates)
+                    duplicates, group_col)
     jobs = resolve_n_jobs(n_jobs)
+    # `False` states that time order does not matter; past step 5 it reads as `None`.
+    time_name = time_col if isinstance(time_col, str) else None
+    stated = time_col is False
     started = time.perf_counter()
     # Arithmetic that overflows is checked where it matters (spec 3, "Numbers that are
     # not finite"); numpy's own messages are held back, and the caller's settings restored.
     with threadpool_limits(limits={"blas": 1, "openmp": jobs}),             np.errstate(over="ignore", invalid="ignore", divide="ignore"):
-        document, predictions = _run_profile(data, target, task, time_col, int(gap),
-                                             profile, int(seed), jobs, duplicates)
+        document, predictions = _run_profile(data, target, task, time_name, int(gap),
+                                             profile, int(seed), jobs, duplicates,
+                                             stated, group_col)
     document["meta"]["n_jobs"] = jobs
     document["meta"]["timing"] = {"seconds": round(time.perf_counter() - started, 3)}
     result = ProfileResult(document, predictions)
@@ -459,7 +596,8 @@ def run(data, target, task="auto", time_col=None, gap=0, profile="full", seed=0,
     return result
 
 
-def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs, duplicates):
+def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs, duplicates,
+                 time_order_stated=False, group_arg=None):
     # Step 1: load and count.
     loaded_frame, info = load_table(data)
     # Step 1a: object columns of numbers are read as numbers, once; every later
@@ -477,16 +615,28 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs, dupli
     # Step 2: usable rows.
     counts = usable_rows(frame, target, time_col)
     usable = counts["usable"]
+    # `group_col` as passed is recorded; a name is the entity column (D57).
+    group_col = group_arg if isinstance(group_arg, str) else None
+    if group_col is not None and group_col not in frame.columns:
+        raise errors.ColumnNotFoundError(
+            f"No column named {group_col!r}. The columns are: "
+            f"{', '.join(repr(str(c)) for c in frame.columns)}.")
     if len(usable) < MIN_USABLE_ROWS:
         with_what = "a target" if time_col is None else "a target and a time value"
         raise errors.TooFewRowsError(
             f"{len(usable)} usable rows (with {with_what}); at least {MIN_USABLE_ROWS} "
             "are needed.")
 
-    # Step 3: under time order, read the time column of the usable rows.
+    # The entity column, read once over every loaded row as it was loaded.
+    entity = (None if group_col is None
+              else _read_entity_column(loaded_frame[group_col], group_col, usable))
+    grouped = group_col is not None and time_col is None
+
+    # Step 3: under time order, the time column is read over all its loaded rows
+    # (step 1a, and the 2**53 rule), and the keys of the usable rows are kept.
     time_ordered = time_col is not None
     if time_ordered:
-        usable_keys, time_form = read_time(frame[time_col].iloc[usable])
+        usable_keys, time_form = read_time(frame[time_col], rows=usable)
         no_key = (np.isnat(usable_keys) if np.issubdtype(usable_keys.dtype, np.datetime64)
                   else np.isnan(usable_keys))
         if no_key.any():
@@ -497,7 +647,7 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs, dupli
     # Step 4: the task, on the usable rows, before any cap. The target is read
     # once, text without the white space round it, and every later step uses it.
     target_read = read_target_values(frame[target]).reset_index(drop=True)
-    task_info = decide_task(target_read.iloc[usable], task)
+    task_info = decide_task(frame[target], task, rows=usable)
     for code in task_info["warnings"]:
         warnings.append(_warning(
             code, target,
@@ -505,7 +655,10 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs, dupli
             "declare task='classification' only if it has two values."))
 
     # Step 5: column roles.
-    roles = roles_of_read_columns(frame, target, time_col, loaded_dtypes)
+    roles = roles_of_read_columns(frame, target, time_col, loaded_dtypes, group_col)
+    dates = _date_columns(roles)
+    if time_col is None and not time_order_stated and dates:
+        raise errors.TimeOrderUndeclaredError(_time_order_message(dates))
     warnings.extend(_column_warnings(roles, time_col))
     features, kinds, feature_missing = build_features(frame, roles)
     if not kinds:
@@ -520,12 +673,27 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs, dupli
     if time_ordered:
         keep = _time_row_cap(usable_keys, profile, gap)
         kept, kept_keys = usable[keep], usable_keys[keep]
+    elif grouped:
+        kept = _entity_row_cap(usable, units_of(entity[usable], len(usable)), profile, seed)
     else:
         kept = _row_cap(usable, profile, seed)
     dropped_row_cap = len(usable) - len(kept)
     task_type = task_info["type"]
     y_all = np.zeros(n_loaded, dtype=np.int64 if task_type == "classification" else float)
     y_all[kept] = encode_target(target_read.iloc[kept].to_numpy(), task_info)
+
+    def _units_among(rows, y_rows):
+        """Step 7's units among `rows` (or None: split one by one), and with
+        `duplicates="group"` the number of those rows that have a copy among them."""
+        if time_ordered:
+            return None, None
+        if duplicates != "group":
+            return (None if entity is None else entity[rows]), None
+        sets, n_with_copies = copy_sets(features, rows, y_rows)
+        if entity is not None:
+            return joined_units(entity[rows], sets), n_with_copies
+        return (sets if n_with_copies else None), n_with_copies
+
     def _fast_rows_error(reason):
         """Under a cap that left rows out: the full profile's error, or the cap's own."""
         if task_type == "classification":
@@ -537,6 +705,14 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs, dupli
                     f"at least {MIN_CLASS_ROWS} of each class are needed.")
         if time_ordered:
             split_time(usable_keys, gap=gap)
+        usable_units, _ = _units_among(
+            usable, encode_target(target_read.iloc[usable].to_numpy(), task_info))
+        if usable_units is not None:
+            # Raises the full profile's own `too_few_groups` when it would stop too.
+            usable_classes = (target_read.iloc[usable].to_numpy()
+                              if task_type == "classification" else None)
+            split_random(len(usable), classes=usable_classes, seed=seed,
+                         groups=usable_units)
         return errors.FastProfileRowsError(
             f"Under the fast profile's cap of {ROW_CAP} rows: {reason}; the full "
             "profile would run: use profile='full'.")
@@ -555,7 +731,16 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs, dupli
                 raise _fast_rows_error(message)
             raise errors.TooFewRowsError(message)
 
-    # Step 7: the holdout and the folds, as positions of the kept rows.
+    # Step 7: the holdout and the folds, as positions of the kept rows. Under
+    # `duplicates="group"` the sets of copies are formed here, on step 5's features.
+    units, n_rows_with_copies = _units_among(kept, y_all[kept])
+    if n_rows_with_copies:
+        warnings.append(_warning(
+            "copies_grouped", None,
+            f"{n_rows_with_copies} of the {len(kept)} rows split have a copy among them (the "
+            "same value in every feature column and the same target); with "
+            "duplicates='group' each set of copies was kept on one side of the holdout "
+            "split and in one fold."))
     if time_ordered:
         try:
             split = split_time(kept_keys, gap=gap)
@@ -569,7 +754,16 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs, dupli
         timestamps_unique = len(np.unique(kept_keys)) == len(kept_keys)
     else:
         classes = target_read.iloc[kept].to_numpy() if task_type == "classification" else None
-        split = split_random(len(kept), classes=classes, seed=seed)
+        if units is not None:
+            try:
+                split = split_random(len(kept), classes=classes, seed=seed,
+                                     groups=units)
+            except errors.TooFewGroupsError as exc:
+                if dropped_row_cap:
+                    raise _fast_rows_error(str(exc)) from exc
+                raise
+        else:
+            split = split_random(len(kept), classes=classes, seed=seed)
         split["gap"] = split["holdout"][:0]
         for fold in split["folds"]:
             fold["gap"] = fold["training"][:0]
@@ -592,20 +786,57 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs, dupli
     if not any(scored):
         raise errors.OneClassError("No fold holds both classes in training and validation.")
 
+    # Step 11 under time order in a regression: each entity one series, or a panel
+    # with nothing said about its entities stops here, before the leak screen and any fit.
+    by_entity = task_type == "regression" and time_ordered and entity is not None
+    if by_entity:
+        _check_one_row_per_stamp(kept_keys, entity[kept], group_col)
+    panel_warning = None
+    if task_type == "regression" and time_ordered and entity is None and not timestamps_unique:
+        r = _panel_autocorrelation(kept_keys[split["training"]], y_all[training_rows])
+        if r is not None and r > PANEL_AUTOCORRELATION:
+            if group_arg is None:
+                raise errors.EntitiesUndeclaredError(_entities_message(target, r))
+            panel_warning = _warning(
+                "autocorrelated_panel_target", target,
+                f"The per-timestamp mean of {target!r} has lag-1 autocorrelation {r:.2f} "
+                f"over the training timestamps (above {PANEL_AUTOCORRELATION}). With "
+                "repeated timestamps the baseline is the training mean, which a "
+                "persistent target beats easily; profile its changes instead.")
+
     # Step 11's baselines need no fit: scored on the holdout now, before any (D44).
-    previous = None
-    if task_type == "regression" and time_ordered and timestamps_unique:
+    previous = previous_holdout = None
+    n_without_previous = None
+    if by_entity:
+        # Each entity's latest row `gap + 1` distinct timestamps earlier, among the kept rows.
+        previous = np.full(n_loaded, np.nan)
+        previous[kept] = metrics.previous_value(y_all[kept], kept_keys, gap=gap,
+                                                groups=entity[kept])
+        previous_holdout = previous[holdout_rows]
+        no_previous = np.isnan(previous_holdout)
+        n_without_previous = int(no_previous.sum())
+        # A row whose entity has no earlier row is predicted by what is known: the mean.
+        previous_holdout = np.where(no_previous, float(np.mean(y_all[training_rows])),
+                                    previous_holdout)
+        if n_without_previous:
+            warnings.append(_warning(
+                "no_previous_value", None,
+                f"{n_without_previous} holdout row(s) belong to an entity of {group_col!r} "
+                f"with no row at least {gap + 1} timestamp(s) earlier; for them the "
+                "previous-value baseline predicts the training mean."))
+    elif task_type == "regression" and time_ordered and timestamps_unique:
         # The target `gap + 1` timestamps earlier among the kept rows in time order.
         previous = np.full(n_loaded, np.nan)
         previous[kept] = metrics.previous_value(y_all[kept], kept_keys, gap=gap)
+        previous_holdout = previous[holdout_rows]
     baselines, baseline_preds = holdout_baselines(
-        task_type, y_all, training_rows, holdout_rows,
-        previous_holdout=None if previous is None else previous[holdout_rows])
+        task_type, y_all, training_rows, holdout_rows, previous_holdout=previous_holdout)
 
     # Step 8: the leak screen, on training rows only, over the selection folds.
     roles = roles.copy()
     for record in leakage.screen(features, kinds, feature_missing, y_all, training_rows,
-                                 folds, scored, task_type, seed, previous=previous):
+                                 folds, scored, task_type, seed, previous=previous,
+                                 previous_by_entity=by_entity):
         name = record["name"]
         if record["leak_rule"] is not None:
             at = roles.index[roles["name"] == name]
@@ -638,9 +869,9 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs, dupli
         n_copies = count_holdout_copies(features, y_all, training_rows, holdout_rows)
         copy_share = n_copies / len(holdout_rows)
         if n_copies >= COPIES_MIN_ROWS and copy_share > COPIES_MAX_SHARE:
-            if duplicates == "error":
+            if duplicates != "keep":
                 raise errors.HoldoutCopiesError(
-                    _copies_message(n_copies, len(holdout_rows), roles))
+                    _copies_message(n_copies, len(holdout_rows), roles, duplicates))
             warnings.append(_warning(
                 "holdout_copies_kept", None,
                 f"{n_copies} of the {len(holdout_rows)} holdout rows "
@@ -689,15 +920,8 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs, dupli
             f"The holdout {metric} of the chosen configuration {chosen['config']} is not "
             f"finite ({score!r}), from predictions that are finite. Likely cause: its "
             "predictions or the target values are too large for squared error.")
-    if task_type == "regression" and time_ordered and not timestamps_unique:
-        r = _panel_autocorrelation(kept_keys[split["training"]], y_all[training_rows])
-        if r is not None and r > PANEL_AUTOCORRELATION:
-            warnings.append(_warning(
-                "autocorrelated_panel_target", target,
-                f"The per-timestamp mean of {target!r} has lag-1 autocorrelation {r:.2f} "
-                f"over the training timestamps (above {PANEL_AUTOCORRELATION}). With "
-                "repeated timestamps the baseline is the training mean, which a "
-                "persistent target beats easily; profile its changes instead."))
+    if panel_warning is not None:
+        warnings.append(panel_warning)
     baseline = next(b for b in baselines if b["used"])
     headline = {
         "metric": metric,
@@ -725,7 +949,8 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs, dupli
     spread, spread_warnings = uncertainty.headline_uncertainty(
         metric, y_holdout, holdout_pred, baseline_preds[baseline["name"]],
         headline["skill"], profile, seed,
-        holdout_keys=kept_keys[split["holdout"]] if time_ordered else None)
+        holdout_keys=kept_keys[split["holdout"]] if time_ordered else None,
+        holdout_groups=None if units is None else units[split["holdout"]])
     headline.update(spread)
     for code, message in spread_warnings:
         warnings.append(_warning(code, None, message))
@@ -765,7 +990,8 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs, dupli
 
     n_scored = int(sum(scored))
     validation = {
-        "scheme": "time_ordered" if time_ordered else "random",
+        "scheme": ("time_ordered" if time_ordered
+                   else "grouped" if units is not None else "random"),
         "holdout_share": len(holdout_rows) / (len(training_rows) + len(holdout_rows)
                                               + len(gap_rows)),
         "n_folds": N_FOLDS,
@@ -776,9 +1002,19 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs, dupli
         "folds": [{"fold": k + 1, "training_rows": len(f["training"]),
                    "validation_rows": len(f["validation"]), "gap_rows": len(f["gap"]),
                    "scored": bool(scored[k])} for k, f in enumerate(folds)],
-        "caveat": None if time_ordered else RANDOM_CAVEAT,
+        "caveat": (None if time_ordered
+                   else GROUPED_CAVEAT if units is not None else RANDOM_CAVEAT),
         "n_holdout_copies": n_copies,
         "holdout_copy_share": copy_share,
+        "group_col": group_col,
+        "n_groups_training": (
+            int(len(np.unique(units[split["training"]]))) if units is not None
+            else None if entity is None else int(len(np.unique(entity[training_rows])))),
+        "n_groups_holdout": (
+            int(len(np.unique(units[split["holdout"]]))) if units is not None
+            else None if entity is None else int(len(np.unique(entity[holdout_rows])))),
+        "n_holdout_without_previous": n_without_previous,
+        "n_rows_with_copies": n_rows_with_copies,
     }
     if time_ordered:
         training_keys = kept_keys[split["training"]]
@@ -796,12 +1032,13 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs, dupli
         "meta": _meta(profile, seed),
         "input": {
             "source": info["source"], "kind": info["kind"], "target": target,
-            "time_col": time_col, "task": task, "gap": gap, "n_rows": n_loaded,
+            "time_col": False if time_order_stated else time_col,
+            "task": task, "gap": gap, "n_rows": n_loaded,
             "n_columns": int(frame.shape[1]), "duplicate_rows": duplicate_rows,
-            "duplicates": duplicates,
+            "duplicates": duplicates, "group_col": group_arg,
         },
         "rows": rows,
-        "columns": roles.to_dict(orient="records"),
+        "columns": _column_records(roles),
         "task": {
             "type": task_type, "decided_by": task_info["decided_by"],
             "n_distinct": int(task_info["n_distinct"]),
@@ -827,6 +1064,24 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs, dupli
     return document, predictions
 
 
+COLUMN_TEXT_KEYS = ("name", "dtype", "role", "kind", "reason", "leak_rule")
+
+
+def _column_records(roles):
+    """The `columns` records of `roles`: a text field with no value is None, never NaN.
+
+    A text column of a frame marks a missing cell as NaN; the document says
+    "does not apply" with null, and holds no number that is not finite.
+    """
+    records = roles.to_dict(orient="records")
+    for record in records:
+        for key in COLUMN_TEXT_KEYS:
+            value = record.get(key)
+            if not isinstance(value, str) and value is not None and pd.isna(value):
+                record[key] = None
+    return records
+
+
 def _meta(profile, seed):
     import sklearn
     import threadpoolctl
@@ -844,4 +1099,5 @@ def _meta(profile, seed):
 
 
 __all__ = ["run", "check_arguments", "resolve_n_jobs", "select", "FitData",
-           "build_features", "encode_target", "count_holdout_copies"]
+           "build_features", "encode_target", "count_holdout_copies", "copy_sets",
+           "joined_units"]

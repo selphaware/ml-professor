@@ -86,13 +86,14 @@ def _all_whole_numbers(present_values):
     return bool(np.all(np.isfinite(numbers)) and np.all(numbers == np.floor(numbers)))
 
 
-def decide_task(values, task="auto"):
+def decide_task(values, task="auto", rows=None):
     """Decide classification or regression for the target values given.
 
     Text is read without the white space round it, and missing values are
     ignored, text of only white space among them. Returns the type, how it was decided, the
     number of distinct values, the classes in sorted order with the second as
-    the positive class, and a list of warning codes.
+    the positive class, and a list of warning codes. With `rows`, the column
+    is read (step 1a) over all its values and the task decided on those rows.
     """
     if task not in TASKS:
         raise errors.InputError(
@@ -107,6 +108,8 @@ def decide_task(values, task="auto"):
             "The target holds whole numbers too large for 64 bits, which are not read as "
             "numbers. To use them as labels, pass them as text.")
     target_values = read_target_values(values)
+    if rows is not None:
+        target_values = target_values.iloc[np.asarray(rows, dtype=np.int64)]
     present_values = target_values.dropna()
     unhashable = _first_unhashable(present_values)
     if unhashable is not None:
@@ -140,12 +143,16 @@ def decide_task(values, task="auto"):
     elif numeric and n_distinct >= MIN_DISTINCT_REGRESSION:
         task_type, decided_by = "regression", "rule"
     else:
-        kind = "numeric" if numeric else "non-numeric"
-        raise errors.TaskAmbiguousError(
-            f"The target is {kind} with {n_distinct} distinct values; the rule "
-            "decides only two values (classification) or a numeric target with "
-            f"more than {MIN_DISTINCT_REGRESSION - 1} (regression). Declare the "
-            "task, or recode the target.")
+        kind = "numeric" if numeric else "not numeric"
+        message = (
+            f"The target is {kind} with {n_distinct} distinct values. Three or more "
+            "classes are not supported in this version. What would run: the rows of "
+            "two of the classes only, or the classes merged into two.")
+        if numeric:
+            message += (
+                " A target which is a quantity, not a set of classes, can be run with "
+                "task='regression'.")
+        raise errors.TaskAmbiguousError(message)
 
     warnings = []
     classes = positive_class = None

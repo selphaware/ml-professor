@@ -1,5 +1,6 @@
 """Holdout metrics, skill over a baseline, and the previous-value baseline."""
 import numpy as np
+import pandas as pd
 
 from mlprofessor.errors import OneClassError
 
@@ -67,8 +68,13 @@ def skill(metric, score, baseline_score):
     raise ValueError(f"unknown metric {metric!r}; expected one of {METRICS}")
 
 
-def previous_value(y, keys, gap=0):
-    """For each row, the target of the row `gap + 1` timestamps earlier; NaN if none."""
+def previous_value(y, keys, gap=0, groups=None):
+    """For each row, the target of the row `gap + 1` timestamps earlier; NaN if none.
+
+    With `groups`, the target of the latest row of the same group at least
+    `gap + 1` distinct timestamps earlier, the timestamps being those of all
+    the rows given; NaN where the group has no such row.
+    """
     y = np.asarray(y, dtype=float)
     keys = np.asarray(keys)
     if y.shape != keys.shape or y.ndim != 1:
@@ -78,6 +84,8 @@ def previous_value(y, keys, gap=0):
     lag = int(gap) + 1
     if len(keys) and np.any(_missing(keys)):
         raise ValueError("keys must not hold missing values")
+    if groups is not None:
+        return _previous_in_groups(y, keys, lag, groups)
     order = np.argsort(keys, kind="mergesort")
     sorted_keys = keys[order]
     if np.any(sorted_keys[1:] == sorted_keys[:-1]):
@@ -85,6 +93,49 @@ def previous_value(y, keys, gap=0):
     out = np.full(len(y), np.nan)
     if len(y) > lag:
         out[order[lag:]] = y[order[:-lag]]
+    return out
+
+
+def _group_codes(groups, n_rows):
+    """One code per row for `groups`, read as an entity column is; ValueError if one is empty."""
+    from mlprofessor.columns import read_entities
+
+    codes = np.asarray(read_entities(groups), dtype=np.int64)
+    if len(codes) != n_rows:
+        raise ValueError(f"groups holds {len(codes)} values for {n_rows} rows")
+    if (codes < 0).any():
+        raise ValueError(f"{int((codes < 0).sum())} value(s) of groups are empty")
+    return codes
+
+
+def repeated_in_groups(keys, codes):
+    """A mask of the rows that share their group code and their timestamp with another row."""
+    _, stamp_rank = np.unique(np.asarray(keys), return_inverse=True)
+    pairs = pd.DataFrame({"g": np.asarray(codes), "t": stamp_rank.reshape(-1)})
+    return pairs.duplicated(keep=False).to_numpy(dtype=bool)
+
+
+def _previous_in_groups(y, keys, lag, groups):
+    codes = _group_codes(groups, len(y))
+    out = np.full(len(y), np.nan)
+    if not len(y):
+        return out
+    if repeated_in_groups(keys, codes).any():
+        raise ValueError("previous_value needs unique timestamps within each group; "
+                         "two rows of one group share a timestamp")
+    _, stamp_rank = np.unique(keys, return_inverse=True)
+    stamp_rank = stamp_rank.reshape(-1).astype(np.int64)
+    # One sortable number per row: its group, then its timestamp shifted by the lag,
+    # so the latest row of a group at or below `rank - lag` is found by one search.
+    width = int(stamp_rank.max()) + lag + 1
+    placed = codes * width + stamp_rank + lag
+    order = np.argsort(placed, kind="mergesort")
+    sorted_placed = placed[order]
+    wanted = codes * width + stamp_rank
+    found = np.searchsorted(sorted_placed, wanted, side="right") - 1
+    has = found >= 0
+    has[has] = codes[order[found[has]]] == codes[has]
+    out[has] = y[order[found[has]]]
     return out
 
 

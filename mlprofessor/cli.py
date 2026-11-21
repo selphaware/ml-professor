@@ -24,8 +24,12 @@ def _build_parser():
     run.add_argument("--task", default="auto",
                      choices=["auto", "classification", "regression"],
                      help="the task (default: auto)")
-    run.add_argument("--time-col", default=None, metavar="COLUMN",
-                     help="the time column; enables the time-ordered scheme")
+    time_order = run.add_mutually_exclusive_group()
+    time_order.add_argument("--time-col", default=None, metavar="COLUMN",
+                            help="the time column; enables the time-ordered scheme")
+    time_order.add_argument("--no-time-order", action="store_true",
+                            help="state that the order of the rows in time does not "
+                                 "matter: split at random even when a column holds dates")
     run.add_argument("--gap", type=int, default=0, metavar="N",
                      help="whole timestamps between training and holdout (default: 0)")
     run.add_argument("--profile", default="full", choices=["full", "fast"],
@@ -34,10 +38,17 @@ def _build_parser():
                      help="the random seed (default: 0)")
     run.add_argument("--n-jobs", type=int, default=-1, metavar="N",
                      help="threads; -1 for every core (default: -1)")
-    run.add_argument("--duplicates", default="error", choices=["error", "keep"],
-                     help="when holdout rows have copies among the training rows (random "
-                          "split): stop (error) or go ahead with a warning (keep) "
-                          "(default: error)")
+    run.add_argument("--duplicates", default="error", choices=["error", "keep", "group"],
+                     help="rows that are copies of one another (no time column): stop when "
+                          "holdout rows have copies among the training rows (error), go "
+                          "ahead with a warning (keep), or keep each set of copies on one "
+                          "side of the split and of every fold (group) (default: error)")
+    entities = run.add_mutually_exclusive_group()
+    entities.add_argument("--group-col", default=None, metavar="COLUMN",
+                          help="the entity column: the rows of one entity (a customer, a "
+                               "patient, a device) are kept together")
+    entities.add_argument("--no-entities", action="store_true",
+                          help="state that no rows belong to one entity")
     return parser
 
 
@@ -46,11 +57,14 @@ def main(argv=None):
     from mlprofessor import profile
 
     args = _build_parser().parse_args(argv)
+    time_col = False if args.no_time_order else args.time_col
+    group_col = False if args.no_entities else args.group_col
     try:
         result = profile(
-            args.data, args.target, task=args.task, time_col=args.time_col,
+            args.data, args.target, task=args.task, time_col=time_col,
             gap=args.gap, profile=args.profile, seed=args.seed,
             out_dir=args.out, n_jobs=args.n_jobs, duplicates=args.duplicates,
+            group_col=group_col,
         )
     except errors.ProfileError as exc:
         print(f"error: {exc.code}: {exc}", file=sys.stderr)

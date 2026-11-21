@@ -24,6 +24,10 @@ _PERMUTATION_STREAM = 3
 P_VALUE_REASON_TIME = (
     "No p-value under time order: shuffling the holdout targets assumes the rows are "
     "independent, and rows in time order are not.")
+P_VALUE_REASON_GROUPED = (
+    "No p-value under the grouped scheme: shuffling the holdout targets assumes "
+    "independent rows, and the rows of one entity are not.")
+MIN_HOLDOUT_UNITS = 30
 P_VALUE_REASON_NO_SKILL = (
     "No p-value: the baseline predicts every holdout row exactly, so skill has no value "
     "and there is nothing to compare the shuffled targets with.")
@@ -117,6 +121,12 @@ def _row_weights(n_rows, rng):
     return np.bincount(rng.integers(0, n_rows, size=n_rows), minlength=n_rows).astype(float)
 
 
+def _unit_weights(row_unit, n_units, rng):
+    """As many units drawn as the holdout has, with replacement; every row of each, as often."""
+    per_unit = np.bincount(rng.integers(0, n_units, size=n_units), minlength=n_units)
+    return per_unit[row_unit].astype(float)
+
+
 def _block_weights(row_timestamp, n_timestamps, length, rng):
     n_blocks = math.ceil(n_timestamps / length)
     starts = rng.integers(0, n_timestamps - length + 1, size=n_blocks)
@@ -141,13 +151,14 @@ def _p_value(metric, y, pred, baseline_pred, observed_skill, n_shuffles, rng):
 
 
 def headline_uncertainty(metric, y, pred, baseline_pred, skill, profile, seed,
-                         holdout_keys=None):
+                         holdout_keys=None, holdout_groups=None):
     """The interval and p-value fields of `headline` (spec 5.2), and warning codes.
 
     `y`, `pred` and `baseline_pred` are the holdout targets, the chosen model's
     holdout predictions and the baseline's (for ROC AUC the baseline is chance
     and `baseline_pred` is not used). `holdout_keys` are the holdout rows'
-    timestamps under time order, `None` under the random scheme. Returns
+    timestamps under time order, `None` under the random scheme;
+    `holdout_groups` the holdout rows' units under the grouped scheme. Returns
     `(fields, warnings)`, `warnings` a list of `(code, message)`.
     """
     y = np.asarray(y)
@@ -164,7 +175,20 @@ def headline_uncertainty(metric, y, pred, baseline_pred, skill, profile, seed,
     warnings = []
     rng = _stream(seed, _BOOTSTRAP_STREAM)
 
-    if holdout_keys is None:
+    if holdout_groups is not None:
+        _, row_unit = np.unique(np.asarray(holdout_groups), return_inverse=True)
+        row_unit = row_unit.reshape(-1)
+        n_units = int(row_unit.max()) + 1 if len(row_unit) else 0
+        method = None
+        if n_units < MIN_HOLDOUT_UNITS:
+            fields["interval_reason"] = (
+                f"The holdout holds {n_units} entities; the bootstrap of whole entities "
+                f"needs at least {MIN_HOLDOUT_UNITS}.")
+        else:
+            method = "bootstrap_groups"
+            draw = lambda: _unit_weights(row_unit, n_units, rng)  # noqa: E731
+        fields["p_value_reason"] = P_VALUE_REASON_GROUPED
+    elif holdout_keys is None:
         method = "bootstrap_rows"
         draw = lambda: _row_weights(len(y), rng)  # noqa: E731
     else:
@@ -219,10 +243,11 @@ def headline_uncertainty(metric, y, pred, baseline_pred, skill, profile, seed,
             "it tends to be too narrow, more so on a short holdout or when errors are "
             "serially correlated."))
 
+    random_scheme = holdout_keys is None and holdout_groups is None
     if skill is None:
-        if holdout_keys is None:
+        if random_scheme:
             fields["p_value_reason"] = P_VALUE_REASON_NO_SKILL
-    elif holdout_keys is None:
+    elif random_scheme:
         fields["p_value"] = _p_value(metric, y, pred, baseline_pred, skill, n_resamples,
                                      _stream(seed, _PERMUTATION_STREAM))
         fields["n_permutations"] = n_resamples

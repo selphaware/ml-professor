@@ -67,13 +67,15 @@ TARGET_TOO_LARGE = ("a target value is likely too large for squared error (its s
                     "beyond the largest double, about 1.8e308).")
 
 
-def baseline_errors(y, folds, scored, previous=None):
+def baseline_errors(y, folds, scored, previous=None, previous_by_entity=False):
     """The screen's regression baselines over the pooled validation rows of the scored folds.
 
     Returns `{"training_mean": error}`, with `"previous_value"` too when
     `previous` is given. Raises `NonFiniteScoreError` when an error is not
-    finite, and `RuntimeError` when a previous value is missing: every row of
-    every validation block has one (spec step 8).
+    finite. With `previous_by_entity` (an entity column), a validation row
+    with no previous value is given its fold's training mean in its place;
+    otherwise a missing one raises `RuntimeError`: every row of every
+    validation block has one (spec step 8).
     """
     y = np.asarray(y, dtype=float)
     truth, mean_base, previous_base = [], [], []
@@ -83,9 +85,13 @@ def baseline_errors(y, folds, scored, previous=None):
                 continue
             train_rows, validation_rows = fold["training"], fold["validation"]
             truth.append(y[validation_rows])
-            mean_base.append(np.full(len(validation_rows), float(np.mean(y[train_rows]))))
+            fold_mean = float(np.mean(y[train_rows]))
+            mean_base.append(np.full(len(validation_rows), fold_mean))
             if previous is not None:
-                previous_base.append(np.asarray(previous, dtype=float)[validation_rows])
+                fold_previous = np.asarray(previous, dtype=float)[validation_rows]
+                if previous_by_entity:
+                    fold_previous = np.where(np.isnan(fold_previous), fold_mean, fold_previous)
+                previous_base.append(fold_previous)
     truth = np.concatenate(truth)
     errors = {"training_mean": metrics.mse(truth, np.concatenate(mean_base))}
     if previous is not None:
@@ -153,17 +159,20 @@ def single_column_skill(values, kind, y, folds, scored, task_type, seed, previou
 
 
 def screen(features, kinds, missing, y, training_rows, folds, scored, task_type, seed,
-           previous=None):
+           previous=None, previous_by_entity=False):
     """Step 8 for every feature, in file order.
 
     Returns one record per feature: `{"name", "leak_rule", "skill", "warn"}`,
     `leak_rule` being `missing_by_class`, `predicts_target` or None.
+    `previous_by_entity` says `previous` is each entity's own, NaN where an
+    entity has none.
     """
     records = []
     base_errors = None
     if task_type != "classification":
         # Measured before any column, so a target too large stops the screen first.
-        base_errors = baseline_errors(y, folds, scored, previous=previous)
+        base_errors = baseline_errors(y, folds, scored, previous=previous,
+                                      previous_by_entity=previous_by_entity)
     for name in features.columns:
         kind = kinds[name]
         record = {"name": name, "leak_rule": None, "skill": None, "warn": False}

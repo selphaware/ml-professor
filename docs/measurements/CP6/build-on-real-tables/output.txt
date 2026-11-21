@@ -1,0 +1,155 @@
+
+##### A. A date column and nothing said about time order (D58 part 1)
+--------------------------------------------------------------------------------------------------------------
+VIX level, lag features, nothing said  [0.1s]
+   expect: stops: time_order_undeclared (was skill 0.939 with a warning)
+   named error: time_order_undeclared: The column(s) 'date' hold dates, and nothing was said about time order. A table that holds dates is often ordered in time, and a random split of it can report as predictable what is not. Pass the time column as time_col (--time-col COLUMN) for a time-ordered split, or pass time_col=False (--no-time-order) to state that the order of the rows in time does not matter.
+--------------------------------------------------------------------------------------------------------------
+VIX level, time_col=date  [0.9s]
+   expect: previous_value baseline, skill small (was 0.023)
+   RAN  time_ordered, baseline previous_value, skill 0.023 [-0.077, 0.105] via bootstrap_blocks, p None, groups [None, None], copies [None, None]
+   input {'time_col': 'date', 'group_col': None, 'duplicates': 'error'}; warnings ['interval_approximate']; excluded {}
+--------------------------------------------------------------------------------------------------------------
+VIX level, time_col=False  [0.2s]
+   expect: runs on the caller's word, with the warning and the caveat
+   RAN  random, baseline training_mean, skill 0.939 [0.907, 0.958] via bootstrap_rows, p 0.005, groups [None, None], copies [0, None]
+   input {'time_col': False, 'group_col': None, 'duplicates': 'error'}; warnings ['date_column_undeclared', 'strong_single_column']; excluded {'date': 'datetime'}
+--------------------------------------------------------------------------------------------------------------
+weather.csv as shipped, target temp_max, nothing said  [0.0s]
+   expect: stops: time_order_undeclared, naming `date`
+   named error: time_order_undeclared: The column(s) 'date' hold dates, and nothing was said about time order. A table that holds dates is often ordered in time, and a random split of it can report as predictable what is not. Pass the time column as time_col (--time-col COLUMN) for a time-ordered split, or pass time_col=False (--no-time-order) to state that the order of the rows in time does not matter.
+
+##### B. A panel under time order (D57 part 1, D58 part 3)
+--------------------------------------------------------------------------------------------------------------
+stocks price level, time_col=date, nothing said about entities  [0.0s]
+   expect: stops: entities_undeclared (was skill 0.979)
+   named error: entities_undeclared: The timestamps repeat, so the table is a panel of several series, and the per-timestamp mean of 'price' has lag-1 autocorrelation 0.94 over the training timestamps (above 0.5). Against the training mean, skill on such a table shows only that one period resembles the last, and nothing says which row belongs to which series. Pass the column that names each row's series as group_col (--group-col COLUMN), so that each se
+--------------------------------------------------------------------------------------------------------------
+stocks price level, time_col=date, group_col=symbol  [0.0s]
+   expect: each stock's own previous value is the baseline; skill about 0
+   RAN  time_ordered, baseline previous_value, skill -0.139 [None, None] via None, p None, groups [5, 5], copies [None, None]
+   input {'time_col': 'date', 'group_col': 'symbol', 'duplicates': 'error'}; warnings ['no_interval']; excluded {}
+--------------------------------------------------------------------------------------------------------------
+stocks price level, time_col=date, group_col=False  [0.0s]
+   expect: runs on the caller's word, with autocorrelated_panel_target
+   RAN  time_ordered, baseline training_mean, skill 0.979 [None, None] via None, p None, groups [None, None], copies [None, None]
+   input {'time_col': 'date', 'group_col': False, 'duplicates': 'error'}; warnings ['autocorrelated_panel_target', 'no_interval']; excluded {}
+--------------------------------------------------------------------------------------------------------------
+stocks next-month return, time_col=date, nothing said  [0.1s]
+   expect: runs: returns are not persistent, so nothing to ask
+   RAN  time_ordered, baseline training_mean, skill -0.052 [None, None] via None, p None, groups [None, None], copies [None, None]
+   input {'time_col': 'date', 'group_col': None, 'duplicates': 'error'}; warnings ['no_interval']; excluded {}
+--------------------------------------------------------------------------------------------------------------
+stocks next-month return, time_col=date, group_col=symbol  [0.0s]
+   expect: runs; skill about 0
+   RAN  time_ordered, baseline training_mean, skill -0.004 [None, None] via None, p None, groups [5, 5], copies [None, None]
+   input {'time_col': 'date', 'group_col': 'symbol', 'duplicates': 'error'}; warnings ['no_interval']; excluded {}
+
+##### C. A declared entity column under the random scheme (D57 part 1)
+--------------------------------------------------------------------------------------------------------------
+taxis payment, nothing said (two timestamp columns)  [0.1s]
+   expect: stops: time_order_undeclared, naming pickup and dropoff
+   named error: time_order_undeclared: The column(s) 'pickup', 'dropoff' hold dates, and nothing was said about time order. A table that holds dates is often ordered in time, and a random split of it can report as predictable what is not. Pass the time column as time_col (--time-col COLUMN) for a time-ordered split, or pass time_col=False (--no-time-order) to state that the order of the rows in time does not matter.
+--------------------------------------------------------------------------------------------------------------
+taxis payment, time_col=False  [0.4s]
+   expect: random scheme
+   RAN  random, baseline chance, skill 0.969 [0.950, 0.986] via bootstrap_rows, p 0.005, groups [None, None], copies [0, None]
+   input {'time_col': False, 'group_col': None, 'duplicates': 'error'}; warnings ['date_column_undeclared']; excluded {'pickup': 'datetime', 'dropoff': 'datetime'}
+--------------------------------------------------------------------------------------------------------------
+taxis payment, time_col=False, group_col=pickup_zone  [0.0s]
+   expect: grouped scheme; interval from whole zones; no p-value
+   named error: group_column_invalid: The entity column 'pickup_zone' is empty in 25 usable row(s) (missing, or text of only white space); every row with a target must name its entity. Fill the cells in or remove the rows.
+--------------------------------------------------------------------------------------------------------------
+mpg, group_col=name (a model name can repeat across years)  [0.1s]
+   expect: grouped scheme; `name` is not a feature
+   RAN  grouped, baseline training_mean, skill 0.783 [0.710, 0.838] via bootstrap_groups, p None, groups [230, 75], copies [0, None]
+   input {'time_col': None, 'group_col': 'name', 'duplicates': 'error'}; warnings []; excluded {}
+--------------------------------------------------------------------------------------------------------------
+mpg, nothing said  [0.1s]
+   expect: random; `name` excluded as free text or id-like
+   RAN  random, baseline training_mean, skill 0.822 [0.779, 0.873] via bootstrap_rows, p 0.005, groups [None, None], copies [0, None]
+   input {'time_col': None, 'group_col': None, 'duplicates': 'error'}; warnings []; excluded {'name': 'free_text'}
+--------------------------------------------------------------------------------------------------------------
+stocks return as a plain table, time_col=False, group_col=symbol  [0.0s]
+   expect: named error: too_few_groups (five stocks)
+   named error: too_few_groups: The rows split hold 5 entities; a split of whole entities needs at least 6.
+--------------------------------------------------------------------------------------------------------------
+penguins sex, group_col=island (three islands)  [0.0s]
+   expect: named error: too_few_groups
+   named error: too_few_groups: The rows split hold 3 entities; a split of whole entities needs at least 6.
+--------------------------------------------------------------------------------------------------------------
+penguins sex, group_col=nobody  [0.0s]
+   expect: named error: column not found
+   named error: column_not_found: No column named 'nobody'. The columns are: 'species', 'island', 'bill_length_mm', 'bill_depth_mm', 'flipper_length_mm', 'body_mass_g', 'sex'.
+
+##### D. duplicates (D49, D57 part 3, D60)
+--------------------------------------------------------------------------------------------------------------
+titanic, default  [0.1s]
+   expect: stops: holdout_copies_in_training, naming keep and group
+   named error: holdout_copies_in_training: 37 of the 223 holdout rows (16.6%) have a copy among the training rows: the same value in every feature column and the same target. A model that recalls a row scores on them, so the headline would be inflated. Remove the repeated rows; or pass duplicates='group' (--duplicates group) to keep each set of copies on one side of the split and of every fold; or pass duplicates='keep' (--duplicates keep) to go ahead with a 
+--------------------------------------------------------------------------------------------------------------
+titanic, duplicates=keep  [0.2s]
+   expect: runs; random scheme; warning
+   RAN  random, baseline chance, skill 0.745 [0.656, 0.829] via bootstrap_rows, p 0.005, groups [None, None], copies [37, None]
+   input {'time_col': None, 'group_col': None, 'duplicates': 'keep'}; warnings ['duplicate_rows', 'holdout_copies_kept']; excluded {}
+--------------------------------------------------------------------------------------------------------------
+titanic, duplicates=group  [0.2s]
+   expect: grouped; copies counted; no p-value; skill near the keep figure
+   RAN  grouped, baseline chance, skill 0.741 [0.638, 0.838] via bootstrap_groups, p None, groups [575, 209], copies [0, 160]
+   input {'time_col': None, 'group_col': None, 'duplicates': 'group'}; warnings ['copies_grouped', 'duplicate_rows']; excluded {}
+--------------------------------------------------------------------------------------------------------------
+titanic, target shuffled, every row twice, duplicates=keep  [0.3s]
+   expect: inflated: this is what keep permits
+   RAN  random, baseline chance, skill 0.733 [0.674, 0.799] via bootstrap_rows, p 0.005, groups [None, None], copies [366, None]
+   input {'time_col': None, 'group_col': None, 'duplicates': 'keep'}; warnings ['duplicate_rows', 'holdout_copies_kept']; excluded {}
+--------------------------------------------------------------------------------------------------------------
+titanic, target shuffled, every row twice, duplicates=group  [0.3s]
+   expect: skill about 0: the copies cannot be on both sides
+   RAN  grouped, baseline chance, skill -0.154 [-0.301, 0.036] via bootstrap_groups, p None, groups [604, 205], copies [0, 1782]
+   input {'time_col': None, 'group_col': None, 'duplicates': 'group'}; warnings ['copies_grouped', 'duplicate_rows']; excluded {}
+--------------------------------------------------------------------------------------------------------------
+titanic, target shuffled, every row twice + batch column, default  [0.1s]
+   expect: KNOWN OPEN DEFECT (D60): not detected; stops only on Titanic's natural repeats
+   named error: holdout_copies_in_training: 62 of the 446 holdout rows (13.9%) have a copy among the training rows: the same value in every feature column and the same target. A model that recalls a row scores on them, so the headline would be inflated. Remove the repeated rows; or pass duplicates='group' (--duplicates group) to keep each set of copies on one side of the split and of every fold; or pass duplicates='keep' (--duplicates keep) to go ahead with a 
+--------------------------------------------------------------------------------------------------------------
+breast cancer, target shuffled, every row twice + batch column, default  [0.4s]
+   expect: KNOWN OPEN DEFECT (D60): runs with an inflated skill and no stop
+   RAN  random, baseline chance, skill 0.741 [0.646, 0.817] via bootstrap_rows, p 0.005, groups [None, None], copies [0, None]
+   input {'time_col': None, 'group_col': None, 'duplicates': 'error'}; warnings []; excluded {}
+--------------------------------------------------------------------------------------------------------------
+breast cancer, target shuffled, every row twice, default  [0.2s]
+   expect: stops: exact copies
+   named error: holdout_copies_in_training: 213 of the 285 holdout rows (74.7%) have a copy among the training rows: the same value in every feature column and the same target. A model that recalls a row scores on them, so the headline would be inflated. Remove the repeated rows; or pass duplicates='group' (--duplicates group) to keep each set of copies on one side of the split and of every fold; or pass duplicates='keep' (--duplicates keep) to go ahead with a
+--------------------------------------------------------------------------------------------------------------
+breast cancer, target shuffled, every row twice, duplicates=group  [0.4s]
+   expect: skill about 0
+   RAN  grouped, baseline chance, skill -0.033 [-0.231, 0.149] via bootstrap_groups, p None, groups [426, 143], copies [0, 1138]
+   input {'time_col': None, 'group_col': None, 'duplicates': 'group'}; warnings ['copies_grouped', 'duplicate_rows']; excluded {}
+
+##### E. Tables with nothing new to say: should be as before
+--------------------------------------------------------------------------------------------------------------
+breast cancer  [0.3s]
+   expect: as before: skill about 0.98
+   RAN  random, baseline chance, skill 0.995 [0.985, 1.000] via bootstrap_rows, p 0.005, groups [None, None], copies [0, None]
+   input {'time_col': None, 'group_col': None, 'duplicates': 'error'}; warnings []; excluded {}
+--------------------------------------------------------------------------------------------------------------
+diabetes  [0.1s]
+   expect: as before
+   RAN  random, baseline training_mean, skill 0.490 [0.343, 0.602] via bootstrap_rows, p 0.005, groups [None, None], copies [0, None]
+   input {'time_col': None, 'group_col': None, 'duplicates': 'error'}; warnings ['whole_number_regression_target']; excluded {}
+--------------------------------------------------------------------------------------------------------------
+penguins sex  [0.1s]
+   expect: as before
+   RAN  random, baseline chance, skill 0.938 [0.855, 0.986] via bootstrap_rows, p 0.005, groups [None, None], copies [0, None]
+   input {'time_col': None, 'group_col': None, 'duplicates': 'error'}; warnings ['small_holdout']; excluded {}
+--------------------------------------------------------------------------------------------------------------
+customers example CSV  [0.0s]
+   expect: stops or runs? it has signup_date: expect time_order_undeclared
+   named error: time_order_undeclared: The column(s) 'signup_date' hold dates, and nothing was said about time order. A table that holds dates is often ordered in time, and a random split of it can report as predictable what is not. Pass the time column as time_col (--time-col COLUMN) for a time-ordered split, or pass time_col=False (--no-time-order) to state that the order of the rows in time does not matter.
+--------------------------------------------------------------------------------------------------------------
+diamonds 53,940 rows  [0.5s]
+   expect: as before: skill about 0.97
+   RAN  random, baseline training_mean, skill 0.933 [0.918, 0.951] via bootstrap_rows, p 0.005, groups [None, None], copies [0, None]
+   input {'time_col': None, 'group_col': None, 'duplicates': 'error'}; warnings ['duplicate_rows', 'whole_number_regression_target']; excluded {}
+
+SUMMARY: {'ran': 19, 'named error': 12} | python warnings in 0 runs

@@ -8,7 +8,8 @@ import pandas as pd
 
 from mlprofessor import errors
 from mlprofessor.load import beyond_64_bits, read_numbers
-from mlprofessor.task import read_target_values
+from mlprofessor.columns import read_entities
+from mlprofessor.task import _sorted_classes, read_target_values
 
 MAX_SEED = 2**32 - 1
 N_FOLDS = 5
@@ -49,17 +50,107 @@ def _deal_into_folds(shuffled_groups):
     return fold_of_position
 
 
-def split_random(n_rows, classes=None, seed=0):
+MIN_UNITS = 6
+MIN_FOLD_UNITS = N_FOLDS
+
+
+def units_of(groups, n_rows):
+    """Each row's unit, numbered 0.. in the order the units first appear (step 7).
+
+    The numbering depends only on which rows share a value, never on the values.
+    """
+    codes = read_entities(groups)
+    if len(codes) != n_rows:
+        raise errors.GroupColumnError(
+            f"groups holds {len(codes)} values for {n_rows} rows; one value per row is needed.")
+    if (codes < 0).any():
+        raise errors.GroupColumnError(
+            f"{int((codes < 0).sum())} of the rows split have an empty entity cell; every row "
+            "split must name its entity. Fill the cells in or remove the rows.")
+    _, first, inverse = np.unique(codes, return_index=True, return_inverse=True)
+    rank = np.empty(len(first), dtype=np.int64)
+    rank[np.argsort(first, kind="stable")] = np.arange(len(first))
+    return rank[inverse.reshape(-1)]
+
+
+def _unit_classes(unit, n_units, classes, n_rows):
+    """Each unit's class: 1 when most of its rows hold the positive class (ties too), else 0."""
+    labels = read_target_values(pd.Series(np.asarray(classes, dtype=object))).reset_index(drop=True)
+    if len(labels) != n_rows:
+        raise ValueError(f"classes has {len(labels)} labels for {n_rows} rows")
+    distinct = _sorted_classes(pd.unique(labels.to_numpy()))
+    positive = distinct[-1] if len(distinct) < 2 else distinct[1]
+    is_positive = np.array([value == positive for value in labels.to_numpy()], dtype=float)
+    positive_rows = np.bincount(unit, weights=is_positive, minlength=n_units)
+    sizes = np.bincount(unit, minlength=n_units)
+    return (2 * positive_rows >= sizes).astype(np.int64)
+
+
+def _split_whole_units(unit, n_rows, classes, rng):
+    """The grouped scheme of step 7: the holdout and five folds of whole units."""
+    n_units = int(unit.max()) + 1 if n_rows else 0
+    if n_units < MIN_UNITS:
+        raise errors.TooFewGroupsError(
+            f"The rows split hold {n_units} entities; a split of whole entities needs at "
+            f"least {MIN_UNITS}.")
+    sizes = np.bincount(unit, minlength=n_units)
+    unit_class = (np.zeros(n_units, dtype=np.int64) if classes is None
+                  else _unit_classes(unit, n_units, classes, n_rows))
+
+    held = np.zeros(n_units, dtype=bool)
+    for label in (0, 1):
+        pool = np.flatnonzero(unit_class == label)
+        if len(pool) == 0:
+            continue
+        total, held_rows = int(sizes[pool].sum()), 0
+        for u in rng.permutation(pool):
+            if HOLDOUT_SHARE_DENOMINATOR * held_rows >= total:
+                break
+            held[u] = True
+            held_rows += int(sizes[u])
+    training_units = np.flatnonzero(~held)
+    if len(training_units) < MIN_FOLD_UNITS:
+        raise errors.TooFewGroupsError(
+            f"The rows split hold {n_units} entities; holding a quarter of the rows out as "
+            f"whole entities leaves {len(training_units)} for the folds, and the five folds "
+            f"need at least {MIN_FOLD_UNITS}.")
+
+    # Each training unit, in an order drawn from the seed, to the fold that so far holds
+    # the fewest rows of its class (then the fewest rows, then the first such fold).
+    fold_of_unit = np.full(n_units, -1, dtype=np.int64)
+    class_rows = np.zeros((2, N_FOLDS), dtype=np.int64)
+    fold_rows = np.zeros(N_FOLDS, dtype=np.int64)
+    for u in rng.permutation(training_units):
+        label = int(unit_class[u])
+        fold = min(range(N_FOLDS), key=lambda f: (class_rows[label, f], fold_rows[f], f))
+        fold_of_unit[u] = fold
+        class_rows[label, fold] += sizes[u]
+        fold_rows[fold] += sizes[u]
+
+    in_holdout = held[unit]
+    holdout_rows = np.flatnonzero(in_holdout).astype(np.intp)
+    training_rows = np.flatnonzero(~in_holdout).astype(np.intp)
+    fold_labels = fold_of_unit[unit[training_rows]]
+    folds = [{"training": training_rows[fold_labels != fold],
+              "validation": training_rows[fold_labels == fold]} for fold in range(N_FOLDS)]
+    return {"training": training_rows, "holdout": holdout_rows, "folds": folds}
+
+
+def split_random(n_rows, classes=None, seed=0, groups=None):
     """The random scheme: a holdout of ceil(n/4) rows, then five folds of the training rows.
 
-    With `classes` the holdout and the folds are stratified on them. Every draw
-    comes from `seed`. All position arrays are in increasing order.
+    With `classes` the holdout and the folds are stratified on them. With
+    `groups` (one value per row) the rows of one value stay together: the
+    grouped scheme of step 7. Every draw comes from `seed`. All position
+    arrays are in increasing order.
     """
     if (isinstance(seed, bool) or not isinstance(seed, Integral)
             or not 0 <= seed <= MAX_SEED):
         raise errors.InputError(
             f"seed must be a whole number from 0 to {MAX_SEED}; got {seed!r}.")
     rng = np.random.default_rng(int(seed))
+    if groups is not None:
+        return _split_whole_units(units_of(groups, n_rows), n_rows, classes, rng)
     groups = _class_groups(n_rows, classes)
     holdout_size = math.ceil(n_rows / HOLDOUT_SHARE_DENOMINATOR)
     quotas = _holdout_quotas([len(g) for g in groups], holdout_size)
@@ -118,21 +209,24 @@ def _datetime_keys(values):
 EXACT_FLOAT_LIMIT = 2 ** 53
 
 
-def _integer_keys(values):
-    """Exact int64 (or uint64) keys for an integer-typed column with a magnitude above
-    2**53 and no missing value (step 3; D50, D53); None otherwise."""
+def _integer_keys(values, rows):
+    """Exact int64 (or uint64) keys of `rows` for an integer-typed column with a
+    magnitude above 2**53 among its non-missing values (step 3; D50, D53), when
+    none of those rows is missing; None otherwise."""
     if not pd.api.types.is_integer_dtype(values.dtype):
         return None
     present = values.notna().to_numpy(dtype=bool)
-    if not present.any() or not present.all():
+    if not present.any() or not present[rows].all():
         return None
     unsigned = pd.api.types.is_unsigned_integer_dtype(values.dtype)
-    keys = values.to_numpy(dtype=np.uint64 if unsigned else np.int64, copy=True)
+    keys = values[present].to_numpy(dtype=np.uint64 if unsigned else np.int64, copy=True)
     if unsigned:
         above = keys > EXACT_FLOAT_LIMIT
     else:
         above = (keys > EXACT_FLOAT_LIMIT) | (keys < -EXACT_FLOAT_LIMIT)
-    return keys if bool(above.any()) else None
+    if not bool(above.any()):
+        return None
+    return values.iloc[rows].to_numpy(dtype=keys.dtype, copy=True)
 
 
 def _numeric_keys(values):
@@ -173,28 +267,33 @@ def _iso_keys(values):
     return keys
 
 
-def read_time(values):
+def read_time(values, rows=None):
     """Step 3: read a time column in one of its three accepted forms.
 
     Returns `(keys, form)`: keys sort in time order (datetime64[ns] with NaT,
     or float64 with NaN; exact int64 or uint64 for whole numbers of which one
     has a magnitude above 2**53); form is `datetime`, `numeric` or `iso8601`.
+    With `rows`, the column is read (step 1a, and the 2**53 rule) over all its
+    values, and the keys returned are those of the rows given, in their order.
     """
     values = read_numbers(values).reset_index(drop=True)
+    rows = (np.arange(len(values), dtype=np.int64) if rows is None
+            else np.asarray(rows, dtype=np.int64))
     dtype = values.dtype
     if pd.api.types.is_bool_dtype(dtype):
         raise _time_error("a boolean column is not a time")
     if pd.api.types.is_datetime64_any_dtype(dtype):
-        return _datetime_keys(values), "datetime"
+        return _datetime_keys(values.iloc[rows]), "datetime"
     if pd.api.types.is_numeric_dtype(dtype) and not pd.api.types.is_complex_dtype(dtype):
-        exact = _integer_keys(values)
+        exact = _integer_keys(values, rows)
         if exact is not None:
             return exact, "numeric"
-        return _numeric_keys(values), "numeric"
+        return _numeric_keys(values.iloc[rows]), "numeric"
     if beyond_64_bits(values):
         raise _time_error(
             "the column holds whole numbers too large for 64 bits, which are not read as "
             "a time")
+    values = values.iloc[rows].reset_index(drop=True)
     if pd.api.types.is_string_dtype(dtype):
         present = values[values.notna()]
         if dtype == object and not present.map(lambda v: isinstance(v, str)).all():

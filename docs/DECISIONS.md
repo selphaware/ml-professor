@@ -758,3 +758,72 @@ first agreed (rejected on measurement: a decimal column of nanosecond
 instants merged, 200 read as 76).
 Consequence: these values are part of the contract and change only by a new
 decision backed by a new measurement.
+
+## D56 — 2026-11-21 — Phase 1 is not shipped with known defects (replaces D47)
+Decision: The owner's standard is that nothing known to be wrong is left for
+later. Phase 1 closes when all three hold: a review has no finding above
+Low; every Low finding is fixed, or the owner has ruled it not a defect; and
+a generated-table test, run through the library and the reference, finds no
+disagreement. Weaknesses that were set aside in `docs\BACKLOG.md` are fixed
+in two hardening passes before that review, not carried into phase 2.
+Features stay on the roadmap as features: joins, unsupervised methods, the
+report, the Dash app and deep learning.
+Alternatives considered: shipping under D47 with the fourth review's
+near-copy finding recorded as a limit (rejected by the owner: no defect is
+to be fixed in the future that is known now).
+Consequence: at least two more passes through the loop. One limit cannot be
+removed by any tool and is stated, not hidden: a copy of a row altered in
+every column cannot be told from a different row, so the tool gives the
+caller the control to declare which rows belong together.
+
+## D57 — 2026-11-21 — Entities and repeated rows (extends D49; moves grouped validation into phase 1)
+Decision: (1) A declared entity column, `group_col`. Under the random scheme
+the rows of one entity stay on one side of the holdout split and of every
+fold. Under time order the entity gives each one its own previous-value
+baseline, and the leak screen measures a lag against it. (2) The automatic
+screen for repeats is broadened beyond exact copies, to catch copies with an
+added column, a batch number, or small changes to some columns. The harness
+stage designs the rule, measures it on clean data and on a battery of
+near-copies, and reports it for approval. (3) `duplicates="group"` keeps the
+repeats the screen detects on one side of the split. The default stays
+`"error"`. (4) A target's infinite cells are counted in the column
+accounting, as the spec's output section already reads.
+Alternatives considered: matching on all columns but one only (rejected as
+the whole answer: the next variant has two differing columns); leaving
+grouped validation to phase 2 with joins (rejected under D56).
+Consequence: phase 2 becomes joins alone. The fourth review's findings 1, 3,
+4 and 5 are fixed in the same pass.
+
+## D58 — 2026-11-21 — The tool stops and asks where it used to warn (replaces part of D7 and D10)
+Decision: (1) When the table has a date column and no time column is
+declared, the run stops with a named error. The caller either names the
+time column, or states explicitly that row order does not matter, and that
+choice is recorded in the output with the existing caveat. (2) The default
+of D49 stays `"error"`: a table whose holdout rows have copies in training
+stops, as the Titanic file does, and the caller chooses. (3) The same
+principle for panels: under time order, when timestamps repeat, no entity
+column is declared and the target is strongly autocorrelated (the condition
+that today only warns), the run stops and asks for the entity column, or
+for an explicit statement that there are no entities.
+Alternatives considered: a random split with a warning, as D7 had it
+(rejected on real data: the VIX level with its time column undeclared was
+reported at skill 0.939, against 0.023 when declared); a panel scored
+against the training mean with a warning, as D10 had it (rejected on real
+data: a five-stock price panel was reported at 0.979).
+Consequence: a headline that the tool has reason to think is inflated is
+never printed unless the caller has said, in the call, that the reason does
+not apply.
+
+## D59 — 2026-11-21 — How a locked test follows a changed contract
+Decision: When a decision changes behaviour that an existing test pins, the
+tests stage may loosen that one test so that it passes both before and
+after the change, and nothing else in it. A new test, failing until the
+change is built, pins the new behaviour exactly. Each such test is named in
+the test plan, and the owner's lead reads the diff of every existing test
+file after the stage. No existing test is ever edited so that it fails
+against the library as built.
+Alternatives considered: never editing a locked test (rejected: D54 showed
+a contract change can make that impossible); editing tests to the new
+behaviour directly (rejected: they would fail until the new task is built,
+and the driver then reopens every finished task that has tests).
+Consequence: D54 was the first use of this rule; D57 and D58 need it again.

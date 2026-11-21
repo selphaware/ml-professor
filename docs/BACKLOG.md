@@ -5,6 +5,12 @@ build loop: each item becomes work only through a decision in
 `docs/DECISIONS.md` and a change prompt. Phase 2 starts by reading this file
 (D47).
 
+**Status under D56 (2026-11-21).** Nothing known to be wrong is carried into
+phase 2. The weaknesses listed below are fixed in two hardening passes:
+pass 5 (CP6: entities, repeated rows, the undeclared date column, the fourth
+review's findings) and pass 6 (the judge and every remaining weakness
+here). Only the features stay on the roadmap.
+
 ## Roadmap items awaiting a decision
 
 - **Deep learning.** Not in any phase yet (D8 limits the tool to
@@ -86,6 +92,19 @@ build loop: each item becomes work only through a decision in
   count of 10 decides and the outcome depends on the seed (D55).
 - **The type matrix's passing cases have no broken copy.** It is a contract
   test over 805 cases; only its one-value cases are shown to fail, on F6b.
+
+## Found by the fourth review and the real-data run (2026-11-21)
+
+- **Three gate bands have narrow margins at the gate's one seed** (0.07,
+  0.09 and 0.12 to the broken copies), as the reviewer reads them. Two of
+  the three are bounded by the scale itself: a leak scores about 1.0 and
+  skill cannot exceed 1. Pass 6 reports the broken copies' values at the
+  gate seed, so the real distance is on record.
+- **A three-class target** stops as ambiguous, with a message that suggests
+  declaring the task, which would not help. The message should say that
+  three or more classes are not supported.
+- **Not checked on real data:** the owner's own tables, Python 3.12 on
+  Windows, and the full profile at scale.
 
 ## Notes for the framework (ailoop-engineering), not for this repo
 

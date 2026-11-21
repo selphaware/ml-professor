@@ -1,0 +1,1312 @@
+[
+ {
+  "case": "titanic CSV as shipped, target survived",
+  "expect": "`alive` is a copy of the target: excluded as a leak. Many repeated rows: the copies rule may stop it",
+  "outcome": "named error",
+  "error": "HoldoutCopiesError",
+  "code": "holdout_copies_in_training",
+  "message": "37 of the 223 holdout rows (16.6%) have a copy among the training rows: the same value in every feature column and the same target. A model that recalls a row scores on them, so the headline would be inflated. Remove the repeated rows, or pass duplicates='keep' (--duplicates keep) to go ahead with a",
+  "seconds": 1.2,
+  "py_warnings": []
+ },
+ {
+  "case": "titanic CSV, duplicates=keep",
+  "expect": "`alive` excluded as a leak; skill around 0.6 to 0.75 (AUC about 0.85)",
+  "outcome": "ran",
+  "task": "classification",
+  "scheme": "random",
+  "metric": "roc_auc",
+  "score": 0.8724325241894415,
+  "baseline": "chance",
+  "baseline_score": 0.5,
+  "skill": 0.744865048378883,
+  "skill_ci": [
+   0.6558292825410376,
+   0.8290082009677876
+  ],
+  "p": 0.004975124378109453,
+  "model": "linear-0",
+  "rows": {
+   "loaded": 891,
+   "dropped_missing_target": 0,
+   "dropped_missing_time": 0,
+   "dropped_gap": 0,
+   "dropped_row_cap": 0,
+   "training": 668,
+   "holdout": 223
+  },
+  "excluded": {
+   "alive": "suspected_leak"
+  },
+  "n_features": 13,
+  "warnings": [
+   [
+    "duplicate_rows",
+    null
+   ],
+   [
+    "holdout_copies_kept",
+    null
+   ],
+   [
+    "suspected_leak",
+    "alive"
+   ]
+  ],
+  "copies": [
+   37,
+   0.16591928251121077
+  ],
+  "baselines": [
+   {
+    "name": "chance",
+    "score": 0.5,
+    "used": true
+   }
+  ],
+  "seconds": 0.2,
+  "py_warnings": []
+ },
+ {
+  "case": "titanic without `alive`, duplicates=keep",
+  "expect": "skill around 0.6 to 0.75; no leak flagged",
+  "outcome": "ran",
+  "task": "classification",
+  "scheme": "random",
+  "metric": "roc_auc",
+  "score": 0.8724325241894415,
+  "baseline": "chance",
+  "baseline_score": 0.5,
+  "skill": 0.744865048378883,
+  "skill_ci": [
+   0.6558292825410376,
+   0.8290082009677876
+  ],
+  "p": 0.004975124378109453,
+  "model": "linear-0",
+  "rows": {
+   "loaded": 891,
+   "dropped_missing_target": 0,
+   "dropped_missing_time": 0,
+   "dropped_gap": 0,
+   "dropped_row_cap": 0,
+   "training": 668,
+   "holdout": 223
+  },
+  "excluded": {},
+  "n_features": 13,
+  "warnings": [
+   [
+    "duplicate_rows",
+    null
+   ],
+   [
+    "holdout_copies_kept",
+    null
+   ]
+  ],
+  "copies": [
+   37,
+   0.16591928251121077
+  ],
+  "baselines": [
+   {
+    "name": "chance",
+    "score": 0.5,
+    "used": true
+   }
+  ],
+  "seconds": 0.2,
+  "py_warnings": []
+ },
+ {
+  "case": "titanic, target shuffled (control), duplicates=keep",
+  "expect": "skill about zero, p not small",
+  "outcome": "ran",
+  "task": "classification",
+  "scheme": "random",
+  "metric": "roc_auc",
+  "score": 0.5343744695297912,
+  "baseline": "chance",
+  "baseline_score": 0.5,
+  "skill": 0.06874893905958235,
+  "skill_ci": [
+   -0.05212737217908772,
+   0.2179281741465287
+  ],
+  "p": 0.21393034825870647,
+  "model": "linear-0",
+  "rows": {
+   "loaded": 891,
+   "dropped_missing_target": 0,
+   "dropped_missing_time": 0,
+   "dropped_gap": 0,
+   "dropped_row_cap": 0,
+   "training": 668,
+   "holdout": 223
+  },
+  "excluded": {},
+  "n_features": 13,
+  "warnings": [
+   [
+    "duplicate_rows",
+    null
+   ],
+   [
+    "holdout_copies_kept",
+    null
+   ]
+  ],
+  "copies": [
+   30,
+   0.13452914798206278
+  ],
+  "baselines": [
+   {
+    "name": "chance",
+    "score": 0.5,
+    "used": true
+   }
+  ],
+  "seconds": 0.2,
+  "py_warnings": []
+ },
+ {
+  "case": "titanic, target `alive` (yes/no text)",
+  "expect": "same answer as survived; classes yes/no",
+  "outcome": "ran",
+  "task": "classification",
+  "scheme": "random",
+  "metric": "roc_auc",
+  "score": 0.8724325241894415,
+  "baseline": "chance",
+  "baseline_score": 0.5,
+  "skill": 0.744865048378883,
+  "skill_ci": [
+   0.6558292825410376,
+   0.8290082009677876
+  ],
+  "p": 0.004975124378109453,
+  "model": "linear-0",
+  "rows": {
+   "loaded": 891,
+   "dropped_missing_target": 0,
+   "dropped_missing_time": 0,
+   "dropped_gap": 0,
+   "dropped_row_cap": 0,
+   "training": 668,
+   "holdout": 223
+  },
+  "excluded": {},
+  "n_features": 13,
+  "warnings": [
+   [
+    "duplicate_rows",
+    null
+   ],
+   [
+    "holdout_copies_kept",
+    null
+   ]
+  ],
+  "copies": [
+   37,
+   0.16591928251121077
+  ],
+  "baselines": [
+   {
+    "name": "chance",
+    "score": 0.5,
+    "used": true
+   }
+  ],
+  "seconds": 0.2,
+  "py_warnings": []
+ },
+ {
+  "case": "breast cancer (sklearn), target",
+  "expect": "legitimately very predictable (AUC about 0.99); nothing excluded as a leak; strong columns warned at most",
+  "outcome": "ran",
+  "task": "classification",
+  "scheme": "random",
+  "metric": "roc_auc",
+  "score": 0.9972746331236897,
+  "baseline": "chance",
+  "baseline_score": 0.5,
+  "skill": 0.9945492662473794,
+  "skill_ci": [
+   0.9846483795917167,
+   1.0
+  ],
+  "p": 0.004975124378109453,
+  "model": "linear-0",
+  "rows": {
+   "loaded": 569,
+   "dropped_missing_target": 0,
+   "dropped_missing_time": 0,
+   "dropped_gap": 0,
+   "dropped_row_cap": 0,
+   "training": 426,
+   "holdout": 143
+  },
+  "excluded": {},
+  "n_features": 30,
+  "warnings": [],
+  "copies": [
+   0,
+   0.0
+  ],
+  "baselines": [
+   {
+    "name": "chance",
+    "score": 0.5,
+    "used": true
+   }
+  ],
+  "seconds": 0.2,
+  "py_warnings": []
+ },
+ {
+  "case": "diabetes (sklearn), regression target",
+  "expect": "moderate skill, about 0.4 to 0.5 over the mean",
+  "outcome": "ran",
+  "task": "regression",
+  "scheme": "random",
+  "metric": "mse",
+  "score": 2903.6201361583735,
+  "baseline": "training_mean",
+  "baseline_score": 5693.7495288938135,
+  "skill": 0.4900337428923588,
+  "skill_ci": [
+   0.3429073414453271,
+   0.6022836720838429
+  ],
+  "p": 0.004975124378109453,
+  "model": "linear-0",
+  "rows": {
+   "loaded": 442,
+   "dropped_missing_target": 0,
+   "dropped_missing_time": 0,
+   "dropped_gap": 0,
+   "dropped_row_cap": 0,
+   "training": 331,
+   "holdout": 111
+  },
+  "excluded": {},
+  "n_features": 10,
+  "warnings": [
+   [
+    "whole_number_regression_target",
+    "target"
+   ]
+  ],
+  "copies": [
+   0,
+   0.0
+  ],
+  "baselines": [
+   {
+    "name": "training_mean",
+    "score": 5693.7495288938135,
+    "used": true
+   }
+  ],
+  "seconds": 0.4,
+  "py_warnings": []
+ },
+ {
+  "case": "diamonds 53,940 rows, target price (fast)",
+  "expect": "high skill (about 0.95+); carat strong; fast profile caps at 2,000 rows",
+  "outcome": "ran",
+  "task": "regression",
+  "scheme": "random",
+  "metric": "mse",
+  "score": 991658.578,
+  "baseline": "training_mean",
+  "baseline_score": 14873488.36464,
+  "skill": 0.9333271016396157,
+  "skill_ci": [
+   0.9178300342913184,
+   0.951217262163137
+  ],
+  "p": 0.004975124378109453,
+  "model": "tree-0",
+  "rows": {
+   "loaded": 53940,
+   "dropped_missing_target": 0,
+   "dropped_missing_time": 0,
+   "dropped_gap": 0,
+   "dropped_row_cap": 51940,
+   "training": 1500,
+   "holdout": 500
+  },
+  "excluded": {},
+  "n_features": 9,
+  "warnings": [
+   [
+    "duplicate_rows",
+    null
+   ],
+   [
+    "whole_number_regression_target",
+    "price"
+   ]
+  ],
+  "copies": [
+   0,
+   0.0
+  ],
+  "baselines": [
+   {
+    "name": "training_mean",
+    "score": 14873488.36464,
+    "used": true
+   }
+  ],
+  "seconds": 0.4,
+  "py_warnings": []
+ },
+ {
+  "case": "penguins, target species (3 classes)",
+  "expect": "named error: three classes are not supported",
+  "outcome": "named error",
+  "error": "TaskAmbiguousError",
+  "code": "task_ambiguous",
+  "message": "The target is non-numeric with 3 distinct values; the rule decides only two values (classification) or a numeric target with more than 20 (regression). Declare the task, or recode the target.",
+  "seconds": 0.0,
+  "py_warnings": []
+ },
+ {
+  "case": "penguins, target sex",
+  "expect": "rows with no sex dropped and counted; good skill",
+  "outcome": "ran",
+  "task": "classification",
+  "scheme": "random",
+  "metric": "roc_auc",
+  "score": 0.9688208616780045,
+  "baseline": "chance",
+  "baseline_score": 0.5,
+  "skill": 0.937641723356009,
+  "skill_ci": [
+   0.8554348974438261,
+   0.9864422693123771
+  ],
+  "p": 0.004975124378109453,
+  "model": "linear-0",
+  "rows": {
+   "loaded": 344,
+   "dropped_missing_target": 11,
+   "dropped_missing_time": 0,
+   "dropped_gap": 0,
+   "dropped_row_cap": 0,
+   "training": 249,
+   "holdout": 84
+  },
+  "excluded": {},
+  "n_features": 6,
+  "warnings": [
+   [
+    "small_holdout",
+    null
+   ]
+  ],
+  "copies": [
+   0,
+   0.0
+  ],
+  "baselines": [
+   {
+    "name": "chance",
+    "score": 0.5,
+    "used": true
+   }
+  ],
+  "seconds": 0.1,
+  "py_warnings": []
+ },
+ {
+  "case": "example customers.csv",
+  "expect": "runs; modest skill",
+  "outcome": "ran",
+  "task": "classification",
+  "scheme": "random",
+  "metric": "roc_auc",
+  "score": 0.8381076388888888,
+  "baseline": "chance",
+  "baseline_score": 0.5,
+  "skill": 0.6762152777777777,
+  "skill_ci": [
+   0.5131396154773386,
+   0.8160271503445341
+  ],
+  "p": 0.004975124378109453,
+  "model": "linear-0",
+  "rows": {
+   "loaded": 400,
+   "dropped_missing_target": 3,
+   "dropped_missing_time": 0,
+   "dropped_gap": 0,
+   "dropped_row_cap": 0,
+   "training": 297,
+   "holdout": 100
+  },
+  "excluded": {
+   "customer_id": "id_like",
+   "signup_date": "datetime"
+  },
+  "n_features": 5,
+  "warnings": [
+   [
+    "date_column_undeclared",
+    "signup_date"
+   ],
+   [
+    "small_holdout",
+    null
+   ]
+  ],
+  "copies": [
+   0,
+   0.0
+  ],
+  "baselines": [
+   {
+    "name": "chance",
+    "score": 0.5,
+    "used": true
+   }
+  ],
+  "seconds": 0.1,
+  "py_warnings": []
+ },
+ {
+  "case": "VIX daily level, lag features, time_col=date",
+  "expect": "headline baseline is previous_value; skill small (level is persistent)",
+  "outcome": "ran",
+  "task": "regression",
+  "scheme": "time_ordered",
+  "metric": "mse",
+  "score": 3.8545336763256177,
+  "baseline": "previous_value",
+  "baseline_score": 3.946753,
+  "skill": 0.023365871559325457,
+  "skill_ci": [
+   -0.0772565468355973,
+   0.10533902952923947
+  ],
+  "p": null,
+  "model": "linear-0",
+  "rows": {
+   "loaded": 9273,
+   "dropped_missing_target": 0,
+   "dropped_missing_time": 0,
+   "dropped_gap": 0,
+   "dropped_row_cap": 7273,
+   "training": 1500,
+   "holdout": 500
+  },
+  "excluded": {},
+  "n_features": 9,
+  "warnings": [
+   [
+    "interval_approximate",
+    null
+   ]
+  ],
+  "copies": [
+   null,
+   null
+  ],
+  "baselines": [
+   {
+    "name": "training_mean",
+    "score": 24.51714635857779,
+    "used": false
+   },
+   {
+    "name": "previous_value",
+    "score": 3.946753,
+    "used": true
+   }
+  ],
+  "seconds": 0.8,
+  "py_warnings": []
+ },
+ {
+  "case": "VIX daily level, lag features, NO time_col",
+  "expect": "random split with the date-undeclared warning; skill near 1 against the mean (the caveat case)",
+  "outcome": "ran",
+  "task": "regression",
+  "scheme": "random",
+  "metric": "mse",
+  "score": 4.093784517009987,
+  "baseline": "training_mean",
+  "baseline_score": 66.65093123417779,
+  "skill": 0.9385787348922929,
+  "skill_ci": [
+   0.9073180947339669,
+   0.9580154809793341
+  ],
+  "p": 0.004975124378109453,
+  "model": "linear-0",
+  "rows": {
+   "loaded": 9273,
+   "dropped_missing_target": 0,
+   "dropped_missing_time": 0,
+   "dropped_gap": 0,
+   "dropped_row_cap": 7273,
+   "training": 1500,
+   "holdout": 500
+  },
+  "excluded": {
+   "date": "datetime"
+  },
+  "n_features": 9,
+  "warnings": [
+   [
+    "date_column_undeclared",
+    "date"
+   ],
+   [
+    "strong_single_column",
+    "close_lag1"
+   ],
+   [
+    "strong_single_column",
+    "close_lag2"
+   ],
+   [
+    "strong_single_column",
+    "high_lag1"
+   ],
+   [
+    "strong_single_column",
+    "low_lag1"
+   ]
+  ],
+  "copies": [
+   0,
+   0.0
+  ],
+  "baselines": [
+   {
+    "name": "training_mean",
+    "score": 66.65093123417779,
+    "used": true
+   }
+  ],
+  "seconds": 0.2,
+  "py_warnings": []
+ },
+ {
+  "case": "VIX next-day change, time_col=date",
+  "expect": "skill about zero, perhaps slightly positive (mean reversion)",
+  "outcome": "ran",
+  "task": "regression",
+  "scheme": "time_ordered",
+  "metric": "mse",
+  "score": 3.9195833451801305,
+  "baseline": "training_mean",
+  "baseline_score": 3.9467157356444456,
+  "skill": 0.006874675624411242,
+  "skill_ci": [
+   -0.08722372680178435,
+   0.08304533935832963
+  ],
+  "p": null,
+  "model": "linear-0",
+  "rows": {
+   "loaded": 9258,
+   "dropped_missing_target": 0,
+   "dropped_missing_time": 0,
+   "dropped_gap": 0,
+   "dropped_row_cap": 7258,
+   "training": 1500,
+   "holdout": 500
+  },
+  "excluded": {},
+  "n_features": 3,
+  "warnings": [
+   [
+    "interval_approximate",
+    null
+   ]
+  ],
+  "copies": [
+   null,
+   null
+  ],
+  "baselines": [
+   {
+    "name": "training_mean",
+    "score": 3.9467157356444456,
+    "used": true
+   },
+   {
+    "name": "previous_value",
+    "score": 8.765544000000002,
+    "used": false
+   }
+  ],
+  "seconds": 0.1,
+  "py_warnings": []
+ },
+ {
+  "case": "VIX next-day change, time_col=date, gap=1",
+  "expect": "as above; gap rows counted",
+  "outcome": "ran",
+  "task": "regression",
+  "scheme": "time_ordered",
+  "metric": "mse",
+  "score": 3.91994702366569,
+  "baseline": "training_mean",
+  "baseline_score": 3.9467252234031944,
+  "skill": 0.006784916157505871,
+  "skill_ci": [
+   -0.08728130407649942,
+   0.08297008633217563
+  ],
+  "p": null,
+  "model": "linear-0",
+  "rows": {
+   "loaded": 9258,
+   "dropped_missing_target": 0,
+   "dropped_missing_time": 0,
+   "dropped_gap": 1,
+   "dropped_row_cap": 7258,
+   "training": 1499,
+   "holdout": 500
+  },
+  "excluded": {},
+  "n_features": 3,
+  "warnings": [
+   [
+    "interval_approximate",
+    null
+   ]
+  ],
+  "copies": [
+   null,
+   null
+  ],
+  "baselines": [
+   {
+    "name": "training_mean",
+    "score": 3.9467252234031944,
+    "used": true
+   },
+   {
+    "name": "previous_value",
+    "score": 7.759574200000001,
+    "used": false
+   }
+  ],
+  "seconds": 0.1,
+  "py_warnings": []
+ },
+ {
+  "case": "sp500.csv as shipped (dates like 'Jan 1 2000'), time_col=date",
+  "expect": "named error: the time column is not year-first ISO",
+  "outcome": "named error",
+  "error": "TimeColumnError",
+  "code": "time_column_invalid",
+  "message": "time column: value 'Jan 1 2000' is not ISO 8601 with the year first (YYYY-MM-DD, optionally with a time and a zone)",
+  "seconds": 0.0,
+  "py_warnings": []
+ },
+ {
+  "case": "S&P 500 monthly next return (123 rows), time_col=date",
+  "expect": "skill about zero; small-holdout warnings; possibly no interval (few timestamps)",
+  "outcome": "ran",
+  "task": "regression",
+  "scheme": "time_ordered",
+  "metric": "mse",
+  "score": 0.0037007500739761434,
+  "baseline": "training_mean",
+  "baseline_score": 0.0038000228382695216,
+  "skill": 0.026124254647528877,
+  "skill_ci": [
+   -0.011320546104032764,
+   0.048528682189443395
+  ],
+  "p": null,
+  "model": "linear-0",
+  "rows": {
+   "loaded": 119,
+   "dropped_missing_target": 0,
+   "dropped_missing_time": 0,
+   "dropped_gap": 0,
+   "dropped_row_cap": 0,
+   "training": 89,
+   "holdout": 30
+  },
+  "excluded": {},
+  "n_features": 2,
+  "warnings": [
+   [
+    "interval_approximate",
+    null
+   ],
+   [
+    "small_holdout",
+    null
+   ]
+  ],
+  "copies": [
+   null,
+   null
+  ],
+  "baselines": [
+   {
+    "name": "training_mean",
+    "score": 0.0038000228382695216,
+    "used": true
+   },
+   {
+    "name": "previous_value",
+    "score": 0.004629655019689085,
+    "used": false
+   }
+  ],
+  "seconds": 0.0,
+  "py_warnings": []
+ },
+ {
+  "case": "Seattle weather, temp_max from lags, time_col=date (ISO text)",
+  "expect": "previous_value baseline; modest positive skill over persistence",
+  "outcome": "ran",
+  "task": "regression",
+  "scheme": "time_ordered",
+  "metric": "mse",
+  "score": 7.336182486759821,
+  "baseline": "previous_value",
+  "baseline_score": 8.460164835164836,
+  "skill": 0.13285584504608716,
+  "skill_ci": [
+   0.08268799882293876,
+   0.17180456197961388
+  ],
+  "p": null,
+  "model": "linear-0",
+  "rows": {
+   "loaded": 1454,
+   "dropped_missing_target": 0,
+   "dropped_missing_time": 0,
+   "dropped_gap": 0,
+   "dropped_row_cap": 0,
+   "training": 1090,
+   "holdout": 364
+  },
+  "excluded": {},
+  "n_features": 12,
+  "warnings": [
+   [
+    "interval_approximate",
+    null
+   ]
+  ],
+  "copies": [
+   null,
+   null
+  ],
+  "baselines": [
+   {
+    "name": "training_mean",
+    "score": 54.95836326085329,
+    "used": false
+   },
+   {
+    "name": "previous_value",
+    "score": 8.460164835164836,
+    "used": true
+   }
+  ],
+  "seconds": 0.1,
+  "py_warnings": []
+ },
+ {
+  "case": "Seattle weather, rain tomorrow (binary), time_col=date",
+  "expect": "moderate skill (AUC about 0.7 to 0.8)",
+  "outcome": "ran",
+  "task": "classification",
+  "scheme": "time_ordered",
+  "metric": "roc_auc",
+  "score": 0.7756096028154852,
+  "baseline": "chance",
+  "baseline_score": 0.5,
+  "skill": 0.5512192056309704,
+  "skill_ci": [
+   0.4170804815890861,
+   0.6594616567152473
+  ],
+  "p": null,
+  "model": "linear-0",
+  "rows": {
+   "loaded": 1460,
+   "dropped_missing_target": 0,
+   "dropped_missing_time": 0,
+   "dropped_gap": 0,
+   "dropped_row_cap": 0,
+   "training": 1095,
+   "holdout": 365
+  },
+  "excluded": {},
+  "n_features": 5,
+  "warnings": [
+   [
+    "interval_approximate",
+    null
+   ]
+  ],
+  "copies": [
+   null,
+   null
+  ],
+  "baselines": [
+   {
+    "name": "chance",
+    "score": 0.5,
+    "used": true
+   }
+  ],
+  "seconds": 0.1,
+  "py_warnings": []
+ },
+ {
+  "case": "stocks panel (5 symbols), price level with own lag, time_col=date",
+  "expect": "panel: baseline is the training mean and the autocorrelation warning fires; the lag may be flagged as a leak (known limit D31); skill would be inflated otherwise",
+  "outcome": "ran",
+  "task": "regression",
+  "scheme": "time_ordered",
+  "metric": "mse",
+  "score": 740.0762140502476,
+  "baseline": "training_mean",
+  "baseline_score": 35108.49072716513,
+  "skill": 0.9789203067770266,
+  "skill_ci": [
+   null,
+   null
+  ],
+  "p": null,
+  "model": "linear-0",
+  "rows": {
+   "loaded": 555,
+   "dropped_missing_target": 0,
+   "dropped_missing_time": 0,
+   "dropped_gap": 0,
+   "dropped_row_cap": 0,
+   "training": 415,
+   "holdout": 140
+  },
+  "excluded": {},
+  "n_features": 2,
+  "warnings": [
+   [
+    "autocorrelated_panel_target",
+    "price"
+   ],
+   [
+    "no_interval",
+    null
+   ]
+  ],
+  "copies": [
+   null,
+   null
+  ],
+  "baselines": [
+   {
+    "name": "training_mean",
+    "score": 35108.49072716513,
+    "used": true
+   }
+  ],
+  "seconds": 0.6,
+  "py_warnings": []
+ },
+ {
+  "case": "stocks panel, next-month return, time_col=date",
+  "expect": "skill about zero",
+  "outcome": "ran",
+  "task": "regression",
+  "scheme": "time_ordered",
+  "metric": "mse",
+  "score": 0.01187652729452323,
+  "baseline": "training_mean",
+  "baseline_score": 0.011286765316235375,
+  "skill": -0.05225252424089266,
+  "skill_ci": [
+   null,
+   null
+  ],
+  "p": null,
+  "model": "linear-0",
+  "rows": {
+   "loaded": 550,
+   "dropped_missing_target": 0,
+   "dropped_missing_time": 0,
+   "dropped_gap": 0,
+   "dropped_row_cap": 0,
+   "training": 410,
+   "holdout": 140
+  },
+  "excluded": {},
+  "n_features": 2,
+  "warnings": [
+   [
+    "no_interval",
+    null
+   ]
+  ],
+  "copies": [
+   null,
+   null
+  ],
+  "baselines": [
+   {
+    "name": "training_mean",
+    "score": 0.011286765316235375,
+    "used": true
+   }
+  ],
+  "seconds": 0.0,
+  "py_warnings": []
+ },
+ {
+  "case": "titanic, fare written with thousands separators",
+  "expect": "fare_text excluded as numeric_with_separators, with a warning",
+  "outcome": "ran",
+  "task": "classification",
+  "scheme": "random",
+  "metric": "roc_auc",
+  "score": 0.8724325241894415,
+  "baseline": "chance",
+  "baseline_score": 0.5,
+  "skill": 0.744865048378883,
+  "skill_ci": [
+   0.6558292825410376,
+   0.8290082009677876
+  ],
+  "p": 0.004975124378109453,
+  "model": "linear-0",
+  "rows": {
+   "loaded": 891,
+   "dropped_missing_target": 0,
+   "dropped_missing_time": 0,
+   "dropped_gap": 0,
+   "dropped_row_cap": 0,
+   "training": 668,
+   "holdout": 223
+  },
+  "excluded": {
+   "fare_text": "numeric_with_separators"
+  },
+  "n_features": 13,
+  "warnings": [
+   [
+    "duplicate_rows",
+    null
+   ],
+   [
+    "holdout_copies_kept",
+    null
+   ],
+   [
+    "numeric_with_separators",
+    "fare_text"
+   ]
+  ],
+  "copies": [
+   37,
+   0.16591928251121077
+  ],
+  "baselines": [
+   {
+    "name": "chance",
+    "score": 0.5,
+    "used": true
+   }
+  ],
+  "seconds": 1.0,
+  "py_warnings": []
+ },
+ {
+  "case": "titanic plus a consecutive id column",
+  "expect": "passenger_id excluded as id_like",
+  "outcome": "ran",
+  "task": "classification",
+  "scheme": "random",
+  "metric": "roc_auc",
+  "score": 0.8724325241894415,
+  "baseline": "chance",
+  "baseline_score": 0.5,
+  "skill": 0.744865048378883,
+  "skill_ci": [
+   0.6558292825410376,
+   0.8290082009677876
+  ],
+  "p": 0.004975124378109453,
+  "model": "linear-0",
+  "rows": {
+   "loaded": 891,
+   "dropped_missing_target": 0,
+   "dropped_missing_time": 0,
+   "dropped_gap": 0,
+   "dropped_row_cap": 0,
+   "training": 668,
+   "holdout": 223
+  },
+  "excluded": {
+   "passenger_id": "id_like"
+  },
+  "n_features": 13,
+  "warnings": [
+   [
+    "holdout_copies_kept",
+    null
+   ]
+  ],
+  "copies": [
+   37,
+   0.16591928251121077
+  ],
+  "baselines": [
+   {
+    "name": "chance",
+    "score": 0.5,
+    "used": true
+   }
+  ],
+  "seconds": 0.2,
+  "py_warnings": []
+ },
+ {
+  "case": "titanic stacked twice",
+  "expect": "stops: holdout copies in training",
+  "outcome": "named error",
+  "error": "HoldoutCopiesError",
+  "code": "holdout_copies_in_training",
+  "message": "376 of the 446 holdout rows (84.3%) have a copy among the training rows: the same value in every feature column and the same target. A model that recalls a row scores on them, so the headline would be inflated. Remove the repeated rows, or pass duplicates='keep' (--duplicates keep) to go ahead with ",
+  "seconds": 0.1,
+  "py_warnings": []
+ },
+ {
+  "case": "titanic stacked twice with a batch column (review 4, finding 2)",
+  "expect": "SHOULD stop; today the batch column hides the copies",
+  "outcome": "named error",
+  "error": "HoldoutCopiesError",
+  "code": "holdout_copies_in_training",
+  "message": "70 of the 446 holdout rows (15.7%) have a copy among the training rows: the same value in every feature column and the same target. A model that recalls a row scores on them, so the headline would be inflated. Remove the repeated rows, or pass duplicates='keep' (--duplicates keep) to go ahead with a",
+  "seconds": 0.1,
+  "py_warnings": []
+ },
+ {
+  "case": "VIX same-day: close from open/high/low, time_col=date",
+  "expect": "very high skill, legitimately (same-day range); high/low may be warned as strong single columns",
+  "outcome": "ran",
+  "task": "regression",
+  "scheme": "time_ordered",
+  "metric": "mse",
+  "score": 0.8467297148102056,
+  "baseline": "previous_value",
+  "baseline_score": 3.946753,
+  "skill": 0.7854616909621135,
+  "skill_ci": [
+   0.7502868308329624,
+   0.8357556497382952
+  ],
+  "p": null,
+  "model": "linear-0",
+  "rows": {
+   "loaded": 9278,
+   "dropped_missing_target": 0,
+   "dropped_missing_time": 0,
+   "dropped_gap": 0,
+   "dropped_row_cap": 7278,
+   "training": 1500,
+   "holdout": 500
+  },
+  "excluded": {},
+  "n_features": 3,
+  "warnings": [
+   [
+    "interval_approximate",
+    null
+   ]
+  ],
+  "copies": [
+   null,
+   null
+  ],
+  "baselines": [
+   {
+    "name": "training_mean",
+    "score": 24.51714635857779,
+    "used": false
+   },
+   {
+    "name": "previous_value",
+    "score": 3.946753,
+    "used": true
+   }
+  ],
+  "seconds": 0.1,
+  "py_warnings": []
+ },
+ {
+  "case": "titanic, FULL profile, n_jobs=2",
+  "expect": "skill near the fast figure",
+  "outcome": "ran",
+  "task": "classification",
+  "scheme": "random",
+  "metric": "roc_auc",
+  "score": 0.861441181463249,
+  "baseline": "chance",
+  "baseline_score": 0.5,
+  "skill": 0.722882362926498,
+  "skill_ci": [
+   0.6110808418568057,
+   0.8242422638213713
+  ],
+  "p": 0.000999000999000999,
+  "model": "forest-3",
+  "rows": {
+   "loaded": 891,
+   "dropped_missing_target": 0,
+   "dropped_missing_time": 0,
+   "dropped_gap": 0,
+   "dropped_row_cap": 0,
+   "training": 668,
+   "holdout": 223
+  },
+  "excluded": {},
+  "n_features": 13,
+  "warnings": [
+   [
+    "duplicate_rows",
+    null
+   ],
+   [
+    "holdout_copies_kept",
+    null
+   ]
+  ],
+  "copies": [
+   37,
+   0.16591928251121077
+  ],
+  "baselines": [
+   {
+    "name": "chance",
+    "score": 0.5,
+    "used": true
+   }
+  ],
+  "seconds": 12.9,
+  "py_warnings": []
+ },
+ {
+  "case": "titanic, FULL profile, n_jobs=1",
+  "expect": "identical to n_jobs=2",
+  "outcome": "ran",
+  "task": "classification",
+  "scheme": "random",
+  "metric": "roc_auc",
+  "score": 0.861441181463249,
+  "baseline": "chance",
+  "baseline_score": 0.5,
+  "skill": 0.722882362926498,
+  "skill_ci": [
+   0.6110808418568057,
+   0.8242422638213713
+  ],
+  "p": 0.000999000999000999,
+  "model": "forest-3",
+  "rows": {
+   "loaded": 891,
+   "dropped_missing_target": 0,
+   "dropped_missing_time": 0,
+   "dropped_gap": 0,
+   "dropped_row_cap": 0,
+   "training": 668,
+   "holdout": 223
+  },
+  "excluded": {},
+  "n_features": 13,
+  "warnings": [
+   [
+    "duplicate_rows",
+    null
+   ],
+   [
+    "holdout_copies_kept",
+    null
+   ]
+  ],
+  "copies": [
+   37,
+   0.16591928251121077
+  ],
+  "baselines": [
+   {
+    "name": "chance",
+    "score": 0.5,
+    "used": true
+   }
+  ],
+  "seconds": 8.4,
+  "py_warnings": []
+ },
+ {
+  "case": "diamonds 8,000-row sample, FULL profile",
+  "expect": "skill about 0.97+",
+  "outcome": "ran",
+  "task": "regression",
+  "scheme": "random",
+  "metric": "mse",
+  "score": 420379.3666555339,
+  "baseline": "training_mean",
+  "baseline_score": 16527584.472725028,
+  "skill": 0.9745649845354429,
+  "skill_ci": [
+   0.9687143246948996,
+   0.9789861785077751
+  ],
+  "p": 0.000999000999000999,
+  "model": "boosting-1",
+  "rows": {
+   "loaded": 8000,
+   "dropped_missing_target": 0,
+   "dropped_missing_time": 0,
+   "dropped_gap": 0,
+   "dropped_row_cap": 0,
+   "training": 6000,
+   "holdout": 2000
+  },
+  "excluded": {},
+  "n_features": 9,
+  "warnings": [
+   [
+    "duplicate_rows",
+    null
+   ],
+   [
+    "whole_number_regression_target",
+    "price"
+   ]
+  ],
+  "copies": [
+   0,
+   0.0
+  ],
+  "baselines": [
+   {
+    "name": "training_mean",
+    "score": 16527584.472725028,
+    "used": true
+   }
+  ],
+  "seconds": 25.9,
+  "py_warnings": []
+ }
+]

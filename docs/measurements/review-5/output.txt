@@ -1,0 +1,14 @@
+noise, 24 combinations
+   seed 1: keep -0.099 [-0.20,-0.00] units None/None   | group as built -0.282 [no interval] units 36/12       | group on features alone -0.069 [no interval] units 17/7
+   seed 2: keep +0.078 [-0.02,+0.18] units None/None   | group as built -0.270 [no interval] units 35/13       | group on features alone +0.064 [no interval] units 17/7
+   seed 3: keep -0.016 [-0.12,+0.08] units None/None   | group as built -0.560 [no interval] units 36/12       | group on features alone -0.043 [no interval] units 17/7
+signal, 24 combinations
+   seed 1: keep +0.513 [+0.43,+0.59] units None/None   | group as built -0.080 [no interval] units 37/11       | group on features alone +0.406 [no interval] units 17/7
+   seed 2: keep +0.553 [+0.47,+0.63] units None/None   | group as built +0.505 [no interval] units 36/12       | group on features alone +0.415 [no interval] units 17/7
+   seed 3: keep +0.461 [+0.39,+0.53] units None/None   | group as built +0.571 [no interval] units 35/13       | group on features alone +0.625 [no interval] units 17/7
+signal, 3,125 combinations (five 5-level columns)
+   seed 1: keep +0.140 [+0.02,+0.25] units None/None   | group as built +0.156 [+0.04,+0.28] units 1263/405    | group on features alone +0.084 [-0.02,+0.18] units 1102/359
+   seed 2: keep +0.182 [+0.08,+0.29] units None/None   | group as built +0.095 [-0.02,+0.21] units 1252/422    | group on features alone +0.112 [+0.00,+0.21] units 1111/376
+   seed 3: keep +0.174 [+0.07,+0.27] units None/None   | group as built +0.177 [+0.08,+0.30] units 1255/417    | group on features alone +0.134 [+0.03,+0.23] units 1121/363
+titanic: keep +0.745 [+0.66,+0.83] units None/None | group as built +0.741 [+0.64,+0.84] units 575/209 | group on features alone +0.645 [+0.51,+0.75] units 585/187
+titanic shuffled, every row twice: keep +0.733 [+0.67,+0.80] units None/None | group as built -0.154 [-0.30,+0.04] units 604/205 | group on features alone -0.108 [-0.23,+0.03] units 588/184

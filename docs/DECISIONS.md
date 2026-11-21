@@ -871,3 +871,69 @@ p-value when only a few rows are grouped (rejected: on data with no skill a
 row-by-row p-value was below 0.05 in 5 of 30 runs, and one rule for every
 grouped run is easier to trust than a rule with a size threshold).
 Consequence: a caller who groups a handful of copies gives up the p-value.
+
+## D62 — 2026-11-21 — Fifth review accepted; `duplicates="group"` forms its sets on the features alone (amends D57 part 3)
+Decision: The fifth review (`docs\reviews\phase1-review-5.md`, verdict FIX
+FIRST) is accepted in full. Its finding 1: under `duplicates="group"` the
+rows kept together are those that agree in every feature column. The target
+plays no part in forming the sets, so the split never looks at the target
+beyond stratifying. What `"group"` then means is stated in the output and
+the README: no combination of feature values is on both sides. The message
+of the copies stop says when each answer fits: `"keep"` when the repeated
+rows are different cases that look alike, as in a table of few-valued
+columns; `"group"` when they are one case recorded more than once. D49's
+count is unchanged: a copy is still a row equal in every feature and the
+target.
+Alternatives considered: sets of rows equal in every feature and the
+target, as built (rejected on measurement: on noise in a table of 24
+feature combinations it scored -0.28, -0.27 and -0.56 in the lead's check
+and down to -0.85 in the review, because a held-out set can have only its
+opposite class in training; on the features alone the same tables scored
+-0.07, +0.06 and -0.04); a named error when rows that agree in every
+feature differ in target (rejected: it leaves a caller with oversampled
+rows no sound choice).
+Consequence: on a table where different cases share feature values,
+`"group"` is cautious: Titanic scores 0.645 against 0.745 with `"keep"`.
+Measurements: `docs\measurements\review-5\`.
+
+## D63 — 2026-11-21 — The caller always states time order and entities (replaces D58 parts 1 and 3; amends D6 and D7)
+Decision: Every call says two things, and the tool never assumes either.
+Time order: `time_col` is a column's name, or `False` for "the order of the
+rows in time does not matter". Entities: `group_col` is a column's name, or
+`False` for "no rows belong together". When either is left unsaid
+the run stops with a named error, whatever the table holds; the caller
+learns everything that is missing from one message. On the command line the
+same holds for `--time-col` or `--no-time-order`, and `--group-col` or
+`--no-entities`. The rule is for `profile()` and the command line; the step
+functions take what they are given. The existing warnings stay as the
+tool's doubt about a statement: a date column under `time_col=False`, and a
+persistent panel under `group_col=False`. Both statements are recorded in
+the output.
+Alternatives considered: stopping only when the tool sees a reason, as D58
+had it (rejected on the fifth review: a panel of 8 to 12 timestamps was
+asked about in 6 runs of 20; a panel whose timestamps never coincide was
+scored at 0.80 to 0.92 with nothing said; a day held as a whole number was
+scored at 0.947 with no warning; each is an everyday form of financial
+data, and a detector for each would leave the next form open); defaults
+that assume independence with a caveat, as D6 had it.
+Consequence: two more words on every call. The conditional stops of D58
+and their cut-offs no longer decide whether a run goes ahead. Most existing
+tests call with nothing said, so D59 is applied at scale in pass 6.
+
+## D64 — 2026-11-21 — The grouped holdout, three hardening passes, and the loop's budget (amends D56)
+Decision: (1) Fifth review, finding 6: the holdout of the grouped scheme
+does not take far more than a quarter of the rows because one large entity
+was drawn early. The draw leaves out an entity that would overshoot when
+another can complete the holdout, and a warning says so when one entity
+alone is too large for a sound split. The harness stage measures the rule
+and reports it for approval. (2) Findings 5 and 7 are fixed with tests and
+broken copies. (3) The hardening passes of D56 are three: pass 6 builds the
+fifth review's findings (D62, D63 and this decision); pass 7 builds the
+broader repeat screen under D60, the generated-table test, a broken copy
+for every gate check never seen failing, and the rest of
+`docs\BACKLOG.md`. (4) The loop's total budget is raised from 150 to 250
+US dollars, in `loop\loop.json`; 79 were spent after five passes.
+Alternatives considered: one pass for both (rejected: too large to check
+properly, and the repeat screen needs its own measurement).
+Consequence: phase 1 closes under D56 after pass 7's review at the
+earliest.

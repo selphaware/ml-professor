@@ -5,14 +5,14 @@ build loop: each item becomes work only through a decision in
 `docs/DECISIONS.md` and a change prompt. Phase 2 starts by reading this file
 (D47).
 
-**Status under D56 (2026-11-21).** Nothing known to be wrong is carried into
-phase 2. The weaknesses listed below are fixed in two hardening passes:
-pass 5 (CP6: entities, `duplicates="group"`, the undeclared date column, the
-panel stop, the fourth review's findings) and pass 6 (the broader repeat
-screen first, under D60; then the judge and every remaining weakness here).
-Only the features stay on the roadmap.
+**Status under D56 and D64 (2026-11-21).** Nothing known to be wrong is
+carried into phase 2. Three hardening passes: pass 5 (CP6: entities,
+`duplicates="group"`, the two stops, the fourth review's findings; built);
+pass 6 (CP7: the fifth review's findings under D62 to D64); pass 7 (the
+broader repeat screen first, under D60; then the judge and every remaining
+weakness here). Only the features stay on the roadmap.
 
-## Pass 6, first item: the broader repeat screen (D60)
+## Pass 7, first item: the broader repeat screen (D60)
 
 - **Open defect.** Copies disguised by an added column, a batch number or a
   small change pass D49. On real tables with the target shuffled, every row
@@ -118,7 +118,7 @@ Only the features stay on the roadmap.
 - **Three gate bands have narrow margins at the gate's one seed** (0.07,
   0.09 and 0.12 to the broken copies), as the reviewer reads them. Two of
   the three are bounded by the scale itself: a leak scores about 1.0 and
-  skill cannot exceed 1. Pass 6 reports the broken copies' values at the
+  skill cannot exceed 1. Pass 7 reports the broken copies' values at the
   gate seed, so the real distance is on record.
 - **A three-class target** stops as ambiguous, with a message that suggests
   declaring the task, which would not help. The message should say that
@@ -135,12 +135,15 @@ Only the features stay on the roadmap.
   test fail: the only visible difference is a stamp written `17900` or
   `17900.0`. That test has no broken copy behind it.
 - **Gate time.** The per-edit gate takes 15.6 of its 20 seconds and the
-  self-test about 17 minutes. Pass 6 adds broken copies, so it needs a plan
+  self-test about 17 minutes. Pass 7 adds broken copies, so it needs a plan
   for both before it adds them.
 - **A p-value for grouped runs.** None is reported (D61). A shuffle of whole
   entities is sound only when each entity holds one label.
 - **D49 on clean tables of few-valued columns** stops them from about 4,000
   rows (30 of 30 measured). Settled with the repeat screen (D60).
+
+- **Thin spots of the fifth pass.** M17 and M21 are each held by one test.
+- **`CLAUDE.md` says "D1 to D60".** CP7 brings it up to date.
 
 ## Notes for the framework (ailoop-engineering), not for this repo
 

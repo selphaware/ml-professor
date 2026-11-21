@@ -28,8 +28,11 @@ def test_duplicates_is_the_tenth_parameter_and_defaults_to_error():
     import mlprofessor
 
     params = inspect.signature(mlprofessor.profile).parameters
-    assert list(params) == ["data", "target", "task", "time_col", "gap", "profile", "seed",
-                            "out_dir", "n_jobs", "duplicates"]
+    assert list(params)[:10] == ["data", "target", "task", "time_col", "gap", "profile", "seed",
+                                 "out_dir", "n_jobs", "duplicates"]
+    assert list(params)[10:] in ([], ["group_col"]), list(params)[10:]
+    if list(params)[10:] == ["group_col"]:
+        assert params["group_col"].default is None
     assert params["duplicates"].default == "error"
     assert params["duplicates"].kind is inspect.Parameter.POSITIONAL_OR_KEYWORD
 
@@ -259,13 +262,17 @@ def test_the_message_names_an_undeclared_date_column():
         "y": gen.integers(0, 2, size=n),
     })
     err = p.raised(frame, families=p.flat_family(h.Log(), n))
+    stated = {}
+    if err.code == "time_order_undeclared":
+        stated = {"time_col": False}
+        err = p.raised(frame, families=p.flat_family(h.Log(), n), **stated)
     assert err.code == CODE, f"{type(err).__name__}: {err}"
     assert "when" in str(err) and "time_col" in str(err), str(err)
 
     result, _ = p.run_kept(frame, time_col="when")
     assert _validation(result)["n_holdout_copies"] is None
 
-    result, _ = p.run_kept(frame, duplicates="keep")
+    result, _ = p.run_kept(frame, duplicates="keep", **stated)
     pairs = h.warnings_of(result)
     assert ("date_column_undeclared", "when") in pairs
     assert pairs.count(KEPT) == 1

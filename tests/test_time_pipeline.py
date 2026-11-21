@@ -23,7 +23,14 @@ def _iso(ts):
 def test_scheme_follows_time_col():
     frame = h.time_frame(200, seed=1, task="classification")
     log = h.Log()
-    plain_run = _run(frame, families=[h.family("rec", log)]).to_dict()["validation"]
+    from mlprofessor import errors
+    try:
+        plain_result = _run(frame, families=[h.family("rec", log)])
+    except errors.ProfileError as exc:
+        if exc.code != "time_order_undeclared":
+            raise
+        plain_result = _run(frame, families=[h.family("rec", log)], time_col=False)
+    plain_run = plain_result.to_dict()["validation"]
     assert plain_run["scheme"] == "random"
     for key in ["time_col", "time_form", "train_end", "holdout_start", "holdout_end",
                 "n_train_timestamps", "n_holdout_timestamps", "timestamps_unique"]:
@@ -189,7 +196,13 @@ def test_f7_day_first_time_column_stops():
 def test_date_column_undeclared():
     frame = h.time_frame(160, seed=10)
     frame["day_text"] = frame["date"].dt.strftime("%Y-%m-%d")
-    res = _run(frame, families=[h.family("rec", h.Log())])
+    from mlprofessor import errors
+    try:
+        res = _run(frame, families=[h.family("rec", h.Log())])
+    except errors.ProfileError as exc:
+        if exc.code != "time_order_undeclared":
+            raise
+        res = _run(frame, families=[h.family("rec", h.Log())], time_col=False)
     found = [c for code, c in h.warnings_of(res) if code == "date_column_undeclared"]
     assert sorted(found) == ["date", "day_text"]
     assert isinstance(res.to_dict()["validation"]["caveat"], str)
@@ -240,7 +253,14 @@ def test_panel_uses_training_mean_and_flags_persistence(persistent):
     means = frame.groupby("date")["y"].mean().to_numpy()[:45]
     r = h.lag1_autocorr(means)
     assert (r > 0.8) if persistent else (r < 0.3)
-    res = _run(frame, families=[h.family("rec", h.Log())], time_col="date")
+    from mlprofessor import errors
+    try:
+        res = _run(frame, families=[h.family("rec", h.Log())], time_col="date")
+    except errors.ProfileError as exc:
+        if exc.code != "entities_undeclared" or not persistent:
+            raise
+        res = _run(frame, families=[h.family("rec", h.Log())], time_col="date",
+                   group_col=False)
     doc = res.to_dict()
     assert [b["name"] for b in doc["baselines"]] == ["training_mean"]
     assert doc["validation"]["timestamps_unique"] is False

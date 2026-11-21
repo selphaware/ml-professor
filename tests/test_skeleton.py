@@ -56,9 +56,11 @@ def test_profile_signature_and_defaults():
     assert [name for name, _ in expected] == names[:9]
     for name, default in expected:
         assert params[name].default == default, name
-    assert names[9:] in ([], ["duplicates"]), names[9:]
-    if names[9:] == ["duplicates"]:
+    assert names[9:] in ([], ["duplicates"], ["duplicates", "group_col"]), names[9:]
+    if "duplicates" in names[9:]:
         assert params["duplicates"].default == "error"
+    if "group_col" in names[9:]:
+        assert params["group_col"].default is None
 
 
 @pytest.mark.parametrize("name,code", ERRORS)

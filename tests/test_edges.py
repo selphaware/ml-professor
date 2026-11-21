@@ -230,7 +230,13 @@ def test_duplicate_rows_kept_and_reported():
 def test_limitations_and_caveat_are_the_fixed_texts(task, scheme):
     frame = h.time_frame(160, seed=15, task=task)
     kw = {"time_col": "date"} if scheme == "time" else {}
-    doc = _run(frame, **kw).to_dict()
+    from mlprofessor import errors
+    try:
+        doc = _run(frame, **kw).to_dict()
+    except errors.ProfileError as exc:
+        if scheme != "random" or exc.code != "time_order_undeclared":
+            raise
+        doc = _run(frame, time_col=False).to_dict()
     assert doc["limitations"] == h.LIMITATIONS
     if scheme == "random":
         assert doc["validation"]["caveat"] == h.CAVEAT

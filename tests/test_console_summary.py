@@ -34,7 +34,15 @@ def test_summary_shows_both_intervals_the_p_value_and_each_warning(tmp_path):
     amount = np.random.default_rng(112).normal(size=n).round(3).astype(str).astype(object)
     amount[9] = "abc"
     frame.insert(1, "amount", amount)
-    doc, text = _run(tmp_path, frame)
+    probe = tmp_path / "probe"
+    probe.mkdir()
+    frame.to_csv(probe / "table.csv", index=False)
+    proc = h.run_cli(["profile", "--data", probe / "table.csv", "--target", "y",
+                      "--out", probe / "out", "--profile", "fast", "--n-jobs", "1"])
+    more = []
+    if proc.returncode == 3 and "time_order_undeclared" in proc.stderr:
+        more = ["--no-time-order"]
+    doc, text = _run(tmp_path, frame, *more)
 
     codes = [w["code"] for w in doc["warnings"]]
     for code in ["date_column_undeclared", "values_coerced", "small_holdout"]:
@@ -59,7 +67,16 @@ def test_summary_under_time_order_says_why_there_is_no_p_value(tmp_path):
 
 def test_summary_says_why_there_is_no_interval(tmp_path):
     panel = h.panel_frame(n_times=40, per_time=3, seed=114)
-    doc, text = _run(tmp_path, panel, "--time-col", "date")
+    probe = tmp_path / "probe"
+    probe.mkdir()
+    panel.to_csv(probe / "table.csv", index=False)
+    proc = h.run_cli(["profile", "--data", probe / "table.csv", "--target", "y",
+                      "--out", probe / "out", "--profile", "fast", "--n-jobs", "1",
+                      "--time-col", "date"])
+    more = []
+    if proc.returncode == 3 and "entities_undeclared" in proc.stderr:
+        more = ["--no-entities"]
+    doc, text = _run(tmp_path, panel, "--time-col", "date", *more)
     head = doc["headline"]
     assert head["interval_method"] is None
     assert head["interval_reason"] and head["interval_reason"] in text

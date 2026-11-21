@@ -2,9 +2,11 @@
 
 Roles are judged on the usable rows; the counts `n_missing`, `n_coerced` and
 `n_infinite` are kept over every loaded row; `n_infinite` of a numeric column
-also counts the values too large for the tree models (D48). Whole numbers are judged by value,
-never by type. A number written with thousands separators is never parsed,
-and dates are recognised by a fixed list of forms, never by pandas' parser.
+also counts the values too large for the tree models (D48). Whole numbers
+are judged by value, never by type, and those of an integer-typed column are
+compared as integers (D50). A number written with thousands separators is
+never parsed, and dates are recognised by a fixed list of forms, never by
+pandas' parser.
 """
 import datetime
 import re
@@ -12,7 +14,7 @@ import re
 import numpy as np
 import pandas as pd
 
-from mlprofessor.load import missing_mask, usable_rows
+from mlprofessor.load import missing_mask, read_number_columns, usable_rows
 
 COLUMN_KEYS = [
     "name", "position", "dtype", "role", "kind", "reason", "leak_rule",
@@ -190,6 +192,29 @@ def _numeric_rule(values):
     return "feature", "numeric", None
 
 
+def _integer_rule(series):
+    """Rules 8 to 8c for an integer-typed column, judged on the integers themselves.
+
+    As floats, distinct whole numbers above 2**53 can become one; the steps
+    between neighbours are compared, never subtracted, so that nothing overflows.
+    """
+    present = series[series.notna()]
+    if len(present) == 0:
+        return "excluded", "numeric", "all_missing"
+    unsigned = pd.api.types.is_unsigned_integer_dtype(series.dtype)
+    values = present.to_numpy(dtype=np.uint64 if unsigned else np.int64)
+    distinct = np.unique(values)
+    if distinct.size == 1:
+        return "excluded", "numeric", "constant"
+    if distinct.size == values.size:
+        rising = bool(np.all(values[1:] > values[:-1]))
+        falling = bool(np.all(values[1:] < values[:-1]))
+        consecutive = int(distinct[-1]) - int(distinct[0]) + 1 == values.size
+        if consecutive or rising or falling:
+            return "excluded", "numeric", "id_like"
+    return "feature", "numeric", None
+
+
 def _text_rule(text_all, usable, n_usable):
     """Rules 4 to 6c on the usable rows. Returns (role, kind, reason, numeric)."""
     text = text_all.iloc[usable]
@@ -233,7 +258,10 @@ def _judge_column(series, usable):
     if family == "numeric":
         values = numeric_values(series)
         n_too_large = int((np.isfinite(values) & beyond_limit(values)).sum())
-        role, kind, reason = _numeric_rule(values[usable])
+        if pd.api.types.is_integer_dtype(series.dtype):
+            role, kind, reason = _integer_rule(series.iloc[usable])
+        else:
+            role, kind, reason = _numeric_rule(values[usable])
         return role, kind, reason, 0, n_too_large
 
     text_all = stripped_text(series)
@@ -248,7 +276,17 @@ def _judge_column(series, usable):
 
 
 def column_roles(frame, target, time_col=None):
-    """Step 5 alone: one record per column of `frame`, in order (spec 2.7)."""
+    """Step 5 alone: one record per column of `frame`, in order (spec 2.7).
+
+    Object columns of numbers are read as numbers first (step 1a); `dtype` is
+    the type each column came with.
+    """
+    loaded_dtypes = {name: str(frame[name].dtype) for name in frame.columns}
+    return roles_of_read_columns(read_number_columns(frame), target, time_col, loaded_dtypes)
+
+
+def roles_of_read_columns(frame, target, time_col, loaded_dtypes):
+    """Step 5 on a table already read by step 1a; `loaded_dtypes` names each column's type as loaded."""
     usable = usable_rows(frame, target, time_col)["usable"]
     records = []
     for position, name in enumerate(frame.columns):
@@ -263,7 +301,7 @@ def column_roles(frame, target, time_col=None):
             role, kind, reason, n_coerced, extra_infinite = _judge_column(series, usable)
             n_infinite += extra_infinite
         records.append({
-            "name": str(name), "position": position, "dtype": str(series.dtype),
+            "name": str(name), "position": position, "dtype": loaded_dtypes[name],
             "role": role, "kind": kind, "reason": reason, "leak_rule": None,
             "n_missing": n_missing, "n_coerced": n_coerced,
             "n_infinite": n_infinite, "n_imputed": 0,

@@ -1,11 +1,13 @@
 """Step 7: split off the holdout and form the selection folds (D6, D7)."""
 import math
+import re
 from numbers import Integral
 
 import numpy as np
 import pandas as pd
 
 from mlprofessor import errors
+from mlprofessor.load import beyond_64_bits, read_numbers
 from mlprofessor.task import read_target_values
 
 MAX_SEED = 2**32 - 1
@@ -92,8 +94,10 @@ N_TIME_BLOCKS = N_FOLDS + 1
 # only after a time of day. Nothing day-first or month-first ever reaches a parser.
 _ISO_8601 = (
     r"\d{4}-\d{2}-\d{2}"
-    r"(?:[T ]\d{2}:\d{2}(?::\d{2}(?:\.\d{3})?)?(?P<zone>Z|[+-]\d{2}:\d{2})?)?"
+    r"(?:[T ]\d{2}:\d{2}(?::\d{2}(?:\.\d{1,9})?)?(?P<zone>Z|[+-]\d{2}:\d{2})?)?"
 )
+# The same form with a fraction of any length of ten digits or more.
+_LONG_FRACTION = _ISO_8601.replace(r"\.\d{1,9}", r"\.\d{10,}")
 
 
 def _time_error(message):
@@ -110,6 +114,27 @@ def _datetime_keys(values):
         raise _time_error(f"a timestamp is out of range ({exc})") from exc
 
 
+# A 64-bit float holds every whole number up to this magnitude, and only some above it.
+EXACT_FLOAT_LIMIT = 2 ** 53
+
+
+def _integer_keys(values):
+    """Exact int64 (or uint64) keys for an integer-typed column with a magnitude above
+    2**53 and no missing value (step 3; D50, D53); None otherwise."""
+    if not pd.api.types.is_integer_dtype(values.dtype):
+        return None
+    present = values.notna().to_numpy(dtype=bool)
+    if not present.any() or not present.all():
+        return None
+    unsigned = pd.api.types.is_unsigned_integer_dtype(values.dtype)
+    keys = values.to_numpy(dtype=np.uint64 if unsigned else np.int64, copy=True)
+    if unsigned:
+        above = keys > EXACT_FLOAT_LIMIT
+    else:
+        above = (keys > EXACT_FLOAT_LIMIT) | (keys < -EXACT_FLOAT_LIMIT)
+    return keys if bool(above.any()) else None
+
+
 def _numeric_keys(values):
     """A numeric column as float64, missing and infinite values as NaN."""
     keys = values.to_numpy(dtype=np.float64, na_value=np.nan, copy=True)
@@ -124,6 +149,11 @@ def _iso_keys(values):
     matched = text.str.fullmatch(_ISO_8601).to_numpy(dtype=bool)
     if not matched.all():
         first = text[~matched].iloc[0]
+        if re.fullmatch(_LONG_FRACTION.replace("(?P<zone>", "(?:"), first):
+            raise _time_error(
+                f"value {first!r} has a fraction of a second with more than nine "
+                "digits, which a nanosecond timestamp cannot hold; use at most nine"
+            )
         raise _time_error(
             f"value {first!r} is not ISO 8601 with the year first "
             "(YYYY-MM-DD, optionally with a time and a zone)"
@@ -147,18 +177,24 @@ def read_time(values):
     """Step 3: read a time column in one of its three accepted forms.
 
     Returns `(keys, form)`: keys sort in time order (datetime64[ns] with NaT,
-    or float64 with NaN); form is `datetime`, `numeric` or `iso8601`.
+    or float64 with NaN; exact int64 or uint64 for whole numbers of which one
+    has a magnitude above 2**53); form is `datetime`, `numeric` or `iso8601`.
     """
-    if not isinstance(values, pd.Series):
-        values = pd.Series(values)
-    values = values.reset_index(drop=True)
+    values = read_numbers(values).reset_index(drop=True)
     dtype = values.dtype
     if pd.api.types.is_bool_dtype(dtype):
         raise _time_error("a boolean column is not a time")
     if pd.api.types.is_datetime64_any_dtype(dtype):
         return _datetime_keys(values), "datetime"
     if pd.api.types.is_numeric_dtype(dtype) and not pd.api.types.is_complex_dtype(dtype):
+        exact = _integer_keys(values)
+        if exact is not None:
+            return exact, "numeric"
         return _numeric_keys(values), "numeric"
+    if beyond_64_bits(values):
+        raise _time_error(
+            "the column holds whole numbers too large for 64 bits, which are not read as "
+            "a time")
     if pd.api.types.is_string_dtype(dtype):
         present = values[values.notna()]
         if dtype == object and not present.map(lambda v: isinstance(v, str)).all():

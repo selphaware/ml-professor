@@ -43,6 +43,10 @@ class FastProfileError(ProfileError):
     code = "fast_profile_too_few_timestamps"
 
 
+class FastProfileRowsError(ProfileError):
+    code = "fast_profile_too_few_rows"
+
+
 class GapError(ProfileError):
     code = "gap_too_large"
 
@@ -67,3 +71,9 @@ class NonFiniteScoreError(ProfileError):
     """A number the result rests on is infinite or not-a-number (D44)."""
 
     code = "non_finite_score"
+
+
+class HoldoutCopiesError(ProfileError):
+    """Too many holdout rows have a copy among the training rows (step 8a)."""
+
+    code = "holdout_copies_in_training"

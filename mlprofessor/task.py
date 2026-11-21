@@ -55,6 +55,32 @@ def _sorted_classes(distinct_values):
         return sorted(native_values, key=str)
 
 
+def _first_unhashable(present_values):
+    """The type name of the first value that cannot be hashed, or None (D53)."""
+    if present_values.dtype != object:
+        return None
+    for value in present_values:
+        try:
+            hash(value)
+        except TypeError:
+            return type(value).__name__
+    return None
+
+
+def class_value(value):
+    """A class value as JSON holds it: a boolean, a number or text (D53).
+
+    Anything else (bytes, a date, a duration, a period, an interval, a complex
+    number, a tuple) is its text form.
+    """
+    value = _native(value)
+    if isinstance(value, (bool, str)):
+        return value
+    if isinstance(value, (int, float)) and not isinstance(value, complex):
+        return value
+    return str(value)
+
+
 def _all_whole_numbers(present_values):
     numbers = np.asarray(present_values, dtype=float)
     return bool(np.all(np.isfinite(numbers)) and np.all(numbers == np.floor(numbers)))
@@ -72,8 +98,22 @@ def decide_task(values, task="auto"):
         raise errors.InputError(
             f"task must be one of {', '.join(TASKS)}; got {task!r}.")
 
+    # load reads targets through this module, so it is imported here.
+    from mlprofessor.load import beyond_64_bits, read_numbers
+
+    values = read_numbers(values)
+    if beyond_64_bits(values):
+        raise errors.TaskUnsupportedError(
+            "The target holds whole numbers too large for 64 bits, which are not read as "
+            "numbers. To use them as labels, pass them as text.")
     target_values = read_target_values(values)
     present_values = target_values.dropna()
+    unhashable = _first_unhashable(present_values)
+    if unhashable is not None:
+        raise errors.TaskUnsupportedError(
+            f"The target holds values of type {unhashable}, which cannot be compared for "
+            "equality, so its distinct values cannot be counted. Encode the target as "
+            "text or numbers.")
     distinct_values = present_values.unique()
     n_distinct = len(distinct_values)
     numeric = _is_numeric(target_values)

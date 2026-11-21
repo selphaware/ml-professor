@@ -53,6 +53,7 @@ Options (`python -m mlprofessor profile` takes these):
 | `--profile` | `full` or `fast` (see below) | `full` |
 | `--seed` | the random seed, a whole number from 0 to 4,294,967,295; the same seed gives the same output | 0 |
 | `--n-jobs` | threads; `-1` uses every core | -1 |
+| `--duplicates` | `error` stops the run when too many holdout rows have a copy among the training rows; `keep` goes ahead with a warning (see "Copies of holdout rows") | `error` |
 
 The command prints a short plain-text summary to standard output, in this order:
 
@@ -71,7 +72,8 @@ Numbers in the summary are printed to at least four significant digits;
 
 Exit codes: `0` finished and both files written; `2` the command line could not
 be parsed; `3` a named error, with one line `error: <code>: <message>` on
-standard error and no files written.
+standard error and no files written. The copies error has the code
+`holdout_copies_in_training`.
 
 Time-ordered example, with `signup_date` as the time column and a one-timestamp
 gap:
@@ -109,6 +111,7 @@ result = profile(
     seed=0,               # a whole number from 0 to 4,294,967,295
     out_dir="runs/customers",   # optional: writes profile.json and predictions.csv
     n_jobs=-1,
+    duplicates="error",   # "error" or "keep": see "Copies of holdout rows"
 )
 
 print(result.headline)     # dict: metric, score, baseline, skill, interval, p-value, ...
@@ -134,11 +137,11 @@ is raised.
 | Part | Holds |
 |---|---|
 | `meta` | tool, schema version, profile, seed, `n_jobs`, library versions, `timing` |
-| `input` | source, kind, target, time column, task requested, gap, row and column counts, duplicate rows |
+| `input` | source, kind, target, time column, task requested, gap, row and column counts, duplicate rows, the `duplicates` argument |
 | `rows` | seven counts: loaded, four reasons for dropping a row, training, holdout |
 | `columns` | one record per input column: role, kind, reason, leak rule, and counts |
 | `task` | type, whether it was decided by rule or declared, distinct values, classes, positive class |
-| `validation` | scheme, holdout share, folds, gap, time form, last training and first holdout timestamp, caveat |
+| `validation` | scheme, holdout share, folds, gap, time form, last training and first holdout timestamp, caveat, holdout rows with a copy among the training rows and their share (random scheme) |
 | `headline` | metric, score, chosen model, baseline and its score, skill (null when it has no value), interval on the score and on the skill, p-value, reasons |
 | `baselines` | each baseline scored on the holdout, and which one was used |
 | `cv` | metric, folds scored, configurations, the chosen one, its mean and spread |
@@ -152,7 +155,14 @@ dropped. For classification `y_pred` is the predicted probability of the
 positive class; for regression it is the predicted value.
 
 The headline is computed only on holdout rows, which no fitted step has seen.
-Every number in `headline.score` can be recomputed from `predictions.csv`.
+That holds for the rows themselves, but a holdout row can have an exact copy
+among the training rows, and a model can recall such a row. Under the random
+scheme, when more than 1% of the holdout rows, and at least 10 of them, have a
+copy among the training rows, the run stops with `holdout_copies_in_training`
+before any model is fitted, unless the caller passes `duplicates="keep"`
+(`--duplicates keep`); then it goes ahead with a `holdout_copies_kept` warning.
+The count is always reported (see "Copies of holdout rows" below). Every number
+in `headline.score` can be recomputed from `predictions.csv`.
 
 ### When skill has no value
 
@@ -191,13 +201,46 @@ The tool never guesses a time column.
   holdout from training, to keep near-term information out. Training is cut into
   six contiguous blocks, and each fold validates on the next block. The time
   column must be a datetime column, a numeric column, or text in ISO 8601 with
-  the year first (`YYYY-MM-DD`, optionally with a time). Anything else, such as
+  the year first (`YYYY-MM-DD`, optionally with a time). The fraction of a
+  second may have one to nine digits; ten or more raise `time_column_invalid`.
+  A whole-number time column with values above 2**53, such as nanoseconds since
+  1970, is compared exactly, so every distinct value is its own timestamp.
+  Anything else, such as
   `25/01/2024`, raises `time_column_invalid`: the tool never guesses between
   day-first and month-first, so convert the column first.
 
 Under the time-ordered scheme the regression baseline also includes
 `previous_value` when timestamps are unique, so a trending target is not scored
 only against the training mean.
+
+### Copies of holdout rows
+
+A holdout row has a copy when some training row has the same value in every
+feature column and the same target. Columns left out of the features (an
+identifier, a date, a suspected leak) play no part, so two rows that differ only
+in those are copies. Under the random scheme the tool counts the holdout rows
+that have a copy, and reports the count in `validation.n_holdout_copies` and
+its share of the holdout in `validation.holdout_copy_share`. The count is always
+reported, even below the rule.
+
+The rule, which applies only under the random scheme:
+
+- when more than 1% of the holdout rows, and at least 10 of them, have a copy,
+  the run stops before any model is fitted, with `holdout_copies_in_training`
+  (exit code `3`, and no files written);
+- with `--duplicates keep` (or `duplicates="keep"`) the run goes ahead anyway,
+  and the output carries one `holdout_copies_kept` warning saying the headline
+  may be inflated;
+- below the rule, the run goes ahead with no warning.
+
+The default is `--duplicates error`. The easy remedy for a table whose copies are
+genuine repeats is to remove the repeated rows. A table of a few categorical
+columns, such as a survey with a handful of answers, will usually have many
+copies, and so will need `keep`: the warning is then the honest record that the
+headline may be inflated.
+
+Under the time-ordered scheme the rule does not apply. Both fields are `null`,
+and `duplicates` has no effect.
 
 ## Profiles
 
@@ -213,6 +256,11 @@ only against the training mean.
   leave too few timestamps for the split: that raises
   `fast_profile_too_few_timestamps` when `full` would get past that point, and
   otherwise the error `full` would raise. Use `full` then.
+
+  Under either scheme, when the cap leaves fewer than 100 rows, or fewer than
+  10 of a class, the error is `fast_profile_too_few_rows`, but only when `full`
+  would run past that point; otherwise the error `full` would raise is raised.
+  Use `full` then.
 
 ## What it measures, and what it does not
 
@@ -270,7 +318,18 @@ column named `colour=red` beside a categorical column `colour` with a level
 `red`. The run stops before any fit, names the columns involved, and writes
 nothing. A column whose numbers are written with thousands separators, such
 as `1,200`, is excluded rather than read as a number, and the column record says
-why. The full list of error codes is in `spec.md` section 2.4.
+why.
+
+A column of objects that hold only numbers is read as the numbers it stands
+for: `Decimal` values, booleans with missing cells, or whole numbers with
+missing cells. Its `dtype` still says `object`. An object column that mixes a
+boolean with a number is not guessed at; it is excluded as `unsupported_type`.
+Every column excluded as an unsupported type gets an `unsupported_type` warning
+that names it. Whole numbers are compared exactly, so the distinct values of a
+whole-number column above 2**53 stay distinct. A column of whole numbers too
+large for 64 bits is excluded as a feature, with a warning; as the target it
+stops the run with `task_unsupported`, and as the time column with
+`time_column_invalid`. The full list of error codes is in `spec.md` section 2.4.
 
 A text target is read without the white space round its values, so `yes ` and
 `yes` are the same class; `classes`, `positive_class` and `y_true` show the value

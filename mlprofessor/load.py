@@ -7,7 +7,9 @@ and data rows longer than the header (pandas turns their leading fields into
 an index). Row positions 0..n-1 are fixed here and never change.
 """
 import csv
+import math
 import os
+from decimal import Decimal
 
 import numpy as np
 import pandas as pd
@@ -161,11 +163,150 @@ def missing_mask(values):
 
 
 def _is_infinite_number(value):
-    if isinstance(value, (bool, np.bool_)):
-        return False
-    if isinstance(value, (int, float, np.integer, np.floating)):
+    # A whole number is never infinite; `numpy.isinf` raises on one beyond 64 bits.
+    if isinstance(value, (float, np.floating)):
         return bool(np.isinf(value))
     return False
+
+
+# ------------------------------------------------------------ whole numbers (step 1a)
+
+INT64_MIN, INT64_MAX = -2 ** 63, 2 ** 63 - 1
+UINT64_MAX = 2 ** 64 - 1
+_BEYOND_64_BITS = 2 ** 65   # stands for a Decimal whole number of more than 20 digits
+
+
+def _is_empty_cell(value):
+    """True for a missing cell: None, NaN, pd.NA, NaT, or a Decimal not-a-number."""
+    if value is None or value is pd.NA or value is pd.NaT:
+        return True
+    if isinstance(value, Decimal):
+        return value.is_nan()
+    if isinstance(value, (float, np.floating)):
+        return bool(np.isnan(value))
+    if isinstance(value, (np.datetime64, np.timedelta64)):
+        return bool(np.isnat(value))
+    return False
+
+
+def _whole_number(value):
+    """The whole number a cell holds exactly, as an int; None if it holds none."""
+    if isinstance(value, (bool, np.bool_)):
+        return None
+    if isinstance(value, (int, np.integer)):
+        return int(value)
+    if isinstance(value, Decimal) and value.is_finite():
+        if value.adjusted() > 20:
+            return _BEYOND_64_BITS if value > 0 else -_BEYOND_64_BITS
+        if value == value.to_integral_value():
+            return int(value)
+    return None
+
+
+def beyond_64_bits(values):
+    """True for an object column whose non-missing cells are all whole numbers
+    that do not all fit in 64 bits, signed or unsigned (step 1a; D50)."""
+    series = pd.Series(values) if not isinstance(values, pd.Series) else values
+    if series.dtype != object:
+        return False
+    low = high = None
+    for value in series.to_numpy():
+        if _is_empty_cell(value):
+            continue
+        number = _whole_number(value)
+        if number is None:
+            return False
+        low = number if low is None else min(low, number)
+        high = number if high is None else max(high, number)
+    if low is None:
+        return False
+    fits_signed = INT64_MIN <= low and high <= INT64_MAX
+    fits_unsigned = 0 <= low and high <= UINT64_MAX
+    return not (fits_signed or fits_unsigned)
+
+
+def _as_float(value):
+    """A number as a 64-bit float; one beyond the largest double is infinite, with its sign."""
+    try:
+        return float(value)
+    except OverflowError:
+        return math.inf if value > 0 else -math.inf
+
+
+def _without_decimal_nans(series, empty):
+    """The column as it is, with a Decimal not-a-number read as None (pandas raises on sNaN)."""
+    cells = series.to_numpy()
+    decimal_nan = empty & np.fromiter(
+        (isinstance(value, Decimal) for value in cells), dtype=bool, count=len(cells))
+    if not decimal_nan.any():
+        return series
+    cells = cells.copy()
+    cells[decimal_nan] = None
+    return pd.Series(cells, index=series.index, name=series.name, dtype=object)
+
+
+def read_numbers(values):
+    """Step 1a (D51): an object column of numbers as the typed column it stands for.
+
+    All booleans: a nullable boolean column. All whole numbers held exactly and
+    fitting in 64 bits: a nullable Int64 (or UInt64) column, exact. Numbers of
+    any other mixture: float64, NaN where a cell is empty. Anything else, and
+    a column of any other type, is returned as it is.
+    """
+    series = values if isinstance(values, pd.Series) else pd.Series(values)
+    if series.dtype != object:
+        return series
+    cells = series.to_numpy()
+    empty = np.fromiter((_is_empty_cell(value) for value in cells),
+                        dtype=bool, count=len(cells))
+    kinds, wholes = set(), []
+    for value in cells[~empty]:
+        if isinstance(value, (bool, np.bool_)):
+            kinds.add("boolean")
+            continue
+        number = _whole_number(value)
+        if number is not None:
+            kinds.add("whole")
+            wholes.append(number)
+        elif isinstance(value, (float, np.floating, Decimal)):
+            kinds.add("float")
+        else:
+            return _without_decimal_nans(series, empty)
+    if not kinds or ("boolean" in kinds and kinds != {"boolean"}):
+        return _without_decimal_nans(series, empty)
+
+    present = ~empty
+    if kinds == {"boolean"}:
+        data = np.zeros(len(cells), dtype=bool)
+        data[present] = [bool(value) for value in cells[present]]
+        array = pd.arrays.BooleanArray(data, empty.copy())
+    elif kinds == {"whole"}:
+        low, high = min(wholes), max(wholes)
+        if INT64_MIN <= low and high <= INT64_MAX:
+            dtype = np.int64
+        elif 0 <= low and high <= UINT64_MAX:
+            dtype = np.uint64
+        else:
+            return _without_decimal_nans(series, empty)   # too large for 64 bits (D50)
+        data = np.zeros(len(cells), dtype=dtype)
+        data[present] = np.array(wholes, dtype=dtype)
+        array = pd.arrays.IntegerArray(data, empty.copy())
+    else:
+        array = np.full(len(cells), np.nan, dtype=np.float64)
+        array[present] = [_as_float(value) for value in cells[present]]
+    return pd.Series(array, index=series.index, name=series.name)
+
+
+def read_number_columns(frame):
+    """Step 1a for every column of a table; columns of other types are left as they are."""
+    read = {name: read_numbers(frame[name]) for name in frame.columns
+            if frame[name].dtype == object}
+    if not read:
+        return frame
+    out = frame.copy(deep=False)
+    for name, series in read.items():
+        out[name] = series
+    return out
 
 
 def usable_rows(frame, target, time_col=None):
@@ -176,11 +317,11 @@ def usable_rows(frame, target, time_col=None):
                 f"No column named {name!r}. The columns are: "
                 f"{', '.join(repr(str(c)) for c in frame.columns)}.")
     # A text target of only white space is a missing target (D48).
-    no_target = missing_mask(read_target_values(frame[target]))
+    no_target = missing_mask(read_target_values(read_numbers(frame[target])))
     if time_col is None:
         no_time = np.zeros(len(frame), dtype=bool)
     else:
-        no_time = missing_mask(frame[time_col]) & ~no_target
+        no_time = missing_mask(read_numbers(frame[time_col])) & ~no_target
     usable = np.flatnonzero(~no_target & ~no_time).astype(np.int64)
     return {
         "usable": usable,

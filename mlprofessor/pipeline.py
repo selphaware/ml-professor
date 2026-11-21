@@ -14,15 +14,18 @@ import pandas as pd
 from threadpoolctl import threadpool_limits
 
 from mlprofessor import errors, extensions, leakage, metrics, models, uncertainty
-from mlprofessor.columns import (column_roles, feature_numbers, numeric_values, parse_numbers,
-                                 stripped_text, type_family)
-from mlprofessor.load import load_table, usable_rows
+from mlprofessor.columns import (feature_numbers, numeric_values, parse_numbers,
+                                 roles_of_read_columns, stripped_text, type_family)
+from mlprofessor.load import load_table, read_number_columns, usable_rows
 from mlprofessor.preprocess import MISSING_LEVEL, Preprocessor, check_feature_names
 from mlprofessor.result import LIMITATIONS, RANDOM_CAVEAT, ROWS_ITEMS, ProfileResult
 from mlprofessor.split import MAX_SEED, N_FOLDS, read_time, split_random, split_time
-from mlprofessor.task import TASKS, decide_task, read_target_values
+from mlprofessor.task import TASKS, class_value, decide_task, read_target_values
 
 PROFILES = ("full", "fast")
+DUPLICATES = ("error", "keep")
+COPIES_MIN_ROWS = 10
+COPIES_MAX_SHARE = 0.01
 MIN_USABLE_ROWS = 100
 MIN_CLASS_ROWS = 10
 ROW_CAP = 2000
@@ -44,7 +47,8 @@ def _is_whole(value):
     return isinstance(value, Integral) and not isinstance(value, bool)
 
 
-def check_arguments(data, target, task, time_col, gap, profile, seed, out_dir, n_jobs):
+def check_arguments(data, target, task, time_col, gap, profile, seed, out_dir, n_jobs,
+                    duplicates="error"):
     """Raise `InputError` for any argument value outside spec 2.1, before loading."""
     if not isinstance(data, (pd.DataFrame, str, os.PathLike)):
         raise errors.InputError(
@@ -73,6 +77,8 @@ def check_arguments(data, target, task, time_col, gap, profile, seed, out_dir, n
     if not _is_whole(n_jobs) or not (n_jobs == -1 or n_jobs >= 1):
         raise errors.InputError(
             f"n_jobs must be -1 (every core) or a positive whole number; got {n_jobs!r}.")
+    if not isinstance(duplicates, str) or duplicates not in DUPLICATES:
+        raise errors.InputError(f"duplicates must be 'error' or 'keep'; got {duplicates!r}.")
     if out_dir is not None:
         _check_out_dir(os.fspath(out_dir))
 
@@ -127,6 +133,11 @@ def _column_warnings(roles, time_col):
                 "date_column_undeclared", name,
                 f"{name!r} looks like a date and is excluded; the split is random. "
                 "Pass it as time_col for a time-ordered split."))
+        if record["reason"] == "unsupported_type":
+            found.append(_warning(
+                "unsupported_type", name,
+                f"{name!r} is of a type the tool does not read as numbers or categories "
+                f"(dtype {record['dtype']}); the column is excluded."))
         if record["role"] == "feature" and record["kind"] == "numeric" and record["n_infinite"] > 0:
             found.append(_warning(
                 "infinite_values", name,
@@ -154,6 +165,50 @@ def _feature_values(series, kind):
         return pd.Series(feature_numbers(values), index=series.index, dtype=float)
     text = stripped_text(series)
     return text.where(text.notna(), MISSING_LEVEL).astype(object)
+
+
+def _comparable_codes(values):
+    """Integer codes of one column such that equal codes mean equal values (step 8a).
+
+    Numbers are compared as floats with `-0.0` read as `0.0` and every missing
+    cell equal to every other; levels are compared as text.
+    """
+    values = np.asarray(values)
+    if values.dtype.kind == "f":
+        values = values + 0.0
+    codes, _ = pd.factorize(values, use_na_sentinel=False)
+    return np.asarray(codes, dtype=np.int64)
+
+
+def count_holdout_copies(features, y, training_rows, holdout_rows):
+    """Step 8a: the holdout rows with a training row equal in every feature and the target."""
+    rows = np.concatenate([training_rows, holdout_rows])
+    columns = [features[name].to_numpy()[rows] for name in features.columns]
+    columns.append(np.asarray(y)[rows])
+    codes = np.column_stack([_comparable_codes(values) for values in columns])
+    _, row_key = np.unique(codes, axis=0, return_inverse=True)
+    row_key = row_key.reshape(-1)
+    training_keys = row_key[:len(training_rows)]
+    holdout_keys = row_key[len(training_rows):]
+    return int(np.isin(holdout_keys, training_keys).sum())
+
+
+def _copies_message(n_copies, n_holdout, roles):
+    share = 100.0 * n_copies / n_holdout
+    message = (
+        f"{n_copies} of the {n_holdout} holdout rows ({share:.1f}%) have a copy among the "
+        "training rows: the same value in every feature column and the same target. A model "
+        "that recalls a row scores on them, so the headline would be inflated. Remove the "
+        "repeated rows, or pass duplicates='keep' (--duplicates keep) to go ahead with a "
+        "warning.")
+    dates = [r["name"] for r in roles.to_dict(orient="records") if r["reason"] == "datetime"]
+    if dates:
+        message += (
+            " The column(s) " + ", ".join(repr(name) for name in dates) + " were excluded "
+            "as dates because no time column was declared, so rows that differ only in "
+            "their date count as copies; pass it as time_col for a time-ordered split, "
+            "under which this rule does not apply.")
+    return message
 
 
 def build_features(frame, roles):
@@ -213,9 +268,12 @@ def _time_row_cap(keys, profile, gap=0):
 
 
 def _stamp_value(key, form):
-    """A timestamp as written in `validation`: ISO text, or a number for the numeric form."""
+    """A timestamp as written in `validation`: ISO text, or a number for the numeric form.
+
+    An exact integer key (D50) is written as the whole number it is.
+    """
     if form == "numeric":
-        return float(key)
+        return int(key) if isinstance(key, np.integer) else float(key)
     return pd.Timestamp(key).isoformat()
 
 
@@ -382,16 +440,17 @@ def select(configs, features, kinds, y, folds, scored, task_type, metric, seed, 
 # ------------------------------------------------------------ the run
 
 def run(data, target, task="auto", time_col=None, gap=0, profile="full", seed=0,
-        out_dir=None, n_jobs=-1):
+        out_dir=None, n_jobs=-1, duplicates="error"):
     """`profile()` itself: see spec 2.1 and section 3."""
-    check_arguments(data, target, task, time_col, gap, profile, seed, out_dir, n_jobs)
+    check_arguments(data, target, task, time_col, gap, profile, seed, out_dir, n_jobs,
+                    duplicates)
     jobs = resolve_n_jobs(n_jobs)
     started = time.perf_counter()
     # Arithmetic that overflows is checked where it matters (spec 3, "Numbers that are
     # not finite"); numpy's own messages are held back, and the caller's settings restored.
     with threadpool_limits(limits={"blas": 1, "openmp": jobs}),             np.errstate(over="ignore", invalid="ignore", divide="ignore"):
         document, predictions = _run_profile(data, target, task, time_col, int(gap),
-                                             profile, int(seed), jobs)
+                                             profile, int(seed), jobs, duplicates)
     document["meta"]["n_jobs"] = jobs
     document["meta"]["timing"] = {"seconds": round(time.perf_counter() - started, 3)}
     result = ProfileResult(document, predictions)
@@ -400,9 +459,13 @@ def run(data, target, task="auto", time_col=None, gap=0, profile="full", seed=0,
     return result
 
 
-def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs):
+def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs, duplicates):
     # Step 1: load and count.
-    frame, info = load_table(data)
+    loaded_frame, info = load_table(data)
+    # Step 1a: object columns of numbers are read as numbers, once; every later
+    # step reads the read table. The types as loaded are what the output reports.
+    loaded_dtypes = {name: str(loaded_frame[name].dtype) for name in loaded_frame.columns}
+    frame = read_number_columns(loaded_frame)
     warnings = list(info["warnings"])
     n_loaded = len(frame)
     duplicate_rows = _count_duplicate_rows(frame)
@@ -442,7 +505,7 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs):
             "declare task='classification' only if it has two values."))
 
     # Step 5: column roles.
-    roles = column_roles(frame, target, time_col)
+    roles = roles_of_read_columns(frame, target, time_col, loaded_dtypes)
     warnings.extend(_column_warnings(roles, time_col))
     features, kinds, feature_missing = build_features(frame, roles)
     if not kinds:
@@ -463,15 +526,34 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs):
     task_type = task_info["type"]
     y_all = np.zeros(n_loaded, dtype=np.int64 if task_type == "classification" else float)
     y_all[kept] = encode_target(target_read.iloc[kept].to_numpy(), task_info)
+    def _fast_rows_error(reason):
+        """Under a cap that left rows out: the full profile's error, or the cap's own."""
+        if task_type == "classification":
+            y_usable = encode_target(target_read.iloc[usable].to_numpy(), task_info)
+            n_pos = int(y_usable.sum())
+            if min(n_pos, len(usable) - n_pos) < MIN_CLASS_ROWS:
+                return errors.TooFewRowsError(
+                    f"The rarer class has {min(n_pos, len(usable) - n_pos)} rows; "
+                    f"at least {MIN_CLASS_ROWS} of each class are needed.")
+        if time_ordered:
+            split_time(usable_keys, gap=gap)
+        return errors.FastProfileRowsError(
+            f"Under the fast profile's cap of {ROW_CAP} rows: {reason}; the full "
+            "profile would run: use profile='full'.")
+
     if len(kept) < MIN_USABLE_ROWS:
-        raise errors.TooFewRowsError(
-            f"{len(kept)} rows are left; at least {MIN_USABLE_ROWS} are needed.")
+        message = f"{len(kept)} rows are left; at least {MIN_USABLE_ROWS} are needed."
+        if dropped_row_cap:
+            raise _fast_rows_error(message)
+        raise errors.TooFewRowsError(message)
     if task_type == "classification":
         n_positive = int(y_all[kept].sum())
         if min(n_positive, len(kept) - n_positive) < MIN_CLASS_ROWS:
-            raise errors.TooFewRowsError(
-                f"The rarer class has {min(n_positive, len(kept) - n_positive)} rows; "
-                f"at least {MIN_CLASS_ROWS} of each class are needed.")
+            message = (f"The rarer class has {min(n_positive, len(kept) - n_positive)} rows; "
+                       f"at least {MIN_CLASS_ROWS} of each class are needed.")
+            if dropped_row_cap:
+                raise _fast_rows_error(message)
+            raise errors.TooFewRowsError(message)
 
     # Step 7: the holdout and the folds, as positions of the kept rows.
     if time_ordered:
@@ -549,6 +631,22 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs):
             "No feature is left after the leak screen. Excluded: "
             + _excluded_text(roles) + ".")
     features = features[list(kinds)]
+
+    # Step 8a: holdout rows with a copy among the training rows, before anything is fitted.
+    n_copies = copy_share = None
+    if not time_ordered:
+        n_copies = count_holdout_copies(features, y_all, training_rows, holdout_rows)
+        copy_share = n_copies / len(holdout_rows)
+        if n_copies >= COPIES_MIN_ROWS and copy_share > COPIES_MAX_SHARE:
+            if duplicates == "error":
+                raise errors.HoldoutCopiesError(
+                    _copies_message(n_copies, len(holdout_rows), roles))
+            warnings.append(_warning(
+                "holdout_copies_kept", None,
+                f"{n_copies} of the {len(holdout_rows)} holdout rows "
+                f"({100.0 * copy_share:.1f}%) have a copy among the training rows; they "
+                "were kept (duplicates='keep'), so the headline may be inflated by rows "
+                "a model can recall."))
 
     # Step 9: select by five folds inside the training rows.
     metric = "roc_auc" if task_type == "classification" else "mse"
@@ -679,6 +777,8 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs):
                    "validation_rows": len(f["validation"]), "gap_rows": len(f["gap"]),
                    "scored": bool(scored[k])} for k, f in enumerate(folds)],
         "caveat": None if time_ordered else RANDOM_CAVEAT,
+        "n_holdout_copies": n_copies,
+        "holdout_copy_share": copy_share,
     }
     if time_ordered:
         training_keys = kept_keys[split["training"]]
@@ -698,14 +798,18 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs):
             "source": info["source"], "kind": info["kind"], "target": target,
             "time_col": time_col, "task": task, "gap": gap, "n_rows": n_loaded,
             "n_columns": int(frame.shape[1]), "duplicate_rows": duplicate_rows,
+            "duplicates": duplicates,
         },
         "rows": rows,
         "columns": roles.to_dict(orient="records"),
         "task": {
             "type": task_type, "decided_by": task_info["decided_by"],
             "n_distinct": int(task_info["n_distinct"]),
-            "target_dtype": str(frame[target].dtype),
-            "classes": task_info["classes"], "positive_class": task_info["positive_class"],
+            "target_dtype": loaded_dtypes[target],
+            "classes": (None if task_info["classes"] is None
+                        else [class_value(value) for value in task_info["classes"]]),
+            "positive_class": (None if task_info["positive_class"] is None
+                               else class_value(task_info["positive_class"])),
         },
         "validation": validation,
         "headline": headline,
@@ -740,4 +844,4 @@ def _meta(profile, seed):
 
 
 __all__ = ["run", "check_arguments", "resolve_n_jobs", "select", "FitData",
-           "build_features", "encode_target"]
+           "build_features", "encode_target", "count_holdout_copies"]

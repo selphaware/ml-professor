@@ -34,6 +34,10 @@ def _build_parser():
                      help="the random seed (default: 0)")
     run.add_argument("--n-jobs", type=int, default=-1, metavar="N",
                      help="threads; -1 for every core (default: -1)")
+    run.add_argument("--duplicates", default="error", choices=["error", "keep"],
+                     help="when holdout rows have copies among the training rows (random "
+                          "split): stop (error) or go ahead with a warning (keep) "
+                          "(default: error)")
     return parser
 
 
@@ -46,7 +50,7 @@ def main(argv=None):
         result = profile(
             args.data, args.target, task=args.task, time_col=args.time_col,
             gap=args.gap, profile=args.profile, seed=args.seed,
-            out_dir=args.out, n_jobs=args.n_jobs,
+            out_dir=args.out, n_jobs=args.n_jobs, duplicates=args.duplicates,
         )
     except errors.ProfileError as exc:
         print(f"error: {exc.code}: {exc}", file=sys.stderr)

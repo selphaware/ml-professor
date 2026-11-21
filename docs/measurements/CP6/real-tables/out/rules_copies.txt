@@ -1,0 +1,34 @@
+REAL TABLES WITH COPIES ADDED. Every line here should stop.
+titanic (891) | every row twice + unique col               holdout    446  d49     0 run   first     4 run   calibrated   188 STOP  (counted 197, chance 2.7)  0.1s
+titanic (891) | every row twice + batch col                holdout    446  d49    64 STOP  first    68 STOP  calibrated   104 STOP  (counted 124, chance 17.0)  0.0s
+titanic (891) | 5% of rows twice + unique col              holdout    234  d49     0 run   first     1 run   calibrated    20 STOP  (counted 27, chance 1.9)  0.0s
+diamonds (53,940) | every row twice + unique col           holdout   4000  d49     0 run   first    75 STOP  calibrated  3007 STOP  (counted 3062, chance 53.4)  1.4s
+diamonds (53,940) | every row twice + batch col            holdout   4000  d49     4 run   first    79 STOP  calibrated  3076 STOP  (counted 3146, chance 46.4)  1.2s
+diamonds (53,940) | 5% of rows twice + unique col          holdout   2100  d49     0 run   first    20 run   calibrated   380 STOP  (counted 424, chance 24.4)  0.8s
+breast cancer (569) | every row twice + unique col         holdout    285  d49     0 run   first   215 STOP  calibrated   215 STOP  (counted 215, chance 0.0)  0.1s
+breast cancer (569) | every row twice + batch col          holdout    285  d49     0 run   first   215 STOP  calibrated   215 STOP  (counted 215, chance 0.0)  0.2s
+breast cancer (569) | 5% of rows twice + unique col        holdout    150  d49     0 run   first     7 run   calibrated     7 run   (counted 7, chance 0.0)  0.1s
+diabetes (442) | every row twice + unique col              holdout    221  d49     0 run   first   123 STOP  calibrated   165 STOP  (counted 165, chance 3.1)  0.1s
+diabetes (442) | every row twice + batch col               holdout    221  d49     0 run   first   123 STOP  calibrated   165 STOP  (counted 165, chance 3.0)  0.1s
+diabetes (442) | 5% of rows twice + unique col             holdout    116  d49     0 run   first     7 run   calibrated     7 run   (counted 10, chance 1.5)  0.1s
+penguins (333) | every row twice + unique col              holdout    167  d49     0 run   first    29 STOP  calibrated   130 STOP  (counted 131, chance 1.8)  0.0s
+penguins (333) | every row twice + batch col               holdout    167  d49     0 run   first    29 STOP  calibrated   125 STOP  (counted 129, chance 1.6)  0.0s
+penguins (333) | 5% of rows twice + unique col             holdout     88  d49     0 run   first     8 run   calibrated     4 run   (counted 5, chance 0.9)  0.0s
+customers example (400) | every row twice + unique col     holdout    199  d49     0 run   first     0 run   calibrated   162 STOP  (counted 163, chance 0.6)  0.0s
+customers example (400) | every row twice + batch col      holdout    199  d49     0 run   first     0 run   calibrated    56 STOP  (counted 63, chance 2.0)  0.0s
+customers example (400) | 5% of rows twice + unique col    holdout    104  d49     0 run   first     1 run   calibrated     4 run   (counted 5, chance 0.6)  0.0s
+Seattle weather (1,460) | every row twice + unique col     holdout    730  d49     0 run   first     2 run   calibrated   448 STOP  (counted 461, chance 6.3)  0.0s
+Seattle weather (1,460) | every row twice + batch col      holdout    730  d49     6 run   first     8 run   calibrated   178 STOP  (counted 200, chance 12.5)  0.0s
+Seattle weather (1,460) | 5% of rows twice + unique col    holdout    384  d49     0 run   first     1 run   calibrated    19 STOP  (counted 29, chance 4.4)  0.0s
+VIX daily OHLC (9,277) | every row twice + unique col      holdout   4639  d49     0 run   first   683 STOP  calibrated  3474 STOP  (counted 3553, chance 50.6)  0.1s
+VIX daily OHLC (9,277) | every row twice + batch col       holdout   4639  d49     0 run   first   683 STOP  calibrated  3508 STOP  (counted 3605, chance 65.5)  0.1s
+VIX daily OHLC (9,277) | 5% of rows twice + unique col     holdout   2435  d49     0 run   first    80 STOP  calibrated   348 STOP  (counted 411, chance 38.2)  0.1s
+NYC taxis (6,389) | every row twice + unique col           holdout   3195  d49     0 run   first   203 STOP  calibrated  2374 STOP  (counted 2431, chance 34.6)  0.9s
+NYC taxis (6,389) | every row twice + batch col            holdout   3195  d49     6 run   first   212 STOP  calibrated  2449 STOP  (counted 2505, chance 33.5)  0.9s
+NYC taxis (6,389) | 5% of rows twice + unique col          holdout   1677  d49     0 run   first    67 STOP  calibrated   440 STOP  (counted 474, chance 17.8)  0.4s
+tips (244) | every row twice + unique col                  holdout    122  d49     0 run   first    49 STOP  calibrated    97 STOP  (counted 98, chance 0.2)  0.0s
+tips (244) | every row twice + batch col                   holdout    122  d49     1 run   first    50 STOP  calibrated    52 STOP  (counted 54, chance 0.2)  0.0s
+tips (244) | 5% of rows twice + unique col                 holdout     64  d49     0 run   first     1 run   calibrated     1 run   (counted 2, chance 0.6)  0.0s
+mpg (398) | every row twice + unique col                   holdout    199  d49     0 run   first    74 STOP  calibrated   143 STOP  (counted 149, chance 2.0)  0.0s
+mpg (398) | every row twice + batch col                    holdout    199  d49     0 run   first    74 STOP  calibrated   144 STOP  (counted 153, chance 3.0)  0.0s
+mpg (398) | 5% of rows twice + unique col                  holdout    105  d49     0 run   first     4 run   calibrated     9 run   (counted 14, chance 1.1)  0.0s

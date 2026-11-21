@@ -827,3 +827,47 @@ a contract change can make that impossible); editing tests to the new
 behaviour directly (rejected: they would fail until the new task is built,
 and the driver then reopens every finished task that has tests).
 Consequence: D54 was the first use of this rule; D57 and D58 need it again.
+
+## D60 — 2026-11-21 — The broader repeat screen leaves pass 5 (amends D57, part 2)
+Decision: Neither rule proposed in the CP6 session is adopted. Pass 5 builds
+the rest of D57 and D58 with D49's exact rule unchanged, and
+`duplicates="group"` groups the exact copies D49 counts. The count of holdout
+rows with an exact copy in training is reported in the result as a plain
+number. The broader screen is the first item of pass 6, and a rule is
+adopted only when (1) it has been measured on real public tables and on
+made-up tables whose columns depend on each other, as well as on independent
+ones; (2) it stops no clean table, other than tables of few-valued columns,
+where the table alone cannot tell copies from look-alikes and asking is
+right; (3) it stops every disguise of a full copy and oversampling at any
+multiple; (4) every step of its count can be checked by hand.
+Alternatives considered: the calibrated rule (rejected on real tables: it
+stops clean diamonds, taxis and VIX prices, counting 8% to 35% of holdout
+rows, because it expects columns to vary independently; and it runs when
+the smaller class is copied 25 or 50 times before the split, on 4 of 5
+tables); the first rule (rejected: it stops the clean taxi table);
+continuing the research inside the CP6 session (rejected: the session
+already carries the plan, the battery and the prototype). Measurements:
+`docs/measurements/CP6/real-tables/`.
+Consequence: copies disguised by an added column or a small change are not
+detected in pass 5, and the spec says so. Under D56 phase 1 cannot close
+until they are. `tests/test_duplicates.py::test_time_order_has_no_rule`
+stays locked as it is.
+
+## D61 — 2026-11-21 — Three rulings on the CP6 judge
+Decision: (1) The copies rule of D49 applies whenever there is no time
+column: under the random scheme and under the grouped scheme. A declared
+entity column does not switch it off; copies that sit in different entities
+on both sides of the split still stop the run unless the caller passes
+`duplicates="keep"` or `"group"`. (2) `duplicates="group"` with any copy
+found makes the scheme grouped, however few the copies: the interval comes
+from resampling whole units and no p-value is reported, with the reason
+stated. (3) The scripts and the per-seed table behind the two bands and the
+grouped-uncertainty measurement of the fifth pass are kept in
+`docs\measurements\CP6\bands\`, as D35 requires.
+Alternatives considered: for (1), D49 under the random scheme only, as the
+spec read when that was the only scheme without a time column (rejected:
+declaring `group_col` would then switch the rule off silently). For (2), a
+p-value when only a few rows are grouped (rejected: on data with no skill a
+row-by-row p-value was below 0.05 in 5 of 30 runs, and one rule for every
+grouped run is easier to trust than a rule with a size threshold).
+Consequence: a caller who groups a handful of copies gives up the p-value.

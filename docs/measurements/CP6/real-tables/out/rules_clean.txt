@@ -1,0 +1,12 @@
+CLEAN REAL TABLES, as they are. A stop here is a false stop unless the table truly holds repeats.
+titanic (891)                                              holdout    223  d49    31 STOP  first    33 STOP  calibrated    12 STOP  (counted 25, chance 6.2)  0.0s
+diamonds (53,940)                                          holdout  13485  d49    61 run   first    62 run   calibrated  4780 STOP  (counted 4959, chance 133.8)  4.7s
+breast cancer (569)                                        holdout    143  d49     0 run   first     0 run   calibrated     0 run   (counted 0, chance 0.0)  0.1s
+diabetes (442)                                             holdout    111  d49     0 run   first     0 run   calibrated     0 run   (counted 3, chance 1.4)  0.0s
+penguins (333)                                             holdout     84  d49     0 run   first     4 run   calibrated     0 run   (counted 3, chance 0.9)  0.0s
+customers example (400)                                    holdout    100  d49     0 run   first     0 run   calibrated     0 run   (counted 0, chance 0.8)  0.0s
+Seattle weather (1,460)                                    holdout    365  d49     2 run   first     3 run   calibrated     0 run   (counted 4, chance 5.7)  0.0s
+VIX daily OHLC (9,277)                                     holdout   2320  d49     0 run   first    14 run   calibrated   197 STOP  (counted 258, chance 37.2)  0.0s
+NYC taxis (6,389)                                          holdout   1598  d49     4 run   first    68 STOP  calibrated   307 STOP  (counted 340, chance 16.7)  0.3s
+tips (244)                                                 holdout     61  d49     0 run   first     0 run   calibrated     0 run   (counted 0, chance 0.7)  0.0s
+mpg (398)                                                  holdout    100  d49     0 run   first     1 run   calibrated     3 run   (counted 8, chance 1.2)  0.0s

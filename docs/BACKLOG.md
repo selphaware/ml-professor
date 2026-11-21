@@ -7,9 +7,29 @@ build loop: each item becomes work only through a decision in
 
 **Status under D56 (2026-11-21).** Nothing known to be wrong is carried into
 phase 2. The weaknesses listed below are fixed in two hardening passes:
-pass 5 (CP6: entities, repeated rows, the undeclared date column, the fourth
-review's findings) and pass 6 (the judge and every remaining weakness
-here). Only the features stay on the roadmap.
+pass 5 (CP6: entities, `duplicates="group"`, the undeclared date column, the
+panel stop, the fourth review's findings) and pass 6 (the broader repeat
+screen first, under D60; then the judge and every remaining weakness here).
+Only the features stay on the roadmap.
+
+## Pass 6, first item: the broader repeat screen (D60)
+
+- **Open defect.** Copies disguised by an added column, a batch number or a
+  small change pass D49. On real tables with the target shuffled, every row
+  twice scored 0.17 to 0.94 where the true skill is 0.
+- **What failed, and why.** The calibrated rule expects columns to vary
+  independently; on real tables they do not, and it stopped clean diamonds,
+  taxis and VIX prices. It also read 21 or more copies of a row as chance,
+  so oversampling before the split passed. The first rule stopped clean
+  taxis. See `docs/measurements/CP6/real-tables/README.md`.
+- **A lead, not a rule.** Counting holdout rows whose target and every
+  column but one (the same one table-wide) match a training row, numbers to
+  6 significant digits: 0% to 1% on clean tables with several measured
+  columns, 73% to 84% with every row twice. It fails on tables of few-valued
+  columns (clean Titanic 44%).
+- **To settle.** What the tool does on tables of few-valued columns, where
+  no count can tell copies from look-alikes; and whether the made-up tables
+  in the gate can reproduce the dependence between real columns.
 
 ## Roadmap items awaiting a decision
 
@@ -105,6 +125,22 @@ here). Only the features stay on the roadmap.
   three or more classes are not supported.
 - **Not checked on real data:** the owner's own tables, Python 3.12 on
   Windows, and the full profile at scale.
+
+## Found in the CP6 session (fifth pass)
+
+- **A Decimal infinity in an object target of mixed values** is not dropped
+  as an infinite float is. The spec pins the application's reading; no test
+  covers the edge.
+- **Finding 1, the fifth table.** The suite variant M14 does not make its
+  test fail: the only visible difference is a stamp written `17900` or
+  `17900.0`. That test has no broken copy behind it.
+- **Gate time.** The per-edit gate takes 15.6 of its 20 seconds and the
+  self-test about 17 minutes. Pass 6 adds broken copies, so it needs a plan
+  for both before it adds them.
+- **A p-value for grouped runs.** None is reported (D61). A shuffle of whole
+  entities is sound only when each entity holds one label.
+- **D49 on clean tables of few-valued columns** stops them from about 4,000
+  rows (30 of 30 measured). Settled with the repeat screen (D60).
 
 ## Notes for the framework (ailoop-engineering), not for this repo
 

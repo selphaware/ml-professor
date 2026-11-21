@@ -10,6 +10,12 @@ made as written, a decided behaviour contradicts a locked test in a way D59
 does not cover, a measurement argues against a decision), say so plainly and
 stop. Do not work round it.
 
+**Amended 21 November 2026 (D60).** Section B, the broader screen for
+repeated rows, is withdrawn from this pass, with everything in the judge and
+the proofs that belongs to it. D49's exact rule stays as it is, and section C
+groups the exact copies D49 counts. The measurements made for section B are
+in `docs\measurements\CP6\`; the reasons are in D60.
+
 ## Context
 
 - Phase 1 of ML Professor is built and has been through four passes. The

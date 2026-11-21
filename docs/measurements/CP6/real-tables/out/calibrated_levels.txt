@@ -1,0 +1,60 @@
+====================================================================================================
+titanic (891) | columns: {'compared': 13, 'left_out': 0}
+  stop True count 12 share 0.0538 counted 25 chance 6.2 spread 2.29 level 2 exact_only {'rows': 31, 'counted': 6, 'chance': 4.593403809083658, 'spread': 1.9139003219042061, 'beyond': 0}
+  settled: ['class', 'adult_male', 'embark_town']
+  facts: ['survived', 'sex', 'alone', 'pclass', 'who', 'embarked', 'sibsp', 'parch', 'deck', 'age', 'fare']
+   level: {'level': 0, 'rows': 165, 'counted': 8, 'chance': 0.7375204891259598, 'spread': 0.849321538458922, 'beyond': 4}
+   level: {'level': 1, 'rows': 165, 'counted': 17, 'chance': 1.5412688949864144, 'spread': 1.2268427687010224, 'beyond': 11}
+   level: {'level': 2, 'rows': 165, 'counted': 19, 'chance': 1.6240207755355551, 'spread': 1.2589275368135426, 'beyond': 12}
+   level: {'level': 3, 'rows': 165, 'counted': 19, 'chance': 1.6240207755355551, 'spread': 1.2589275368135426, 'beyond': 12}
+   level: {'level': 4, 'rows': 165, 'counted': 19, 'chance': 1.6240207755355551, 'spread': 1.2589275368135426, 'beyond': 12}
+   level: {'level': 5, 'rows': 165, 'counted': 19, 'chance': 1.6240207755355551, 'spread': 1.2589275368135426, 'beyond': 12}
+   level: {'level': 6, 'rows': 165, 'counted': 19, 'chance': 1.6240207755355551, 'spread': 1.2589275368135426, 'beyond': 12}
+   level: {'level': 7, 'rows': 165, 'counted': 19, 'chance': 1.6240207755355551, 'spread': 1.2589275368135426, 'beyond': 12}
+   level: {'level': 8, 'rows': 165, 'counted': 19, 'chance': 1.6240207755355551, 'spread': 1.2589275368135426, 'beyond': 12}
+   level: {'level': 9, 'rows': 165, 'counted': 19, 'chance': 1.6240207755355551, 'spread': 1.2589275368135426, 'beyond': 12}
+====================================================================================================
+diamonds (53,940) | columns: {'compared': 9, 'left_out': 0}
+  stop True count 4780 share 0.3545 counted 4959 chance 133.8 spread 11.42 level 5 exact_only {'rows': 0, 'counted': 0, 'chance': 0.0, 'spread': 0.0, 'beyond': 0}
+  settled: []
+  facts: ['cut', 'color', 'clarity', 'table', 'depth', 'carat', 'z', 'y', 'x', 'price']
+   level: {'level': 0, 'rows': 13485, 'counted': 61, 'chance': 0.001236282552721013, 'spread': 0.03515957092718161, 'beyond': 61}
+   level: {'level': 1, 'rows': 13485, 'counted': 221, 'chance': 0.19961845229510855, 'spread': 0.4452549272658716, 'beyond': 219}
+   level: {'level': 2, 'rows': 13485, 'counted': 917, 'chance': 5.329592109445841, 'spread': 2.2926517148629575, 'beyond': 902}
+   level: {'level': 3, 'rows': 13485, 'counted': 4066, 'chance': 65.46316029992809, 'spread': 8.008280202608395, 'beyond': 3969}
+   level: {'level': 4, 'rows': 13485, 'counted': 4944, 'chance': 131.7544790415017, 'spread': 11.334241788395865, 'beyond': 4767}
+   level: {'level': 5, 'rows': 13485, 'counted': 4959, 'chance': 133.75799699822372, 'spread': 11.41947233806353, 'beyond': 4780}
+   level: {'level': 6, 'rows': 13485, 'counted': 4959, 'chance': 133.76145843377435, 'spread': 11.419623370567928, 'beyond': 4780}
+   level: {'level': 7, 'rows': 13485, 'counted': 4959, 'chance': 133.76145843377435, 'spread': 11.419623370567928, 'beyond': 4780}
+   level: {'level': 8, 'rows': 13485, 'counted': 4959, 'chance': 133.76145843377435, 'spread': 11.419623370567928, 'beyond': 4780}
+   level: {'level': 9, 'rows': 13485, 'counted': 4959, 'chance': 133.76145843377435, 'spread': 11.419623370567928, 'beyond': 4780}
+====================================================================================================
+VIX daily OHLC (9,277) | columns: {'compared': 4, 'left_out': 0}
+  stop True count 197 share 0.0849 counted 258 chance 37.2 spread 6.0 level 3 exact_only {'rows': 0, 'counted': 0, 'chance': 0.0, 'spread': 0.0, 'beyond': 0}
+  settled: []
+  facts: ['change_next', 'low', 'open', 'close', 'high']
+   level: {'level': 0, 'rows': 2320, 'counted': 0, 'chance': 3.8641942756711956e-08, 'spread': 0.00019657553907868688, 'beyond': 0}
+   level: {'level': 1, 'rows': 2320, 'counted': 39, 'chance': 0.00015582022267535134, 'spread': 0.012482726398928662, 'beyond': 39}
+   level: {'level': 2, 'rows': 2320, 'counted': 41, 'chance': 0.22900171771682165, 'spread': 0.4769140393579439, 'beyond': 39}
+   level: {'level': 3, 'rows': 2320, 'counted': 258, 'chance': 37.20617395247449, 'spread': 6.003555358415855, 'beyond': 197}
+   level: {'level': 4, 'rows': 2320, 'counted': 258, 'chance': 37.20617395247449, 'spread': 6.003555358415855, 'beyond': 197}
+   level: {'level': 5, 'rows': 2320, 'counted': 258, 'chance': 37.20617395247449, 'spread': 6.003555358415855, 'beyond': 197}
+   level: {'level': 6, 'rows': 2320, 'counted': 258, 'chance': 37.20617395247449, 'spread': 6.003555358415855, 'beyond': 197}
+   level: {'level': 7, 'rows': 2320, 'counted': 258, 'chance': 37.20617395247449, 'spread': 6.003555358415855, 'beyond': 197}
+   level: {'level': 8, 'rows': 2320, 'counted': 258, 'chance': 37.20617395247449, 'spread': 6.003555358415855, 'beyond': 197}
+   level: {'level': 9, 'rows': 2320, 'counted': 258, 'chance': 37.20617395247449, 'spread': 6.003555358415855, 'beyond': 197}
+====================================================================================================
+NYC taxis (6,389) | columns: {'compared': 11, 'left_out': 0}
+  stop True count 307 share 0.1921 counted 340 chance 16.7 spread 4.04 level 4 exact_only {'rows': 0, 'counted': 0, 'chance': 0.0, 'spread': 0.0, 'beyond': 0}
+  settled: ['pickup_borough', 'dropoff_borough']
+  facts: ['payment', 'color', 'passengers', 'tolls', 'pickup_zone', 'dropoff_zone', 'fare', 'tip', 'total', 'distance']
+   level: {'level': 0, 'rows': 1598, 'counted': 4, 'chance': 0.016237203705321557, 'spread': 0.12733135619223945, 'beyond': 3}
+   level: {'level': 1, 'rows': 1598, 'counted': 18, 'chance': 1.2193201893701795, 'spread': 1.0957857425893636, 'beyond': 12}
+   level: {'level': 2, 'rows': 1598, 'counted': 196, 'chance': 9.235754902741563, 'spread': 3.002917594540458, 'beyond': 175}
+   level: {'level': 3, 'rows': 1598, 'counted': 336, 'chance': 16.15521134771756, 'spread': 3.9678043050768173, 'beyond': 304}
+   level: {'level': 4, 'rows': 1598, 'counted': 340, 'chance': 16.725568625092123, 'spread': 4.0369336030904615, 'beyond': 307}
+   level: {'level': 5, 'rows': 1598, 'counted': 340, 'chance': 16.725568625092123, 'spread': 4.0369336030904615, 'beyond': 307}
+   level: {'level': 6, 'rows': 1598, 'counted': 340, 'chance': 16.725568625092123, 'spread': 4.0369336030904615, 'beyond': 307}
+   level: {'level': 7, 'rows': 1598, 'counted': 340, 'chance': 16.725568625092123, 'spread': 4.0369336030904615, 'beyond': 307}
+   level: {'level': 8, 'rows': 1598, 'counted': 340, 'chance': 16.725568625092123, 'spread': 4.0369336030904615, 'beyond': 307}
+   level: {'level': 9, 'rows': 1598, 'counted': 340, 'chance': 16.725568625092123, 'spread': 4.0369336030904615, 'beyond': 307}

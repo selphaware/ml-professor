@@ -100,6 +100,41 @@ Change as little as each task needs. Every earlier test stays green.
 21. **Fractions of a second (T36)**, then **the fast profile's cap leaving too
     few rows (T37)**, then the **README (T38)**.
 
+### Fifth pass, after the fourth review and the real-data run (tasks T39 to T47)
+
+Change as little as each task needs. Every earlier test stays green; nine of
+them were loosened by the tests stage so that they pass before and after
+(D59), and none of them is yours to edit.
+
+22. **The guards first (T39).** Six tests of what the application already
+    does: the infinite cells of the target and the time column are counted, an
+    infinite float in an object target is a missing target, the constructor
+    `ProfileResult(document, predictions)`, a column of predictions. Expect to
+    change nothing.
+23. **Read each object column once (T40).** Over all loaded rows, before any
+    row is dropped. An odd cell in a row that step 2 drops still decides what
+    its column is.
+24. **Findings 4 and 5, the three-class message (T41).** The finite check
+    covers every part of the document and sits in the constructor. Only what
+    the model does may fail a configuration; the tool's own scoring is outside
+    that `try`. This second part has no test: read spec step 9.
+25. **The undeclared date column (T42).** `time_col=None` with a date column
+    stops at step 5; `time_col=False` is the caller's statement and gives the
+    old behaviour. Change the README's commands in the same task: the example
+    table has a date column.
+26. **Entities under the random scheme (T43).** `group_col`, the role `group`,
+    the split of whole entities, the cap of whole entities, the interval from
+    whole entities, no p-value. The five properties of spec step 7 are the
+    contract; no row number is.
+27. **Entities under time order (T44).** Each entity's own previous value, in
+    the headline baseline and in the leak screen; a row with none gets the
+    training mean, counted and warned. Then the stop for a panel with nothing
+    said about entities.
+28. **`duplicates="group"` (T45).** The exact copies of step 8a, found before
+    the split, each set on one side. Nothing wider: the broader screen is not
+    in this version (D60).
+29. **The entity role of the type matrix (T46)**, then the **README (T47)**.
+
 ## Rules that keep the number honest
 
 - The holdout rows are chosen before anything is fitted, and nothing fitted
@@ -183,6 +218,35 @@ Change as little as each task needs. Every earlier test stays green.
   next fault of the same class.
 - Nothing is excluded in silence: a column the tool cannot read is named in a
   warning, so the caller who meant it as a feature finds out.
+- Where the tool has reason to think the headline would be inflated, it stops
+  and asks; it does not warn and carry on (D58). A date column with nothing
+  said about time order, a panel with nothing said about entities, copies of
+  holdout rows in training: each is a named error that names what the caller
+  can pass. `None` means "nothing was said"; `False` is the caller's statement
+  that the reason does not apply, and it is recorded in `input`. Never treat
+  the two alike.
+- Rows that belong together stay together. With `group_col` and no time
+  column, split entities, not rows: for the holdout, for every fold, under the
+  fast profile's cap, and in every resample of the interval. A row-by-row
+  shuffle or bootstrap of rows that are not independent gives a p-value and an
+  interval that are too sure: under the grouped scheme there is no p-value.
+  Reporting `grouped` and splitting by row is the failure the gate is built to
+  catch (F10).
+- Under time order an entity has its own past. The previous value of a row is
+  the latest earlier row of the same entity, `gap + 1` timestamps back or
+  more, and it is used wherever the previous value is: the headline baseline
+  and the leak screen. Forget it in the screen and the lag of a persistent
+  panel is thrown out as a leak.
+- A copy is an exact copy (D49, D60). `duplicates="group"` keeps exact copies
+  together and nothing wider; a copy that differs in any column is not
+  detected in this version, and the README says so plainly.
+- Read a column once. What an object column is, is decided over all its loaded
+  rows; a second reading over the usable rows only lets a cell that should
+  stop the run slip out with its row.
+- A model fails for what the model does: its making, its `fit`, its
+  prediction, the shape and finiteness of what it hands back. The tool's own
+  scoring is outside that `try`. A fault there must end the run, not fill the
+  models table with `failed`.
 
 ## Common failures and their real causes
 
@@ -243,6 +307,16 @@ Change as little as each task needs. Every earlier test stays green.
 | `too_few_rows: 60 rows are left` under `fast` on a table the full profile runs | The cap kept whole timestamps holding at most 2,000 rows, and the latest one is small; or a rare class fell out of the sample (D52). | After the cap: if rows were left out and the full profile would get past this point and form its split, `fast_profile_too_few_rows`; otherwise the full profile's own error. |
 | `test_guard_review3.py` fails | One of six pinned details moved: the percentiles (2.5 and 97.5), the leak screen's previous-value baseline, the seeded sample of the fast cap, the sample deviation in `cv_std`, shared ranks for ties in every resample, `n_imputed` over training and holdout rows only (M8 to M13). The application is wrong, not the test. | The test's name says which. |
 | `test_type_matrix.py` fails with a raw exception in a case named kind-role-extreme | A kind of column, in that role, with that value, reached code not written for it. | The first frame of the traceback inside the package. Decide what the spec says of that kind (steps 1a to 5), and make that place do it. |
+| `data.rows_reconcile`, `data.columns_accounted`, `data.coercion_reported` or `time.undeclared_warns` fails with exit 2 and "unrecognized arguments: --no-time-order" | The command line does not take `--no-time-order` yet (D58). Those runs are on tables with a date column and no time column, and say so. | T42: `time_col=False` in `profile()`, `--no-time-order` on the command line. |
+| `time.undeclared_stops` fails with exit 0 | A table with a date column and nothing said about time order was split at random (F7d). | Step 5: stop with `time_order_undeclared` when `time_col` is `None` and a column is excluded as `datetime`. |
+| `groups.kept_together` fails: entities on both sides, with `validation.scheme` saying `grouped` | The entity column was read and reported, and the split was made row by row all the same (F10). | The split of step 7: it takes the entities, not the rows. Then the folds, the cap and the bootstrap. |
+| `groups.no_skill_on_entities` fails with skill near 0.8 | The same: a row of an entity on each side lets a model know the entity again. | As above. |
+| `time.panel_previous_value` fails: `baselines` lists only `training_mean`, skill near 1 | With entities declared the previous value was not computed per entity, or was dropped because the timestamps repeat (F8b). | Step 11: each entity's latest row at least `gap + 1` timestamps earlier. |
+| The lag column of a panel is excluded as `suspected_leak` although the entity column is declared | The leak screen measured it against the training mean only (M16). | Step 8: the screen's baseline uses each entity's previous value too. |
+| `entities_undeclared` on a table that ran before | Repeated timestamps and a target that follows its own past: a panel (D58). | Not a defect: pass `group_col`, or `group_col=False` if there are no entities. |
+| A table with rows that have a copy runs under `duplicates="group"` and then stops with `holdout_copies_in_training` | The leak screen excluded a column, and rows that differed only there became copies on opposite sides. | Not a defect: the message names the column; the caller removes it. |
+| `test_type_matrix_group.py` fails with a raw exception | A kind of column, as the entity column, reached code not written for it. | Where the entity column's cells are compared: fix it there. No broad `except`. |
+| A result holds `null` where a number belongs in `task`, `columns` or `input`; or `test_review4_small.py` fails | The finite check looked at the five scoring parts only (finding 4). | The constructor of `ProfileResult`: every part of the document. |
 
 ## How to debug a gate failure
 

@@ -17,13 +17,13 @@ def load_table(data):
     return frame, {"kind": kind, "source": source, "warnings": warnings}
 
 
-def _usable(frame, target, time_col):
+def _usable(frame, target, time_col, group_col=None):
     """(no target, no time, the frame with its object number columns typed, loaded types)."""
-    for name in (target, time_col):
+    for name in (target, time_col, group_col):
         if name is not None and name not in frame.columns:
             raise E.ColumnNotFoundError(f"no column named {name!r}")
     # an object column that holds only numbers is read as numbers, in every step (D51)
-    frame, loaded = core._numbers_from_objects(frame)
+    frame, loaded, _ = core._numbers_from_objects(frame)
     # a text target cell that holds only white space is a missing target (D48)
     no_target = core._no_target(core._target_values(frame[target]))
     no_time = np.zeros(len(frame), dtype=bool)
@@ -40,11 +40,11 @@ def usable_rows(frame, target, time_col=None):
             "dropped_missing_time": int(no_time.sum())}
 
 
-def column_roles(frame, target, time_col=None):
+def column_roles(frame, target, time_col=None, group_col=None):
     """Step 5. One record per column: the roles that need no target."""
-    no_target, no_time, frame, loaded = _usable(frame, target, time_col)
+    no_target, no_time, frame, loaded = _usable(frame, target, time_col, group_col)
     records, _ = core._roles(frame.reset_index(drop=True), ~no_target & ~no_time, target,
-                             time_col, loaded)
+                             time_col, loaded, group_col)
     return pd.DataFrame(records, columns=core.COLUMN_KEYS)
 
 
@@ -96,18 +96,28 @@ def read_time(values):
     return keys.astype("datetime64[ns]"), form
 
 
-def split_random(n_rows, classes=None, seed=0):
+def split_random(n_rows, classes=None, seed=0, groups=None):
     """Step 7, random scheme. Positions 0..n_rows-1; `classes` makes it stratified.
 
     The seed is in the range of `profile()` (D45). Text labels are compared without
-    the white space round them, as the target is read everywhere (D46).
+    the white space round them, as the target is read everywhere (D46). `groups`,
+    when given, holds one value per row, and the rows of one value stay together:
+    on one side of the holdout, and in the validation part of one fold (D57).
     """
     core._check_seed(seed)
     y = None
     if classes is not None:
         labels = core._target_values(pd.Series(np.asarray(classes, dtype=object)))
         y = (labels == core._classes(labels)[1]).to_numpy().astype("int64")
-    split = core._split_random(int(n_rows), y, classes is not None, int(seed))
+    if groups is not None:
+        codes = core._group_codes(pd.Series(groups).reset_index(drop=True), "groups")
+        if len(codes) != int(n_rows) or (codes < 0).any():
+            raise E.GroupColumnError("groups must hold one value for each of the rows, "
+                                     "none of them empty")
+        split = core._split_grouped(np.unique(codes, return_inverse=True)[1], y,
+                                    classes is not None, int(seed))
+    else:
+        split = core._split_random(int(n_rows), y, classes is not None, int(seed))
     return {"training": split["train"], "holdout": split["holdout"],
             "folds": [{"training": np.sort(f["train"]), "validation": np.sort(f["valid"])}
                       for f in split["folds"]]}
@@ -155,9 +165,21 @@ def skill(metric, score, baseline_score):
     raise ValueError(f"metric must be roc_auc or mse, not {metric!r}")
 
 
-def previous_value(y, keys, gap=0):
-    """For each row, the target `gap + 1` timestamps earlier; NaN where there is none."""
+def previous_value(y, keys, gap=0, groups=None):
+    """For each row, the target `gap + 1` timestamps earlier; NaN where there is none.
+
+    With `groups`, one value per row: the target of the latest row of the same
+    group that lies at least `gap + 1` distinct timestamps earlier (D57).
+    """
     y, keys = np.asarray(y, dtype="float64"), np.asarray(keys)
+    if groups is not None:
+        codes = core._group_codes(pd.Series(groups).reset_index(drop=True), "groups")
+        _, stamp = np.unique(keys, return_inverse=True)
+        cell = codes.astype("int64") * (int(stamp.max()) + 1) + stamp
+        if (codes < 0).any() or len(np.unique(cell)) != len(cell):
+            raise ValueError("previous_value needs a group for every row, and unique "
+                             "timestamps within each group")
+        return core._previous_by_group(y, keys, codes, int(gap))
     if len(np.unique(keys)) != len(keys):
         raise ValueError("previous_value needs unique timestamps")
     order = np.argsort(keys, kind="stable")

@@ -69,6 +69,34 @@ class HoldoutCopiesError(ProfileError):
     code = "holdout_copies_in_training"
 
 
+class TimeOrderUndeclaredError(ProfileError):
+    """A column holds dates and the caller has neither declared a time column nor
+    said that the rows have no time order (D58)."""
+
+    code = "time_order_undeclared"
+
+
+class EntitiesUndeclaredError(ProfileError):
+    """Under time order the timestamps repeat, the target is strongly
+    autocorrelated, and the caller has neither declared an entity column nor said
+    that there are no entities (D58)."""
+
+    code = "entities_undeclared"
+
+
+class GroupColumnError(ProfileError):
+    """The entity column cannot be used as it is: an empty cell in a usable row,
+    values that cannot be compared, or two rows of one entity at one timestamp (D57)."""
+
+    code = "group_column_invalid"
+
+
+class TooFewGroupsError(ProfileError):
+    """Too few entities to form the holdout and five folds of whole entities (D57)."""
+
+    code = "too_few_groups"
+
+
 class OneClassError(ProfileError):
     code = "one_class"
 

@@ -15,12 +15,15 @@ Named silent failures (docs/DECISIONS.md D13; spec.md "Failure modes"):
   F3 the headline is a cross-validation score F7 time order is ignored
   F4 accuracy is the headline                F8 only the training-mean baseline
   F9 copies of holdout rows in training are scored with no error (D49)
+  F10 an entity has rows on both sides of the split although its column was declared (D57)
 
-F6 and F7 each have more than one form, and one broken fixture cannot fail
+F6, F7 and F8 each have more than one form, and one broken fixture cannot fail
 every check of its family. The other forms have fixtures of their own (D46):
   F6b a column is lost from the accounting    F6d a long row is read silently
   F6c a model family is lost from the table   F7b a day-first date is parsed leniently
   F7c whole-number time keys are read as floats, so distinct instants merge (D50)
+  F7d a table with a date column is split at random without the caller's say (D58)
+  F8b a panel is scored against the training mean although its entities were declared (D57)
 
 The self-test proves more than gatekit asks. gatekit accepts a failure mode as
 soon as one check that names it fails on its fixture. Here every check that
@@ -267,6 +270,13 @@ BANDS = {
     # good -0.118..+0.009 (mean -0.008, sd 0.024, skewed down). F8 (training mean
     # only): 0.881..1.000.
     "random_walk": (-0.30, 0.05),
+    # 300 entities of 5 rows, a label per entity, `--group-col customer` (CP6):
+    # good -0.260..+0.168 (mean -0.027, sd 0.119). F10 (the split ignores the entity column): +0.760..+0.882.
+    "entities": (-0.57, 0.52),
+    # twelve random walks on the same dates, `--group-col series` (CP6): good
+    # -0.023..+0.006 (mean -0.003, sd 0.007). F8b (scored against the training
+    # mean): 0.995..0.999.
+    "panel": (-0.04, 0.03),
 }
 # The fast profile's p-value takes the values k/201. On noise_clf: good 0.0100..0.965
 # (never at the floor in 30 seeds); F1 exactly 1/201 = 0.004975 on all 30. The cut-off
@@ -571,6 +581,60 @@ def make_int_stamps(seed, n=1500):
     return ["t", "level_prev", "level"], rows, ()
 
 
+ENTITY_ROWS = 5                                 # rows of each entity in `entities`
+
+
+def make_entities(seed, entities=300, per=ENTITY_ROWS, features=6):
+    """Many rows for each entity, alike but for a little noise, and one label for
+    the entity, drawn at random (D57).
+
+    Nothing about one entity says anything of another, so the right skill is
+    about zero. But the six measures identify the entity, and every row of an
+    entity has its label: with a row of an entity on each side of the split a
+    model scores by knowing the entity again. No two rows agree in every column
+    (each value has its own noise), so the count of copies (D49) is zero here:
+    the control is the entity column, `customer`, declared as `--group-col`.
+    Rows are written in shuffled order.
+    """
+    rng = random.Random(seed)
+    rows = []
+    for e in range(entities):
+        label = rng.choice(["no", "yes"])
+        centre = [rng.gauss(0, 1) for _ in range(features)]
+        for _ in range(per):
+            rows.append([f"C{e + 1:04d}"] + [_f(c + rng.gauss(0, 0.05)) for c in centre]
+                        + [label])
+    rng.shuffle(rows)
+    return ["customer"] + [f"m{i + 1}" for i in range(features)] + ["outcome"], rows, ()
+
+
+def make_panel(seed, series=12, stamps=125):
+    """Twelve random walks on the same business days, each at a level of its own;
+    the one feature is the level the day before, of the same series (D57, D58).
+
+    A panel: every date holds twelve rows. Against the training mean each
+    series looks almost perfectly predictable, since a level resembles the one
+    before (the real-data run measured 0.979 on five stocks). With the series
+    declared as `--group-col`, each has its own previous value, the baseline is
+    that, and skill is about zero. Rows are written in shuffled order.
+    """
+    rng = random.Random(seed)
+    day, days = datetime.date(2021, 1, 4), []
+    while len(days) < stamps:
+        if day.weekday() < 5:
+            days.append(day)
+        day += datetime.timedelta(days=1)
+    rows = []
+    for s in range(series):
+        level = float(_f(rng.gauss(0, 20)))
+        for d in days:
+            new = level + rng.gauss(0, 1)
+            rows.append([d.isoformat(), f"S{s + 1:02d}", _f(level), _f(new)])
+            level = float(_f(new))
+    rng.shuffle(rows)
+    return ["date", "series", "level_prev", "level"], rows, ()
+
+
 # name -> (builder, target column). Seeds are SEED + position.
 DATASETS = {
     "signal_clf": (lambda s: make_signal_clf(s), "outcome"),
@@ -598,6 +662,9 @@ DATASETS = {
     # Added last again (CP5), for the same reason.
     "dup_noise": (lambda s: make_dup_noise(s), "outcome"),
     "int_stamps": (lambda s: make_int_stamps(s), "level"),
+    # Added last again (CP6), for the same reason.
+    "entities": (lambda s: make_entities(s), "outcome"),
+    "panel": (lambda s: make_panel(s), "level"),
 }
 
 
@@ -781,7 +848,9 @@ RUNS = {
     "near_leak": ("near_leak", [], "fast", 1),
     "binary_numeric": ("binary_numeric", [], "fast", 1),
     "ambiguous_target": ("ambiguous_target", [], "fast", 1),
-    "messy": ("messy", [], "fast", 1),
+    # `messy` has a column of dates, `signup_date`, and its rows have no order in
+    # time: the run says so (D58). Nothing else about it changes.
+    "messy": ("messy", ["--no-time-order"], "fast", 1),
     "long_rows": ("long_rows", [], "fast", 1),
     "dup_noise": ("dup_noise", [], "fast", 1),
     "time_blocks": ("time_blocks", ["--time-col", "date"], "fast", 1),
@@ -789,12 +858,21 @@ RUNS = {
     # With `date` excluded, the rows of one block of dates differ in nothing the
     # models see, so every holdout row has a copy among the training rows (500 of
     # 500 at the gate seed). The run is about the warning for an undeclared date
-    # column, so it says the copies are meant: `--duplicates keep` (D49, D53).
-    "time_blocks_undeclared": ("time_blocks", ["--duplicates", "keep"], "fast", 1),
+    # column, so it says the copies are meant: `--duplicates keep` (D49, D53). Since
+    # D58 the warning is reached only when the caller has said that the rows have no
+    # time order: `--no-time-order`.
+    "time_blocks_undeclared": ("time_blocks", ["--duplicates", "keep", "--no-time-order"],
+                               "fast", 1),
+    # The same table and nothing said about time order: the run must stop (D58).
+    # `--duplicates keep`, so that the copies rule is not what stops it: without
+    # the new stop this run finishes, under a random split, at skill near 1.
+    "time_blocks_unstated": ("time_blocks", ["--duplicates", "keep"], "fast", 1),
     "time_dayfirst": ("time_dayfirst", ["--time-col", "date"], "fast", 1),
     "random_walk": ("random_walk", ["--time-col", "date"], "fast", 1),
     "int_stamps": ("int_stamps", ["--time-col", "t"], "fast", 1),
     "flat_tail": ("flat_tail", ["--time-col", "date"], "fast", 1),
+    "entities": ("entities", ["--group-col", "customer"], "fast", 1),
+    "panel": ("panel", ["--time-col", "date", "--group-col", "series"], "fast", 1),
     "api_signal_clf": ("signal_clf", "api", "fast", 1),
     "full_noise_small": ("noise_small", [], "full", 1),
     "full_signal_clf_j1": ("signal_clf_small", [], "full", 1),
@@ -836,6 +914,10 @@ CHECK_RUNS = {
     "time.persistence_baseline": ["random_walk"],
     "time.integer_keys_distinct": ["int_stamps"],
     "time.undeclared_warns": ["time_blocks_undeclared"],
+    "time.undeclared_stops": ["time_blocks_unstated"],
+    "time.panel_previous_value": ["panel"],
+    "groups.kept_together": ["entities"],
+    "groups.no_skill_on_entities": ["entities"],
     "time.flat_holdout_reported": ["flat_tail"],
     "uncertainty.reported": ["signal_clf", "time_blocks"],
     "result.matches_json": ["api_signal_clf"],
@@ -1083,7 +1165,7 @@ def _runs_dir(ctx):
 
     A gate run on a build writes to verify/artifacts/runs, the folder a failure
     message and CLAUDE.md send the builder to. The self-test runs the reference
-    and fourteen broken copies of it through the same checks; it writes to a folder
+    and seventeen broken copies of it through the same checks; it writes to a folder
     per fixture under verify/artifacts/selftest_runs, so that after it `runs/`
     still holds the last gate run on the build and not a broken fixture's output
     (D46; second review, finding 6).
@@ -1902,27 +1984,206 @@ def time_integer_keys_distinct(ctx):
 @gate.check("time.undeclared_warns",
             why="a date column with no declared time column is the commonest way to get a "
                 "random split on ordered data without noticing",
-            doc="a date column with no --time-col: random scheme, with a warning")
+            doc="a date column and --no-time-order: random scheme, with a warning, and the "
+                "statement recorded")
 def time_undeclared_warns(ctx):
     try:
         result = outputs(ctx, "time_blocks_undeclared")
     except CheckFailed as exc:
         raise CheckFailed(
-            f"{exc}\n  This run passes `--duplicates keep` (spec.md 2.1 and step 8; D49, D53). "
-            "With `date` excluded, the rows of one block of dates differ in nothing the models "
-            "see, so every holdout row has a copy among the training rows; without the "
-            "argument the run stops with `holdout_copies_in_training`. The command line must "
-            "accept `--duplicates`, and `keep` must let the run go ahead") from None
+            f"{exc}\n  This run passes `--no-time-order` and `--duplicates keep` (spec.md 2.1, "
+            "steps 5 and 8a; D49, D53, D58). `--no-time-order` is the caller's statement that "
+            "the rows have no time order: without it a table with a date column stops with "
+            "`time_order_undeclared`. With `date` excluded, the rows of one block of dates "
+            "differ in nothing the models see, so every holdout row has a copy among the "
+            "training rows; without `--duplicates keep` the run stops with "
+            "`holdout_copies_in_training`. The command line must accept both, and with both "
+            "the run goes ahead") from None
     scheme = at(result, "validation.scheme")
     ctx.record("undeclared scheme", scheme)
     ctx.require(scheme == "random",
                 f"validation.scheme is {scheme!r} with no --time-col: the time column is never "
                 "inferred (D7)")
+    ctx.require(at(result, "input.time_col") is False,
+                f"input.time_col is {at(result, 'input.time_col')!r} on a run given "
+                "`--no-time-order`: the caller's statement is recorded as `false` (D58; spec.md "
+                "5.2), so that the output says who chose the random split")
     ctx.require(any(w["column"] == "date" for w in warnings_of(result, "date_column_undeclared")),
                 "no warning with code `date_column_undeclared` names the column `date`: a date "
                 "column is present and the rows were split at random")
     ctx.require(at(result, "validation.caveat"), "validation.caveat must carry the fixed "
                                                  "random-split caveat (D6)")
+
+
+@gate.check("time.undeclared_stops", catches=["F7d"],
+            doc="a date column, no --time-col and no --no-time-order: the run stops with the "
+                "named error and writes no headline")
+def time_undeclared_stops(ctx):
+    stopped(ctx, "time_blocks_unstated", "time_order_undeclared",
+            "`time_blocks` has a column of dates, `date`, and this run declares no time column "
+            "and does not say that the rows have no time order. A table that holds dates is "
+            "very often ordered in time, and under a random split such a table is reported as "
+            "predictable when it is not: here the label is random per block of five dates, and "
+            "a random split scores near 1. So the run stops and asks: `--time-col date`, or "
+            "`--no-time-order` (D58; spec.md step 5). The run passes `--duplicates keep`, so "
+            "the copies rule of step 8a is not what stops it")
+
+
+def _with_hint(ctx, name, hint):
+    """`outputs`, with a word on the arguments of the run when it did not succeed."""
+    try:
+        return outputs(ctx, name)
+    except CheckFailed as exc:
+        raise CheckFailed(f"{exc}\n  {hint}") from None
+
+
+def _all_rows_split(ctx, result, label):
+    """The holdout rows, for a run in which every source row is on one side of the
+    split: none dropped, none capped. Returns (holdout positions in file order, set)."""
+    held = holdout_check(ctx, result, label)
+    got, n = row_counts(result), len(result["source"])
+    ctx.require(got.get("loaded") == n and got.get("holdout") == len(held)
+                and got.get("training") == n - len(held),
+                f"rows on `{label}`: loaded {got.get('loaded')!r}, training "
+                f"{got.get('training')!r}, holdout {got.get('holdout')!r}; the gate counts {n} "
+                f"source rows, none of them dropped, and {len(held)} rows in predictions.csv, "
+                f"so {n - len(held)} training rows")
+    return held, set(held)
+
+
+@gate.check("time.panel_previous_value", catches=["F8b"],
+            doc="twelve random walks with --group-col: the baseline is each series' own "
+                "previous value, recomputed by the gate, and skill is about zero")
+def time_panel_previous_value(ctx):
+    result = _with_hint(
+        ctx, "panel",
+        "This run passes `--time-col date --group-col series` (spec.md 2.1; D57). The command "
+        "line must accept `--group-col`.")
+    held, in_holdout = _all_rows_split(ctx, result, "panel")
+    header, source = result["header"], result["source"]
+    time_at, series_at, target = header.index("date"), header.index("series"), header.index("level")
+    level = [float(row[target]) for row in source]
+    of_series = {}
+    for i, row in enumerate(source):
+        of_series.setdefault(row[series_at], []).append((row[time_at], i))
+    before = {}                             # a row -> the row of its series on the date before
+    for dated in of_series.values():
+        dated.sort()
+        for (_, earlier), (_, later) in zip(dated, dated[1:]):
+            before[later] = earlier
+    ctx.require(at(result, "validation.scheme") == "time_ordered",
+                f"validation.scheme on `panel` is {at(result, 'validation.scheme')!r}: with "
+                "--time-col the split is by time, with or without an entity column (D57)")
+    ctx.require(all(p in before for p in held),
+                "a holdout row of `panel` is the first row of its series: every series runs "
+                "over every date, so the holdout must be the latest dates")
+    truth = [level[p] for p in held]
+    training_mean = mean([v for i, v in enumerate(level) if i not in in_holdout])
+    base_mean = mse(truth, [training_mean] * len(truth))
+    base_previous = mse(truth, [level[before[p]] for p in held])
+    mine = mse(truth, [guess for _, _, guess in result["predictions"]])
+    baselines = {b["name"]: b for b in records(result, "baselines", ["name", "score", "used"])}
+    ctx.record("panel baseline", at(result, "headline.baseline"))
+    ctx.require({"training_mean", "previous_value"} <= set(baselines),
+                f"baselines on `panel` lists {sorted(baselines)}. Every date holds twelve rows, "
+                "one for each series, and the series are declared with `--group-col series`: "
+                "each row's previous value is the target of its own series on the timestamp "
+                "before, so both training_mean and previous_value are scored and reported "
+                "(D57; spec.md step 11). Without it the only baseline is the training mean, "
+                "against which twelve random walks look almost perfectly predictable")
+    for name, want in (("training_mean", base_mean), ("previous_value", base_previous)):
+        ctx.require(isinstance(baselines[name]["score"], (int, float))
+                    and close(baselines[name]["score"], want, 1e-7),
+                    f"the {name} baseline on `panel` scores {baselines[name]['score']!r}; "
+                    f"recomputed by the gate from the source it is {want:.6g}. The previous "
+                    "value of a row is the target of the same series on the date before")
+    skill = at(result, "headline.skill", "number")
+    ctx.require(at(result, "headline.baseline") == "previous_value",
+                f"the headline baseline on `panel` is {at(result, 'headline.baseline')!r}, giving "
+                f"skill {skill:.4f}. The previous value has the lower error "
+                f"({base_previous:.4g} against {base_mean:.4g} for the training mean), so it is "
+                "the baseline (D10, D57)")
+    ctx.require(close(skill, 1 - mine / base_previous, 1e-7),
+                f"headline.skill on `panel` is {skill:.6g}; 1 - error / previous-value error, "
+                f"recomputed by the gate, is {1 - mine / base_previous:.6g}")
+    ctx.require(at(result, "validation.group_col") == "series"
+                and at(result, "validation.n_groups_training") == len(of_series)
+                and at(result, "validation.n_groups_holdout") == len(of_series),
+                f"validation on `panel` reports group_col "
+                f"{at(result, 'validation.group_col')!r} and "
+                f"{at(result, 'validation.n_groups_training')!r} and "
+                f"{at(result, 'validation.n_groups_holdout')!r} entities in the training and "
+                f"the holdout rows; the gate counts the column `series` and {len(of_series)} "
+                "series on each side")
+    ctx.require(at(result, "validation.n_holdout_without_previous") == 0,
+                f"validation.n_holdout_without_previous on `panel` is "
+                f"{at(result, 'validation.n_holdout_without_previous')!r}; every holdout row has "
+                "an earlier row of its own series, so it is 0")
+    band(ctx, skill, "panel", "skill on panel",
+         "each series is a random walk: tomorrow's level is today's plus noise, so nothing "
+         "beats the series' own previous value")
+
+
+@gate.check("groups.kept_together", catches=["F10"],
+            doc="with --group-col no entity has rows on both sides of the split, by the gate's "
+                "own count from predictions.csv, and the output reports the grouped scheme")
+def groups_kept_together(ctx):
+    result = _with_hint(
+        ctx, "entities",
+        "This run passes `--group-col customer` (spec.md 2.1; D57). The command line must "
+        "accept `--group-col`.")
+    held, in_holdout = _all_rows_split(ctx, result, "entities")
+    entity_at = result["header"].index("customer")
+    entity = [row[entity_at] for row in result["source"]]
+    held_entities = {entity[i] for i in in_holdout}
+    training_entities = {e for i, e in enumerate(entity) if i not in in_holdout}
+    both = sorted(held_entities & training_entities)
+    ctx.record("entities on both sides", len(both))
+    ctx.require(not both,
+                f"{len(both)} of the {len(set(entity))} entities of `entities` have rows on both "
+                f"sides of the split (for example {', '.join(both[:3])}). The run declares "
+                "`--group-col customer`: the rows of one entity stay on one side of the holdout "
+                "split, and of every fold (D57; spec.md step 7). Here the features identify the "
+                "entity and the label belongs to the entity, so a row on each side lets a model "
+                "score by knowing the entity again")
+    scheme = at(result, "validation.scheme")
+    ctx.require(scheme == "grouped",
+                f"validation.scheme on `entities` is {scheme!r}; with an entity column and no "
+                "time column it is `grouped`")
+    ctx.require(at(result, "validation.group_col") == "customer"
+                and at(result, "input.group_col") == "customer",
+                "input.group_col and validation.group_col must both record the entity column "
+                "the run used (`customer`)")
+    counts = (at(result, "validation.n_groups_training"), at(result, "validation.n_groups_holdout"))
+    ctx.require(counts == (len(training_entities), len(held_entities)),
+                f"validation reports {counts[0]!r} entities in the training rows and "
+                f"{counts[1]!r} in the holdout; the gate counts {len(training_entities)} and "
+                f"{len(held_entities)}")
+    roles = {c["name"]: c["role"] for c in records(result, "columns", ["name", "role"])}
+    ctx.require(roles.get("customer") == "group",
+                f"the column `customer` has role {roles.get('customer')!r}; the entity column "
+                "has the role `group` and is not a feature (spec.md 5.2)")
+    share = at(result, "validation.holdout_share", "number")
+    largest = max(entity.count(e) for e in set(entity))
+    ctx.require(0.25 <= share <= 0.25 + 2 * largest / len(entity) and close(
+        share, len(held) / len(entity)),
+                f"validation.holdout_share on `entities` is {share:.4f}, {len(held)} rows. The "
+                "holdout is whole entities that together hold at least a quarter of the rows "
+                "and, for each class, less than one entity more than that (spec.md step 7): "
+                f"between 0.25 and {0.25 + 2 * largest / len(entity):.4f} here")
+
+
+@gate.check("groups.no_skill_on_entities", catches=["F10"],
+            doc="no skill where only an entity on both sides of the split could give any")
+def groups_no_skill_on_entities(ctx):
+    result = _with_hint(
+        ctx, "entities",
+        "This run passes `--group-col customer` (spec.md 2.1; D57). The command line must "
+        "accept `--group-col`.")
+    band(ctx, at(result, "headline.skill", "number"), "entities", "skill on entities",
+         "the label is random per entity and the features only identify the entity, so "
+         "nothing learned on one entity helps on another. Skill here means rows of one entity "
+         "are on both sides of the split")
 
 
 @gate.check("time.flat_holdout_reported",
@@ -2376,6 +2637,28 @@ def broken_float_time_keys(tmp):
                          "error")
 def broken_copies_ignored(tmp):
     return _fixture(tmp, "F9")
+
+
+# The three inflated headlines of the real-data run that the fifth pass removes
+# (D57, D58), each with a dataset on which the right conclusion is known and a
+# fixture that takes the wrong road. Registered last, so the order above stays.
+
+@gate.failure_mode("F10", "an entity has rows on both sides of the split although the entity "
+                          "column was declared")
+def broken_entities_split(tmp):
+    return _fixture(tmp, "F10")
+
+
+@gate.failure_mode("F8b", "a panel is scored against the training mean although the entity "
+                          "column was declared")
+def broken_panel_mean_baseline(tmp):
+    return _fixture(tmp, "F8b")
+
+
+@gate.failure_mode("F7d", "a table with an undeclared date column is profiled under a random "
+                          "split without the caller's say")
+def broken_undeclared_date_runs(tmp):
+    return _fixture(tmp, "F7d")
 
 
 if __name__ == "__main__":

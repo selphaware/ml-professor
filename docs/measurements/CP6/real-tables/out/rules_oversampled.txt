@@ -1,0 +1,32 @@
+OVERSAMPLING BEFORE THE SPLIT (the minority class copied k times). Every line here should stop.
+titanic (891) | minority x2                                holdout    309  d49   155 STOP  first   155 STOP  calibrated   103 STOP  (counted 131, chance 10.8)  0.0s
+titanic (891) | minority x5                                holdout    565  d49   447 STOP  first   447 STOP  calibrated   222 STOP  (counted 280, chance 32.1)  0.0s
+titanic (891) | minority x10                               holdout    993  d49   880 STOP  first   880 STOP  calibrated   229 STOP  (counted 314, chance 54.2)  0.1s
+titanic (891) | minority x25                               holdout   2275  d49  2162 STOP  first  2162 STOP  calibrated     4 run   (counted 13, chance 5.0)  0.1s
+titanic (891) | minority x50                               holdout   4413  d49  4300 STOP  first  4300 STOP  calibrated     4 run   (counted 13, chance 5.0)  0.3s
+breast cancer (569) | minority x2                          holdout    196  d49    88 STOP  first    88 STOP  calibrated    88 STOP  (counted 88, chance 0.0)  0.1s
+breast cancer (569) | minority x5                          holdout    355  d49   266 STOP  first   266 STOP  calibrated   266 STOP  (counted 266, chance 0.0)  0.2s
+breast cancer (569) | minority x10                         holdout    620  d49   531 STOP  first   531 STOP  calibrated   531 STOP  (counted 531, chance 0.2)  0.4s
+breast cancer (569) | minority x25                         holdout   1415  d49  1326 STOP  first  1326 STOP  calibrated     0 run   (counted 0, chance 0.0)  0.5s
+breast cancer (569) | minority x50                         holdout   2740  d49  2651 STOP  first  2651 STOP  calibrated     0 run   (counted 0, chance 0.0)  0.8s
+Seattle weather (1,460) | minority x2                      holdout    521  d49   248 STOP  first   248 STOP  calibrated   234 STOP  (counted 248, chance 7.3)  0.0s
+Seattle weather (1,460) | minority x5                      holdout    988  d49   781 STOP  first   781 STOP  calibrated   625 STOP  (counted 692, chance 37.1)  0.0s
+Seattle weather (1,460) | minority x10                     holdout   1767  d49  1560 STOP  first  1560 STOP  calibrated   707 STOP  (counted 799, chance 55.2)  0.0s
+Seattle weather (1,460) | minority x25                     holdout   4103  d49  3896 STOP  first  3896 STOP  calibrated     0 run   (counted 3, chance 3.9)  0.1s
+Seattle weather (1,460) | minority x50                     holdout   7997  d49  7790 STOP  first  7790 STOP  calibrated     0 run   (counted 3, chance 3.9)  0.2s
+NYC taxis (6,389) | minority x2                            holdout   2051  d49   662 STOP  first   722 STOP  calibrated   964 STOP  (counted 1004, chance 21.5)  0.6s
+NYC taxis (6,389) | minority x5                            holdout   3410  d49  2262 STOP  first  2331 STOP  calibrated  2558 STOP  (counted 2635, chance 42.2)  0.8s
+NYC taxis (6,389) | minority x10                           holdout   5675  d49  4532 STOP  first  4595 STOP  calibrated  4082 STOP  (counted 4346, chance 193.8)  1.4s
+NYC taxis (6,389) | minority x25                           holdout  12470  d49 11328 STOP  first 11375 STOP  calibrated   315 STOP  (counted 340, chance 11.5)  3.3s
+NYC taxis (6,389) | minority x50                           holdout  23795  d49 22652 STOP  first 22717 STOP  calibrated   314 STOP  (counted 338, chance 11.2)  6.4s
+customers example (400) | minority x2                      holdout    135  d49    59 STOP  first    59 STOP  calibrated    58 STOP  (counted 59, chance 0.7)  0.0s
+customers example (400) | minority x5                      holdout    242  d49   178 STOP  first   178 STOP  calibrated   176 STOP  (counted 178, chance 0.7)  0.0s
+customers example (400) | minority x10                     holdout    419  d49   355 STOP  first   355 STOP  calibrated   102 STOP  (counted 126, chance 9.5)  0.0s
+customers example (400) | minority x25                     holdout    952  d49   888 STOP  first   888 STOP  calibrated     0 run   (counted 0, chance 0.4)  0.0s
+customers example (400) | minority x50                     holdout   1839  d49  1775 STOP  first  1775 STOP  calibrated     0 run   (counted 0, chance 0.3)  0.1s
+WHOLE TABLE REPEATED k TIMES
+breast cancer | whole table x2                             holdout    285  d49   215 STOP  first   215 STOP  calibrated   215 STOP  (counted 215, chance 0.0)  0.2s
+breast cancer | whole table x10                            holdout   1423  d49  1423 STOP  first  1423 STOP  calibrated  1423 STOP  (counted 1423, chance 1.6)  0.9s
+breast cancer | whole table x20                            holdout   2845  d49  2845 STOP  first  2845 STOP  calibrated  2845 STOP  (counted 2845, chance 12.7)  3.6s
+breast cancer | whole table x21                            holdout   2988  d49  2988 STOP  first  2988 STOP  calibrated     0 run   (counted 0, chance 0.0)  0.1s
+breast cancer | whole table x30                            holdout   4268  d49  4268 STOP  first  4268 STOP  calibrated     0 run   (counted 0, chance 0.0)  0.2s

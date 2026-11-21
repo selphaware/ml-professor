@@ -2,7 +2,7 @@
 
 A Python package, `mlprofessor`, that measures how predictable one target
 column of one table is. The contract is `spec.md`. The decisions behind it are
-`docs/DECISIONS.md` (D1 to D54). The build order is `plan/tasks.json`; what the
+`docs/DECISIONS.md` (D1 to D60). The build order is `plan/tasks.json`; what the
 tests prove is `plan/test-plan.md`. The method and the table of common failures
 are in the skill `mlprofessor-build`.
 
@@ -25,7 +25,7 @@ writes to `verify/artifacts/selftest_runs/<fixture>/` instead (D46).
 ## The methodology in five lines
 
 1. Count every row and column; drop only rows with no target (or no time value), and say how many.
-2. Decide the task by a stated rule; split off a 25% holdout first: at random, or the latest whole timestamps when `time_col` is given.
+2. Decide the task by a stated rule; split off a 25% holdout first: at random, in whole entities when `group_col` is given, or the latest whole timestamps when `time_col` is given.
 3. Choose a model by five folds inside the training rows only, with every preprocessing step refitted inside each fold.
 4. Refit the chosen one on the training rows and score it once on the holdout, as skill over a baseline (ROC AUC against 0.5; squared error against the training mean or the previous value). If it raises there, the next best by cross-validation takes its place: the holdout never takes part in the choice.
 5. Report it with an interval and a p-value from the holdout predictions, and with every exclusion, warning and limitation. Where a baseline's error is exactly zero, skill has no value and is reported as null, with the reason; the score keeps its interval.
@@ -49,7 +49,31 @@ than 1% of the holdout rows, and at least 10 of them, have one, the run stops
 with `holdout_copies_in_training`, before any model is fitted, unless the
 caller passed `duplicates="keep"` (`--duplicates keep`); then it runs, with a
 `holdout_copies_kept` warning. The count and the share are always reported.
-Under time order the rule does not apply. Spec step 8a.
+Under time order the rule does not apply. Spec step 8a. A third value,
+`duplicates="group"` (D57, D60), keeps each set of copies on one side of the
+split and of every fold. **A copy is an exact copy.** One that differs in any
+column (an added column, a batch number, a value changed by 1e-9) is not
+detected in this version; the broader screen was measured and withdrawn (D60;
+`docs/measurements/CP6/`). The caller's control is `group_col`.
+
+**The tool stops and asks where it has reason to think the headline would be
+inflated (D58).** Nothing said about time order (`time_col=None`) and a column
+of dates: `time_order_undeclared`, at step 5; the caller names the time column
+or passes `time_col=False` (`--no-time-order`). A panel under time order
+(repeated timestamps, target autocorrelated above 0.5) and nothing said about
+entities: `entities_undeclared`, at step 11; the caller names the entity
+column or passes `group_col=False` (`--no-entities`). The old warnings
+(`date_column_undeclared`, `autocorrelated_panel_target`) are raised only
+beside the caller's own statement.
+
+**A declared entity column keeps the rows of one entity together (D57).** With
+no time column: the grouped scheme, whole entities on one side of the holdout
+and in one fold; under the fast profile whole entities under the cap; the
+interval from resampled entities (`bootstrap_groups`, none under 30 holdout
+entities) and no p-value. Under time order the split is by time as ever, and
+each entity has its own previous value as a baseline, in the headline and in
+the leak screen. Which rows land where is open; the five properties of spec
+step 7 are the contract.
 
 **No input ends in an error that is not named (D50 to D52).** Whatever type a
 column has and whatever it holds, in any role, the run ends in a result or in
@@ -59,7 +83,12 @@ numbers with `None`) is read as the typed column it stands for; whole numbers
 are compared exactly, as time keys above 2**53 and when distinct values are
 counted; whole numbers too large for 64 bits are excluded with a warning as a
 spare column and are a named error as the target or the time column. Every
-column excluded as `unsupported_type` gets a warning naming it.
+column excluded as `unsupported_type` gets a warning naming it. Since the
+fifth pass (D57): each object column is read once, over all loaded rows, so
+an odd cell in a row that is dropped for another column's empty cell gives
+the same named error as in a usable row; an infinite float in an object
+target is a missing target; and no `ProfileResult` can be made from a
+document that holds a float that is not finite, in any part of it.
 
 ## Output
 
@@ -69,12 +98,12 @@ column excluded as `unsupported_type` gets a warning naming it.
 | Part of `profile.json` | Holds | On `ProfileResult` |
 |---|---|---|
 | `meta` | tool, schema version, profile, seed, `n_jobs`, library versions, `timing` | `to_dict()` |
-| `input` | source, kind, target, time column, task requested, gap, rows, columns, duplicate rows, the `duplicates` argument (D49) | `to_dict()` |
+| `input` | source, kind, target, `time_col` as passed (a name, `false` or null: D58), task requested, gap, rows, columns, duplicate rows, the `duplicates` argument (D49), `group_col` as passed (a name, `false` or null: D57) | `to_dict()` |
 | `rows` | seven counts: loaded, four `dropped_` reasons, training, holdout | `.rows` |
-| `columns` | one record per input column: role, kind, reason, leak rule, four counts (`n_infinite` also counts feature values too large for the tree models, above 3.4028234663852886e+38: D48). `dtype` is the type as loaded: `object` for an object column read as numbers (D51) | `.columns` |
+| `columns` | one record per input column: role (`target`, `time`, `group`, `feature`, `excluded`), kind, reason, leak rule, four counts (`n_infinite` also counts feature values too large for the tree models, above 3.4028234663852886e+38: D48; and the infinite cells of the target and of the time column: D57). `dtype` is the type as loaded: `object` for an object column read as numbers (D51) | `.columns` |
 | `task` | type, decided by rule or declared, distinct values, classes, positive class (a text target is read without the white space round it: D46; a class value is written as a boolean, a number or text: D53) | `to_dict()` |
-| `validation` | scheme, holdout share, folds, gap, time form, last training and first holdout timestamp (an exact whole number for integer keys above 2**53: D50), caveat, and under the random scheme the holdout rows with a copy among the training rows and their share (D49) | `to_dict()` |
-| `headline` | metric, score, model, baseline and its score, skill (null when the baseline's error is zero), the interval on the score and on skill, the resamples used for each, p-value, reasons | `.headline` |
+| `validation` | scheme (`random`, `grouped`, `time_ordered`), holdout share, folds, gap, time form, last training and first holdout timestamp (an exact whole number for integer keys above 2**53: D50), caveat, and with no time column the holdout rows with a copy among the training rows and their share (D49); the entity column, the entities on each side, the holdout rows with no previous value, and under `duplicates="group"` the rows that have a copy (D57) | `to_dict()` |
+| `headline` | metric, score, model, baseline and its score, skill (null when the baseline's error is zero), the interval on the score and on skill (`bootstrap_rows`, `bootstrap_groups` or `bootstrap_blocks`), the resamples used for each, p-value (random scheme only), reasons | `.headline` |
 | `baselines` | each baseline scored on the holdout, and which one was used | `to_dict()` |
 | `cv` | metric, folds scored, configurations, the chosen one, its mean and spread | `to_dict()` |
 | `models` | one record per configuration: params, status, error, fold scores, mean, spread, chosen. One that fails after it was chosen keeps its fold scores | `.models` |
@@ -100,12 +129,27 @@ column excluded as `unsupported_type` gets a warning naming it.
 | F7b | a day-first time column is parsed leniently, so the run goes ahead on the wrong order | time.dayfirst_stops |
 | F7c | whole-number time keys are read as floats, so distinct instants above 2**53 become one timestamp and the previous-value baseline is lost (D50) | time.integer_keys_distinct |
 | F9 | holdout rows with copies among the training rows are scored with no error (D49) | data.holdout_copies_stop |
+| F10 | an entity has rows on both sides of the split although the entity column was declared (D57) | groups.kept_together, groups.no_skill_on_entities |
+| F7d | a table with a date column and nothing said about time order is split at random, where it should stop (D58) | time.undeclared_stops |
+| F8b | a panel is scored against the training mean although the entity column was declared (D57) | time.panel_previous_value |
 
-F6b, F6c, F6d, F7b and F7c are the other forms of F6 and F7, each with a
-broken copy of the reference of its own (D46, D50). **Every check in this table
-is seen to fail on the broken copy of the mode it names**, in every run of the
-gate's self-test (`verify/smoke_test.py --selftest`, nine to twelve minutes),
-which prints the table that proves it and fails if one pair is missing.
+F6b, F6c, F6d, F7b, F7c, F7d and F8b are the other forms of F6, F7 and F8,
+each with a broken copy of the reference of its own (D46, D50, D57, D58).
+**Every check in this table is seen to fail on the broken copy of the mode it
+names**, in every run of the gate's self-test (`verify/smoke_test.py
+--selftest`, about seventeen minutes with seventeen broken copies), which
+prints the table that proves it and fails if one pair is missing.
+
+Four checks came with the fifth pass. `time.undeclared_stops` runs
+`time_blocks` with nothing said about time order: exit 3, the error's code, no
+headline. `time.panel_previous_value` runs twelve random walks with
+`--time-col date --group-col series`: both baselines as the gate recomputes
+them, each series against its own previous value, and skill about zero.
+`groups.kept_together` runs 300 entities of five rows with `--group-col
+customer` and counts, from `predictions.csv` and the source, that no entity is
+on both sides; `groups.no_skill_on_entities` asserts the band on that run. Two
+older runs changed: `messy` and `time_blocks` with no time column each pass
+`--no-time-order` (D58), so the four checks that read them belong to T42.
 
 Two checks came with the fourth pass and assert no score.
 `data.holdout_copies_stop` runs noise with every row present twice: exit 3,
@@ -148,6 +192,15 @@ suite, each in the way that can see it:
 | M11 | `cv_std` is the population deviation of the fold scores, not the sample deviation | `test_guard_review3.py::test_m11_cv_std_is_the_sample_deviation` |
 | M12 | in a resampled ROC AUC, tied predictions do not share their rank | `test_guard_review3.py::test_m12_tied_predictions_in_a_resample` |
 | M13 | `n_imputed` is counted over every loaded row | `test_guard_review3.py::test_m13_n_imputed_counts_rows_that_reach_a_model` |
+| M14 | an object column is read a second time over the usable rows only, so an odd cell in a dropped row is never seen | `test_read_once.py`, its first four tests |
+| M15 | with an entity column the holdout is whole entities but the folds are cut through them | `test_groups_random.py::test_no_entity_on_both_sides_or_in_two_folds` |
+| M16 | under time order with an entity column the leak screen forgets each entity's previous value | `test_groups_time.py::test_the_leak_screen_measures_a_lag_against_the_entity_baseline` |
+| M17 | with an entity column the fast cap keeps a sample of rows, whatever their entity | `test_groups_random.py::test_the_fast_cap_keeps_whole_entities` |
+| M18 | the check that no number is infinite or not-a-number covers five parts of the output, not every part | `test_review4_small.py::test_no_part_of_the_output_can_hold_a_number_that_is_not_finite` |
+| M19 | a panel with nothing said about entities goes ahead with a warning, where it should stop | `test_panel_stop.py::test_a_persistent_panel_with_no_entity_column_stops` |
+| M20 | the infinite cells of the target and of the time column are left out of `n_infinite` | `test_guard_review4.py::test_m20_infinite_cells_of_the_target_and_the_time_column_are_counted` |
+| M21 | under the grouped scheme the bootstrap draws rows one by one and still reports `bootstrap_groups` | `test_groups_random.py::test_the_interval_resamples_whole_entities_and_there_is_no_p_value` |
+| M22 | with `duplicates="group"` the copies are found and counted, and the split is made row by row | `test_duplicates_group.py::test_each_set_of_copies_stays_on_one_side_and_in_one_fold` |
 
 A guard that fails means the application is wrong, not the test. Three more
 tests of that kind hold what was decided and the application already does:
@@ -158,8 +211,8 @@ is never skipped, before a header of two columns as before one of three
 (`test_guard_header_lines.py`, which fails on F6d).
 
 The mutation check runs the whole suite against the reference and against
-each of twenty-seven variants of it: the fourteen of the table above and M1 to
-M13. The good reference must fail nothing, and every variant at least one test.
+each of thirty-nine variants of it: the seventeen of the table above and M1 to
+M22. The good reference must fail nothing, and every variant at least one test.
 
 **The type matrix (D52).** `tests/test_type_matrix.py` runs `profile()` on
 about 800 small tables: every kind of pandas column (each integer and float
@@ -172,7 +225,8 @@ not-a-number, negative zero, one value throughout). Each case must end in a
 result that keeps the reconciliation rules or in a named error. A raw
 `TypeError`, `ValueError` or `OverflowError` is a failure of the case, and the
 remedy is at the place it starts, never a broad `except` round the run. Spec
-section 7, "The type matrix".
+section 7, "The type matrix". `tests/test_type_matrix_group.py` (D57) does the
+same for a fourth role, the entity column: 353 tables.
 
 ## Environment (measured 2026-11-15; interpreter base and process starts 2026-11-16)
 
@@ -238,9 +292,9 @@ section 7, "The type matrix".
 - Do not edit the harness: `verify/`, `plan/`, `spec.md`, `CLAUDE.md`,
   `tests/`, `loop/`, `.claude/`. If a check, a test or the spec looks wrong,
   stop and say so plainly, with the evidence. Never widen a band.
-- `verify/reference/` is the judge's own fixture, with twenty-seven deliberate
-  faults wired into it (fourteen the gate catches, thirteen only the tests are
-  relied on for). It is not a starting point: do not copy from it.
+- `verify/reference/` is the judge's own fixture, with thirty-nine deliberate
+  faults wired into it (seventeen the gate catches, twenty-two only the tests
+  are relied on for). It is not a starting point: do not copy from it.
 - Application code never mentions the gate, the tests or the loop.
 - No git. The human owns every git operation.
 - Write only inside `mlprofessor/` and `examples/`, and `requirements.txt` and

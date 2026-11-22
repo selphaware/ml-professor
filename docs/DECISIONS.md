@@ -937,3 +937,56 @@ Alternatives considered: one pass for both (rejected: too large to check
 properly, and the repeat screen needs its own measurement).
 Consequence: phase 1 closes under D56 after pass 7's review at the
 earliest.
+
+## D65 — 2026-11-21 — D59 may be applied through a shared helper (extends D59)
+Decision: When a changed contract touches what many existing tests do on
+their first line, the tests stage may make the change once in a helper of
+the test files and not in each test. The helper makes the call as the test
+wrote it, and repeats it with the missing statement only when the run stops
+with the new named error for a statement the call did not make; any other
+error is raised as it is. Every helper and every test changed is named in
+the test plan with its exact form, a test that pins the stop itself opts
+out of the fall-back, and the lead reads the diff of every file after the
+stage. The harness session reports, for each broken copy that the suite
+caught before, how many cases fail on it before and after the loosening.
+Alternatives considered: editing each test body (rejected: 27 more bodies
+for the same effect, and more room for a slip).
+Consequence: for D63, 30 replacements in 21 files cover 1,435 cases that
+leave a statement unsaid.
+
+## D66 — 2026-11-21 — Rulings on the plan of pass 6 (CP7)
+Decision: (1) The grouped holdout, as the harness session measured it: a
+unit joins the holdout while the holdout stays under a quarter of the rows;
+the smallest unit passed over completes it; every unit it can spare goes
+back to training. For classification the same is done for the units of each
+class. (2) A warning is raised whenever a unit holds a quarter or more of
+the rows it is drawn among: when it is kept in training because of its
+size, the warning gives its share and says that the headline does not test
+it; when the smaller units cannot fill a quarter, that unit is the holdout
+and the warning says so. (3) A whole-number column in which every value
+reads as a calendar date written `YYYYMMDD`, years 1900 to 2100, with at
+least two distinct values, is a date form: excluded as a date, named by the
+existing warning under `time_col=False`, and accepted as the time column.
+(4) No check that the levels of a column are series of their own is built.
+(5) The count and the warning of `duplicates="group"` are renamed so that
+neither says "copies": they count rows that agree in every feature, which
+is not what a copy means at step 8a. (6) Both error codes are kept; when
+time order is unsaid the error is `time_order_undeclared`, and its message
+also asks for the entities when both are unsaid. The error is raised at
+step 5, after the errors of steps 1 to 4, so that it can name the columns
+that hold dates and say that timestamps repeat. On the command line it is
+exit code 3 with the function's own message. (7) The message of the copies
+stop names `"keep"` first, as the session worded it.
+Alternatives considered: for (2), a warning only when no sound split
+exists (rejected: with one entity of 60% of the rows the holdout was
+exactly a quarter and nothing said that the largest entity is never
+tested); keeping a too-large unit in training and holding out a quarter of
+the rest (rejected: about 50 rows of small entities). For (3), a warning
+only (rejected: the same date written as text is excluded, and as a number
+it is a feature that carries the row's place in time). For (4), the check
+as measured: it flagged every panel, and also a segment that only sets the
+level (0.89 to 0.997); the stricter form missed panels of 8 and 12
+timestamps.
+Consequence: day counts and `YYYYMM` are not seen as dates, and a statement
+of `group_col=False` is questioned only by the panel warning, which fires
+in about half of panels of 8 timestamps. Both are stated as limits.

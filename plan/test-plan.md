@@ -2972,3 +2972,734 @@ fault of the tool's own scoring (finding 5): it cannot be reached from
 outside, and is judged by reading. A `Decimal` infinity in an object target
 that is not read as numbers: it is a value like any other there (spec step
 2), and no test pins what follows from that. Run time at 100,000 rows.
+
+# Sixth pass (CP7): both statements on every call, `"group"` on the features, the grouped holdout, dates as whole numbers
+
+Decisions D62 to D66. The spec sections are named beside each file. **No test
+of this pass is about a copy that differs from its original, or about the
+gate checks never seen failing:** both are pass 7 (D60, D64).
+
+## Ground rules of the sixth pass
+
+1. **The application already exists, and this is the sixth pass.**
+   `mlprofessor/` is built and passes all 1,757 cases of the first five
+   passes. Your role prompt says you write the suite before the application
+   exists and that every test must fail now. In this pass that is not so:
+   most of your tests must fail today, three guards and some other tests must
+   pass today, and every existing test must pass today and after the build.
+   Rule 5 says which.
+
+2. **The first five passes are final. Do not edit them, with the exceptions of
+   rule 3, which D59 and D65 allow and which are listed there by name.** That
+   means the 52 existing test files, `tests/conftest.py`,
+   `tests/mlp_helpers.py`, `tests/cp3_helpers.py`, `tests/cp4_helpers.py`,
+   `tests/cp5_helpers.py`, `tests/cp6_helpers.py` and everything under
+   `tests/fixtures/`. New shared helpers go in one new file,
+   `tests/cp7_helpers.py`. The owner's lead reads the diff of every existing
+   file against the committed one afterwards, and any change other than
+   those of rule 3 sends the whole stage back.
+
+3. **THE LOOSENING (D59, D65). 39 replacements in 22 existing files, and no
+   other change to any of them.** D63 makes every call say two things; 1,435
+   of the 1,757 existing cases leave at least one unsaid, and in 1,006 of
+   them (193 test functions in 39 files) the call would now stop. D65 lets
+   the change be made once in a helper. The rule of every helper is the same:
+   **it makes the call as the test wrote it, and makes it again with the
+   missing statement only when the run stops with `time_order_undeclared` or
+   `entities_undeclared` for a statement the call did not make; any other
+   error is raised as it is.** Against the application as it stands a helper
+   so changed does what it did, but for a table on which that application
+   already asks (a date column, a persistent panel), where the helper now
+   answers "no" for the test.
+
+   **The exact text of every replacement is in
+   `docs/measurements/CP7/loosening.py`.** It is the form that was proved:
+   read it, and make exactly those replacements, each of which matches its
+   file once. `python -B docs/measurements/CP7/loosening.py --table` prints
+   them. Keep each file's line endings as they are: five of the files end
+   their lines with CR LF (`test_leakage.py`, `test_pipeline.py`,
+   `test_preprocess.py`, `test_result_schema.py`, `test_type_matrix.py`).
+   **No existing test is ever edited so that it fails against the library as
+   built:** run the whole suite against the application before you finish and
+   see all 1,757 cases pass.
+
+   **(a) `tests/mlp_helpers.py`.** `run_cli` is replaced by the first block
+   below, which also adds three functions after it; the second block is
+   inserted immediately before `def files_in(folder):`.
+
+   ```python
+   def run_cli(args, timeout=900, as_given=False):
+       """Run `python -m mlprofessor` in a new process from the repo root.
+
+       D59, D63: when the run stops only because nothing was said about time order or
+       about entities, it is run once more with `--no-time-order` and `--no-entities`
+       added for whichever was not said, and that run is returned. `as_given=True`
+       returns the first run whatever it is.
+       """
+       env = dict(os.environ)
+       env["PYTHONDONTWRITEBYTECODE"] = "1"
+
+       def once(arguments):
+           return subprocess.run(
+               [PYTHON, "-m", "mlprofessor", *[str(a) for a in arguments]],
+               cwd=str(REPO_ROOT), capture_output=True, text=True, timeout=timeout, env=env,
+           )
+
+       proc = once(args)
+       more = [] if as_given else missing_flags(proc, args)
+       return once([*args, *more]) if more else proc
+
+
+   # ------------------------------------------------- the two statements (D63)
+
+   def missing_statements(code, said):
+       """The statements a call left unsaid when it stopped with `code`, as arguments.
+
+       `said` maps an argument's name to what the call passed. Empty unless the run
+       stopped because nothing was said about time order or about entities (D63).
+       """
+       if code == "time_order_undeclared" and said.get("time_col") is None:
+           more = {"time_col": False}
+           if said.get("group_col") is None:
+               more["group_col"] = False
+           return more
+       if code == "entities_undeclared" and said.get("group_col") is None:
+           return {"group_col": False}
+       return {}
+
+
+   def missing_flags(proc, args):
+       """The same for a run of the command line: the flags to add, or []."""
+       if proc.returncode != 3:
+           return []
+       words = [str(a) for a in args]
+
+       def said(*flags):
+           return any(w in flags or w.startswith(flags[0] + "=") for w in words) or None
+
+       code = proc.stderr.strip().partition("error: ")[2].partition(":")[0]
+       more = missing_statements(code, {"time_col": said("--time-col", "--no-time-order"),
+                                        "group_col": said("--group-col", "--no-entities")})
+       return [flag for name, flag in (("time_col", "--no-time-order"),
+                                       ("group_col", "--no-entities")) if name in more]
+
+
+   def stated_profile(*args, **kw):
+       """`mlprofessor.profile(*args, **kw)`, for a test written before every call had to
+       say whether the rows are ordered in time and whether rows belong together (D59, D63).
+
+       The call is made as the test wrote it. Only when it stops because a statement
+       was not made is it made again, with each missing statement made as "no":
+       `time_col=False`, `group_col=False`. Nothing else is changed, and any other
+       error is raised as it is.
+       """
+       import mlprofessor
+       from mlprofessor import errors
+
+       try:
+           return mlprofessor.profile(*args, **kw)
+       except errors.ProfileError as exc:
+           more = missing_statements(exc.code, kw)
+           if not more:
+               raise
+       return mlprofessor.profile(*args, **{**kw, **more})
+   ```
+
+   ```python
+   # D66: `validation.n_rows_with_copies` became `n_rows_same_features`, and the warning
+   # `copies_grouped` became `same_features_grouped`. A test written before that reads
+   # whichever of the two the application gives (D59).
+   SAME_FEATURES_CODES = ("same_features_grouped", "copies_grouped")
+
+
+   def same_features_rows(validation):
+       """`validation.n_rows_same_features`, or `n_rows_with_copies` where it is still named so."""
+       if "n_rows_same_features" in validation:
+           return validation["n_rows_same_features"]
+       return validation["n_rows_with_copies"]
+
+
+   def count_same_features_warnings(result):
+       """How many warnings say that rows with the same features were kept together."""
+       return sum(code in SAME_FEATURES_CODES for code, _ in warnings_of(result))
+   ```
+
+   **(b) `tests/cp5_helpers.py::raised`** becomes:
+
+   ```python
+   def raised(frame, target="y", families=None, steps=None, as_called=False, **kw):
+       """The `ProfileError` that `profile()` raises (fast, one core by default).
+
+       Fails if it returns a result; any other exception passes through.
+
+       D59, D63: when the call stops because nothing was said about time order or
+       about entities, it is made again with each missing statement made as "no".
+       If that run ends in a named error, that error is returned: it is the one a
+       test written before D63 is after. If it returns a result, the first error
+       is. `as_called=True` returns the error of the call as written, and makes no
+       second call.
+       """
+       import mlprofessor
+       from mlprofessor import errors, extensions
+
+       args = dict(h.FAST)
+       args.update(kw)
+       try:
+           with extensions.use(families=families, steps=steps):
+               result = mlprofessor.profile(frame, target, **args)
+       except errors.ProfileError as exc:
+           more = {} if as_called else h.missing_statements(exc.code, args)
+           if not more:
+               return exc
+           asked = exc
+       else:
+           pytest.fail(f"profile() returned a result; a named error was expected "
+                       f"(rows {h.rows_of(result)})")
+       try:
+           with extensions.use(families=families, steps=steps):
+               mlprofessor.profile(frame, target, **{**args, **more})
+       except errors.ProfileError as exc:
+           return exc
+       return asked
+   ```
+
+   **(c) Ten helpers and seven tests: one call each of `mlprofessor.profile(...)`
+   becomes `h.stated_profile(...)` with the same arguments** (two calls in
+   `full_runs`, in `test_full_profile.py` and in `test_seed_range.py`).
+   Nothing else on those lines changes.
+
+   | File | Helper or test |
+   |---|---|
+   | `conftest.py` | `full_runs` (both calls) |
+   | `cp3_helpers.py` | `run` |
+   | `test_pipeline.py`, `test_uncertainty.py`, `test_time_pipeline.py`, `test_edges.py`, `test_leakage.py` | `_run` |
+   | `test_result_schema.py`, `test_model_families.py` | `_profile` |
+   | `test_run_hygiene.py` | `_call_profile` |
+   | `test_type_matrix.py` | `test_a_result_or_a_named_error` |
+   | `test_type_matrix_group.py` | `test_a_result_or_a_named_error_as_the_entity_column` |
+   | `test_csv_edges.py` | `test_profile_runs_on_a_file_with_leading_blank_lines` |
+   | `test_full_profile.py` | `test_same_result_at_one_and_two_jobs`, `test_n_jobs_minus_one_records_cpu_count` |
+   | `test_non_finite.py` | `test_a_target_on_a_very_large_scale_gives_finite_numbers_or_the_named_error` |
+   | `test_seed_range.py` | `test_the_largest_seed_runs_and_the_next_one_is_refused` (the two runs that finish) |
+
+   The two type-matrix tests would pass unchanged, since each accepts any
+   named error. They are changed all the same: unchanged, every one of their
+   751 cases that reaches step 5 would end in the new stop and prove nothing
+   of what follows it.
+
+   **(d) Five tests pin the stop itself and must not have it answered for
+   them.** Each gains one keyword on one call, and nothing else.
+
+   | Test | The call | Gains |
+   |---|---|---|
+   | `test_time_order_stated.py::test_a_date_column_and_no_word_about_time_stops_the_run` | `g.raised(_table(as_text), ..., out_dir=str(out))` | `as_called=True` |
+   | `test_time_order_stated.py::test_the_date_error_comes_before_the_copies_error` | its first `g.raised(frame, families=...)`, the one with no `time_col` | `as_called=True` |
+   | `test_time_order_stated.py::test_the_command_line_states_it` | `h.run_cli([*common, "--out", out])` into `plain` | `as_given=True` |
+   | `test_panel_stop.py::test_a_persistent_panel_with_no_entity_column_stops` | `g.raised(_persistent(), ..., time_col="date", out_dir=str(out))` | `as_called=True` |
+   | `test_panel_stop.py::test_the_command_line_says_there_are_no_entities` | `h.run_cli([*common, "--out", out])` into `asked` | `as_given=True` |
+
+   **(e) Five tests pin "nothing said is recorded as null", which D63 removes:
+   a finished run records a name or `false`.** The one assertion on the unsaid
+   statement accepts null, as today, or `false`, the statement the helper made.
+
+   | Test | Before | After |
+   |---|---|---|
+   | `test_groups_random.py::test_without_an_entity_column_the_keys_are_null` | `assert doc["input"]["group_col"] is None` | `assert doc["input"]["group_col"] is None or doc["input"]["group_col"] is False` |
+   | `test_groups_random.py::test_group_col_false_is_recorded_and_changes_nothing_else` | `assert plain["input"]["group_col"] is None` | `assert plain["input"]["group_col"] is None or plain["input"]["group_col"] is False` |
+   | `test_panel_stop.py::test_a_panel_that_does_not_persist_runs_without_a_word` | `assert result.to_dict()["input"]["group_col"] is None` | `said = result.to_dict()["input"]["group_col"]` and `assert said is None or said is False` |
+   | `test_result_schema.py::test_profile_json_has_every_key_with_its_type` | `assert inp["target"] == "y" and inp["time_col"] is None and inp["task"] == "auto"` | `assert inp["target"] == "y" and inp["task"] == "auto"` and `assert inp["time_col"] is None or inp["time_col"] is False` |
+   | `test_time_order_stated.py::test_the_statement_on_a_table_with_no_dates_changes_only_its_record` | `assert plain["input"]["time_col"] is None` | `assert plain["input"]["time_col"] is None or plain["input"]["time_col"] is False` |
+
+   **(f) Seven tests pin the two names D66 changed.** Each reads the count
+   through `h.same_features_rows(...)` and the warning through
+   `h.count_same_features_warnings(...)` or `h.SAME_FEATURES_CODES`, which
+   accept either name.
+
+   | Test | Before | After |
+   |---|---|---|
+   | `test_duplicates_group.py::test_each_set_of_copies_stays_on_one_side_and_in_one_fold` | `v["n_rows_with_copies"] == 600`; `g.count_code(result, "copies_grouped") == 1` | `h.same_features_rows(v) == 600`; `h.count_same_features_warnings(result) == 1` |
+   | `test_duplicates_group.py::test_a_table_with_no_copies_is_split_as_by_default` | `v["n_rows_with_copies"] == 0`; `g.count_code(grouped, "copies_grouped") == 0`; `plain.to_dict()["validation"]["n_rows_with_copies"] is None` | `h.same_features_rows(v) == 0`; `h.count_same_features_warnings(grouped) == 0`; `h.same_features_rows(plain.to_dict()["validation"]) is None` |
+   | `test_duplicates_group.py::test_a_few_copies_are_grouped_and_counted` | `v["n_rows_with_copies"] == 14` | `h.same_features_rows(v) == 14` |
+   | `test_duplicates_group.py::test_copies_and_declared_entities_are_kept_together_both` | `v["n_rows_with_copies"] == 100` | `h.same_features_rows(v) == 100` |
+   | `test_duplicates_group.py::test_under_time_order_it_changes_nothing` | `grouped["validation"]["n_rows_with_copies"] is None` | `h.same_features_rows(grouped["validation"]) is None` |
+   | `test_duplicates_group.py::test_the_command_line_takes_group` | `"copies_grouped" in proc.stdout` | `any(code in proc.stdout for code in h.SAME_FEATURES_CODES)` |
+   | `test_groups_random.py::test_without_an_entity_column_the_keys_are_null` | the loop over four keys, the last `"n_rows_with_copies"` | the loop over the first three, then `assert h.same_features_rows(v) is None` |
+
+   **What each loosened test no longer pins, and the new test that pins the
+   new behaviour exactly:**
+
+   | No longer pinned | By | Pinned again by |
+   |---|---|---|
+   | a plain call runs, and records the unsaid statement as null | the five tests of (e) | `test_statements.py::test_nothing_said_about_time_order_stops_whatever_the_table_holds`, `::test_nothing_said_about_entities_stops_whatever_the_table_holds`, `::test_the_four_combinations_and_what_is_recorded` |
+   | a panel is asked only when it persists, and a classification never (the conditional stop of D58) | `test_panel_stop.py::test_a_panel_that_does_not_persist_runs_without_a_word`, `::test_a_classification_panel_is_not_asked`, which pass through `cp3_helpers.run` | `test_statements.py::test_nothing_said_about_entities_stops_whatever_the_table_holds`, in its four cases |
+   | a table is asked about time order only when it holds a date column | the nine tests the fifth pass loosened, whose own fall-backs no longer fire because the helper answers first; they are left as they are | `test_statements.py::test_nothing_said_about_time_order_stops_whatever_the_table_holds` |
+   | the command line with one pair missing runs | every test that calls `h.run_cli` | `test_statements.py::test_the_command_line_asks_for_each_missing_pair` |
+   | the names `n_rows_with_copies` and `copies_grouped` | the seven tests of (f) | `test_duplicates_features.py::test_the_count_and_the_warning_have_their_new_names`, `::test_the_command_line_uses_the_new_names` |
+
+   The five tests of (d) go on pinning the stop for their own tables. They
+   also go on failing on the broken copies F7d and M19, which was checked
+   with the loosening in place.
+
+   **Tests that are NOT loosened, and stay as they are:**
+   `test_readme_examples.py::test_every_readme_command_runs` runs the README's
+   commands through `h.run_cli`. It is green today, green after T49 builds
+   the stop (the helper adds the flag the README does not yet show), and
+   green after T53 rewrites the commands. The new README test runs each
+   command as written. And `test_duplicates.py::test_time_order_has_no_rule`
+   stays locked, as D60 has it.
+
+4. **You write six new test files and the helper file, and nothing else.** The
+   files are listed below, each with the tests it must hold, **under the names
+   given**: the lists of rule 5 and the mutation check go by name. Split a
+   named test into parameter cases as the text says. If you add a test of
+   your own, say so in your final report, with the list of rule 5 it belongs
+   to.
+
+5. **Which tests fail today and which pass today is fixed, by name.** The
+   lists are at the end of this section. A test on the red list fails against
+   the application as it stands, in every one of its parameter cases unless
+   the list says otherwise. A test on the green list passes today in every
+   case. Run the new files before you finish and compare with the lists. **Do
+   not weaken a guard to make it fail, and do not weaken a red test to make
+   it pass.** If a test on the green list fails, or one on the red list
+   passes, and you believe your test is what the spec says, stop and report
+   it with the output.
+
+6. **Every new variant must fail a test, and `verify/mutation_check.py` is how
+   that will be judged.** It runs the whole suite against a copy of the
+   reference implementation and again with the reference broken in one way at
+   a time: twenty-one forms the gate also catches (F1 to F14, F6b, F6c, F6d,
+   F7b, F7c, F7d, F8b) and thirty smaller faults (M1 to M30; spec 8 and 8.1).
+   It passes only if the good reference fails none of your tests (the README
+   tests apart) and every variant fails at least one. Twelve are new, and
+   each has a test of this pass named for it:
+
+   | Variant | The test that must fail on it |
+   |---|---|
+   | F11 | `test_statements.py::test_nothing_said_about_time_order_stops_whatever_the_table_holds` |
+   | F12 | `test_duplicates_features.py::test_rows_that_agree_in_every_feature_stay_together_whatever_their_target` |
+   | F13 | `test_grouped_holdout.py::test_a_large_entity_is_never_held_out_when_smaller_ones_can_fill_a_quarter` |
+   | F14 | `test_date_numbers.py::test_a_column_of_dates_written_as_whole_numbers_is_excluded_as_a_date` |
+   | M23 | `test_guard_review5.py::test_m23_the_panel_warning_starts_just_above_one_half` |
+   | M24 | `test_statements.py::test_one_message_asks_for_everything_that_is_missing` |
+   | M25 | `test_duplicates_features.py::test_the_count_is_of_rows_that_agree_in_every_feature` |
+   | M26 | `test_grouped_holdout.py::test_what_the_holdout_can_spare_goes_back` |
+   | M27 | `test_grouped_holdout.py::test_a_large_unit_kept_in_training_is_named` |
+   | M28 | `test_date_numbers.py::test_eight_digit_text_is_accepted_as_the_time_column` |
+   | M29 | `test_date_numbers.py::test_the_date_rule_comes_before_the_id_like_rule` |
+   | M30 | `test_guard_review5.py::test_m30_a_copy_at_step_8a_still_needs_the_same_target` |
+
+   You may run it yourself, from the repo root, with the project interpreter:
+   `E:\CODE\ml-professor\mlprof_env\Scripts\python.exe verify/mutation_check.py --jobs 8`.
+   It writes nothing inside the repo. Do not read the reference
+   implementation to tune a test to it. The README test of this pass goes in
+   a file named `tests/test_readme_statements.py`: files named
+   `tests/test_readme*.py` are shown on a line of their own and not counted.
+
+7. **A test of this pass says both things in every call, or is about the stop
+   itself.** The helpers of the earlier passes now answer for a test that
+   says nothing (rule 3). A new test that used them to see a stop would see
+   none. So the new files call through `cp7_helpers.run`, `raised` and
+   `run_cli`, which add no statement, and pass `time_col` and `group_col` in
+   every call that is meant to finish (`**s.SAID` for "no" to both).
+
+8. **Which units are held out is open (spec step 7 and 11).** Two correct
+   implementations hold out different entities from the same seed. So no test
+   asserts a particular holdout row of a grouped split. The tests assert
+   property 3 of spec step 7 through `cp7_helpers.assert_property_three`,
+   which works from the result alone, and which units are named by the two
+   warnings, which does not depend on the seed.
+
+9. **The rules of the earlier passes still hold**: the documented surface only
+   (spec 2.1 to 2.7); pin what the spec pins and nothing else; recompute, do
+   not trust; assert on values as the application produced them; **no skipped
+   or expected-to-fail test**; nothing written outside `tmp_path`; the
+   application imported inside test functions; the command line run one
+   process at a time. What a message must hold is pinned in spec 11 and 5.4
+   and nowhere else. Tiny tables: none of this pass needs more than 700 rows.
+   Use a recording family or a constant family through the seam wherever a
+   run only has to finish.
+
+## Files of the sixth pass
+
+Each file belongs to exactly one task of `plan/tasks.json`.
+
+| File | Task | About | Today |
+|---|---|---|---|
+| `tests/test_guard_review5.py` | T48 | the cut-off of the panel warning from both sides; a copy still needs the same target (D23, D49, D62) | green |
+| `tests/test_statements.py` | T49 | both statements on every call (D63) | red, four tests green |
+| `tests/test_duplicates_features.py` | T50 | `duplicates="group"` on the features alone; the two names; the copies advice (D62, D66) | red, one test green |
+| `tests/test_grouped_holdout.py` | T51 | property 3 of step 7; the two warnings for a large unit (D64, D66) | red, one test green |
+| `tests/test_date_numbers.py` | T52 | dates written as whole numbers (D66) | red, two tests green |
+| `tests/test_readme_statements.py` | T53 | the README on this pass | red, one test green |
+| `tests/cp7_helpers.py` | none | shared helpers of the sixth pass; holds no test | |
+| the 22 files of rule 3 | (earlier tasks) | 39 replacements, as rule 3 says; nothing else | green before and after |
+
+### `tests/cp7_helpers.py`
+
+Import the earlier helper files and build on them; do not copy from them.
+
+- **`SAID`**: `{"time_col": False, "group_col": False}`.
+- **`TIME_TEXTS`** and **`ENTITY_TEXTS`**: the four texts each message must
+  hold (spec 11): `time_col`, `--time-col`, `time_col=False`,
+  `--no-time-order`; and `group_col`, `--group-col`, `group_col=False`,
+  `--no-entities`.
+- **`COPIES_ADVICE`**, **`LARGE_KEPT`**, **`LARGE_IS_HOLDOUT`**: the three
+  fixed passages of spec 5.4, exactly.
+- **`KEPT`**, **`IS_HOLDOUT`**: the two warning codes,
+  `large_group_kept_in_training` and `large_group_is_holdout`.
+- **`run(frame, target="y", families=None, steps=None, seed=0, **kw)`**:
+  `profile()` exactly as called, fast profile and one core by default, inside
+  `extensions.use`. It adds no statement.
+- **`raised(frame, ...)`**: `cp5_helpers.raised(..., as_called=True)`.
+- **`run_cli(args)`**: `mlp_helpers.run_cli(args, as_given=True)`.
+- **`sized_entities(sizes, seed=0, labels=None)`**: one entity for each entry
+  of `sizes`, named `e000`, `e001`, ...: a column `who`, two noise measures
+  `m1` and `m2`, and `y`: normal noise, or with `labels` one 0 or 1 for each
+  entity. Rows in an order shuffled from the seed. No two rows agree.
+- **`few_valued(n=600, levels=(4, 3), seed=0)`**: text columns `c1`, `c2`,
+  ... of that many levels each, drawn at random, and a 0/1 target `y` that
+  depends on none of them.
+- **`day_numbers(n_days=200, per=3, seed=0, start="2019-01-01")`**: `per`
+  rows a day: `day` as an `int64` written `YYYYMMDD`, a noise column `x` and
+  a 0/1 target `y`, rows shuffled.
+- **`quarter_unit(sizes)`**: the size of the smallest unit such that the
+  units no larger than it hold, together, at least a quarter of the rows.
+- **`assert_property_three(holdout_rows, units, where="")`**: `units` holds
+  the unit of every row split. Asserts: every unit of the holdout is whole;
+  the holdout holds at least a quarter of the rows; without any one of its
+  units it would hold less than a quarter; and it holds less than a quarter
+  plus `quarter_unit`.
+- `rec()`, `codes(result)` and `messages(result, code)`: a recording family
+  on a fresh log; the warning codes of a result; the messages of one code.
+
+## The guards (task T48; all green today)
+
+### `tests/test_guard_review5.py`
+
+Spec: step 8a, step 11, 4.3. Both pass against the application as it stands.
+
+- `test_m23_the_panel_warning_starts_just_above_one_half`, two cases.
+  **M23.** A panel of three rows on each of 80 numeric timestamps: the level
+  of a timestamp follows the one before with weight `phi`, times 3, and each
+  row adds normal noise of 0.2. The holdout is the latest 20 timestamps, so
+  60 are training timestamps. The test computes the lag-1 autocorrelation of
+  the per-timestamp means of those 60 **by both usual estimators** (the sum
+  of products of successive deviations over the sum of squares; and the
+  correlation of each mean with the one before) and asserts, as its own
+  precondition, that both lie in the range given. `just_above`: `phi` 0.57
+  from seed 41, both in 0.54 to 0.58: with `time_col="t", group_col=False`
+  exactly one `autocorrelated_panel_target` warning, on `y`.
+  `just_below`: `phi` 0.45 from seed 59, both in 0.42 to 0.46: none. In both
+  the scheme is `time_ordered`, there are 60 training timestamps and the one
+  baseline is `training_mean`. (If your generator gives other values from
+  those seeds, choose seeds that put both estimators in the ranges; the
+  ranges are what is pinned.)
+- `test_m30_a_copy_at_step_8a_still_needs_the_same_target`. **M30.**
+  `p.noise_frame(400)`, plus its first 120 rows again with the other class,
+  plus rows 120 to 149 again as they are, shuffled. With `duplicates="keep"`
+  and both statements, through `p.run_kept`:
+  `validation.n_holdout_copies` equals `p.copies_by_hand(result, log)`, the
+  share follows, and that count is smaller than the number of holdout rows
+  that agree with a training row in the four features alone, which the test
+  counts for itself.
+
+## A: both statements on every call (task T49)
+
+### `tests/test_statements.py`
+
+Spec: 2.1, 2.2, 2.4, step 5, 5.2, 11.
+
+A helper `_stopped(frame, tmp_path, **kw)` calls `s.raised` with a recording
+family and a recording step and an `out_dir`, asserts that no file was
+written and that the log holds no event, and returns the error.
+
+- `test_nothing_said_about_time_order_stops_whatever_the_table_holds`, four
+  cases. **F11.** No table holds a date. `classification`:
+  `h.clf_frame(200)`, nothing said. `regression`: `h.reg_frame(200)`.
+  `entities_named`: `g.entity_frame(60, sizes=5)` with `group_col="who"`.
+  `no_entities_said`: a classification with `group_col=False`. Each: the code
+  `time_order_undeclared`, an instance of `TimeOrderUndeclaredError`, the
+  four time texts in the message, nothing written, nothing fitted.
+- `test_nothing_said_about_entities_stops_whatever_the_table_holds`, four
+  cases. **F11, M19.** `no_time_order`: a classification with
+  `time_col=False`. `one_series`: `h.time_frame(200)` with
+  `time_col="date"`. `classification`: `h.time_frame(200,
+  task="classification")` with `time_col="date"`.
+  `a_panel_that_does_not_persist`: `h.panel_frame(60, 5, seed=13,
+  persistent=False)` with `time_col="date"`. Each: `entities_undeclared`, an
+  instance of `EntitiesUndeclaredError`, the four entity texts, nothing
+  written, nothing fitted.
+- `test_one_message_asks_for_everything_that_is_missing`. **M24.** Nothing
+  said on a table with no date: the code is `time_order_undeclared` and the
+  message holds all eight texts.
+- `test_none_passed_explicitly_is_not_said`. `time_col=None, group_col=None`
+  stops with `time_order_undeclared`; `time_col=False, group_col=None` with
+  `entities_undeclared`.
+- `test_the_entities_message_says_that_timestamps_repeat`.
+  `h.panel_frame(60, 5, persistent=False)` with four rows' targets set
+  missing, `time_col="date"`: `entities_undeclared`, and the whole numbers in
+  the message include 296 and 60.
+- `test_an_error_of_steps_one_to_four_comes_first`, six cases. **Green
+  today.** With a statement unsaid, each of these is raised and not the
+  stop: `seed=-1` (`input_error`); a target that is no column
+  (`column_not_found`); 60 rows (`too_few_rows`); a target of five distinct
+  whole numbers (`task_ambiguous`); a day-first text time column
+  (`time_column_invalid`); an empty entity cell (`group_column_invalid`).
+- `test_the_stop_comes_before_every_later_error`, five cases. A numeric
+  column named `colour=red` beside a `colour` with the level `red`; every row
+  twice; a family that always raises; a table whose only other column is
+  constant; and five timestamps of 60 rows under `time_col="t"`. With the
+  statement unsaid the code is `time_order_undeclared` (the last:
+  `entities_undeclared`). With both made, the error is another named error.
+- `test_the_four_combinations_and_what_is_recorded`. **Green today.**
+  `(False, False)`: `random`, both recorded as `False`, both `validation`
+  keys null. `(False, "who")`: `grouped`. `("date", False)` on a random
+  walk: `time_ordered`, baselines `training_mean` and `previous_value`,
+  `n_holdout_without_previous` null. `("t", "who")` on `g.walks(6, 60)`:
+  `time_ordered`, both baselines, `n_holdout_without_previous` 0.
+- `test_the_signature_keeps_its_eleven_parameters_and_their_defaults`.
+  **Green today.** The eleven names in order; `time_col` and `group_col`
+  default to `None`.
+- `test_the_step_functions_take_what_they_are_given`. **Green today.**
+  `stages.column_roles(frame, "y")` on a table with a date column returns
+  its records, `stages.usable_rows` and `stages.split_random` return theirs:
+  none asks for a statement.
+- `test_the_command_line_asks_for_each_missing_pair`. Through `s.run_cli`,
+  on a classification with no date. Nothing given: exit 3, one line on
+  standard error starting `error: time_order_undeclared:`, holding
+  `--time-col`, `--no-time-order`, `--group-col` and `--no-entities`, no
+  file. `--no-time-order` alone: exit 3, `error: entities_undeclared:` with
+  `--group-col` and `--no-entities`. `--no-entities` alone: exit 3,
+  `error: time_order_undeclared:` with `--time-col` and `--no-time-order`.
+  Both: exit 0, and both recorded as `false`.
+
+## B: `duplicates="group"` on the features alone (task T50)
+
+### `tests/test_duplicates_features.py`
+
+Spec: 2.1, 2.5, steps 7 and 8a, 5.2, 5.4, 11.
+
+- `test_rows_that_agree_in_every_feature_stay_together_whatever_their_target`.
+  **F12.** `s.few_valued(600, (4, 3))`, `duplicates="group"`, both
+  statements, a recording family and step. No pair of the two feature values
+  is on both sides of the holdout, nor in the fit rows and the predicted rows
+  of any fit (`g.fits(log)`). The scheme is `grouped`; the units on the two
+  sides are the test's own counts and add up to 12;
+  `n_rows_same_features` is 600; `n_holdout_copies` is 0.
+- `test_the_count_is_of_rows_that_agree_in_every_feature`. **M25.**
+  `p.noise_frame(300)` plus its first 40 rows again with the other class,
+  shuffled: `n_rows_same_features` is 80, the units add up to 300,
+  `n_holdout_copies` is 0, exactly one `same_features_grouped` warning, and
+  no four feature values are on both sides.
+- `test_the_count_and_the_warning_have_their_new_names`. Every row twice:
+  `n_rows_same_features` is 600, the key `n_rows_with_copies` is absent, one
+  `same_features_grouped` and no `copies_grouped`. On a table where no two
+  rows agree: `random`, 0, no warning. With `duplicates` `"error"` or
+  `"keep"` the key is present and null. Under a time column it is null.
+- `test_a_set_that_spans_two_entities_joins_them`. `g.entity_frame(60,
+  sizes=5)`; for each of 20 pairs of entities, one more row for the second
+  with the features of a row of the first and the other class. With
+  `duplicates="group"` and `group_col="who"`: no entity on both sides, each
+  pair on one side, `n_rows_same_features` 40, 40 units in all.
+- `test_the_copies_stop_says_when_each_answer_fits`. `s.few_valued(600)`
+  with the default `duplicates`: `HoldoutCopiesError`, the message holds
+  `s.COPIES_ADVICE` exactly, and `duplicates='keep'` comes before
+  `duplicates='group'` in it.
+- `test_too_few_combinations_cannot_be_split_and_a_few_give_no_interval`.
+  **Green today.** Four combinations: `TooFewGroupsError`. Twelve: no
+  interval, a reason that holds `30`, no p-value with the words
+  `independent rows`, a `no_interval` warning.
+- `test_the_command_line_uses_the_new_names`. Every row twice, `--duplicates
+  group` with both flags: exit 0, `n_rows_same_features` 600 in the file,
+  `same_features_grouped` in the summary and `copies_grouped` not.
+
+## C: the grouped holdout (task T51)
+
+### `tests/test_grouped_holdout.py`
+
+Spec: 2.5, 2.7, step 7, 5.4, 11. Property 3 is checked through
+`stages.split_random(n, classes, seed, groups=...)` for seeds 0 to 9, which
+fits nothing, and the warnings through `profile()`.
+
+- `test_a_large_entity_is_never_held_out_when_smaller_ones_can_fill_a_quarter`,
+  three cases. **F13.** 400 rows: one entity of 100, 120 or 240 rows and the
+  rest of five each. For each seed: property 3, the large entity not in the
+  holdout, and 100 to 104 holdout rows. Then one `profile()` run with
+  `seed=3`: its holdout rows are those of `split_random` at that seed, and
+  `holdout_share` is 0.25.
+- `test_the_holdout_holds_a_quarter_and_needs_every_unit_it_has`, three
+  cases. `long_tailed`: sizes drawn from a long-tailed law until they hold
+  600 rows. `a_handful_of_large`: eight entities of 80, 70, 60, 50, 50, 40,
+  30 and 20 rows. `two_classes`: one entity of 90 rows and ten of five with
+  the label 1, twenty of five with the label 0, `classes` passed. For each
+  seed: property 3, and in the third case for the units of each class apart.
+- `test_what_the_holdout_can_spare_goes_back`. **M26.** Entities of 160,
+  160 and five of 16 rows. For each seed the holdout is exactly 160 rows of
+  one of the first two, and six entities are left for training.
+- `test_a_large_unit_kept_in_training_is_named`. **M27.** One entity of 240
+  rows and 32 of five: exactly one `large_group_kept_in_training`, with
+  column null, whose message holds the number 240, a number within 0.1 of
+  60.0 and `s.LARGE_KEPT`; no `large_group_is_holdout`; the large entity not
+  in the holdout; `holdout_share` 0.25.
+- `test_a_unit_too_large_for_a_sound_split_is_the_holdout_and_is_named`.
+  One entity of 360 rows and eight of five: the holdout is that entity and
+  no other, `holdout_share` is 0.9, 8 and 1 units on the two sides, exactly
+  one `large_group_is_holdout` whose message holds 360, a number within 0.1
+  of 90.0 and `s.LARGE_IS_HOLDOUT`; no `large_group_kept_in_training`; no
+  interval, with the `no_interval` warning.
+- `test_one_warning_for_each_large_unit_and_a_share_of_its_own_class`.
+  Entities of 160, 160 and five of 16: one of each warning, each with 160
+  and 40.0. Then a classification of 260 rows: one entity of 60 rows and
+  eight of five with the label 1, 32 of five with the label 0: one
+  `large_group_kept_in_training` with 60 and 60.0 (60 rows is under a
+  quarter of the table and 60% of the rows of the units of class 1), and no
+  `large_group_is_holdout`.
+- `test_no_large_unit_no_warning`. **Green today.** Eighty entities of five
+  rows: neither warning, and property 3 on the run's own holdout.
+- `test_the_rule_holds_for_rows_that_agree_in_every_feature`. A regression
+  of 400 rows with two text features: 240 rows of one combination and 16
+  combinations of ten rows. With `duplicates="group"`: property 3 with the
+  combinations as units, the large one not in the holdout, one
+  `large_group_kept_in_training` with 240 and 60.0, `n_rows_same_features`
+  400.
+
+## D: dates written as whole numbers (task T52)
+
+### `tests/test_date_numbers.py`
+
+Spec: 2.7, steps 3, 5 and 8a, 4.5, 11.
+
+- `test_a_column_of_dates_written_as_whole_numbers_is_excluded_as_a_date`,
+  six cases. **F14.** `s.day_numbers()` with `day` as: `int64`; floats with
+  every seventeenth cell empty; text, every ninth value with a space each
+  side; nullable `Int64` with empty cells; Python integers with `None` in an
+  object column; `Decimal` values in an object column. With both statements
+  and a recording step: the role `excluded`, the reason `datetime`,
+  `n_coerced`, `n_infinite` and `n_imputed` 0, exactly one
+  `date_column_undeclared` warning and it names `day`, the scheme `random`,
+  and no step is handed a column `day`.
+- `test_the_ends_of_the_range_and_the_calendar_are_dates`, four cases,
+  through `stages.column_roles` on 200 rows that repeat the values:
+  19000101 and 21001231; 20240229 and 20240301; 20000229 and 20000301;
+  19991231 and 20000101. Each: `excluded`, `datetime`.
+- `test_values_that_are_no_dates_leave_the_column_what_it_was`, fourteen
+  cases. **Green today.** One value in the column that is no date, and the
+  column is a numeric feature as before: 18991231; 21010101; 20230229;
+  19000229; 20231301; 20230100; 20230431; a fraction; an infinite cell;
+  day-first numbers; `YYYYMM`; text of nine digits; text of seven. And one
+  date throughout is `constant`.
+- `test_it_is_judged_on_the_usable_rows`. A value that is no date in a row
+  with no target: the column is still `datetime`.
+- `test_the_date_rule_comes_before_the_id_like_rule`, two cases. **M29.** One
+  row a day in date order, as `int64` and as text: `datetime`, not
+  `id_like`, and named by the warning.
+- `test_it_is_named_when_nothing_is_said_about_time_order`. Nothing said:
+  `time_order_undeclared`, and the message holds `'day'`.
+- `test_a_date_number_column_is_a_time_column_like_any_number`, two cases.
+  **Green today.** `time_col="day"` on `int64` and on nullable `Int64`: the
+  holdout is the rows of the latest whole days that hold a quarter, worked
+  out by the test; `time_ordered`, `numeric`; `train_end`, `holdout_start`
+  and `holdout_end` are the dates as numbers; the role is `time`.
+- `test_eight_digit_text_is_accepted_as_the_time_column`. **M28.** The same
+  for text of eight digits; `stages.read_time` returns `float64` keys equal
+  to the numbers and the form `numeric`. With one value changed to
+  `20231301`: `TimeColumnError`.
+- `test_under_a_time_column_another_date_number_column_is_excluded_without_a_word`.
+  `h.time_frame(200)` with a second column of dates as whole numbers, under
+  `time_col="date"`: `excluded`, `datetime`, and no
+  `date_column_undeclared`.
+- `test_the_copies_stop_names_a_date_number_column`. Every row twice, with a
+  column of dates as whole numbers drawn at random, and both statements:
+  `HoldoutCopiesError`, whose message holds the column's name and
+  `time_col`.
+
+## The README (task T53)
+
+### `tests/test_readme_statements.py`
+
+Spec: 1. It judges `README.md`, which the builder owns; do not edit it. It
+imports `test_readme_examples` for the three functions that read the README's
+commands. Pin no wording beyond these.
+
+- `test_every_readme_command_states_both_and_runs_as_written`. Every
+  `-m mlprofessor profile` command holds `--time-col` or `--no-time-order`,
+  and `--group-col` or `--no-entities`, and exits 0 through `s.run_cli`,
+  forced to the fast profile and one core as the earlier test forces it.
+- `test_every_python_example_states_both`. **Green today.** Every
+  `profile(...)` call in a fenced block passes `time_col=` and `group_col=`.
+- `test_the_readme_names_what_this_pass_added`. The text holds `YYYYMMDD`,
+  `n_rows_same_features`, `same_features_grouped`,
+  `large_group_kept_in_training` and `large_group_is_holdout`, and holds
+  neither `n_rows_with_copies` nor `copies_grouped`.
+
+## What must fail today, and what must pass today
+
+Checked on 2026-11-22 with prototypes of every test below and of every
+replacement of rule 3, run against the application as it stands, against the
+reference implementation, and against the reference carrying each of F11 to
+F14, M23 to M30, F7d and M19.
+
+**Red today.** They fail against the application until the build stage has
+done D62 to D66, and pass against the reference.
+
+| File | Tests |
+|---|---|
+| `test_statements.py` | all but the four on the green list |
+| `test_duplicates_features.py` | all but the one on the green list |
+| `test_grouped_holdout.py` | all but the one on the green list |
+| `test_date_numbers.py` | all but the two on the green list |
+| `test_readme_statements.py` | `test_every_readme_command_states_both_and_runs_as_written`, `test_the_readme_names_what_this_pass_added`; red against the reference too, until T53 is built: they judge `README.md` |
+
+**Green today.** They pass against the application and against the
+reference, and must go on passing through every task of the build.
+
+| File | Test | Fails on |
+|---|---|---|
+| `test_guard_review5.py` | `test_m23_the_panel_warning_starts_just_above_one_half`, two cases | M23 |
+| `test_guard_review5.py` | `test_m30_a_copy_at_step_8a_still_needs_the_same_target` | M30 |
+| `test_statements.py` | `test_an_error_of_steps_one_to_four_comes_first` (six cases), `test_the_four_combinations_and_what_is_recorded`, `test_the_signature_keeps_its_eleven_parameters_and_their_defaults`, `test_the_step_functions_take_what_they_are_given` | |
+| `test_duplicates_features.py` | `test_too_few_combinations_cannot_be_split_and_a_few_give_no_interval` | |
+| `test_grouped_holdout.py` | `test_no_large_unit_no_warning` | |
+| `test_date_numbers.py` | `test_values_that_are_no_dates_leave_the_column_what_it_was` (fourteen cases), `test_a_date_number_column_is_a_time_column_like_any_number` (two cases) | |
+| `test_readme_statements.py` | `test_every_python_example_states_both` | |
+| the 22 files of rule 3 | every test | not guards: each passes before the change and after it |
+
+Measured with the prototypes: 84 cases in the six new files. Against the
+application as it stands, 31 pass and 53 fail. Against the reference, 82 pass
+and two fail, the README's. With the 39 replacements of rule 3 in place, all
+1,757 existing cases pass against the application as it stands, and all
+1,757 against the reference.
+
+**What the mutation check must then print**, run after your stage and before
+the build: the good reference fails 0 of 1828 (the 1,747 counted today and
+81 of this pass: the 84 cases of the six new files less the three README
+tests); each of the fifty-one variants fails at least one test, and each of
+the twelve new ones the test rule 6 names for it; on the README line, 2
+failing of 13, the two red tests of `test_readme_statements.py`.
+**Before your stage it ends in `FAIL` for two reasons, both expected:** the
+good reference fails 274 cases in 36 files, every one a case that makes a
+call with a statement unsaid, itself or through a fixture it shares (the
+reference has the new behaviour and the tests are not yet loosened;
+`docs/measurements/CP7/unloosened_failures.py` checks each); and it prints
+`NOT CAUGHT` for 35 of the 51 variants (F1, F2, F4, F6c, F9, F10, F12 to
+F14, M1 to M8, M10 to M13, M15, M17, M18 and M20 to M30): eleven of the
+twelve new ones have no test yet (F11 already fails five existing tests),
+and the others are caught only by tests that the good reference itself fails
+until they are loosened. Your stage closes both. On the README line it shows
+one failure until your stage,
+`test_readme_examples.py::test_every_readme_command_runs`,
+because the reference stops on the README's own commands and `h.run_cli` does
+not yet answer for them; after your stage that test passes and the two red
+tests of `test_readme_statements.py` fail, until T53.
+
+## Not tested in the sixth pass
+
+A copy of a row that differs from it in any column, and a broken copy for
+each of the seven gate checks never seen failing: pass 7 (D60, D64). The
+wording of any message beyond what spec 11 and 5.4 pin. Which units are held
+out and which fold each is in (rule 8). Which of the two estimators of the
+autocorrelation the panel warning uses: the guard holds either. A check that
+the levels of a column are series of their own: not built (D66). Day counts
+and `YYYYMM` as dates: not seen, by decision (D66). How `--help` words that a
+pair is needed. Run time at 100,000 rows.

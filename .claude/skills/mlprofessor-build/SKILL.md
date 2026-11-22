@@ -121,7 +121,7 @@ them were loosened by the tests stage so that they pass before and after
 25. **The undeclared date column (T42).** `time_col=None` with a date column
     stops at step 5; `time_col=False` is the caller's statement and gives the
     old behaviour. Change the README's commands in the same task: the example
-    table has a date column.
+    table has a date column. (T49 makes the stop unconditional: step 31.)
 26. **Entities under the random scheme (T43).** `group_col`, the role `group`,
     the split of whole entities, the cap of whole entities, the interval from
     whole entities, no p-value. The five properties of spec step 7 are the
@@ -132,8 +132,29 @@ them were loosened by the tests stage so that they pass before and after
     said about entities.
 28. **`duplicates="group"` (T45).** The exact copies of step 8a, found before
     the split, each set on one side. Nothing wider: the broader screen is not
-    in this version (D60).
+    in this version (D60). (T50 changes which rows are a set: step 32.)
 29. **The entity role of the type matrix (T46)**, then the **README (T47)**.
+30. **Guards of the sixth pass (T48).** The 0.5 cut-off of the panel warning,
+    held from both sides, and the count of step 8a, which still reads the
+    target. Expect to change nothing.
+31. **Both statements on every call (T49).** `None` for `time_col` or
+    `group_col` is "not said", and stops the run at step 5 whatever the table
+    holds: `time_order_undeclared` when time order is unsaid (its message asks
+    for both when both are), `entities_undeclared` when only the entities are.
+    Exit code 3 on the command line, never argparse's 2. The stop for entities
+    moves from step 11 to step 5; the two conditions that used to decide a
+    stop (a date form, an autocorrelation) now decide only a warning.
+32. **`duplicates="group"` on the features alone (T50).** The sets are the
+    rows that agree in every feature column; the target plays no part. The
+    count and the warning are renamed (`n_rows_same_features`,
+    `same_features_grouped`). Step 8a is not touched.
+33. **The grouped holdout (T51).** A unit joins while the holdout stays under
+    a quarter; the smallest unit passed over completes it; what it can spare
+    goes back. Then the two warnings for a unit of a quarter or more.
+34. **Dates written as whole numbers (T52).** Rule 2a of step 5, before the
+    id-like rules: every value a calendar date `YYYYMMDD`, two distinct.
+    Excluded as `datetime`; eight-digit text accepted as the time column.
+35. **The README (T53).** Every command and every example says both things.
 
 ## Rules that keep the number honest
 
@@ -218,13 +239,20 @@ them were loosened by the tests stage so that they pass before and after
   next fault of the same class.
 - Nothing is excluded in silence: a column the tool cannot read is named in a
   warning, so the caller who meant it as a feature finds out.
-- Where the tool has reason to think the headline would be inflated, it stops
-  and asks; it does not warn and carry on (D58). A date column with nothing
-  said about time order, a panel with nothing said about entities, copies of
-  holdout rows in training: each is a named error that names what the caller
-  can pass. `None` means "nothing was said"; `False` is the caller's statement
-  that the reason does not apply, and it is recorded in `input`. Never treat
-  the two alike.
+- The tool assumes nothing about time order or about entities (D63). Every
+  call says both: a column's name, or `False`. `None` means "nothing was
+  said", and stops the run at step 5 with a named error, whatever the table
+  holds; `False` is the caller's statement, and it is recorded in `input`.
+  Never treat the two alike, and never let what the table looks like decide
+  whether to ask: a detector for one kind of table leaves the next kind open
+  (a panel of twelve timestamps, a day held as a number). What the table
+  shows is a warning beside the statement, nothing more. Copies of holdout
+  rows in training are a named error too (D49).
+- One message tells the caller everything that is missing. With both
+  statements unsaid the error is `time_order_undeclared` and it asks for both.
+  On the command line a missing pair is that same error, exit code 3: do not
+  make the pair `required` for argparse, whose exit 2 could not name the date
+  columns the table holds.
 - Rows that belong together stay together. With `group_col` and no time
   column, split entities, not rows: for the holdout, for every fold, under the
   fast profile's cap, and in every resample of the interval. A row-by-row
@@ -237,9 +265,24 @@ them were loosened by the tests stage so that they pass before and after
   more, and it is used wherever the previous value is: the headline baseline
   and the leak screen. Forget it in the screen and the lag of a persistent
   panel is thrown out as a leak.
-- A copy is an exact copy (D49, D60). `duplicates="group"` keeps exact copies
-  together and nothing wider; a copy that differs in any column is not
-  detected in this version, and the README says so plainly.
+- A copy is an exact copy (D49, D60): the same value in every feature and
+  the same target. That is what step 8a counts, and it did not change. A copy
+  that differs in any column is not detected in this version, and the README
+  says so plainly.
+- `duplicates="group"` keeps together the rows that agree in every feature
+  column, and never looks at the target to do it (D62). Form the sets with the
+  target and a held-out set has only its opposite class among the training
+  rows: noise then scores far below zero, which looks like a result.
+- The grouped holdout holds a quarter and no more than it must (D64). Take a
+  unit while the holdout stays under a quarter, complete with the smallest
+  unit passed over, return what it can spare. Units taken in seed order until
+  a quarter is held make a holdout of 70% when a large one comes early. A
+  unit of a quarter or more is always named: kept in training and so never
+  tested, or the whole holdout because nothing smaller can fill it (D66).
+- A date is a date however it is written. Whole numbers that all read as
+  `YYYYMMDD` are excluded like a date column, before the id-like rule can
+  call them an identifier (D66). Only that form: a day count or `YYYYMM`
+  cannot be told from a measure, and the spec says so.
 - Read a column once. What an object column is, is decided over all its loaded
   rows; a second reading over the usable rows only lets a cell that should
   stop the run slip out with its row.
@@ -308,12 +351,21 @@ them were loosened by the tests stage so that they pass before and after
 | `test_guard_review3.py` fails | One of six pinned details moved: the percentiles (2.5 and 97.5), the leak screen's previous-value baseline, the seeded sample of the fast cap, the sample deviation in `cv_std`, shared ranks for ties in every resample, `n_imputed` over training and holdout rows only (M8 to M13). The application is wrong, not the test. | The test's name says which. |
 | `test_type_matrix.py` fails with a raw exception in a case named kind-role-extreme | A kind of column, in that role, with that value, reached code not written for it. | The first frame of the traceback inside the package. Decide what the spec says of that kind (steps 1a to 5), and make that place do it. |
 | `data.rows_reconcile`, `data.columns_accounted`, `data.coercion_reported` or `time.undeclared_warns` fails with exit 2 and "unrecognized arguments: --no-time-order" | The command line does not take `--no-time-order` yet (D58). Those runs are on tables with a date column and no time column, and say so. | T42: `time_col=False` in `profile()`, `--no-time-order` on the command line. |
-| `time.undeclared_stops` fails with exit 0 | A table with a date column and nothing said about time order was split at random (F7d). | Step 5: stop with `time_order_undeclared` when `time_col` is `None` and a column is excluded as `datetime`. |
+| `time.undeclared_stops` fails with exit 0 | A table with a date column and nothing said about time order was split at random (F7d). | Step 5: stop with `time_order_undeclared` when `time_col` is `None`, whatever the columns hold (D63). |
+| `statements.time_order_asked` or `statements.entities_asked` fails with exit 0 | A statement the caller did not make was assumed (F11): `None` was read as `False`. | Step 5: `time_col is None` stops with `time_order_undeclared`; otherwise `group_col is None` stops with `entities_undeclared`. No condition on the table. |
+| The same two fail with exit 2 | The pair was made `required` for argparse. A missing pair is the function's own error, exit 3, with its message. | The command line: pass `None` through and let `profile()` stop. |
+| `statements.time_order_asked` fails: the message does not name `--group-col` | With both unsaid the message asked for time order only (M24). | The message of `time_order_undeclared`: when `group_col` is `None` too, it asks for both. |
+| An older test fails with `time_order_undeclared` or `entities_undeclared` after T49 | It reaches `profile()` by a road that does not answer for it. The suite's helpers (`mlp_helpers.stated_profile`, `run_cli`, `cp5_helpers.raised`) repeat a call with the missing statement only when the run stops for one. | Not the test: check that the stop is raised at step 5 with exactly these two codes, and that an error of steps 1 to 4 still comes first. |
+| `duplicates.group_on_features` fails: combinations on both sides; or `duplicates.group_no_skill` fails with skill near -0.9 | The sets of `duplicates="group"` were formed with the target (F12). | Step 7: the key of a set is the feature columns of step 5, nothing else. |
+| `validation` has no key `n_rows_same_features`, or the summary shows `copies_grouped` | The two names D66 changed. | Where `validation` and the warning are built: `n_rows_same_features`, `same_features_grouped`; the old names are not written. |
+| `groups.holdout_bounded` fails with a holdout of three quarters of the rows or more | Units were taken in seed order until a quarter was held, and the large one came before the small ones had filled it (F13). | Step 7, property 3: take while the holdout stays under a quarter, complete with the smallest unit passed over, return what it can spare. |
+| The same check fails on the warnings | A unit of a quarter or more was not named, or by the wrong code. | One `large_group_kept_in_training` for each such unit among the training rows; one `large_group_is_holdout` when it is the holdout. |
+| `time.date_numbers_seen` fails: the column `day` is a `feature`, or `id_like` | Dates written as whole numbers were read as a measure, or the id-like rule was asked first (F14, M29). | Step 5, rule 2a, after rules 1 and 2 and before every other. |
 | `groups.kept_together` fails: entities on both sides, with `validation.scheme` saying `grouped` | The entity column was read and reported, and the split was made row by row all the same (F10). | The split of step 7: it takes the entities, not the rows. Then the folds, the cap and the bootstrap. |
 | `groups.no_skill_on_entities` fails with skill near 0.8 | The same: a row of an entity on each side lets a model know the entity again. | As above. |
 | `time.panel_previous_value` fails: `baselines` lists only `training_mean`, skill near 1 | With entities declared the previous value was not computed per entity, or was dropped because the timestamps repeat (F8b). | Step 11: each entity's latest row at least `gap + 1` timestamps earlier. |
 | The lag column of a panel is excluded as `suspected_leak` although the entity column is declared | The leak screen measured it against the training mean only (M16). | Step 8: the screen's baseline uses each entity's previous value too. |
-| `entities_undeclared` on a table that ran before | Repeated timestamps and a target that follows its own past: a panel (D58). | Not a defect: pass `group_col`, or `group_col=False` if there are no entities. |
+| `entities_undeclared` or `time_order_undeclared` on a table that ran before | Nothing was said about entities, or about time order. Since D63 every call says both. | Not a defect: pass the column's name, or `False`. |
 | A table with rows that have a copy runs under `duplicates="group"` and then stops with `holdout_copies_in_training` | The leak screen excluded a column, and rows that differed only there became copies on opposite sides. | Not a defect: the message names the column; the caller removes it. |
 | `test_type_matrix_group.py` fails with a raw exception | A kind of column, as the entity column, reached code not written for it. | Where the entity column's cells are compared: fix it there. No broad `except`. |
 | A result holds `null` where a number belongs in `task`, `columns` or `input`; or `test_review4_small.py` fails | The finite check looked at the five scoring parts only (finding 4). | The constructor of `ProfileResult`: every part of the document. |

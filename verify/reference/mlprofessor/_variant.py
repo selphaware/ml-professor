@@ -24,11 +24,25 @@ other line of the package stays the same.
     F7c  whole-number time keys are always read as 64-bit floats, so distinct
          instants above 2**53 become one timestamp (D50)
     F7d  a table with a date column and no word from the caller about time
-         order is split at random, with a warning, where it should stop (D58)
+         order is split at random, with a warning, where it should stop (D58).
+         Since D63 every table stops there; this copy still lets through the
+         one that holds dates
     F8b  with the entity column declared under time order, the headline is
          still scored against the training mean alone (D57)
-"M1" .. "M22" small faults that no gate check is relied on to catch (D39, D46,
-              D52, D57). They exist for the test suite:
+"F11" .. "F14" the failure modes of the sixth pass (D62 to D66), each with a gate
+              dataset or run and a check that names it.
+    F11  a statement the caller did not make is assumed: with nothing said
+         about time order, or about entities, the run goes ahead as if
+         `False` had been passed (D63)
+    F12  `duplicates="group"` forms its sets with the target: rows that agree
+         in every feature and differ in class are kept apart, so a held-out
+         set has only its opposite class among the training rows (D62)
+    F13  the grouped holdout takes the units in seed order until they hold a
+         quarter, so one large unit drawn early makes it far more (D64)
+    F14  a column of dates written as whole numbers, YYYYMMDD, is a numeric
+         feature and nothing says that the table holds dates (D66)
+"M1" .. "M30" small faults that no gate check is relied on to catch (D39, D46,
+              D52, D57, D62 to D66). They exist for the test suite:
               verify/mutation_check.py proves a test fails on each.
     M1  the final fit's imputation and scaling statistics are learned from
         training and holdout rows together
@@ -67,12 +81,30 @@ other line of the package stays the same.
     M18 the check that no number of the output is infinite or not-a-number
         covers five parts of the document, not every part (finding 4)
     M19 a panel with no declared entity column and an autocorrelated target
-        goes ahead with a warning, where it should stop and ask (D58)
+        goes ahead with a warning, where it should stop and ask (D58). Since
+        D63: under a time column, nothing said about entities is read as
+        `group_col=False`, whatever the table holds
     M20 the infinite cells of the target and of the time column are left out
         of `n_infinite` in their column records (finding 3)
     M21 under the grouped scheme the bootstrap draws rows one by one and still
         reports `bootstrap_groups`
     M22 with `duplicates="group"` the copies are found and counted, and the
         split is made row by row all the same
+    M23 the panel warning's cut-off is 0.8, the value abandoned in D23, not 0.5
+    M24 with both statements unsaid, the message asks for time order only, so
+        the caller needs a second failed call to learn of the other (D63)
+    M25 with `duplicates="group"` the sets are formed on the features, and the
+        count of rows still reads the target: it counts exact copies (D62)
+    M26 the grouped holdout is completed by the smallest unit passed over, and
+        nothing it can spare goes back to the training rows (D64)
+    M27 a unit of a quarter or more that is kept among the training rows gets
+        no warning; only the one that is the holdout is named (D66)
+    M28 dates written as eight digits of text are refused as the time column,
+        though the same column is excluded as a date (D66)
+    M29 the id-like rule is asked before the date-number rule: one row a day
+        in date order is `id_like`, and nothing says the table holds dates
+    M30 the count of step 8a is made on the features alone, like the sets of
+        `duplicates="group"`: a holdout row counts as having a copy when a
+        training row agrees in every feature, whatever its target (D62)
 """
 BROKEN = None

@@ -25,6 +25,15 @@ every check of its family. The other forms have fixtures of their own (D46):
   F7d a table with a date column is split at random without the caller's say (D58)
   F8b a panel is scored against the training mean although its entities were declared (D57)
 
+The sixth pass added four (D62 to D66):
+  F11 a statement the caller did not make is assumed: nothing said about time order,
+      or about entities, and the run goes ahead (D63)
+  F12 `duplicates="group"` forms its sets with the target, so a held-out set has only
+      its opposite class among the training rows (D62)
+  F13 the grouped holdout takes far more than a quarter because a large entity was
+      drawn early (D64)
+  F14 dates written as whole numbers, YYYYMMDD, are a numeric feature (D66)
+
 The self-test proves more than gatekit asks. gatekit accepts a failure mode as
 soon as one check that names it fails on its fixture. Here every check that
 names a mode must fail on that mode's own fixture, and the self-test prints
@@ -277,6 +286,10 @@ BANDS = {
     # -0.023..+0.006 (mean -0.003, sd 0.007). F8b (scored against the training
     # mean): 0.995..0.999.
     "panel": (-0.04, 0.03),
+    # a region of 4 levels and a branch of 16, 2,000 rows, a label drawn at random,
+    # `--duplicates group` (CP7): good -0.121..+0.084 (mean -0.000, sd 0.044). F12 (the
+    # sets formed with the target): -1.000..-0.648 (mean -0.906, sd 0.094).
+    "few_valued": (-0.20, 0.20),
 }
 # The fast profile's p-value takes the values k/201. On noise_clf: good 0.0100..0.965
 # (never at the floor in 30 seeds); F1 exactly 1/201 = 0.004975 on all 30. The cut-off
@@ -635,6 +648,83 @@ def make_panel(seed, series=12, stamps=125):
     return ["date", "series", "level_prev", "level"], rows, ()
 
 
+BRANCHES = 16                   # four in each of the four regions
+
+
+def make_few_valued(seed, n=2000):
+    """Two columns of a few levels each, and a label that depends on neither (D62).
+
+    A `region` of four levels and a `branch` of sixteen, each branch in one
+    region: sixteen combinations, 125 rows of each or so, and nothing that
+    predicts the label, so the right skill is about zero. Every holdout row has a
+    training row like it, and the run stops unless the caller chooses. With
+    `--duplicates group` the rows that agree in every feature are kept together,
+    and a held-out branch has no row among the training rows. Were the sets
+    formed with the target too (F12), a held-out set of one branch and one class
+    would have only the other class of that branch in training: the model learns
+    the opposite of every row it is then asked about, and skill is far below
+    zero (the fifth review measured down to -0.85).
+
+    The branch alone says which combination a row has, so a model can learn a
+    combination exactly. With two columns that cross, a linear model softens the
+    effect, and over 30 seeds the broken copy's best seed came within the good
+    band (docs/measurements/CP7, the tables tried).
+    """
+    rng = random.Random(seed)
+    rows = []
+    for _ in range(n):
+        b = rng.randrange(BRANCHES)
+        rows.append([REGIONS[b % len(REGIONS)], f"b{b + 1:02d}", rng.choice(["no", "yes"])])
+    return ["region", "branch", "outcome"], rows, ()
+
+
+DOMINANT_ROWS, SMALL_ENTITIES, SMALL_ROWS = 1490, 255, 2
+
+
+def make_dominant_entity(seed, features=4):
+    """One entity that holds three quarters of the rows, and 255 of two rows each (D64).
+
+    2,000 rows: 1,490 of `C0000` and 510 of the others. The small entities hold
+    just over a quarter, so a sound holdout exists: 250 of them, 500 rows. Taken
+    in an order drawn from the seed until a quarter is held (F13), the large
+    entity is drawn before the small ones have filled the quarter in 250 orders
+    of 256, and the holdout is then three quarters of the table or more. The
+    target and the measures are noise; no two rows agree.
+    """
+    rng = random.Random(seed)
+    names = ["C0000"] * DOMINANT_ROWS
+    for e in range(SMALL_ENTITIES):
+        names += [f"C{e + 1:04d}"] * SMALL_ROWS
+    rows = [[name] + [_f(rng.gauss(0, 1)) for _ in range(features)] + [_f(rng.gauss(0, 1))]
+            for name in names]
+    rng.shuffle(rows)
+    return ["customer"] + [f"n{i + 1}" for i in range(features)] + ["amount"], rows, ()
+
+
+def make_day_numbers(seed, days=600, per=3, block=5, features=4):
+    """The label is random per block of five days, and the day is a whole number
+    written YYYYMMDD: 20150101, 20150102, ... (D66; the fifth review, finding 4).
+
+    Three rows a day, so the column is no identifier; the other columns are
+    noise. Read as a number, the day places every row in its block: under a
+    random split a tree learns the blocks, and the review measured skill 0.947
+    with no warning. Read as the date it is, the column is excluded, the warning
+    for a date column says so, and what is left predicts nothing.
+    """
+    rng = random.Random(seed)
+    start = datetime.date(2015, 1, 1)
+    rows = []
+    for t in range(days):
+        if t % block == 0:
+            label = rng.choice(["low", "high"])
+        day = start + datetime.timedelta(days=t)
+        for _ in range(per):
+            rows.append([int(day.strftime("%Y%m%d"))]
+                        + [_f(rng.gauss(0, 1)) for _ in range(features)] + [label])
+    rng.shuffle(rows)
+    return ["day"] + [f"n{i + 1}" for i in range(features)] + ["regime"], rows, ()
+
+
 # name -> (builder, target column). Seeds are SEED + position.
 DATASETS = {
     "signal_clf": (lambda s: make_signal_clf(s), "outcome"),
@@ -665,6 +755,10 @@ DATASETS = {
     # Added last again (CP6), for the same reason.
     "entities": (lambda s: make_entities(s), "outcome"),
     "panel": (lambda s: make_panel(s), "level"),
+    # Added last again (CP7), for the same reason.
+    "few_valued": (lambda s: make_few_valued(s), "outcome"),
+    "dominant_entity": (lambda s: make_dominant_entity(s), "amount"),
+    "day_numbers": (lambda s: make_day_numbers(s), "regime"),
 }
 
 
@@ -823,7 +917,8 @@ def plain(value):
     return value
 
 data, target, out = sys.argv[1:4]
-result = mlprofessor.profile(data, target=target, profile="fast", seed=0, out_dir=out, n_jobs=1)
+result = mlprofessor.profile(data, target=target, profile="fast", seed=0, out_dir=out, n_jobs=1,
+                             time_col=False, group_col=False)
 result.to_json(out + "/via_to_json.json")
 frames = {}
 for name in ("rows", "columns", "models", "warnings", "predictions"):
@@ -836,49 +931,68 @@ print("@@RESULT@@" + json.dumps({"frames": frames, "headline": plain(dict(result
                                  "to_dict": plain(result.to_dict())}))
 '''
 
+# Every call says two things, and the tool assumes neither (D63): whether the rows are
+# ordered in time (`--time-col COLUMN` or `--no-time-order`) and whether rows belong
+# together (`--group-col COLUMN` or `--no-entities`). So every run below says both,
+# but for the three that are about a statement left unsaid. Nothing else about a run
+# that existed before D63 changed.
+NO_TIME, NO_ENTITIES = ["--no-time-order"], ["--no-entities"]
+NEITHER = NO_TIME + NO_ENTITIES
+
 # run name -> dataset, extra command-line arguments, profile, n_jobs
 RUNS = {
-    "signal_clf": ("signal_clf", [], "fast", 1),
-    "signal_reg": ("signal_reg", [], "fast", 1),
-    "noise_clf": ("noise_clf", [], "fast", 1),
-    "noise_reg": ("noise_reg", [], "fast", 1),
-    "imbalanced": ("imbalanced", [], "fast", 1),
-    "leak": ("leak", [], "fast", 1),
-    "leak_reg": ("leak_reg", [], "fast", 1),
-    "near_leak": ("near_leak", [], "fast", 1),
-    "binary_numeric": ("binary_numeric", [], "fast", 1),
-    "ambiguous_target": ("ambiguous_target", [], "fast", 1),
+    "signal_clf": ("signal_clf", NEITHER, "fast", 1),
+    "signal_reg": ("signal_reg", NEITHER, "fast", 1),
+    "noise_clf": ("noise_clf", NEITHER, "fast", 1),
+    "noise_reg": ("noise_reg", NEITHER, "fast", 1),
+    "imbalanced": ("imbalanced", NEITHER, "fast", 1),
+    "leak": ("leak", NEITHER, "fast", 1),
+    "leak_reg": ("leak_reg", NEITHER, "fast", 1),
+    "near_leak": ("near_leak", NEITHER, "fast", 1),
+    "binary_numeric": ("binary_numeric", NEITHER, "fast", 1),
+    "ambiguous_target": ("ambiguous_target", NEITHER, "fast", 1),
     # `messy` has a column of dates, `signup_date`, and its rows have no order in
     # time: the run says so (D58). Nothing else about it changes.
-    "messy": ("messy", ["--no-time-order"], "fast", 1),
-    "long_rows": ("long_rows", [], "fast", 1),
-    "dup_noise": ("dup_noise", [], "fast", 1),
-    "time_blocks": ("time_blocks", ["--time-col", "date"], "fast", 1),
-    "time_blocks_gap": ("time_blocks", ["--time-col", "date", "--gap", "3"], "fast", 1),
+    "messy": ("messy", NEITHER, "fast", 1),
+    "long_rows": ("long_rows", NEITHER, "fast", 1),
+    "dup_noise": ("dup_noise", NEITHER, "fast", 1),
+    "time_blocks": ("time_blocks", ["--time-col", "date"] + NO_ENTITIES, "fast", 1),
+    "time_blocks_gap": ("time_blocks", ["--time-col", "date", "--gap", "3"] + NO_ENTITIES,
+                        "fast", 1),
     # With `date` excluded, the rows of one block of dates differ in nothing the
     # models see, so every holdout row has a copy among the training rows (500 of
     # 500 at the gate seed). The run is about the warning for an undeclared date
     # column, so it says the copies are meant: `--duplicates keep` (D49, D53). Since
     # D58 the warning is reached only when the caller has said that the rows have no
     # time order: `--no-time-order`.
-    "time_blocks_undeclared": ("time_blocks", ["--duplicates", "keep", "--no-time-order"],
-                               "fast", 1),
+    "time_blocks_undeclared": ("time_blocks", ["--duplicates", "keep"] + NEITHER, "fast", 1),
     # The same table and nothing said about time order: the run must stop (D58).
     # `--duplicates keep`, so that the copies rule is not what stops it: without
-    # the new stop this run finishes, under a random split, at skill near 1.
-    "time_blocks_unstated": ("time_blocks", ["--duplicates", "keep"], "fast", 1),
-    "time_dayfirst": ("time_dayfirst", ["--time-col", "date"], "fast", 1),
-    "random_walk": ("random_walk", ["--time-col", "date"], "fast", 1),
-    "int_stamps": ("int_stamps", ["--time-col", "t"], "fast", 1),
-    "flat_tail": ("flat_tail", ["--time-col", "date"], "fast", 1),
-    "entities": ("entities", ["--group-col", "customer"], "fast", 1),
+    # the stop this run finishes, under a random split, at skill near 1. It says
+    # that there are no entities, so that time order is the one thing left unsaid.
+    "time_blocks_unstated": ("time_blocks", ["--duplicates", "keep"] + NO_ENTITIES, "fast", 1),
+    "time_dayfirst": ("time_dayfirst", ["--time-col", "date"] + NO_ENTITIES, "fast", 1),
+    "random_walk": ("random_walk", ["--time-col", "date"] + NO_ENTITIES, "fast", 1),
+    "int_stamps": ("int_stamps", ["--time-col", "t"] + NO_ENTITIES, "fast", 1),
+    "flat_tail": ("flat_tail", ["--time-col", "date"] + NO_ENTITIES, "fast", 1),
+    "entities": ("entities", ["--group-col", "customer"] + NO_TIME, "fast", 1),
     "panel": ("panel", ["--time-col", "date", "--group-col", "series"], "fast", 1),
     "api_signal_clf": ("signal_clf", "api", "fast", 1),
-    "full_noise_small": ("noise_small", [], "full", 1),
-    "full_signal_clf_j1": ("signal_clf_small", [], "full", 1),
-    "full_signal_clf_j4": ("signal_clf_small", [], "full", 4),
-    "full_signal_reg_j1": ("signal_reg_small", [], "full", 1),
-    "full_signal_reg_j4": ("signal_reg_small", [], "full", 4),
+    "full_noise_small": ("noise_small", NEITHER, "full", 1),
+    "full_signal_clf_j1": ("signal_clf_small", NEITHER, "full", 1),
+    "full_signal_clf_j4": ("signal_clf_small", NEITHER, "full", 4),
+    "full_signal_reg_j1": ("signal_reg_small", NEITHER, "full", 1),
+    "full_signal_reg_j4": ("signal_reg_small", NEITHER, "full", 4),
+    # Added with the sixth pass (D62 to D66), last, so the order above stays.
+    # Nothing said at all, on a table that holds no date: the run must stop and ask
+    # for both. Before D63 it went ahead under a random split.
+    "unsaid_both": ("signal_clf", [], "fast", 1),
+    # A time column, one series with unique timestamps, and nothing said about
+    # entities: the run must stop. Before D63 only a persistent panel was asked.
+    "unsaid_entities": ("random_walk", ["--time-col", "date"], "fast", 1),
+    "few_valued": ("few_valued", ["--duplicates", "group"] + NEITHER, "fast", 1),
+    "dominant_entity": ("dominant_entity", ["--group-col", "customer"] + NO_TIME, "fast", 1),
+    "day_numbers": ("day_numbers", NEITHER, "fast", 1),
 }
 # Time limits per run. Measured on the reference: a fast run 3 to 6 seconds, a full
 # run 9 to 17 alone and about 20 when eight run side by side. Two waves of hung fast
@@ -925,6 +1039,12 @@ CHECK_RUNS = {
     "output.deterministic": ["signal_clf", "api_signal_clf"],
     "output.same_at_any_n_jobs": ["full_signal_clf_j1", "full_signal_clf_j4",
                                   "full_signal_reg_j1", "full_signal_reg_j4"],
+    "statements.time_order_asked": ["unsaid_both"],
+    "statements.entities_asked": ["unsaid_entities"],
+    "duplicates.group_on_features": ["few_valued"],
+    "duplicates.group_no_skill": ["few_valued"],
+    "groups.holdout_bounded": ["dominant_entity"],
+    "time.date_numbers_seen": ["day_numbers"],
 }
 SLOW_CHECKS = {"model.selection_full", "output.same_at_any_n_jobs"}
 
@@ -1165,7 +1285,7 @@ def _runs_dir(ctx):
 
     A gate run on a build writes to verify/artifacts/runs, the folder a failure
     message and CLAUDE.md send the builder to. The self-test runs the reference
-    and seventeen broken copies of it through the same checks; it writes to a folder
+    and twenty-one broken copies of it through the same checks; it writes to a folder
     per fixture under verify/artifacts/selftest_runs, so that after it `runs/`
     still holds the last gate run on the build and not a broken fixture's output
     (D46; second review, finding 6).
@@ -1991,9 +2111,9 @@ def time_undeclared_warns(ctx):
         result = outputs(ctx, "time_blocks_undeclared")
     except CheckFailed as exc:
         raise CheckFailed(
-            f"{exc}\n  This run passes `--no-time-order` and `--duplicates keep` (spec.md 2.1, "
-            "steps 5 and 8a; D49, D53, D58). `--no-time-order` is the caller's statement that "
-            "the rows have no time order: without it a table with a date column stops with "
+            f"{exc}\n  This run passes `--no-time-order`, `--no-entities` and `--duplicates "
+            "keep` (spec.md 2.1, steps 5 and 8a; D49, D53, D63). `--no-time-order` is the "
+            "caller's statement that the rows have no time order: without it the run stops with "
             "`time_order_undeclared`. With `date` excluded, the rows of one block of dates "
             "differ in nothing the models see, so every holdout row has a copy among the "
             "training rows; without `--duplicates keep` the run stops with "
@@ -2025,8 +2145,9 @@ def time_undeclared_stops(ctx):
             "very often ordered in time, and under a random split such a table is reported as "
             "predictable when it is not: here the label is random per block of five dates, and "
             "a random split scores near 1. So the run stops and asks: `--time-col date`, or "
-            "`--no-time-order` (D58; spec.md step 5). The run passes `--duplicates keep`, so "
-            "the copies rule of step 8a is not what stops it")
+            "`--no-time-order` (D58, D63; spec.md step 5). The run passes `--duplicates keep`, "
+            "so the copies rule of step 8a is not what stops it, and `--no-entities`, so time "
+            "order is the one statement it leaves unsaid")
 
 
 def _with_hint(ctx, name, hint):
@@ -2184,6 +2305,196 @@ def groups_no_skill_on_entities(ctx):
          "the label is random per entity and the features only identify the entity, so "
          "nothing learned on one entity helps on another. Skill here means rows of one entity "
          "are on both sides of the split")
+
+
+def asked(ctx, name, code, flags, what):
+    """A run that leaves a statement unsaid: exit code 3, the named error, every flag
+    that would answer it on standard error, and nothing written (D63)."""
+    stopped(ctx, name, code, what)
+    result = run(ctx, name)
+    ctx.require(result["rc"] == 3,
+                f"the tool exited {result['rc']} on the run `{name}`: a statement the caller "
+                "did not make is a named error, exit code 3, never a command line that could "
+                "not be parsed (spec.md 2.2)")
+    missing = [flag for flag in flags if flag not in result["stderr"]]
+    ctx.require(not missing,
+                f"the message of `{code}` on the run `{name}` does not name "
+                f"{', '.join(missing)}. One message tells the caller everything that is "
+                "missing, so that one more call is enough (D63; spec.md step 5). stderr was: "
+                f"{_tail(result['stderr'], 500) or '(empty)'}")
+
+
+@gate.check("statements.time_order_asked", catches=["F11"],
+            doc="nothing said about time order or entities, on a table with no date column: "
+                "the run stops with the named error, and its message asks for both")
+def statements_time_order_asked(ctx):
+    asked(ctx, "unsaid_both", "time_order_undeclared",
+          ["--time-col", "--no-time-order", "--group-col", "--no-entities"],
+          "this run says nothing about time order and nothing about entities. `signal_clf` "
+          "holds no date, and that makes no difference: the tool assumes neither statement, "
+          "whatever the table holds (D63; spec.md step 5). The caller passes `--time-col "
+          "COLUMN` or `--no-time-order`, and `--group-col COLUMN` or `--no-entities`. With "
+          "both unsaid the error is `time_order_undeclared`, and its message asks for both")
+
+
+@gate.check("statements.entities_asked", catches=["F11"],
+            doc="a time column, one series with unique timestamps, and nothing said about "
+                "entities: the run stops with the named error")
+def statements_entities_asked(ctx):
+    asked(ctx, "unsaid_entities", "entities_undeclared", ["--group-col", "--no-entities"],
+          "this run passes `--time-col date` and says nothing about entities. `random_walk` "
+          "is one series, a row for each date, and that makes no difference: a run never "
+          "goes ahead or stops because of what the timestamps look like (D63; spec.md step "
+          "5). The caller passes `--group-col COLUMN` or `--no-entities`")
+
+
+def _few_valued(ctx):
+    return _with_hint(
+        ctx, "few_valued",
+        "This run passes `--duplicates group --no-time-order --no-entities` (spec.md 2.1, "
+        "step 7; D62, D63). Without `--duplicates group` this table stops with "
+        "`holdout_copies_in_training`: every holdout row has a training row like it.")
+
+
+@gate.check("duplicates.group_on_features", catches=["F12"],
+            doc="with --duplicates group no combination of feature values is on both sides "
+                "of the split, by the gate's own count from predictions.csv")
+def duplicates_group_on_features(ctx):
+    result = _few_valued(ctx)
+    held, in_holdout = _all_rows_split(ctx, result, "few_valued")
+    places = [result["header"].index(name) for name in ("region", "branch")]
+    combination = [tuple(row[i] for i in places) for row in result["source"]]
+    held_ones = {combination[i] for i in in_holdout}
+    training_ones = {c for i, c in enumerate(combination) if i not in in_holdout}
+    both = sorted(held_ones & training_ones)
+    ctx.record("feature combinations on both sides", len(both))
+    ctx.require(not both,
+                f"{len(both)} of the {len(set(combination))} combinations of `region` and "
+                f"`branch` have rows on both sides of the split (for example "
+                f"{' / '.join(both[0]) if both else ''}). With `--duplicates group` the rows "
+                "that agree in every feature column are kept together, whatever their target "
+                "(D62; spec.md step 7). Sets formed with the target put the two classes of one "
+                "combination in different sets: a held-out set then has only the other class "
+                "of its combination among the training rows, and a model learns the opposite "
+                "of every row it is asked about")
+    scheme = at(result, "validation.scheme")
+    ctx.require(scheme == "grouped",
+                f"validation.scheme on `few_valued` is {scheme!r}; with `--duplicates group` "
+                "and rows that agree it is `grouped`")
+    count = {}
+    for one in combination:
+        count[one] = count.get(one, 0) + 1
+    alike = sum(n for n in count.values() if n > 1)
+    ctx.require(at(result, "validation.n_rows_same_features") == alike,
+                f"validation.n_rows_same_features is "
+                f"{at(result, 'validation.n_rows_same_features')!r}; the gate counts {alike} rows "
+                "that agree with another row in every feature column (spec.md 5.2; D62, D66)")
+    units = (at(result, "validation.n_groups_training"), at(result, "validation.n_groups_holdout"))
+    ctx.require(units == (len(training_ones), len(held_ones)),
+                f"validation reports {units[0]!r} units among the training rows and {units[1]!r} "
+                f"in the holdout; the gate counts {len(training_ones)} and {len(held_ones)} "
+                "combinations of feature values")
+    ctx.require(at(result, "validation.n_holdout_copies") == 0,
+                f"validation.n_holdout_copies is {at(result, 'validation.n_holdout_copies')!r}: "
+                "a copy agrees in every feature, so with the rows that agree kept together no "
+                "holdout row has a copy among the training rows (spec.md step 8a)")
+    ctx.require(len(warnings_of(result, "same_features_grouped")) == 1,
+                "exactly one warning with the code `same_features_grouped` says that rows which "
+                "agree in every feature column were kept together (spec.md 2.5; D66)")
+
+
+@gate.check("duplicates.group_no_skill", catches=["F12"],
+            doc="noise in a table of two few-valued columns, with --duplicates group: no skill")
+def duplicates_group_no_skill(ctx):
+    result = _few_valued(ctx)
+    band(ctx, at(result, "headline.skill", "number"), "few_valued", "skill on few_valued",
+         "the label is drawn at random, so nothing predicts it. Skill far below zero here "
+         "means that the sets of `--duplicates group` were formed with the target: a held-out "
+         "set then has only its opposite class among the training rows (D62)")
+
+
+@gate.check("groups.holdout_bounded", catches=["F13"],
+            doc="one entity of three quarters of the rows: the holdout is a quarter, made of "
+                "whole small entities, by the gate's own count, and the large one is named")
+def groups_holdout_bounded(ctx):
+    result = _with_hint(
+        ctx, "dominant_entity",
+        "This run passes `--group-col customer --no-time-order` (spec.md 2.1; D57, D63).")
+    held, in_holdout = _all_rows_split(ctx, result, "dominant_entity")
+    entity_at = result["header"].index("customer")
+    entity = [row[entity_at] for row in result["source"]]
+    n, size = len(entity), {}
+    for name in entity:
+        size[name] = size.get(name, 0) + 1
+    held_entities = {entity[i] for i in in_holdout}
+    both = sorted(held_entities & {e for i, e in enumerate(entity) if i not in in_holdout})
+    ctx.require(not both,
+                f"{len(both)} entities of `dominant_entity` have rows on both sides of the "
+                f"split (for example {', '.join(both[:3])}): the rows of one entity stay on "
+                "one side (D57; spec.md step 7)")
+    # The gate's own bound (spec.md step 7, property 3): the smallest entity such that
+    # the entities no larger than it hold, together, a quarter of the rows.
+    filled, unit = 0, 0
+    for rows in sorted(size.values()):
+        filled, unit = filled + rows, rows
+        if 4 * filled >= n:
+            break
+    ctx.record("dominant_entity holdout rows", len(held))
+    ctx.require(4 * len(held) >= n and 4 * len(held) < n + 4 * unit,
+                f"the holdout of `dominant_entity` holds {len(held)} of the {n} rows "
+                f"({len(held) / n:.1%}). One entity holds {max(size.values())} rows and the "
+                f"{len(size) - 1} others {n - max(size.values())}, which is more than a quarter: "
+                "the holdout is made of small entities, at least a quarter of the rows and "
+                f"less than a quarter plus one entity of {unit} rows, so {-(-n // 4)} to "
+                f"{(n + 4 * unit - 1) // 4} rows (D64, D66; spec.md step 7). An entity is taken "
+                "while the holdout stays below a quarter, the smallest one passed over "
+                "completes it, and what it can spare goes back. Units taken in seed order until "
+                "a quarter is held give three quarters of the table here")
+    spare = sorted(e for e in held_entities if 4 * (len(held) - size[e]) >= n)
+    ctx.require(not spare,
+                f"the holdout of `dominant_entity` could spare {len(spare)} of its entities "
+                f"(for example {', '.join(spare[:3])}) and still hold a quarter of the rows: "
+                "every entity it can spare goes back to the training rows (spec.md step 7)")
+    share = at(result, "validation.holdout_share", "number")
+    ctx.require(close(share, len(held) / n),
+                f"validation.holdout_share is {share!r}; the gate counts {len(held)} holdout "
+                f"rows of {n}, {len(held) / n!r}")
+    kept = warnings_of(result, "large_group_kept_in_training")
+    ctx.require(len(kept) == 1 and not warnings_of(result, "large_group_is_holdout"),
+                f"{len(kept)} warning(s) with the code `large_group_kept_in_training` and "
+                f"{len(warnings_of(result, 'large_group_is_holdout'))} with "
+                "`large_group_is_holdout`. One entity here holds a quarter or more of the rows "
+                "and is kept among the training rows: exactly one warning of the first code "
+                "says so, with its share, and that the headline does not test it (D66; spec.md "
+                "2.5)")
+
+
+@gate.check("time.date_numbers_seen", catches=["F14"],
+            doc="a day written as a whole number, YYYYMMDD, and --no-time-order: the column "
+                "is excluded as a date and the warning for a date column names it")
+def time_date_numbers_seen(ctx):
+    result = _with_hint(
+        ctx, "day_numbers",
+        "This run passes `--no-time-order --no-entities` (spec.md 2.1; D63).")
+    column = {c["name"]: c for c in records(result, "columns", ["name", "role", "reason"])}
+    day = column.get("day", {})
+    ctx.record("day_numbers role of `day`", f"{day.get('role')}/{day.get('reason')}")
+    ctx.require((day.get("role"), day.get("reason")) == ("excluded", "datetime"),
+                f"the column `day` of `day_numbers` has role {day.get('role')!r} and reason "
+                f"{day.get('reason')!r}. Every value of it is a whole number that reads as a "
+                "calendar date written YYYYMMDD (20150101, 20150102, ...): such a column is a "
+                "date, excluded with the reason `datetime` (D66; spec.md step 5, rule 2a). As a "
+                "numeric feature it places every row in time, and here the label is random per "
+                "block of five days: a random split then scores near 1")
+    ctx.require(any(w["column"] == "day" for w in warnings_of(result, "date_column_undeclared")),
+                "no warning with the code `date_column_undeclared` names the column `day`: the "
+                "run says `--no-time-order` on a table that holds dates, and the tool's doubt "
+                "about that statement is this warning (spec.md 2.5; D63, D66)")
+    scheme = at(result, "validation.scheme")
+    ctx.require(scheme == "random" and at(result, "input.time_col") is False,
+                f"validation.scheme is {scheme!r} and input.time_col "
+                f"{at(result, 'input.time_col')!r} on a run given `--no-time-order`: the scheme "
+                "is `random` and the statement is recorded as `false`")
 
 
 @gate.check("time.flat_holdout_reported",
@@ -2410,7 +2721,7 @@ def result_matches_json(ctx):
 REQUIRED = {
     "meta": ["tool", "schema_version", "profile", "seed", "n_jobs", "versions", "timing"],
     "input": ["source", "kind", "target", "time_col", "task", "gap", "n_rows", "n_columns",
-              "duplicate_rows"],
+              "duplicate_rows", "group_col"],
     "task": ["type", "decided_by", "n_distinct", "target_dtype", "classes", "positive_class"],
     "validation": ["scheme", "holdout_share", "n_folds", "stratified", "gap", "time_col",
                    "time_form", "train_end", "holdout_start", "holdout_end",
@@ -2433,7 +2744,9 @@ RECORD_KEYS = {
     "warnings": ["code", "column", "message"],
 }
 # On signal_clf (random scheme, classification) these may be null; everything else may not.
-MAY_BE_NULL = {"input.time_col", "validation.time_col", "validation.time_form",
+# `input.time_col` and `input.group_col` are never null in a finished run: each is the
+# caller's statement, a name or `false` (D63).
+MAY_BE_NULL = {"validation.time_col", "validation.time_form",
                "validation.train_end", "validation.holdout_start", "validation.holdout_end",
                "validation.n_train_timestamps", "validation.n_holdout_timestamps",
                "validation.timestamps_unique", "headline.block_length",
@@ -2659,6 +2972,33 @@ def broken_panel_mean_baseline(tmp):
                           "split without the caller's say")
 def broken_undeclared_date_runs(tmp):
     return _fixture(tmp, "F7d")
+
+
+# The four of the sixth pass (D62 to D66): three headlines the fifth review found
+# wrong while the build matched the contract, and the one statement no table can
+# make for the caller. Registered last, so the order above stays.
+
+@gate.failure_mode("F11", "a statement the caller did not make is assumed: nothing said about "
+                          "time order, or about entities, and the run goes ahead")
+def broken_statements_assumed(tmp):
+    return _fixture(tmp, "F11")
+
+
+@gate.failure_mode("F12", "duplicates='group' forms its sets with the target, so rows that agree "
+                          "in every feature are on both sides of the split")
+def broken_group_reads_target(tmp):
+    return _fixture(tmp, "F12")
+
+
+@gate.failure_mode("F13", "the grouped holdout takes far more than a quarter because a large "
+                          "entity was drawn early")
+def broken_holdout_overshoots(tmp):
+    return _fixture(tmp, "F13")
+
+
+@gate.failure_mode("F14", "dates written as whole numbers (YYYYMMDD) are a numeric feature")
+def broken_date_numbers_as_feature(tmp):
+    return _fixture(tmp, "F14")
 
 
 if __name__ == "__main__":

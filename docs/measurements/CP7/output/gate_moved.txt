@@ -1,0 +1,25 @@
+datasets: 69 values before under 23 names; 0 moved, 0 gone, 0 new under an existing name; only after: day_numbers, dominant_entity, few_valued
+checks: 102 values before under 10 names; 0 moved, 0 gone, 6 new under an existing name; only after: duplicates, statements
+    new   date_numbers_seen.catches[0]: 1 run(s)
+    new   date_numbers_seen.message: 1 run(s)
+    new   date_numbers_seen.ok: 1 run(s)
+    new   holdout_bounded.catches[0]: 1 run(s)
+    new   holdout_bounded.message: 1 run(s)
+    new   holdout_bounded.ok: 1 run(s)
+records: 113 values before under 112 names; 0 moved, 0 gone, 0 new under an existing name; only after: day_numbers role of `day`, dominant_entity holdout rows, feature combinations on both sides, skill on few_valued, unsaid_both exit code, unsaid_entities exit code
+runs: 15142 values before under 29 names; 69 moved, 25 gone, 25 new under an existing name; only after: day_numbers, dominant_entity, few_valued, unsaid_both, unsaid_entities
+    moved  command: 27 run(s): ambiguous_target, binary_numeric, dup_noise, entities, flat_tail, full_noise_small, full_signal_clf_j1, full_signal_clf_j4, full_signal_reg_j1, full_signal_reg_j4, imbalanced, int_stamps, leak, leak_reg, long_rows, messy, near_leak, noise_clf, noise_reg, random_walk, signal_clf, signal_reg, time_blocks, time_blocks_gap, time_blocks_undeclared, time_blocks_unstated, time_dayfirst
+    moved  profile.input.group_col: 22 run(s): api_signal_clf, binary_numeric, flat_tail, full_noise_small, full_signal_clf_j1, full_signal_clf_j4, full_signal_reg_j1, full_signal_reg_j4, imbalanced, int_stamps, leak, leak_reg, messy, near_leak, noise_clf, noise_reg, random_walk, signal_clf, signal_reg, time_blocks, time_blocks_gap, time_blocks_undeclared
+           None -> False (22)
+    moved  profile.input.time_col: 16 run(s): api_signal_clf, binary_numeric, entities, full_noise_small, full_signal_clf_j1, full_signal_clf_j4, full_signal_reg_j1, full_signal_reg_j4, imbalanced, leak, leak_reg, near_leak, noise_clf, noise_reg, signal_clf, signal_reg
+           None -> False (16)
+    moved  stderr: 2 run(s): dup_noise, time_blocks_unstated
+           "error: holdout_copies_in_training: 277  -> "error: holdout_copies_in_training: 277  (1); "error: time_order_undeclared: column(s) -> "error: time_order_undeclared: Nothing w (1)
+    moved  stdout.result.to_dict.input.group_col: 1 run(s): api_signal_clf
+           None -> False (1)
+    moved  stdout.result.to_dict.input.time_col: 1 run(s): api_signal_clf
+           None -> False (1)
+    gone   profile.validation.n_rows_with_copies: 24 run(s)
+    gone   stdout.result.to_dict.validation.n_rows_with_copies: 1 run(s)
+    new   profile.validation.n_rows_same_features: 24 run(s)
+    new   stdout.result.to_dict.validation.n_rows_same_features: 1 run(s)

@@ -1,0 +1,53 @@
+`proposed` here and the reference's _split_grouped agree in 330 of 330 splits (holdout rows and folds, or the same stop)
+`as built` here and the reference's _split_grouped as its broken copy F13 agree in 330 of 330 splits (holdout rows and folds, or the same stop)
+holdout share of the rows over 30 seeds (seed k: table from data seed k, split from seed k)
+| Table | Rule | min | mean | max | too_few_groups | warned: kept in training | warned: is the holdout | u* (rows) |
+|---|---|---|---|---|---|---|---|---|
+| equal: 400 entities of 5 rows | as built | 0.250 | 0.250 | 0.250 | 0 | n/a | n/a | 5 |
+| equal: 400 entities of 5 rows | proposed | 0.250 | 0.250 | 0.250 | 0 | 0 | 0 | 5 |
+| one entity of 30% of the rows | as built | 0.250 | 0.314 | 0.540 | 0 | n/a | n/a | 5 |
+| one entity of 30% of the rows | proposed | 0.250 | 0.250 | 0.250 | 0 | 30 | 0 | 5 |
+| one entity of 60% of the rows | as built | 0.250 | 0.453 | 0.792 | 0 | n/a | n/a | 5 |
+| one entity of 60% of the rows | proposed | 0.250 | 0.250 | 0.250 | 0 | 30 | 0 | 5 |
+| one entity of 74.5% of the rows | as built | 0.750 | 0.895 | 0.988 | 0 | n/a | n/a | 2 |
+| one entity of 74.5% of the rows | proposed | 0.250 | 0.250 | 0.250 | 0 | 30 | 0 | 2 |
+| one entity of 90% of the rows | as built | 0.902 | 0.948 | 0.988 | 4 | n/a | n/a | 1800 |
+| one entity of 90% of the rows | proposed | 0.900 | 0.900 | 0.900 | 0 | 0 | 30 | 1800 |
+| five entities of 12% each, the rest of 5 rows | as built | 0.250 | 0.288 | 0.367 | 0 | n/a | n/a | 5 |
+| five entities of 12% each, the rest of 5 rows | proposed | 0.250 | 0.250 | 0.250 | 0 | 0 | 0 | 5 |
+| eight large entities and no other | as built | 0.250 | 0.305 | 0.400 | 2 | n/a | n/a | 250 |
+| eight large entities and no other | proposed | 0.250 | 0.259 | 0.275 | 0 | 0 | 0 | 250 |
+| two of 40% each and five of 4% | as built | 0.400 | 0.414 | 0.440 | 13 | n/a | n/a | 800 |
+| two of 40% each and five of 4% | proposed | 0.400 | 0.400 | 0.400 | 0 | 30 | 30 | 800 |
+| one entity of exactly a quarter of the rows | as built | 0.250 | 0.278 | 0.472 | 0 | n/a | n/a | 5 |
+| one entity of exactly a quarter of the rows | proposed | 0.250 | 0.250 | 0.250 | 0 | 30 | 0 | 5 |
+| sizes drawn from a long-tailed law (1 to about 300 rows) | as built | 0.250 | 0.258 | 0.325 | 0 | n/a | n/a | 5..10 |
+| sizes drawn from a long-tailed law (1 to about 300 rows) | proposed | 0.250 | 0.250 | 0.250 | 0 | 0 | 0 | 5..10 |
+| classification: one entity of 40% of the rows, its label 1 | as built | 0.250 | 0.440 | 0.647 | 0 | n/a | n/a | (5, 5) |
+| classification: one entity of 40% of the rows, its label 1 | proposed | 0.250 | 0.252 | 0.253 | 0 | 30 | 0 | (5, 5) |
+
+per seed (seed 0, 1, ...): the holdout's share of the rows; `stop` is too_few_groups
+equal: 400 entities of 5 rows | as built | .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500
+equal: 400 entities of 5 rows | proposed | .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500
+one entity of 30% of the rows | as built | .3700 .2500 .2500 .3800 .2500 .2500 .2500 .4125 .4625 .2500 .2500 .4425 .2500 .2500 .2500 .2500 .2500 .5400 .2500 .4225 .4625 .2500 .2500 .2500 .2500 .2500 .3275 .2500 .5325 .3150
+one entity of 30% of the rows | proposed | .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500
+one entity of 60% of the rows | as built | .2500 .2500 .7375 .6425 .2500 .7100 .2500 .2500 .7475 .2500 .2500 .2500 .6975 .2500 .2500 .2500 .6675 .2500 .7075 .6100 .2500 .2500 .6050 .2500 .7925 .6800 .7500 .2500 .6275 .6200
+one entity of 60% of the rows | proposed | .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500
+one entity of 74.5% of the rows | as built | .9250 .9460 .8850 .8370 .9810 .9880 .9360 .9550 .8330 .9570 .8170 .9200 .9480 .7720 .9840 .9620 .7600 .9300 .8620 .7500 .8780 .9480 .8220 .9400 .8930 .8800 .8650 .9280 .9550 .7790
+one entity of 74.5% of the rows | proposed | .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500
+one entity of 90% of the rows | as built | .9825 .9775 .9150 .9125 .9825 .9375 .9575 .9875 stop .9675 .9025 .9425 .9475 stop .9675 .9550 .9375 .9750 .9350 stop .9050 .9100 .9325 .9200 stop .9875 .9300 .9650 .9275 .9750
+one entity of 90% of the rows | proposed | .9000 .9000 .9000 .9000 .9000 .9000 .9000 .9000 .9000 .9000 .9000 .9000 .9000 .9000 .9000 .9000 .9000 .9000 .9000 .9000 .9000 .9000 .9000 .9000 .9000 .9000 .9000 .9000 .9000 .9000
+five entities of 12% each, the rest of 5 rows | as built | .2675 .2500 .2500 .2975 .2500 .3675 .3400 .2500 .3375 .2500 .3225 .3650 .3350 .3525 .2500 .2500 .2575 .2700 .2500 .2500 .3400 .2500 .2500 .2725 .2625 .3600 .3675 .2500 .2650 .2700
+five entities of 12% each, the rest of 5 rows | proposed | .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500
+eight large entities and no other | as built | .2750 .2500 .3750 .3750 .3250 .3750 .2500 .3000 .3000 .2500 .2500 .2750 .4000 .2500 .2750 .3250 .3750 .2750 stop .2750 .3250 .3250 .3000 stop .2750 .3250 .3250 .3000 .3250 .2750
+eight large entities and no other | proposed | .2750 .2500 .2500 .2500 .2500 .2500 .2750 .2500 .2500 .2500 .2500 .2500 .2750 .2750 .2500 .2500 .2500 .2750 .2500 .2500 .2750 .2750 .2750 .2500 .2500 .2750 .2750 .2500 .2500 .2750
+two of 40% each and five of 4% | as built | .4000 stop stop .4400 stop .4400 .4400 .4000 .4000 stop stop stop .4000 stop .4000 .4000 .4000 stop .4000 stop .4400 stop stop stop .4400 .4000 .4400 stop .4000 .4000
+two of 40% each and five of 4% | proposed | .4000 .4000 .4000 .4000 .4000 .4000 .4000 .4000 .4000 .4000 .4000 .4000 .4000 .4000 .4000 .4000 .4000 .4000 .4000 .4000 .4000 .4000 .4000 .4000 .4000 .4000 .4000 .4000 .4000 .4000
+one entity of exactly a quarter of the rows | as built | .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .4425 .2500 .2500 .4725 .2500 .4525 .2850 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .3025 .2500 .2500 .3800 .2500 .2500 .2500
+one entity of exactly a quarter of the rows | proposed | .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500 .2500
+sizes drawn from a long-tailed law (1 to about 300 rows) | as built | .2516 .2512 .2509 .2505 .2851 .2501 .2504 .2560 .2504 .2505 .2505 .2758 .2547 .2521 .2721 .2511 .2537 .2774 .2514 .2546 .2501 .2501 .2523 .2512 .2549 .2512 .3245 .2582 .2502 .2504
+sizes drawn from a long-tailed law (1 to about 300 rows) | proposed | .2501 .2502 .2504 .2500 .2502 .2501 .2504 .2500 .2504 .2500 .2500 .2504 .2502 .2501 .2501 .2501 .2502 .2502 .2504 .2501 .2501 .2501 .2504 .2502 .2504 .2502 .2500 .2502 .2502 .2504
+classification: one entity of 40% of the rows, its label 1 | as built | .4850 .6475 .2500 .2525 .5775 .2500 .2525 .4800 .2500 .6275 .6475 .4875 .4875 .2525 .6325 .2525 .4900 .6050 .2500 .6450 .5000 .2525 .6150 .6325 .5025 .2525 .2525 .2500 .4975 .6275
+classification: one entity of 40% of the rows, its label 1 | proposed | .2525 .2525 .2500 .2525 .2525 .2500 .2525 .2525 .2500 .2525 .2500 .2525 .2525 .2525 .2500 .2525 .2525 .2525 .2500 .2525 .2500 .2525 .2525 .2525 .2525 .2525 .2525 .2500 .2525 .2525
+
+gate dataset `entities`, 30 data seeds, tool seed 0: holdout and folds identical, row for row, under both rules in 30 of 30; holdout share 0.2500 to 0.2533

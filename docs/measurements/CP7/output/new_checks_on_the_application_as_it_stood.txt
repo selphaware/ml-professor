@@ -1,0 +1,7 @@
+43 checks, 6 failed, 34 runs, 27 s
+  FAIL statements.time_order_asked: the tool exited 0 on `signal_clf`; it must stop with the named error `time_order_undeclared` (this run says nothing about time order and nothing about entities. `signal_clf` holds no date, and that ma
+  FAIL statements.entities_asked: the tool exited 0 on `random_walk`; it must stop with the named error `entities_undeclared` (this run passes `--time-col date` and says nothing about entities. `random_walk` is one series, a row for e
+  FAIL duplicates.group_on_features: 5 of the 16 combinations of `region` and `branch` have rows on both sides of the split (for example east / b03). With `--duplicates group` the rows that agree in every feature column are kept together
+  FAIL duplicates.group_no_skill: skill on few_valued is -0.806726, expected between -0.2 and 0.2: the label is drawn at random, so nothing predicts it. Skill far below zero here means that the sets of `--duplicates group` were formed
+  FAIL groups.holdout_bounded: the holdout of `dominant_entity` holds 1510 of the 2000 rows (75.5%). One entity holds 1490 rows and the 255 others 510, which is more than a quarter: the holdout is made of small entities, at least a
+  FAIL time.date_numbers_seen: the column `day` of `day_numbers` has role 'feature' and reason None. Every value of it is a whole number that reads as a calendar date written YYYYMMDD (20150101, 20150102, ...): such a column is a d

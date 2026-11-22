@@ -1,0 +1,69 @@
+30 data seeds (base 1115, 1215, ...), fast profile, tool seed 0, one core
+| Table | Copy | skill min | mean | sd | max | stops | holdout units | interval reported | interval holds 0 |
+|---|---|---|---|---|---|---|---|---|---|
+| the gate's `few_valued` | good | -0.121 | -0.000 | 0.044 | +0.084 | 0 | 5..6 | 0 of 30 | 0 of 0 |
+|  | mean - 4.5 sd, mean + 4.5 sd | -0.198 |  |  | +0.198 |  |  |  |  |
+| the gate's `few_valued` | F12 | -1.000 | -0.906 | 0.094 | -0.648 | 0 | 8..10 | 0 of 30 | 0 of 0 |
+
+| table | copy | k | skill | model | holdout units | rows that agree with another | holdout copies | holdout share |
+|---|---|---|---|---|---|---|---|---|
+| few_valued | good | 0 | +0.0183 | tree-0 | 5 | 2000 | 0 | 0.295 |
+| few_valued | good | 1 | +0.0000 | tree-0 | 5 | 2000 | 0 | 0.303 |
+| few_valued | good | 2 | -0.0461 | tree-0 | 5 | 2000 | 0 | 0.307 |
+| few_valued | good | 3 | -0.0199 | tree-0 | 5 | 2000 | 0 | 0.298 |
+| few_valued | good | 4 | +0.0129 | linear-0 | 5 | 2000 | 0 | 0.3005 |
+| few_valued | good | 5 | +0.0835 | linear-0 | 5 | 2000 | 0 | 0.2875 |
+| few_valued | good | 6 | -0.0115 | linear-0 | 5 | 2000 | 0 | 0.295 |
+| few_valued | good | 7 | -0.0879 | linear-0 | 5 | 2000 | 0 | 0.2985 |
+| few_valued | good | 8 | +0.0471 | tree-0 | 5 | 2000 | 0 | 0.3015 |
+| few_valued | good | 9 | +0.0376 | tree-0 | 5 | 2000 | 0 | 0.3065 |
+| few_valued | good | 10 | -0.0123 | tree-0 | 5 | 2000 | 0 | 0.293 |
+| few_valued | good | 11 | +0.0435 | tree-0 | 5 | 2000 | 0 | 0.3025 |
+| few_valued | good | 12 | +0.0031 | linear-0 | 5 | 2000 | 0 | 0.294 |
+| few_valued | good | 13 | -0.0046 | linear-0 | 5 | 2000 | 0 | 0.303 |
+| few_valued | good | 14 | +0.0019 | linear-0 | 5 | 2000 | 0 | 0.302 |
+| few_valued | good | 15 | +0.0078 | linear-0 | 5 | 2000 | 0 | 0.299 |
+| few_valued | good | 16 | -0.0037 | linear-0 | 5 | 2000 | 0 | 0.3045 |
+| few_valued | good | 17 | -0.0859 | tree-0 | 5 | 2000 | 0 | 0.2975 |
+| few_valued | good | 18 | +0.0648 | linear-0 | 5 | 2000 | 0 | 0.284 |
+| few_valued | good | 19 | -0.0113 | linear-0 | 5 | 2000 | 0 | 0.2935 |
+| few_valued | good | 20 | -0.1214 | linear-0 | 5 | 2000 | 0 | 0.295 |
+| few_valued | good | 21 | -0.0255 | linear-0 | 5 | 2000 | 0 | 0.3 |
+| few_valued | good | 22 | -0.0083 | linear-0 | 6 | 2000 | 0 | 0.353 |
+| few_valued | good | 23 | -0.0017 | linear-0 | 5 | 2000 | 0 | 0.2945 |
+| few_valued | good | 24 | +0.0068 | tree-0 | 5 | 2000 | 0 | 0.306 |
+| few_valued | good | 25 | +0.0656 | linear-0 | 5 | 2000 | 0 | 0.3055 |
+| few_valued | good | 26 | +0.0000 | tree-0 | 6 | 2000 | 0 | 0.3515 |
+| few_valued | good | 27 | +0.0000 | tree-0 | 5 | 2000 | 0 | 0.3005 |
+| few_valued | good | 28 | +0.0319 | tree-0 | 6 | 2000 | 0 | 0.353 |
+| few_valued | good | 29 | +0.0146 | linear-0 | 6 | 2000 | 0 | 0.3535 |
+| few_valued | F12 | 0 | -1.0000 | tree-0 | 10 | 2000 | 0 | 0.2935 |
+| few_valued | F12 | 1 | -1.0000 | tree-0 | 9 | 2000 | 0 | 0.272 |
+| few_valued | F12 | 2 | -0.9343 | tree-0 | 9 | 2000 | 0 | 0.274 |
+| few_valued | F12 | 3 | -0.6481 | linear-0 | 10 | 2000 | 0 | 0.298 |
+| few_valued | F12 | 4 | -1.0000 | tree-0 | 9 | 2000 | 0 | 0.2745 |
+| few_valued | F12 | 5 | -0.9626 | tree-0 | 10 | 2000 | 0 | 0.2945 |
+| few_valued | F12 | 6 | -0.8319 | linear-0 | 10 | 2000 | 0 | 0.2805 |
+| few_valued | F12 | 7 | -1.0000 | tree-0 | 10 | 2000 | 0 | 0.2865 |
+| few_valued | F12 | 8 | -0.9549 | linear-0 | 9 | 2000 | 0 | 0.2795 |
+| few_valued | F12 | 9 | -0.9496 | tree-0 | 9 | 2000 | 0 | 0.276 |
+| few_valued | F12 | 10 | -0.9632 | tree-0 | 9 | 2000 | 0 | 0.274 |
+| few_valued | F12 | 11 | -0.7493 | tree-0 | 10 | 2000 | 0 | 0.297 |
+| few_valued | F12 | 12 | -0.8900 | tree-0 | 10 | 2000 | 0 | 0.2915 |
+| few_valued | F12 | 13 | -0.7615 | tree-0 | 10 | 2000 | 0 | 0.293 |
+| few_valued | F12 | 14 | -0.9661 | tree-0 | 9 | 2000 | 0 | 0.265 |
+| few_valued | F12 | 15 | -0.8288 | linear-0 | 10 | 2000 | 0 | 0.2965 |
+| few_valued | F12 | 16 | -0.9641 | tree-0 | 10 | 2000 | 0 | 0.2975 |
+| few_valued | F12 | 17 | -0.7741 | tree-0 | 9 | 2000 | 0 | 0.2775 |
+| few_valued | F12 | 18 | -0.8100 | tree-0 | 9 | 2000 | 0 | 0.2715 |
+| few_valued | F12 | 19 | -0.9580 | linear-0 | 9 | 2000 | 0 | 0.2645 |
+| few_valued | F12 | 20 | -0.8247 | tree-0 | 10 | 2000 | 0 | 0.292 |
+| few_valued | F12 | 21 | -0.9619 | linear-0 | 10 | 2000 | 0 | 0.2965 |
+| few_valued | F12 | 22 | -1.0000 | tree-0 | 9 | 2000 | 0 | 0.2775 |
+| few_valued | F12 | 23 | -1.0000 | tree-0 | 8 | 2000 | 0 | 0.256 |
+| few_valued | F12 | 24 | -0.9527 | tree-0 | 9 | 2000 | 0 | 0.2755 |
+| few_valued | F12 | 25 | -0.9530 | tree-0 | 9 | 2000 | 0 | 0.27 |
+| few_valued | F12 | 26 | -0.8340 | tree-0 | 10 | 2000 | 0 | 0.2895 |
+| few_valued | F12 | 27 | -0.9413 | tree-0 | 9 | 2000 | 0 | 0.274 |
+| few_valued | F12 | 28 | -0.8181 | tree-0 | 10 | 2000 | 0 | 0.293 |
+| few_valued | F12 | 29 | -0.9538 | tree-0 | 10 | 2000 | 0 | 0.2925 |

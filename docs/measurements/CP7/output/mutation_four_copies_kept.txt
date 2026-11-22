@@ -1,0 +1,39 @@
+mutation check: 5 case(s), 8 at a time, projects under C:\Users\uahma\AppData\Local\Temp\mlprof-mutation-ng8d8sc7
+  note: docs/DECISIONS.md: copied from the repo
+  note: examples/customers.csv: copied from the repo
+  note: overlay: tests/conftest.py replaced by C:/Users/uahma/AppData/Local/Temp/claude/0233f86d4baa4dd4/28ea1721-e52d-449e-ae7e-ea32c288f5aa/scratchpad/proto/full
+  note: overlay: tests/cp3_helpers.py replaced by C:/Users/uahma/AppData/Local/Temp/claude/0233f86d4baa4dd4/28ea1721-e52d-449e-ae7e-ea32c288f5aa/scratchpad/proto/full
+  note: overlay: tests/cp5_helpers.py replaced by C:/Users/uahma/AppData/Local/Temp/claude/0233f86d4baa4dd4/28ea1721-e52d-449e-ae7e-ea32c288f5aa/scratchpad/proto/full
+  note: overlay: tests/cp7_helpers.py added from C:/Users/uahma/AppData/Local/Temp/claude/0233f86d4baa4dd4/28ea1721-e52d-449e-ae7e-ea32c288f5aa/scratchpad/proto/full
+  note: overlay: tests/mlp_helpers.py replaced by C:/Users/uahma/AppData/Local/Temp/claude/0233f86d4baa4dd4/28ea1721-e52d-449e-ae7e-ea32c288f5aa/scratchpad/proto/full
+  note: overlay: tests/test_csv_edges.py replaced by C:/Users/uahma/AppData/Local/Temp/claude/0233f86d4baa4dd4/28ea1721-e52d-449e-ae7e-ea32c288f5aa/scratchpad/proto/full
+  note: overlay: tests/test_date_numbers.py added from C:/Users/uahma/AppData/Local/Temp/claude/0233f86d4baa4dd4/28ea1721-e52d-449e-ae7e-ea32c288f5aa/scratchpad/proto/full
+  note: overlay: tests/test_duplicates_features.py added from C:/Users/uahma/AppData/Local/Temp/claude/0233f86d4baa4dd4/28ea1721-e52d-449e-ae7e-ea32c288f5aa/scratchpad/proto/full
+  note: overlay: tests/test_duplicates_group.py replaced by C:/Users/uahma/AppData/Local/Temp/claude/0233f86d4baa4dd4/28ea1721-e52d-449e-ae7e-ea32c288f5aa/scratchpad/proto/full
+  note: overlay: tests/test_edges.py replaced by C:/Users/uahma/AppData/Local/Temp/claude/0233f86d4baa4dd4/28ea1721-e52d-449e-ae7e-ea32c288f5aa/scratchpad/proto/full
+  note: overlay: tests/test_full_profile.py replaced by C:/Users/uahma/AppData/Local/Temp/claude/0233f86d4baa4dd4/28ea1721-e52d-449e-ae7e-ea32c288f5aa/scratchpad/proto/full
+  note: overlay: tests/test_grouped_holdout.py added from C:/Users/uahma/AppData/Local/Temp/claude/0233f86d4baa4dd4/28ea1721-e52d-449e-ae7e-ea32c288f5aa/scratchpad/proto/full
+  note: overlay: tests/test_groups_random.py replaced by C:/Users/uahma/AppData/Local/Temp/claude/0233f86d4baa4dd4/28ea1721-e52d-449e-ae7e-ea32c288f5aa/scratchpad/proto/full
+  note: overlay: tests/test_guard_review5.py added from C:/Users/uahma/AppData/Local/Temp/claude/0233f86d4baa4dd4/28ea1721-e52d-449e-ae7e-ea32c288f5aa/scratchpad/proto/full
+  note: overlay: tests/test_leakage.py replaced by C:/Users/uahma/AppData/Local/Temp/claude/0233f86d4baa4dd4/28ea1721-e52d-449e-ae7e-ea32c288f5aa/scratchpad/proto/full
+  note: overlay: tests/test_model_families.py replaced by C:/Users/uahma/AppData/Local/Temp/claude/0233f86d4baa4dd4/28ea1721-e52d-449e-ae7e-ea32c288f5aa/scratchpad/proto/full
+  note: overlay: tests/test_non_finite.py replaced by C:/Users/uahma/AppData/Local/Temp/claude/0233f86d4baa4dd4/28ea1721-e52d-449e-ae7e-ea32c288f5aa/scratchpad/proto/full
+  note: overlay: tests/test_panel_stop.py replaced by C:/Users/uahma/AppData/Local/Temp/claude/0233f86d4baa4dd4/28ea1721-e52d-449e-ae7e-ea32c288f5aa/scratchpad/proto/full
+  note: overlay: tests/test_pipeline.py replaced by C:/Users/uahma/AppData/Local/Temp/claude/0233f86d4baa4dd4/28ea1721-e52d-449e-ae7e-ea32c288f5aa/scratchpad/proto/full
+  note: overlay: tests/test_readme_statements.py added from C:/Users/uahma/AppData/Local/Temp/claude/0233f86d4baa4dd4/28ea1721-e52d-449e-ae7e-ea32c288f5aa/scratchpad/proto/full
+  note: overlay: tests/test_result_schema.py replaced by C:/Users/uahma/AppData/Local/Temp/claude/0233f86d4baa4dd4/28ea1721-e52d-449e-ae7e-ea32c288f5aa/scratchpad/proto/full
+  note: overlay: tests/test_run_hygiene.py replaced by C:/Users/uahma/AppData/Local/Temp/claude/0233f86d4baa4dd4/28ea1721-e52d-449e-ae7e-ea32c288f5aa/scratchpad/proto/full
+  note: overlay: tests/test_seed_range.py replaced by C:/Users/uahma/AppData/Local/Temp/claude/0233f86d4baa4dd4/28ea1721-e52d-449e-ae7e-ea32c288f5aa/scratchpad/proto/full
+  note: overlay: tests/test_statements.py added from C:/Users/uahma/AppData/Local/Temp/claude/0233f86d4baa4dd4/28ea1721-e52d-449e-ae7e-ea32c288f5aa/scratchpad/proto/full
+  note: overlay: tests/test_time_order_stated.py replaced by C:/Users/uahma/AppData/Local/Temp/claude/0233f86d4baa4dd4/28ea1721-e52d-449e-ae7e-ea32c288f5aa/scratchpad/proto/full
+  note: overlay: tests/test_time_pipeline.py replaced by C:/Users/uahma/AppData/Local/Temp/claude/0233f86d4baa4dd4/28ea1721-e52d-449e-ae7e-ea32c288f5aa/scratchpad/proto/full
+  note: overlay: tests/test_type_matrix.py replaced by C:/Users/uahma/AppData/Local/Temp/claude/0233f86d4baa4dd4/28ea1721-e52d-449e-ae7e-ea32c288f5aa/scratchpad/proto/full
+  note: overlay: tests/test_type_matrix_group.py replaced by C:/Users/uahma/AppData/Local/Temp/claude/0233f86d4baa4dd4/28ea1721-e52d-449e-ae7e-ea32c288f5aa/scratchpad/proto/full
+  note: overlay: tests/test_uncertainty.py replaced by C:/Users/uahma/AppData/Local/Temp/claude/0233f86d4baa4dd4/28ea1721-e52d-449e-ae7e-ea32c288f5aa/scratchpad/proto/full
+good   fails 0 of 1828   [354 s]
+F11    fails 25: test_date_numbers.py::test_it_is_named_when_nothing_is_said_about_time_order, test_panel_stop.py::test_a_persistent_panel_with_no_entity_column_stops, test_panel_stop.py::test_the_command_line_says_there_are_no_entities, test_statements.py::test_none_passed_explicitly_is_not_said, test_statements.py::test_nothing_said_about_entities_stops_whatever_the_table_holds[a_panel_that_does_not_persist] (and 20 more)   [258 s]
+M9     fails 7: test_groups_time.py::test_an_entity_with_no_earlier_row_gets_the_training_mean, test_groups_time.py::test_each_entity_has_its_own_previous_value[0], test_groups_time.py::test_each_entity_has_its_own_previous_value[2], test_groups_time.py::test_the_command_line_takes_both_columns, test_groups_time.py::test_the_leak_screen_measures_a_lag_against_the_entity_baseline (and 2 more)   [357 s]
+M16    fails 6: test_groups_time.py::test_an_entity_with_no_earlier_row_gets_the_training_mean, test_groups_time.py::test_each_entity_has_its_own_previous_value[0], test_groups_time.py::test_each_entity_has_its_own_previous_value[2], test_groups_time.py::test_the_command_line_takes_both_columns, test_groups_time.py::test_the_leak_screen_measures_a_lag_against_the_entity_baseline (and 1 more)   [355 s]
+M22    fails 11: test_duplicates_features.py::test_a_set_that_spans_two_entities_joins_them, test_duplicates_features.py::test_rows_that_agree_in_every_feature_stay_together_whatever_their_target, test_duplicates_features.py::test_the_command_line_uses_the_new_names, test_duplicates_features.py::test_the_count_and_the_warning_have_their_new_names, test_duplicates_features.py::test_the_count_is_of_rows_that_agree_in_every_feature (and 6 more)   [361 s]
+README tests (not counted: they judge README.md, the same file in every case): 2 of 13 failing: test_readme_statements.py::test_every_readme_command_states_both_and_runs_as_written, test_readme_statements.py::test_the_readme_names_what_this_pass_added
+MUTATION CHECK: PASS (the good reference fails nothing; each of 4 variant(s) fails at least one test)

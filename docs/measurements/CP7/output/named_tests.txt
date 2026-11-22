@@ -1,0 +1,58 @@
+| Broken copy | cases failing | the test named for it | among them |
+|---|---|---|---|
+| F1 | 28 | (caught by the gate; no one test named) | |
+| F2 | 11 | (caught by the gate; no one test named) | |
+| F3 | 21 | (caught by the gate; no one test named) | |
+| F4 | 12 | (caught by the gate; no one test named) | |
+| F5 | 52 | (caught by the gate; no one test named) | |
+| F6 | 146 | (caught by the gate; no one test named) | |
+| F7 | 147 | (caught by the gate; no one test named) | |
+| F8 | 16 | (caught by the gate; no one test named) | |
+| F9 | 16 | (caught by the gate; no one test named) | |
+| F6b | 50 | (caught by the gate; no one test named) | |
+| F6c | 18 | (caught by the gate; no one test named) | |
+| F6d | 6 | (caught by the gate; no one test named) | |
+| F7b | 35 | (caught by the gate; no one test named) | |
+| F7c | 12 | (caught by the gate; no one test named) | |
+| F10 | 28 | (caught by the gate; no one test named) | |
+| F7d | 6 | `test_time_order_stated.py::test_a_date_column_and_no_word_about_time_stops_the_run` | yes, 2 case(s) |
+| F8b | 5 | (caught by the gate; no one test named) | |
+| F11 | 25 | `test_statements.py::test_nothing_said_about_time_order_stops_whatever_the_table_holds` | yes, 4 case(s) (from the kept report) |
+| F12 | 5 | `test_duplicates_features.py::test_rows_that_agree_in_every_feature_stay_together_whatever_their_target` | yes, 1 case(s) |
+| F13 | 11 | `test_grouped_holdout.py::test_a_large_entity_is_never_held_out_when_smaller_ones_can_fill_a_quarter` | yes, 3 case(s) |
+| F14 | 16 | `test_date_numbers.py::test_a_column_of_dates_written_as_whole_numbers_is_excluded_as_a_date` | yes, 5 case(s) |
+| M1 | 1 | `test_guard_final_fit.py::test_m1_final_fit_statistics_ignore_the_holdout` | yes, 1 case(s) |
+| M2 | 2 | `test_guard_final_fit.py::test_m2_levels_come_from_the_rows_of_each_fit` | yes, 1 case(s) |
+| M3 | 2 | `test_guard_leak_screen.py::test_m3_single_column_skill_is_fitted_on_fold_training_rows_only` | yes, 1 case(s) |
+| M3 | 2 | `test_guard_leak_screen.py::test_m3_missing_by_class_counts_training_rows_only` | yes, 1 case(s) |
+| M4 | 3 | `test_guard_uncertainty.py::test_m4_block_bootstrap_draws_whole_blocks` | yes, 1 case(s) |
+| M5 | 1 | `test_guard_uncertainty.py::test_m5_ties_count_in_the_p_value` | yes, 1 case(s) |
+| M6 | 1 | `test_non_finite.py::test_a_prediction_that_is_not_finite_counts_as_raising` | yes, 1 case(s) |
+| M7 | 4 | `test_fast_profile_error.py::test_fast_error_stands_when_the_full_profile_would_run` | yes, 2 case(s) |
+| M7 | 4 | `test_time_pipeline.py::test_wide_panel_under_fast_raises` | yes, 1 case(s) |
+| M8 | 1 | `test_guard_review3.py::test_m8_the_interval_is_the_middle_95_percent` | yes, 1 case(s) |
+| M9 | 7 | `test_guard_review3.py::test_m9_the_leak_screen_uses_the_previous_value` | yes, 1 case(s) (from the kept report) |
+| M10 | 1 | `test_guard_review3.py::test_m10_the_fast_cap_is_a_sample_from_the_seed` | yes, 1 case(s) |
+| M11 | 1 | `test_guard_review3.py::test_m11_cv_std_is_the_sample_deviation` | yes, 1 case(s) |
+| M12 | 1 | `test_guard_review3.py::test_m12_tied_predictions_in_a_resample` | yes, 1 case(s) |
+| M13 | 1 | `test_guard_review3.py::test_m13_n_imputed_counts_rows_that_reach_a_model` | yes, 1 case(s) |
+| M14 | 4 | `test_read_once.py (its tests)` | yes, 4 case(s) |
+| M15 | 4 | `test_groups_random.py::test_no_entity_on_both_sides_or_in_two_folds` | yes, 2 case(s) |
+| M16 | 6 | `test_groups_time.py::test_the_leak_screen_measures_a_lag_against_the_entity_baseline` | yes, 1 case(s) |
+| M17 | 1 | `test_groups_random.py::test_the_fast_cap_keeps_whole_entities` | yes, 1 case(s) |
+| M18 | 6 | `test_review4_small.py::test_no_part_of_the_output_can_hold_a_number_that_is_not_finite` | yes, 5 case(s) |
+| M19 | 7 | `test_panel_stop.py::test_a_persistent_panel_with_no_entity_column_stops` | yes, 1 case(s) |
+| M19 | 7 | `test_statements.py::test_nothing_said_about_entities_stops_whatever_the_table_holds` | yes, 3 case(s) |
+| M20 | 3 | `test_guard_review4.py::test_m20_infinite_cells_of_the_target_and_the_time_column_are_counted` | yes, 1 case(s) |
+| M21 | 1 | `test_groups_random.py::test_the_interval_resamples_whole_entities_and_there_is_no_p_value` | yes, 1 case(s) |
+| M22 | 11 | `test_duplicates_group.py::test_each_set_of_copies_stays_on_one_side_and_in_one_fold` | yes, 1 case(s) (from the kept report) |
+| M23 | 1 | `test_guard_review5.py::test_m23_the_panel_warning_starts_just_above_one_half` | yes, 1 case(s) |
+| M24 | 2 | `test_statements.py::test_one_message_asks_for_everything_that_is_missing` | yes, 1 case(s) |
+| M25 | 3 | `test_duplicates_features.py::test_the_count_is_of_rows_that_agree_in_every_feature` | yes, 1 case(s) |
+| M26 | 4 | `test_grouped_holdout.py::test_what_the_holdout_can_spare_goes_back` | yes, 1 case(s) |
+| M27 | 3 | `test_grouped_holdout.py::test_a_large_unit_kept_in_training_is_named` | yes, 1 case(s) |
+| M28 | 1 | `test_date_numbers.py::test_eight_digit_text_is_accepted_as_the_time_column` | yes, 1 case(s) |
+| M29 | 3 | `test_date_numbers.py::test_the_date_rule_comes_before_the_id_like_rule` | yes, 2 case(s) |
+| M30 | 2 | `test_guard_review5.py::test_m30_a_copy_at_step_8a_still_needs_the_same_target` | yes, 1 case(s) |
+
+every named test fails on its copy

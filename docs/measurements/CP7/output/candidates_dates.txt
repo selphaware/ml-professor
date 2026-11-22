@@ -1,0 +1,55 @@
+candidate 1: a whole-number column that reads as YYYYMMDD, years 1900 to 2100
+
+| Table | data seeds | columns looked at | whole-number columns | flagged |
+|---|---|---|---|---|
+| gate `signal_clf` | 30 | 210 | 0 | none |
+| gate `signal_reg` | 30 | 180 | 0 | none |
+| gate `noise_clf` | 30 | 9000 | 0 | none |
+| gate `noise_reg` | 30 | 9000 | 0 | none |
+| gate `imbalanced` | 30 | 210 | 0 | none |
+| gate `leak` | 30 | 300 | 0 | none |
+| gate `leak_reg` | 30 | 210 | 0 | none |
+| gate `binary_numeric` | 30 | 210 | 0 | none |
+| gate `ambiguous_target` | 30 | 90 | 0 | none |
+| gate `messy` | 30 | 360 | 60 | none |
+| gate `time_blocks` | 30 | 270 | 240 | none |
+| gate `time_dayfirst` | 30 | 270 | 240 | none |
+| gate `random_walk` | 30 | 60 | 0 | none |
+| gate `noise_small` | 30 | 300 | 0 | none |
+| gate `signal_clf_small` | 30 | 210 | 0 | none |
+| gate `signal_reg_small` | 30 | 180 | 0 | none |
+| gate `near_leak` | 30 | 240 | 0 | none |
+| gate `long_rows` | 30 | 210 | 0 | none |
+| gate `flat_tail` | 30 | 90 | 0 | none |
+| gate `dup_noise` | 30 | 300 | 0 | none |
+| gate `int_stamps` | 30 | 60 | 30 | none |
+| gate `entities` | 30 | 210 | 0 | none |
+| gate `panel` | 30 | 90 | 0 | none |
+| gate `few_valued` | 30 | 60 | 0 | none |
+| gate `dominant_entity` | 30 | 150 | 0 | none |
+| gate `day_numbers` (added by this pass for the rule: its column `day` is dates) | 30 | 150 | 30 | day |
+| examples/customers.csv | - | 7 | 2 | none |
+
+flagged on the gate's other datasets and the example table: 0; on `day_numbers`, the one column that is dates
+
+| Table made for the purpose | should flag | flagged, over the seeds | verdict |
+|---|---|---|---|
+| finding 4: the day as a whole number, three rows a day | day | day | as it should |
+| the same, as floats with empty cells | day | day | as it should |
+| the same, as digit text | day | day | as it should |
+| one row a day, in order (id-like today) | day | day | as it should |
+| month ends over 40 years, shuffled | day | day | as it should |
+| two date columns (opened, closed) | opened, closed | opened, closed | as it should |
+| eight-digit identifiers drawn at random | none | none | as it should |
+| identifiers counting up from 20230101 | none | none | as it should |
+| whole numbers drawn at random between 19000101 and 21001231 | none | none | as it should |
+| years only (1990 to 2024) | none | none | as it should |
+| year and month as YYYYMM | none | none | as it should |
+| seconds since 1970 | none | none | as it should |
+| days since 1970 | none | none | as it should |
+| prices in whole cents, counts, ages, post codes | none | none | as it should |
+| dates as YYYYMMDD with one cell of 20231301 | none | none | as it should |
+| dates as DDMMYYYY whole numbers | none | none | as it should |
+
+tables made for the purpose on which the rule is wrong: 0 of 16
+a whole number drawn at random between 19000101 and 21001231 reads as a date with probability 0.0369; a column of 100 such values all read as dates with probability about 4.6e-144

@@ -1,0 +1,56 @@
+| Broken copy | judge as it stood, suite as it is | judge as it stood, suite loosened | judge as changed, suite loosened and the new tests |
+|---|---|---|---|
+| F1 | 26 | 26 | 28 |
+| F2 | 11 | 11 | 11 |
+| F3 | 21 | 21 | 21 |
+| F4 | 12 | 12 | 12 |
+| F5 | 50 | 50 | 52 |
+| F6 | 140 | 145 | 146 |
+| F7 | 139 | 139 | 147 |
+| F8 | 16 | 16 | 16 |
+| F9 | 13 | 13 | 16 |
+| F6b | 49 | 49 | 50 |
+| F6c | 18 | 18 | 18 |
+| F6d | 6 | 6 | 6 |
+| F7b | 33 | 33 | 35 |
+| F7c | 12 | 12 | 12 |
+| F10 | 14 | 14 | 28 |
+| F7d | 5 | 5 | 6 |
+| F8b | 4 | 4 | 5 |
+| M1 | 1 | 1 | 1 |
+| M2 | 2 | 2 | 2 |
+| M3 | 2 | 2 | 2 |
+| M4 | 3 | 3 | 3 |
+| M5 | 1 | 1 | 1 |
+| M6 | 1 | 1 | 1 |
+| M7 | 4 | 4 | 4 |
+| M8 | 1 | 1 | 1 |
+| M9 | 6 | 6 | 7 |
+| M10 | 1 | 1 | 1 |
+| M11 | 1 | 1 | 1 |
+| M12 | 1 | 1 | 1 |
+| M13 | 1 | 1 | 1 |
+| M14 | 4 | 4 | 4 |
+| M15 | 3 | 3 | 4 |
+| M16 | 5 | 5 | 6 |
+| M17 | 1 | 1 | 1 |
+| M18 | 6 | 6 | 6 |
+| M19 | 2 | 2 | 7 |
+| M20 | 3 | 3 | 3 |
+| M21 | 1 | 1 | 1 |
+| M22 | 4 | 4 | 11 |
+| F11 |  |  | 25 |
+| F12 |  |  | 5 |
+| F13 |  |  | 11 |
+| F14 |  |  | 16 |
+| M23 |  |  | 1 |
+| M24 |  |  | 2 |
+| M25 |  |  | 3 |
+| M26 |  |  | 4 |
+| M27 |  |  | 3 |
+| M28 |  |  | 1 |
+| M29 |  |  | 3 |
+| M30 |  |  | 2 |
+judge as it stood, suite as it is: good   fails 0 of 1747
+judge as it stood, suite loosened: good   fails 0 of 1747
+judge as changed, suite loosened and the new tests: good   fails 0 of 1828

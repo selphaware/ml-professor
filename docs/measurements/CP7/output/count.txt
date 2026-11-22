@@ -1,0 +1,72 @@
+suite: 1757 cases in 52 files; 0 failing in the lab
+calls of profile(): 1731
+
+   1178 calls: unsaid, D63 changes the outcome
+     35 calls: unsaid, stops today with the same code
+     67 calls: both said
+    451 calls: unsaid, ends before step 5 (unchanged by D63)
+
+| File | cases | call profile()/CLI | leave something unsaid | D63 changes the outcome | stop today with the same code |
+|---|---|---|---|---|---|
+| test_chosen_failure.py | 5 | 5 | 5 | 5 | 0 |
+| test_console_summary.py | 3 | 3 | 3 | 2 | 2 |
+| test_csv_edges.py | 16 | 8 | 8 | 1 | 0 |
+| test_duplicates.py | 22 | 20 | 20 | 14 | 1 |
+| test_duplicates_group.py | 13 | 13 | 13 | 8 | 0 |
+| test_edges.py | 39 | 39 | 39 | 16 | 2 |
+| test_fast_cap_error.py | 4 | 3 | 3 | 3 | 0 |
+| test_fast_profile_error.py | 5 | 5 | 5 | 5 | 0 |
+| test_feature_names.py | 9 | 7 | 7 | 7 | 0 |
+| test_full_profile.py | 7 | 4 | 4 | 4 | 0 |
+| test_groups_random.py | 25 | 24 | 23 | 19 | 0 |
+| test_groups_time.py | 7 | 7 | 1 | 1 | 0 |
+| test_guard_final_fit.py | 3 | 3 | 3 | 3 | 0 |
+| test_guard_header_lines.py | 3 | 3 | 3 | 0 | 0 |
+| test_guard_leak_screen.py | 2 | 2 | 2 | 2 | 0 |
+| test_guard_review3.py | 6 | 6 | 6 | 6 | 0 |
+| test_guard_review4.py | 6 | 6 | 6 | 5 | 0 |
+| test_guard_uncertainty.py | 2 | 2 | 2 | 2 | 0 |
+| test_leakage.py | 8 | 8 | 8 | 8 | 0 |
+| test_model_families.py | 5 | 3 | 3 | 3 | 0 |
+| test_non_finite.py | 18 | 15 | 15 | 14 | 0 |
+| test_object_numbers.py | 24 | 24 | 24 | 24 | 0 |
+| test_panel_stop.py | 5 | 5 | 4 | 2 | 2 |
+| test_pipeline.py | 24 | 24 | 24 | 24 | 0 |
+| test_read_once.py | 5 | 5 | 5 | 1 | 0 |
+| test_readme_examples.py | 3 | 1 | 1 | 1 | 0 |
+| test_result_schema.py | 15 | 7 | 7 | 6 | 0 |
+| test_review4_small.py | 10 | 3 | 3 | 1 | 0 |
+| test_run_hygiene.py | 9 | 7 | 7 | 4 | 0 |
+| test_seed_range.py | 7 | 5 | 5 | 1 | 0 |
+| test_skill_undefined.py | 10 | 9 | 9 | 9 | 0 |
+| test_summary_digits.py | 1 | 1 | 1 | 1 | 0 |
+| test_target_white_space.py | 6 | 4 | 4 | 4 | 0 |
+| test_time_fraction.py | 28 | 3 | 3 | 1 | 0 |
+| test_time_order_stated.py | 10 | 10 | 10 | 5 | 5 |
+| test_time_pipeline.py | 15 | 15 | 15 | 13 | 3 |
+| test_type_matrix.py | 805 | 805 | 805 | 505 | 20 |
+| test_type_matrix_group.py | 353 | 353 | 299 | 246 | 0 |
+| test_uncertainty.py | 16 | 16 | 16 | 16 | 0 |
+| test_whole_numbers.py | 19 | 14 | 14 | 14 | 0 |
+| total | 1757 | 1497 | 1435 | 1006 | 35 |
+
+where the calls that D63 changes are made (the function that calls profile()):
+    505 cases,   505 calls: test_type_matrix.py::test_a_result_or_a_named_error   test_type_matrix.py 505
+    246 cases,   246 calls: test_type_matrix_group.py::test_a_result_or_a_named_error_as_the_entity_column   test_type_matrix_group.py 246
+    141 cases,   257 calls: cp3_helpers.py::run   test_chosen_failure.py 5, test_duplicates.py 12, test_duplicates_group.py 5, test_fast_cap_error.py 2, test_fast_profile_error.py 5, test_feature_names.py 6, test_groups_random.py 15, test_groups_time.py 1, test_guard_final_fit.py 3, test_guard_leak_screen.py 2, test_guard_review3.py 6, test_guard_review4.py 5, test_guard_uncertainty.py 2, test_non_finite.py 12, test_object_numbers.py 24, test_panel_stop.py 2, test_read_once.py 1, test_review4_small.py 1, test_run_hygiene.py 3, test_skill_undefined.py 8, test_target_white_space.py 4, test_time_fraction.py 1, test_time_order_stated.py 3, test_whole_numbers.py 13
+     24 cases,    32 calls: test_pipeline.py::_run   test_pipeline.py 24
+     18 cases,    27 calls: cp5_helpers.py::raised   test_duplicates.py 8, test_duplicates_group.py 2, test_fast_cap_error.py 3, test_groups_random.py 4, test_time_order_stated.py 1
+     16 cases,    18 calls: test_edges.py::_run   test_edges.py 16
+     16 cases,    23 calls: test_uncertainty.py::_run   test_uncertainty.py 16
+     15 cases,    22 calls: command line (h.run_cli or a subprocess)   test_console_summary.py 2, test_duplicates.py 1, test_duplicates_group.py 1, test_feature_names.py 1, test_full_profile.py 1, test_groups_random.py 1, test_non_finite.py 1, test_readme_examples.py 1, test_result_schema.py 1, test_skill_undefined.py 1, test_summary_digits.py 1, test_time_fraction.py 1, test_time_order_stated.py 1, test_whole_numbers.py 1
+     13 cases,    17 calls: test_time_pipeline.py::_run   test_time_pipeline.py 13
+      8 cases,     8 calls: test_leakage.py::_run   test_leakage.py 8
+      6 cases,     7 calls: test_result_schema.py::_profile   test_result_schema.py 6
+      3 cases,     7 calls: test_model_families.py::_profile   test_model_families.py 3
+      1 cases,     1 calls: test_csv_edges.py::test_profile_runs_on_a_file_with_leading_blank_lines   test_csv_edges.py 1
+      1 cases,     2 calls: conftest.py::full_runs   test_full_profile.py 1
+      1 cases,     1 calls: test_full_profile.py::test_same_result_at_one_and_two_jobs   test_full_profile.py 1
+      1 cases,     1 calls: test_full_profile.py::test_n_jobs_minus_one_records_cpu_count   test_full_profile.py 1
+      1 cases,     1 calls: test_non_finite.py::test_a_target_on_a_very_large_scale_gives_finite_numbers_or_the_named_error   test_non_finite.py 1
+      1 cases,     1 calls: test_run_hygiene.py::_call_profile   test_run_hygiene.py 1
+      1 cases,     2 calls: test_seed_range.py::test_the_largest_seed_runs_and_the_next_one_is_refused   test_seed_range.py 1

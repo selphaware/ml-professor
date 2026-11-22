@@ -82,7 +82,9 @@ def read_time(values):
 
     The keys of a numeric column are 64-bit floats, with one exception (D50, D53):
     an integer-typed column that holds a magnitude above 2**53 gives exact 64-bit
-    integers, since as floats two of its values could become one.
+    integers, since as floats two of its values could become one. Text of eight
+    digits that all read as calendar dates, YYYYMMDD, is ordered as those numbers
+    and has the form `numeric` (D66).
     """
     keys, missing, form, _ = core._time_keys(_typed(values), "time")
     if form == "numeric":

@@ -1,0 +1,97 @@
+candidate 2: a text or whole-number column whose levels each form a series
+
+skill: 1 - squared error of the previous value within a level / squared error of the table's own baseline, over the training rows; `own mean`: the same against each level's own training mean
+
+| Table | column | levels | skill, min..max over the seeds | own mean, min..max | flagged at 0.5 | flagged at 0.9 | flagged at 0.95 | flagged at 0.98 | flagged at 0.5 on both |
+|---|---|---|---|---|---|---|---|---|---|
+| gate `random_walk` (--time-col date) | no column whose levels could be series | | | | | | | | |
+| gate `flat_tail` (--time-col date) | no column whose levels could be series | | | | | | | | |
+| gate `int_stamps` (--time-col t) | no column whose levels could be series | | | | | | | | |
+| gate `panel` (--time-col date) | series | 12 | +0.993..+0.999 | +0.886..+0.950 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+
+not in scope (no regression under a time column in the gate's own run): signal_clf, signal_reg, noise_clf, noise_reg, imbalanced, leak, leak_reg, binary_numeric, ambiguous_target, messy, time_blocks, time_dayfirst, noise_small, signal_clf_small, signal_reg_small, near_leak, long_rows, dup_noise, entities, few_valued, dominant_entity, day_numbers
+
+| Table | column | levels | skill | own mean | flagged at 0.5 | flagged at 0.9 | flagged at 0.95 | flagged at 0.98 | flagged at 0.5 on both |
+|---|---|---|---|---|---|---|---|---|---|
+| examples/customers.csv, target monthly_spend, time column signup_date | age | 62 | -1.106..-1.106 | -1.503..-1.503 | 0 of 1 | 0 of 1 | 0 of 1 | 0 of 1 | 0 of 1 |
+| examples/customers.csv, target monthly_spend, time column signup_date | plan | 3 | -0.050..-0.050 | -0.978..-0.978 | 0 of 1 | 0 of 1 | 0 of 1 | 0 of 1 | 0 of 1 |
+| examples/customers.csv, target monthly_spend, time column signup_date | region | 4 | -1.062..-1.062 | -1.074..-1.074 | 0 of 1 | 0 of 1 | 0 of 1 | 0 of 1 | 0 of 1 |
+| examples/customers.csv, target monthly_spend, time column signup_date | support_calls | 10 | -1.003..-1.003 | -1.067..-1.067 | 0 of 1 | 0 of 1 | 0 of 1 | 0 of 1 | 0 of 1 |
+| examples/customers.csv, target age, time column signup_date | plan | 3 | -1.027..-1.027 | -1.038..-1.038 | 0 of 1 | 0 of 1 | 0 of 1 | 0 of 1 | 0 of 1 |
+| examples/customers.csv, target age, time column signup_date | region | 4 | -1.046..-1.046 | -1.048..-1.048 | 0 of 1 | 0 of 1 | 0 of 1 | 0 of 1 | 0 of 1 |
+| examples/customers.csv, target age, time column signup_date | support_calls | 10 | -1.133..-1.133 | -1.234..-1.234 | 0 of 1 | 0 of 1 | 0 of 1 | 0 of 1 | 0 of 1 |
+
+| Table made for the purpose | column | levels | skill, min..max | own mean, min..max | flagged at 0.5 | flagged at 0.9 | flagged at 0.95 | flagged at 0.98 | flagged at 0.5 on both |
+|---|---|---|---|---|---|---|---|---|---|
+| finding 3: twelve walks, stamps offset by one second [should flag: series] | series | 12 | +0.992..+0.999 | +0.894..+0.967 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| twelve walks on the same stamps [should flag: series] | series | 12 | +0.996..+0.999 | +0.901..+0.956 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| finding 2: 150 walks of 12 stamps [should flag: series] | series | 150 | +0.997..+0.998 | +0.178..+0.344 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 0 of 30 |
+| 40 walks of 8 stamps [should flag: series] | series | 40 | +0.995..+0.998 | -0.468..+0.014 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 0 of 30 |
+| 40 walks of 36 stamps [should flag: series] | series | 40 | +0.996..+0.999 | +0.701..+0.824 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| twelve walks, the series named by a whole number [should flag: series] | series | 12 | +0.995..+0.999 | +0.883..+0.967 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| twelve series that return to their own level (0.9 a step) [should flag: series] | series | 12 | +0.992..+0.999 | +0.672..+0.810 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| twelve series that return quickly (0.5 a step) [should flag: series] | series | 12 | +0.991..+0.998 | -0.148..+0.070 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 0 of 30 |
+| one random walk with a weekday, a month, a segment and a rating [should flag: none] | month | 12 | -30.418..-1.001 | +0.847..+0.946 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| one random walk with a weekday, a month, a segment and a rating [should flag: none] | rating | 5 | -5.235..-3.051 | +0.764..+0.984 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| one random walk with a weekday, a month, a segment and a rating [should flag: none] | segment | 4 | -3.698..-2.310 | +0.795..+0.988 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| one random walk with a weekday, a month, a segment and a rating [should flag: none] | weekday | 5 | -4.888..-3.222 | +0.753..+0.984 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| independent rows, a segment that sets the level (4 sd apart) [should flag: none] | segment | 4 | +0.889..+0.920 | -1.118..-0.792 | 30 of 30 | 25 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| one series with a strong weekly pattern and independent noise [should flag: none] | weekday | 5 | +0.846..+0.895 | -1.177..-0.819 | 30 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| one slow random walk under a strong weekly pattern [should flag: none] | weekday | 5 | +0.987..+0.991 | +0.753..+0.984 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| independent rows, a segment that sets the level (20 sd apart) [should flag: none] | segment | 4 | +0.996..+0.997 | -1.233..-0.725 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 0 of 30 |
+| eight stores a day, the target independent of the store [should flag: none] | store | 8 | -1.182..-0.848 | -1.191..-0.872 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| eight stores a day, each store at a level of its own, no memory [should flag: none] | store | 8 | -0.161..+0.849 | -1.191..-0.872 | 23 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+
+per seed (data seed 0, 1, ... for the tables made here; base seed 1115, 1215, ... for the gate's): the ratio against the table's own baseline, then against each level's own mean
+gate `panel` (--time-col date) | series | table: +0.998 +0.998 +0.996 +0.998 +0.996 +0.998 +0.998 +0.993 +0.998 +0.998 +0.998 +0.998 +0.997 +0.998 +0.998 +0.999 +0.997 +0.999 +0.997 +0.998 +0.997 +0.999 +0.997 +0.998 +0.997 +0.997 +0.995 +0.995 +0.998 +0.998
+gate `panel` (--time-col date) | series | own mean: +0.903 +0.939 +0.950 +0.940 +0.889 +0.950 +0.944 +0.912 +0.928 +0.924 +0.940 +0.886 +0.927 +0.904 +0.903 +0.927 +0.914 +0.916 +0.946 +0.945 +0.943 +0.941 +0.899 +0.923 +0.928 +0.930 +0.944 +0.923 +0.937 +0.937
+examples/customers.csv, target monthly_spend, time column signup_date | age | table: -1.106
+examples/customers.csv, target monthly_spend, time column signup_date | age | own mean: -1.503
+examples/customers.csv, target monthly_spend, time column signup_date | plan | table: -0.050
+examples/customers.csv, target monthly_spend, time column signup_date | plan | own mean: -0.978
+examples/customers.csv, target monthly_spend, time column signup_date | region | table: -1.062
+examples/customers.csv, target monthly_spend, time column signup_date | region | own mean: -1.074
+examples/customers.csv, target monthly_spend, time column signup_date | support_calls | table: -1.003
+examples/customers.csv, target monthly_spend, time column signup_date | support_calls | own mean: -1.067
+examples/customers.csv, target age, time column signup_date | plan | table: -1.027
+examples/customers.csv, target age, time column signup_date | plan | own mean: -1.038
+examples/customers.csv, target age, time column signup_date | region | table: -1.046
+examples/customers.csv, target age, time column signup_date | region | own mean: -1.048
+examples/customers.csv, target age, time column signup_date | support_calls | table: -1.133
+examples/customers.csv, target age, time column signup_date | support_calls | own mean: -1.234
+finding 3: twelve walks, stamps offset by one second [should flag: series] | series | table: +0.996 +0.997 +0.996 +0.998 +0.997 +0.998 +0.992 +0.996 +0.998 +0.996 +0.998 +0.997 +0.998 +0.999 +0.999 +0.998 +0.999 +0.998 +0.997 +0.998 +0.998 +0.998 +0.993 +0.997 +0.998 +0.997 +0.997 +0.996 +0.997 +0.998
+finding 3: twelve walks, stamps offset by one second [should flag: series] | series | own mean: +0.949 +0.940 +0.911 +0.928 +0.894 +0.949 +0.936 +0.948 +0.947 +0.924 +0.955 +0.925 +0.898 +0.920 +0.947 +0.920 +0.945 +0.956 +0.959 +0.944 +0.967 +0.915 +0.935 +0.939 +0.946 +0.918 +0.937 +0.916 +0.944 +0.942
+twelve walks on the same stamps [should flag: series] | series | table: +0.998 +0.999 +0.998 +0.999 +0.997 +0.998 +0.997 +0.998 +0.999 +0.998 +0.997 +0.998 +0.998 +0.998 +0.998 +0.997 +0.997 +0.997 +0.996 +0.997 +0.998 +0.996 +0.998 +0.997 +0.998 +0.997 +0.998 +0.998 +0.996 +0.998
+twelve walks on the same stamps [should flag: series] | series | own mean: +0.946 +0.927 +0.934 +0.911 +0.942 +0.943 +0.942 +0.929 +0.923 +0.939 +0.939 +0.943 +0.933 +0.906 +0.956 +0.950 +0.908 +0.935 +0.927 +0.901 +0.932 +0.926 +0.918 +0.925 +0.938 +0.938 +0.936 +0.930 +0.948 +0.931
+finding 2: 150 walks of 12 stamps [should flag: series] | series | table: +0.997 +0.997 +0.998 +0.997 +0.998 +0.998 +0.998 +0.998 +0.998 +0.998 +0.997 +0.998 +0.998 +0.997 +0.998 +0.997 +0.997 +0.997 +0.998 +0.997 +0.997 +0.997 +0.998 +0.997 +0.998 +0.997 +0.998 +0.998 +0.998 +0.998
+finding 2: 150 walks of 12 stamps [should flag: series] | series | own mean: +0.337 +0.237 +0.344 +0.300 +0.243 +0.217 +0.254 +0.208 +0.180 +0.248 +0.225 +0.326 +0.316 +0.178 +0.232 +0.260 +0.255 +0.314 +0.274 +0.243 +0.263 +0.268 +0.320 +0.245 +0.308 +0.321 +0.243 +0.236 +0.272 +0.188
+40 walks of 8 stamps [should flag: series] | series | table: +0.997 +0.997 +0.998 +0.998 +0.996 +0.997 +0.998 +0.996 +0.997 +0.998 +0.997 +0.997 +0.997 +0.998 +0.997 +0.997 +0.997 +0.998 +0.998 +0.998 +0.998 +0.997 +0.997 +0.997 +0.995 +0.995 +0.997 +0.997 +0.997 +0.997
+40 walks of 8 stamps [should flag: series] | series | own mean: -0.215 -0.232 -0.463 -0.468 -0.223 -0.076 -0.248 +0.014 -0.084 -0.256 -0.169 -0.116 -0.391 -0.312 -0.313 -0.084 -0.145 -0.055 -0.205 -0.233 -0.308 -0.264 -0.145 -0.299 -0.236 -0.302 -0.449 -0.224 -0.248 -0.018
+40 walks of 36 stamps [should flag: series] | series | table: +0.998 +0.997 +0.998 +0.998 +0.997 +0.998 +0.998 +0.997 +0.998 +0.996 +0.998 +0.997 +0.997 +0.998 +0.999 +0.997 +0.997 +0.997 +0.998 +0.998 +0.997 +0.998 +0.997 +0.998 +0.998 +0.997 +0.996 +0.997 +0.998 +0.997
+40 walks of 36 stamps [should flag: series] | series | own mean: +0.742 +0.794 +0.746 +0.792 +0.824 +0.756 +0.777 +0.747 +0.802 +0.792 +0.743 +0.760 +0.811 +0.764 +0.760 +0.767 +0.735 +0.742 +0.775 +0.701 +0.768 +0.796 +0.742 +0.761 +0.735 +0.777 +0.765 +0.787 +0.776 +0.738
+twelve walks, the series named by a whole number [should flag: series] | series | table: +0.997 +0.996 +0.999 +0.995 +0.996 +0.997 +0.996 +0.998 +0.998 +0.998 +0.997 +0.997 +0.997 +0.996 +0.997 +0.998 +0.997 +0.998 +0.998 +0.997 +0.996 +0.998 +0.997 +0.997 +0.998 +0.997 +0.997 +0.998 +0.997 +0.999
+twelve walks, the series named by a whole number [should flag: series] | series | own mean: +0.929 +0.949 +0.943 +0.934 +0.924 +0.912 +0.962 +0.937 +0.964 +0.912 +0.928 +0.883 +0.935 +0.952 +0.931 +0.937 +0.894 +0.916 +0.917 +0.941 +0.953 +0.916 +0.933 +0.936 +0.946 +0.903 +0.944 +0.967 +0.909 +0.933
+twelve series that return to their own level (0.9 a step) [should flag: series] | series | table: +0.997 +0.992 +0.997 +0.996 +0.997 +0.994 +0.998 +0.998 +0.995 +0.996 +0.996 +0.994 +0.997 +0.997 +0.997 +0.998 +0.994 +0.997 +0.998 +0.997 +0.998 +0.996 +0.994 +0.997 +0.998 +0.996 +0.999 +0.998 +0.997 +0.997
+twelve series that return to their own level (0.9 a step) [should flag: series] | series | own mean: +0.672 +0.722 +0.786 +0.753 +0.793 +0.725 +0.724 +0.736 +0.769 +0.795 +0.681 +0.711 +0.730 +0.716 +0.737 +0.768 +0.682 +0.771 +0.731 +0.810 +0.682 +0.761 +0.779 +0.734 +0.765 +0.760 +0.757 +0.737 +0.787 +0.780
+twelve series that return quickly (0.5 a step) [should flag: series] | series | table: +0.995 +0.991 +0.994 +0.997 +0.996 +0.998 +0.997 +0.994 +0.993 +0.994 +0.998 +0.994 +0.996 +0.997 +0.995 +0.996 +0.993 +0.994 +0.995 +0.995 +0.996 +0.998 +0.998 +0.995 +0.995 +0.997 +0.998 +0.997 +0.995 +0.992
+twelve series that return quickly (0.5 a step) [should flag: series] | series | own mean: -0.028 -0.037 -0.019 -0.015 +0.070 +0.005 -0.032 -0.106 -0.148 -0.050 +0.029 +0.022 +0.012 -0.088 -0.029 -0.011 -0.015 -0.084 -0.057 -0.014 -0.040 +0.009 -0.068 -0.077 -0.012 -0.023 -0.010 +0.036 -0.033 -0.006
+one random walk with a weekday, a month, a segment and a rating [should flag: none] | month | table: -18.777 -3.108 -16.377 -30.418 -5.818 -6.473 -7.007 -4.385 -8.496 -1.801 -7.158 -4.507 -2.728 -2.599 -7.896 -1.001 -2.075 -2.865 -2.913 -4.623 -9.987 -3.945 -1.716 -1.102 -2.295 -2.633 -10.877 -9.932 -6.861 -8.179
+one random walk with a weekday, a month, a segment and a rating [should flag: none] | month | own mean: +0.934 +0.876 +0.925 +0.881 +0.920 +0.913 +0.939 +0.927 +0.930 +0.915 +0.937 +0.932 +0.910 +0.921 +0.924 +0.847 +0.859 +0.916 +0.877 +0.927 +0.937 +0.909 +0.930 +0.858 +0.879 +0.863 +0.878 +0.931 +0.941 +0.946
+one random walk with a weekday, a month, a segment and a rating [should flag: none] | rating | table: -4.045 -3.920 -5.235 -4.675 -3.863 -4.030 -3.774 -4.937 -3.346 -3.278 -3.695 -4.382 -3.852 -3.573 -3.735 -3.509 -3.051 -4.341 -3.863 -3.959 -3.729 -3.129 -4.290 -3.231 -3.265 -4.609 -4.358 -4.270 -3.723 -4.434
+one random walk with a weekday, a month, a segment and a rating [should flag: none] | rating | own mean: +0.984 +0.859 +0.974 +0.979 +0.947 +0.949 +0.965 +0.926 +0.968 +0.889 +0.965 +0.940 +0.902 +0.908 +0.960 +0.830 +0.837 +0.902 +0.902 +0.947 +0.975 +0.928 +0.886 +0.764 +0.852 +0.827 +0.950 +0.971 +0.968 +0.969
+one random walk with a weekday, a month, a segment and a rating [should flag: none] | segment | table: -2.932 -2.948 -3.698 -3.289 -2.823 -2.779 -2.831 -3.542 -2.813 -2.321 -2.880 -3.289 -3.084 -2.807 -2.773 -2.403 -2.506 -3.250 -2.670 -2.772 -2.587 -2.310 -3.003 -2.593 -2.697 -2.793 -3.283 -3.020 -2.815 -3.567
+one random walk with a weekday, a month, a segment and a rating [should flag: none] | segment | own mean: +0.988 +0.887 +0.980 +0.984 +0.959 +0.962 +0.972 +0.944 +0.972 +0.914 +0.971 +0.953 +0.918 +0.924 +0.968 +0.873 +0.859 +0.922 +0.926 +0.960 +0.981 +0.943 +0.914 +0.795 +0.875 +0.883 +0.960 +0.978 +0.974 +0.974
+one random walk with a weekday, a month, a segment and a rating [should flag: none] | weekday | table: -4.039 -4.131 -4.720 -4.455 -4.123 -4.110 -3.863 -4.888 -3.722 -3.453 -3.910 -4.249 -4.268 -3.770 -3.941 -3.658 -3.282 -4.248 -3.710 -3.872 -3.828 -3.222 -3.709 -3.435 -3.362 -3.956 -4.010 -4.272 -4.190 -4.208
+one random walk with a weekday, a month, a segment and a rating [should flag: none] | weekday | own mean: +0.984 +0.855 +0.976 +0.980 +0.945 +0.949 +0.965 +0.927 +0.966 +0.884 +0.964 +0.943 +0.894 +0.903 +0.958 +0.826 +0.830 +0.904 +0.905 +0.948 +0.975 +0.927 +0.899 +0.753 +0.849 +0.848 +0.954 +0.971 +0.965 +0.971
+independent rows, a segment that sets the level (4 sd apart) [should flag: none] | segment | table: +0.904 +0.908 +0.899 +0.903 +0.911 +0.913 +0.911 +0.900 +0.907 +0.916 +0.901 +0.901 +0.906 +0.899 +0.905 +0.902 +0.889 +0.904 +0.904 +0.910 +0.907 +0.912 +0.920 +0.904 +0.894 +0.906 +0.902 +0.908 +0.909 +0.908
+independent rows, a segment that sets the level (4 sd apart) [should flag: none] | segment | own mean: -1.107 -1.055 -0.921 -1.092 -0.945 -0.958 -0.981 -1.019 -1.029 -0.998 -1.047 -1.052 -1.007 -0.982 -1.002 -0.929 -1.109 -0.954 -1.071 -1.105 -0.967 -0.877 -0.792 -1.061 -1.118 -1.038 -0.941 -1.008 -1.031 -0.954
+one series with a strong weekly pattern and independent noise [should flag: none] | weekday | table: +0.855 +0.858 +0.865 +0.846 +0.860 +0.866 +0.872 +0.874 +0.857 +0.895 +0.859 +0.862 +0.866 +0.877 +0.861 +0.870 +0.870 +0.863 +0.881 +0.871 +0.853 +0.883 +0.873 +0.857 +0.873 +0.860 +0.874 +0.861 +0.861 +0.872
+one series with a strong weekly pattern and independent noise [should flag: none] | weekday | own mean: -1.177 -1.002 -0.920 -1.158 -1.037 -0.993 -0.993 -0.992 -1.045 -0.886 -1.016 -1.025 -0.895 -0.948 -0.819 -1.002 -0.989 -0.962 -1.000 -0.990 -1.053 -0.963 -1.087 -1.163 -0.921 -1.041 -1.027 -1.082 -1.065 -0.992
+one slow random walk under a strong weekly pattern [should flag: none] | weekday | table: +0.990 +0.987 +0.988 +0.989 +0.990 +0.988 +0.989 +0.987 +0.991 +0.990 +0.990 +0.989 +0.987 +0.987 +0.989 +0.988 +0.989 +0.987 +0.989 +0.989 +0.991 +0.990 +0.988 +0.988 +0.989 +0.988 +0.989 +0.990 +0.991 +0.990
+one slow random walk under a strong weekly pattern [should flag: none] | weekday | own mean: +0.984 +0.855 +0.976 +0.980 +0.945 +0.949 +0.965 +0.927 +0.966 +0.884 +0.964 +0.943 +0.894 +0.903 +0.958 +0.826 +0.830 +0.904 +0.905 +0.948 +0.975 +0.927 +0.899 +0.753 +0.849 +0.848 +0.954 +0.971 +0.965 +0.971
+independent rows, a segment that sets the level (20 sd apart) [should flag: none] | segment | table: +0.996 +0.996 +0.996 +0.997 +0.996 +0.996 +0.996 +0.996 +0.996 +0.996 +0.996 +0.996 +0.996 +0.996 +0.996 +0.996 +0.996 +0.997 +0.996 +0.996 +0.996 +0.996 +0.997 +0.996 +0.996 +0.996 +0.996 +0.996 +0.996 +0.996
+independent rows, a segment that sets the level (20 sd apart) [should flag: none] | segment | own mean: -1.123 -1.233 -1.119 -0.725 -1.052 -1.037 -0.988 -0.961 -0.806 -1.133 -1.004 -0.920 -1.045 -0.926 -1.001 -0.958 -0.954 -0.815 -1.011 -1.052 -0.961 -1.047 -0.956 -0.878 -0.959 -1.072 -0.946 -0.974 -1.066 -1.039
+eight stores a day, the target independent of the store [should flag: none] | store | table: -1.149 -1.092 -1.037 -1.182 -0.973 -1.038 -1.015 -0.955 -1.081 -0.930 -1.129 -1.021 -0.977 -1.037 -0.868 -0.947 -0.987 -0.848 -1.032 -1.035 -1.002 -0.986 -1.000 -0.883 -0.998 -1.117 -0.956 -1.065 -1.008 -0.848
+eight stores a day, the target independent of the store [should flag: none] | store | own mean: -1.158 -1.101 -1.050 -1.191 -0.994 -1.054 -1.037 -0.978 -1.091 -0.946 -1.146 -1.035 -0.988 -1.060 -0.889 -0.968 -0.999 -0.891 -1.055 -1.051 -1.009 -0.998 -1.025 -0.898 -1.026 -1.146 -0.989 -1.085 -1.042 -0.872
+eight stores a day, each store at a level of its own, no memory [should flag: none] | store | table: +0.509 +0.702 +0.577 -0.161 +0.732 +0.579 +0.461 +0.840 +0.778 +0.692 +0.659 +0.849 +0.396 +0.736 +0.671 +0.418 +0.642 +0.736 +0.622 +0.584 +0.471 +0.766 +0.756 +0.844 +0.608 +0.716 +0.735 +0.235 +0.488 +0.681
+eight stores a day, each store at a level of its own, no memory [should flag: none] | store | own mean: -1.158 -1.101 -1.050 -1.191 -0.994 -1.054 -1.037 -0.978 -1.091 -0.946 -1.146 -1.035 -0.988 -1.060 -0.889 -0.968 -0.999 -0.891 -1.055 -1.051 -1.009 -0.998 -1.025 -0.898 -1.026 -1.146 -0.989 -1.085 -1.042 -0.872

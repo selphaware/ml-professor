@@ -134,9 +134,9 @@ weakness here). Only the features stay on the roadmap.
 - **Finding 1, the fifth table.** The suite variant M14 does not make its
   test fail: the only visible difference is a stamp written `17900` or
   `17900.0`. That test has no broken copy behind it.
-- **Gate time.** The per-edit gate takes 15.6 of its 20 seconds and the
-  self-test about 17 minutes. Pass 7 adds broken copies, so it needs a plan
-  for both before it adds them.
+- **Gate time.** After the CP7 judge the per-edit gate takes 17.2 of its 20
+  seconds and the self-test about 19 minutes. Pass 7 adds broken copies, so
+  it needs a plan for both before it adds them.
 - **A p-value for grouped runs.** None is reported (D61). A shuffle of whole
   entities is sound only when each entity holds one label.
 - **D49 on clean tables of few-valued columns** stops them from about 4,000
@@ -144,6 +144,23 @@ weakness here). Only the features stay on the roadmap.
 
 - **Thin spots of the fifth pass.** M17 and M21 are each held by one test.
 - **`CLAUDE.md` says "D1 to D60".** CP7 brings it up to date.
+
+## Found in the CP7 session (sixth pass)
+
+- **A code column that reads as dates.** Rule 2a excludes a whole-number
+  column when every value is a valid `YYYYMMDD` date and two differ. A
+  random value in range is a valid date with probability 0.037, so a column
+  of two or three distinct codes can be excluded by chance. It shows in the
+  column accounting, but the caller has no override until the deferred
+  role override is built.
+- **`duplicates="group"` gives no interval on small tables.** About 120
+  feature combinations are needed for 30 holdout units.
+- **One entity above three quarters of the rows** is the whole holdout, and
+  the model trains on the rest, with a warning (D66). Before, some such runs
+  stopped with `too_few_groups`.
+- **What the older tests prove about an unsaid statement:** nothing, since
+  they go through the helper of D65. The five opt-out tests and
+  `test_statements.py` carry it.
 
 ## Notes for the framework (ailoop-engineering), not for this repo
 

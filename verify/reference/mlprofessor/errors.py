@@ -70,16 +70,16 @@ class HoldoutCopiesError(ProfileError):
 
 
 class TimeOrderUndeclaredError(ProfileError):
-    """A column holds dates and the caller has neither declared a time column nor
-    said that the rows have no time order (D58)."""
+    """The caller has neither declared a time column nor said that the order of the
+    rows in time does not matter, whatever the table holds (D63). When nothing was
+    said about entities either, the same message asks for both."""
 
     code = "time_order_undeclared"
 
 
 class EntitiesUndeclaredError(ProfileError):
-    """Under time order the timestamps repeat, the target is strongly
-    autocorrelated, and the caller has neither declared an entity column nor said
-    that there are no entities (D58)."""
+    """Time order was stated, and the caller has neither declared an entity column
+    nor said that no rows belong together, whatever the table holds (D63)."""
 
     code = "entities_undeclared"
 

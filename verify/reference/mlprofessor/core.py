@@ -1,7 +1,7 @@
 """Reference implementation of spec.md, in the spec's order of operations.
 
-Judge fixture: the gate measures its bands on this code and breaks it in fourteen
-named ways; the test suite is proved against those and against thirteen smaller
+Judge fixture: the gate measures its bands on this code and breaks it in twenty-one
+named ways; the test suite is proved against those and against thirty smaller
 faults (see _variant.py). One module on purpose, so each step of the
 methodology can be read top to bottom in `_run`.
 """
@@ -102,6 +102,21 @@ ISO_LONG_FRACTION_RE = re.compile(
 # D28: a number written with thousands separators. Never parsed: `1,200` is 1.2 in some locales.
 SEPARATED_RE = re.compile(r"[+-]?[0-9]{1,3}(?:,[0-9]{3})+(?:\.[0-9]+)?")
 
+# D62: when each answer to the copies stop fits, `keep` first. A fixed text.
+COPIES_ADVICE = ("Pass duplicates='keep' (--duplicates keep) if the repeated rows are different "
+                 "cases that look alike, as in a table of few-valued columns. Pass "
+                 "duplicates='group' (--duplicates group) if they are one case recorded more "
+                 "than once: no combination of feature values is then on both sides of the "
+                 "split. Or remove the repeated rows.")
+# D66: what is said of a unit that holds a quarter or more of the rows it is drawn
+# among. Fixed texts.
+LARGE_KEPT = ("It is kept among the training rows and the holdout is made of smaller units: "
+              "the headline does not test it.")
+LARGE_IS_HOLDOUT = ("The units smaller than a quarter do not together hold a quarter, so this "
+                    "one unit is the holdout: the headline rests on it alone.")
+# D66: a whole number reads as a calendar date written YYYYMMDD when its year is in
+# this range, both ends included, and its month and day exist.
+DATE_NUMBER_YEARS = (1900, 2100)
 RANDOM_CAVEAT = ("Random split: this number is optimistic if the rows are ordered in time "
                  "or one entity appears on many rows.")
 GROUPED_CAVEAT = ("Random split of whole entities: this number is optimistic if the rows are "
@@ -213,8 +228,10 @@ def profile(data, target, task="auto", time_col=None, gap=0, profile="full", see
     if isinstance(n_jobs, bool) or not isinstance(n_jobs, (int, np.integer)) \
             or not (n_jobs == -1 or n_jobs >= 1):
         raise E.InputError(f"n_jobs must be -1 or a positive whole number, not {n_jobs!r}")
-    # D58: `False` is the caller's statement that the rows have no time order, and
-    # for `group_col` that no entity holds more than one row. `True` says nothing.
+    # D63: every call says both things. `False` is the caller's statement that the
+    # rows have no time order, and for `group_col` that no rows belong together.
+    # `None` is "not said": it is an argument like any other here, and the run
+    # stops for it at step 5, where the table can be named. `True` says nothing.
     if time_col is True:
         raise E.InputError("time_col must be a column name, None, or False for a table whose "
                            "rows have no time order; not True")
@@ -557,6 +574,12 @@ def _time_keys(series, name, judged=None):
     present = series.dropna()
     if (pt.is_string_dtype(dtype) or dtype == object) and all(isinstance(v, str) for v in present):
         text = present.str.strip()
+        if BROKEN != "M28" and len(text) and text.map(_date_digits).all() \
+                and _calendar_dates(text.astype("int64").to_numpy()):
+            # D66: dates written as eight digits are ordered as the numbers they are
+            keys = pd.to_numeric(series.str.strip(), errors="coerce") \
+                .to_numpy(dtype="float64", na_value=np.nan)
+            return keys, np.isnan(keys), "numeric", int
         ok = text.map(lambda v: ISO_TIME_RE.fullmatch(v) is not None)
         if not ok.all() and BROKEN == "F7b":
             # Parsed leniently, value by value: 01/12/2023 becomes 12 January and
@@ -726,6 +749,63 @@ def _whole_number_id(x):
     return int(x.max()) - int(x.min()) + 1 == len(x)
 
 
+def _calendar_dates(values):
+    """Whether every one of `values`, whole numbers in a numpy array, reads as a
+    calendar date written YYYYMMDD: a year from 1900 to 2100, a month from 1 to 12
+    and a day that month has, 29 February only in a leap year (D66)."""
+    values = np.asarray(values)
+    if len(values) == 0:
+        return False
+    low, high = DATE_NUMBER_YEARS[0] * 10000 + 101, DATE_NUMBER_YEARS[1] * 10000 + 1231
+    if int(values.min()) < low or int(values.max()) > high:
+        return False
+    values = values.astype("int64")
+    year, month, day = values // 10000, values // 100 % 100, values % 100
+    if not ((month >= 1) & (month <= 12) & (day >= 1)).all():
+        return False
+    length = np.array([0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31])[month]
+    leap = (year % 4 == 0) & ((year % 100 != 0) | (year % 400 == 0))
+    length = np.where((month == 2) & leap, 29, length)
+    return bool((day <= length).all())
+
+
+def _date_digits(text):
+    """Whether a stripped text value is eight digits, the form of a date number as text."""
+    return len(text) == 8 and text.isascii() and text.isdigit()
+
+
+def _date_numbers(series, rows):
+    """D66: whether a column holds dates written as whole numbers, YYYYMMDD.
+
+    Judged on the cells of `rows` that are not empty: every one is a whole number
+    that reads as a calendar date, and at least two of them differ. The column is
+    of integer type; or of float type with every value whole (an infinite cell is
+    a value, and not a date); or text of eight digits. A boolean column is not.
+    """
+    dtype = series.dtype
+    if pt.is_bool_dtype(dtype) or pt.is_complex_dtype(dtype):
+        return False
+    if pt.is_integer_dtype(dtype):
+        exact, gone = _exact_integers(series)
+        values = exact[rows & ~gone]
+    elif pt.is_float_dtype(dtype):
+        values = series.to_numpy(dtype="float64", na_value=np.nan)[rows]
+        values = values[~np.isnan(values)]
+        if not np.isfinite(values).all() or not np.all(values == np.floor(values)):
+            return False
+    elif pt.is_string_dtype(dtype) or dtype == object:
+        present = series[rows].dropna()
+        if not all(isinstance(v, str) for v in present):
+            return False
+        stripped = [v.strip() for v in present]
+        if not all(_date_digits(v) for v in stripped):
+            return False
+        values = np.array([int(v) for v in stripped], dtype="int64")
+    else:
+        return False
+    return _calendar_dates(values) and len(np.unique(values)) >= 2
+
+
 def _separated(text):
     """D28: whether a stripped text value is a number written with thousands separators."""
     return SEPARATED_RE.fullmatch(text) is not None
@@ -774,6 +854,10 @@ def _roles(df, usable, target, time_col, loaded=None, group_col=None):
         if len(present) == 0:
             rec.update(role="excluded", reason="all_missing")
         elif pt.is_datetime64_any_dtype(dtype):
+            rec.update(role="excluded", reason="datetime", kind="datetime")
+        elif BROKEN not in ("F14", "M29") and _date_numbers(series, usable):
+            # D66: dates written as whole numbers are dates, before any rule that would
+            # read them as a measure or as an identifier. F14: they are a feature.
             rec.update(role="excluded", reason="datetime", kind="datetime")
         elif pt.is_bool_dtype(dtype) or (pt.is_numeric_dtype(dtype)
                                          and not pt.is_complex_dtype(dtype)):
@@ -833,6 +917,10 @@ def _roles(df, usable, target, time_col, loaded=None, group_col=None):
                 rec.update(role="excluded", reason="constant")
             elif _whole_number_id(seen):
                 rec.update(role="excluded", reason="id_like")
+            elif BROKEN == "M29" and _date_numbers(series, usable):
+                # M29: the id-like rule is asked first, so one row a day in date order
+                # is an identifier and nothing says that the table holds dates
+                rec.update(role="excluded", reason="datetime", kind="datetime")
             else:
                 prepared[name] = numbers
         elif levels is not None:
@@ -931,7 +1019,9 @@ def _fast_rows_stop(found, y_usable, classification, all_keys, gap, groups_usabl
 
 def _row_keys(columns, y, used):
     """One whole number per row of `used`: equal for two rows that are copies of one
-    another (D49), the same value in every one of `columns` and the same `y`.
+    another (D49), the same value in every one of `columns` and the same `y`. With
+    `y` None the target plays no part: equal for two rows that agree in every one
+    of `columns`, which is what `duplicates="group"` keeps together (D62).
 
     `columns` are feature columns as a fitted step is handed them: 64-bit floats
     for a numeric column, where two empty cells are equal and 0.0 equals -0.0;
@@ -939,7 +1029,7 @@ def _row_keys(columns, y, used):
     empty cell being the level `(missing)`. `y` is the target as step 4 reads it.
     """
     code = np.zeros(len(used), dtype="int64")
-    for values in list(columns) + [y]:
+    for values in list(columns) + ([] if y is None else [y]):
         cell = values[used]
         if cell.dtype == object:
             cell = cell.astype(str)
@@ -952,8 +1042,9 @@ def _row_keys(columns, y, used):
 
 def _holdout_copies(columns, y, train, holdout):
     """D49: how many holdout rows have a copy among the training rows, on the
-    features left after the leak screen."""
-    code = _row_keys(columns, y, np.concatenate([train, holdout]))
+    features left after the leak screen. A copy has the same target too: D62 changed
+    what `duplicates="group"` keeps together, and not what a copy is. M30: it did."""
+    code = _row_keys(columns, None if BROKEN == "M30" else y, np.concatenate([train, holdout]))
     return int(np.isin(code[len(train):], code[:len(train)]).sum())
 
 
@@ -1079,9 +1170,21 @@ def _split_grouped(groups, y, classification, seed):
     positive class on a tie), and the rule below is applied to the entities of
     each class apart.
 
-    Holdout: the entities in an order drawn from the seed, taken until they hold
-    at least a quarter of the rows. Folds: the training entities in an order
-    drawn from the seed, each to the fold that so far holds the fewest rows.
+    Holdout (D64, D66), with the entities in an order drawn from the seed: an
+    entity joins it while the holdout, with it, still holds less than a quarter
+    of the rows, and any other is passed over; the smallest entity passed over,
+    the first among equals, completes it; then every entity the holdout can
+    spare, the largest first, goes back to the training rows. So the holdout
+    holds at least a quarter, needs every entity it has, and never takes a large
+    entity where smaller ones could fill it. F13: the entities in that order
+    until they hold a quarter, as built in the fifth pass.
+    Folds: the training entities in an order drawn from the seed, each to the
+    fold that so far holds the fewest rows.
+
+    `too_large` in the result lists every entity that holds a quarter or more of
+    the rows it is drawn among, as (rows, rows drawn among, whether it is the
+    holdout). Such an entity is the holdout exactly when the entities smaller
+    than a quarter do not together hold a quarter; otherwise it is never held out.
 
     The entities are numbered here as they first appear among the rows, so the
     split depends on which rows share an entity and not on what it is called.
@@ -1102,15 +1205,39 @@ def _split_grouped(groups, y, classification, seed):
         stratum = np.zeros(n_groups, dtype="int64")
     held = np.zeros(n_groups, dtype=bool)
     fold_of = np.full(n_groups, -1)
-    orders = {}
+    orders, too_large = {}, []
     for s in (0, 1):
         members = np.flatnonzero(stratum == s)
         members = members[rng.permutation(len(members))]
         total, taken = int(sizes[members].sum()), 0
-        for g in members.tolist():
-            if 4 * taken >= total:
-                break
-            held[g], taken = True, taken + int(sizes[g])
+        if BROKEN == "F13":                 # as built in the fifth pass: until a quarter is held
+            for g in members.tolist():
+                if 4 * taken >= total:
+                    break
+                held[g], taken = True, taken + int(sizes[g])
+            orders[s] = members[~held[members]]
+            continue
+        passed = []
+        for g in members.tolist():          # 1. while the holdout stays below a quarter
+            if 4 * (taken + int(sizes[g])) < total:
+                held[g], taken = True, taken + int(sizes[g])
+            else:
+                passed.append(g)
+        if passed:
+            # 2. completed by the smallest unit passed over, the first among equals
+            last = min(passed, key=lambda g: int(sizes[g]))
+            held[last], taken = True, taken + int(sizes[last])
+            # 3. what the holdout can spare goes back, the largest first
+            spare = [g for g in members.tolist() if held[g] and g != last]
+            if BROKEN == "M26":             # M26: step 3 is missing
+                spare = []
+            for g in sorted(spare, key=lambda g: -int(sizes[g])):
+                if 4 * (taken - int(sizes[g])) >= total:
+                    held[g], taken = False, taken - int(sizes[g])
+        # D66: every unit that holds a quarter or more of the rows it is drawn among
+        # is either the whole holdout or never in it. Either way the caller is told.
+        too_large += [(int(sizes[g]), total, bool(held[g])) for g in members.tolist()
+                      if 4 * int(sizes[g]) >= total]
         orders[s] = members[~held[members]]
     if int((~held).sum()) < N_FOLDS:
         raise E.TooFewGroupsError(
@@ -1123,7 +1250,7 @@ def _split_grouped(groups, y, classification, seed):
             if classification else KFold(N_FOLDS, shuffle=True, random_state=seed).split(train)
         return {"train": train, "gap": np.array([], dtype=int), "holdout": holdout,
                 "folds": [{"train": train[a], "valid": train[b], "gap_rows": 0}
-                          for a, b in cuts]}
+                          for a, b in cuts], "too_large": too_large}
     load = np.zeros(N_FOLDS, dtype="int64")
     for s in (0, 1):
         own = np.zeros(N_FOLDS, dtype="int64")
@@ -1134,7 +1261,8 @@ def _split_grouped(groups, y, classification, seed):
     train, holdout = np.flatnonzero(row_fold >= 0), np.flatnonzero(held[groups])
     folds = [{"train": np.flatnonzero((row_fold >= 0) & (row_fold != k)),
               "valid": np.flatnonzero(row_fold == k), "gap_rows": 0} for k in range(N_FOLDS)]
-    return {"train": train, "gap": np.array([], dtype=int), "holdout": holdout, "folds": folds}
+    return {"train": train, "gap": np.array([], dtype=int), "holdout": holdout, "folds": folds,
+            "too_large": too_large}
 
 
 def _split_random(n, y, classification, seed):
@@ -1610,7 +1738,7 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs, duplicat
          group_col=None):
     warnings = []
     # `time_col=False` is the caller's statement that the rows have no time order,
-    # and `group_col=False` that there are no entities (D58). Either way the column
+    # and `group_col=False` that there are no entities (D63). Either way the column
     # is not used: what the caller passed is reported in `input`.
     stated_time, time_col = time_col, (None if time_col is False else time_col)
     group_name = group_col if isinstance(group_col, str) else None
@@ -1741,14 +1869,32 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs, duplicat
     # D58: a column of dates and no word from the caller about time order. The tool
     # does not go ahead under a random split on its own say: on the VIX level that
     # gave skill 0.939, against 0.023 with the time column declared. F7d: it does.
-    if undeclared and stated_time is None and BROKEN != "F7d":
-        named = ", ".join(repr(name) for name in undeclared)
+    # D63: every call says two things, and the tool assumes neither. F11: it assumes
+    # both. F7d: it assumes time order away where a column holds dates. M19: it
+    # assumes there are no entities under a time column. M24: with both unsaid it
+    # asks for the one and leaves the other for the next call.
+    entities = ("Nothing was said about entities: rows that belong together, as the rows of "
+                "one customer or one series do. Pass group_col (--group-col) with the name of "
+                "the column that says which entity a row belongs to, or group_col=False "
+                "(--no-entities) if no rows belong together")
+    if stated_time is None and BROKEN != "F11" and not (BROKEN == "F7d" and undeclared):
+        seen = ("Column(s) " + ", ".join(repr(name) for name in undeclared) + " hold dates. "
+                if undeclared else "")
         raise E.TimeOrderUndeclaredError(
-            f"column(s) {named} hold dates, and no time column was declared. If the rows are "
-            f"ordered in time, pass time_col (--time-col), for example time_col="
-            f"{undeclared[0]!r}: the holdout is then the latest rows. If their order does not "
-            "matter, say so with time_col=False (--no-time-order): the rows are then split at "
-            "random, and the output records the choice. Nothing was written")
+            "Nothing was said about time order. " + seen + "Pass time_col (--time-col) with "
+            "the name of the time column if the rows are ordered in time: the holdout is then "
+            "the latest rows. Pass time_col=False (--no-time-order) if their order in time "
+            "does not matter: the rows are then split at random. "
+            + (entities + ". " if group_col is None and BROKEN != "M24" else "")
+            + "Nothing was written")
+    if group_col is None and BROKEN != "F11" and not (BROKEN == "M19" and time_col is not None):
+        seen = ""
+        if time_col is not None:
+            stamps = len(np.unique(keys_all[usable]))
+            if stamps < int(usable.sum()):
+                seen = (f" The timestamps repeat: {int(usable.sum())} rows on {stamps} "
+                        "timestamps, which is what several series in one table look like.")
+        raise E.EntitiesUndeclaredError(entities + "." + seen + " Nothing was written")
     # Two features may not give the matrix one name (D37). Judged here, on every
     # level of the usable rows, so the answer does not depend on the cap, the
     # seed or the rows a fit happens to see.
@@ -1810,7 +1956,7 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs, duplicat
 
     # 7. split off the holdout, applying the gap
     time_ordered = time_col is not None
-    grouped, units, n_with_copies = False, None, None
+    grouped, units, n_same_features = False, None, None
     if time_ordered and BROKEN != "F7":
         keys = keys_all[rows]
         try:
@@ -1827,28 +1973,35 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs, duplicat
         def units_of(part):
             """The rows `part` (positions in the loaded table) as whole units: the
             declared entities, joined under `duplicates="group"` with the sets of rows
-            that are copies of one another (D57, D60). None when every row stands
-            alone. Also the number of rows that have a copy, or None if not asked."""
+            that agree in every feature column (D57, D62). None when every row stands
+            alone. Also the number of rows that agree with another, or None if not
+            asked."""
             found = None
             if groups_all is not None:
                 found = np.unique(groups_all[part], return_inverse=True)[1]
-            with_copies = None
+            same_features = None
             if duplicates == "group":
-                # the copies D49 counts, found before the split on the features of step 5
-                copy_of = _row_keys(list(prepared.values()), y_work_all, part)
-                with_copies = int((np.bincount(copy_of)[copy_of] > 1).sum())
-                if with_copies and BROKEN != "M22":     # M22: found, counted, and not used
+                # D62: rows that agree in every feature column of step 5. The target
+                # plays no part. F12: it does, as built in the fifth pass.
+                copy_of = _row_keys(list(prepared.values()),
+                                    y_work_all if BROKEN == "F12" else None, part)
+                same_features = int((np.bincount(copy_of)[copy_of] > 1).sum())
+                if same_features and BROKEN != "M22":     # M22: found, counted, and not used
                     found = copy_of if found is None else _clusters([copy_of, found])
-            return found, with_copies
+                if BROKEN == "M25":
+                    # M25: the sets are right, and the count still reads the target
+                    counted = _row_keys(list(prepared.values()), y_work_all, part)
+                    same_features = int((np.bincount(counted)[counted] > 1).sum())
+            return found, same_features
 
         if not time_ordered:
-            units, n_with_copies = units_of(rows)
-            if n_with_copies and BROKEN != "M22":
-                _warn(warnings, "copies_grouped",
-                      f"{n_with_copies} of the {len(rows)} rows have a copy among them: the "
-                      "same value in every feature column and the same target. With "
-                      "duplicates='group' each set of copies is kept on one side of the "
-                      "split and of every fold")
+            units, n_same_features = units_of(rows)
+            if n_same_features and BROKEN != "M22":
+                _warn(warnings, "same_features_grouped",
+                      f"{n_same_features} of the {len(rows)} rows agree with another row in "
+                      "every feature column. With duplicates='group' the rows that agree are "
+                      "kept together: no combination of feature values is on both sides of "
+                      "the split or in two folds")
         if units is not None and BROKEN != "F10":
             try:
                 split = _split_grouped(units, y, classification, seed)
@@ -1869,6 +2022,13 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs, duplicat
         else:
             split = _split_random(len(rows), y, classification, seed)   # F7: shuffled regardless
         grouped = units is not None             # F10: said, and not done
+        for size, total, is_holdout in split.get("too_large", []):
+            found = (f"One unit of {size} rows holds {100 * size / total:.1f}% of the {total} "
+                     "rows" + (" of the units of its class. " if classification else ". "))
+            if is_holdout:
+                _warn(warnings, "large_group_is_holdout", found + LARGE_IS_HOLDOUT)
+            elif BROKEN != "M27":           # M27: only the unit that is the holdout is named
+                _warn(warnings, "large_group_kept_in_training", found + LARGE_KEPT)
         if time_ordered:
             keys = keys_all[rows]
             _, counts = np.unique(keys, return_counts=True)
@@ -1929,20 +2089,10 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs, duplicat
             if lag1 is not None and not math.isfinite(lag1):
                 raise _not_finite("The lag-1 autocorrelation of the per-timestamp mean of the "
                                   "target over the training timestamps", lag1, TARGET_CAUSE)
-            if lag1 is not None and lag1 > AUTOCORR:
-                # D58: a panel whose target follows its own past, and no word about
-                # entities. Against the training mean a five-stock price panel was
-                # reported at 0.979. M19: the run goes ahead with a warning.
-                if group_col is None and BROKEN != "M19":
-                    raise E.EntitiesUndeclaredError(
-                        f"the timestamps repeat, and the per-timestamp mean of target {target!r} "
-                        f"has lag-1 autocorrelation {lag1:.2f}: this looks like several series "
-                        "in one table. Against the training mean, skill would only show that "
-                        "one period resembles the last. Pass group_col (--group-col) to name "
-                        "the column that says which series a row belongs to: each series then "
-                        "has its own previous value as a baseline. If there are no such "
-                        "entities, say so with group_col=False (--no-entities). Nothing was "
-                        "written")
+            # M23: the cut-off the first harness session abandoned, 0.8
+            if lag1 is not None and lag1 > (0.8 if BROKEN == "M23" else AUTOCORR):
+                # The caller has said that there are no entities (D63); the tool's doubt
+                # about that statement is a warning, as it was (D10, D58).
                 panel_warning = (f"the per-timestamp mean of the target has lag-1 "
                                  f"autocorrelation {lag1:.2f}; against the training mean, skill "
                                  "here may only reflect that one period resembles the last")
@@ -2045,24 +2195,22 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs, duplicat
                 dates = [r["name"] for r in records if r["reason"] == "datetime"]
                 after = ""
                 if duplicates == "group":
-                    # the sets of copies were formed before the leak screen (step 7)
+                    # the sets were formed before the leak screen, on the features of step 5
                     leaks = [r["name"] for r in records if r["reason"] == "suspected_leak"]
-                    after = (". duplicates='group' kept on one side the copies it found before "
-                             "the split; these rows became copies when the leak screen excluded "
+                    after = (" duplicates='group' kept together the rows that agreed in every "
+                             "feature column before the split; these rows became copies when "
+                             "the leak screen excluded "
                              + (", ".join(repr(n) for n in leaks) or "a column")
-                             + ". Remove the excluded column(s) and run again")
+                             + ". Remove the excluded column(s) and run again.")
                 raise E.HoldoutCopiesError(
                     f"{found}. A model can score on such a row by recalling its copy, so the "
-                    "headline would overstate how predictable the target is. Remove the "
-                    "repeated rows; or pass duplicates='group' (--duplicates group) to keep "
-                    "each set of copies on one side of the split; or pass duplicates='keep' "
-                    "(--duplicates keep) if they are separate observations that happen to "
-                    "agree; the output then records the count" + after + (
-                        ". Note: the column(s) " + ", ".join(repr(d) for d in dates)
+                    "headline would overstate how predictable the target is. "
+                    + COPIES_ADVICE + after + (
+                        " Note: the column(s) " + ", ".join(repr(d) for d in dates)
                         + " hold dates and were excluded because no time column was declared, "
                         "so rows that differ only in their date count as copies. If the rows "
                         "are ordered in time, declare time_col: under time order this rule "
-                        "does not apply" if dates else ""))
+                        "does not apply." if dates else ""))
             if duplicates == "keep":
                 _warn(warnings, "holdout_copies_kept",
                       f"{found}, and were kept (duplicates='keep'). A model can score on such "
@@ -2302,7 +2450,7 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs, duplicat
         "n_holdout_copies": n_copies, "holdout_copy_share": copy_share,
         # rows with a copy among the rows split, counted before the split:
         # `duplicates="group"` only (D57, D60)
-        "n_rows_with_copies": n_with_copies,
+        "n_rows_same_features": n_same_features,
         "group_col": group_name,
         "n_groups_training": None if sided is None else int(len(np.unique(sided[train]))),
         "n_groups_holdout": None if sided is None else int(len(np.unique(sided[holdout]))),

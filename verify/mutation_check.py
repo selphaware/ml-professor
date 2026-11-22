@@ -1,10 +1,10 @@
 """Does the test suite catch what it is there to catch? (D39)
 
 The gate's self-test proves the gate against the reference implementation
-broken in seventeen ways (F1 to F10, and the other forms F6b, F6c, F6d, F7b,
-F7c, F7d and F8b: D46, D49, D50, D57, D58). This script proves the test suite
-the same way, against those seventeen and against twenty-two smaller faults no
-gate check is relied on to catch (M1 to M22;
+broken in twenty-one ways (F1 to F14, and the other forms F6b, F6c, F6d, F7b,
+F7c, F7d and F8b: D46, D49, D50, D57, D58, D62 to D66). This script proves the
+test suite the same way, against those twenty-one and against thirty
+smaller faults no gate check is relied on to catch (M1 to M30;
 verify/reference/mlprofessor/_variant.py lists them all).
 
 For the known-good reference and for each variant it builds a throwaway
@@ -70,7 +70,8 @@ REFERENCE = HERE / "reference" / "mlprofessor"
 GATE_FILE = HERE / "smoke_test.py"
 GATE_DATA = "verify/artifacts/data/"
 CASES = (["good"] + [f"F{i}" for i in range(1, 10)] + ["F6b", "F6c", "F6d", "F7b", "F7c"]
-         + ["F10", "F7d", "F8b"] + [f"M{i}" for i in range(1, 23)])
+         + ["F10", "F7d", "F8b"] + [f"F{i}" for i in range(11, 15)]
+         + [f"M{i}" for i in range(1, 31)])
 PROBE = "test_mutation_check_probe.py"
 README_TESTS = re.compile(r"^test_readme\w*\.py::")
 RUN_SECONDS = 1800

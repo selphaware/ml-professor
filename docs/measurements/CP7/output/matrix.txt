@@ -1,0 +1,23 @@
+| Failure mode | Description | Caught by |
+|---|---|---|
+| F1 | the chosen model is refitted on all rows before the holdout is scored | model.noise_clf, model.noise_p_value, model.noise_reg |
+| F2 | the leak screen is removed, so a copy of the target is a feature | leak.excluded, leak.regression, leak.near_leak_warned |
+| F3 | the headline is the best cross-validation score, not the holdout score | model.headline_recomputed, model.selection_full |
+| F4 | the headline metric is accuracy | model.headline_recomputed, model.metric_clf |
+| F5 | the task is decided from the column's type alone | task.binary_numeric, task.ambiguous_stops |
+| F6 | rows with any missing value are dropped before counting | data.rows_reconcile, data.coercion_reported |
+| F7 | the split is shuffled even when a time column is declared | time.order_respected, time.no_skill_on_blocks, time.gap_applied |
+| F8 | the regression baseline is always the training mean | time.persistence_baseline |
+| F6b | a column is lost from the accounting (constant columns are dropped with no record) | data.columns_accounted |
+| F6c | a model family is lost from the models table (only the chosen configuration's family is listed) | models.all_accounted |
+| F6d | data rows longer than the header are read silently, with no error | data.long_rows_stop |
+| F7b | a day-first time column is parsed leniently, so the run goes ahead on the wrong order | time.dayfirst_stops |
+| F7c | whole-number time keys are read as floats, so distinct instants above 2**53 become one timestamp | time.integer_keys_distinct |
+| F9 | holdout rows with copies among the training rows are scored with no error | data.holdout_copies_stop |
+| F10 | an entity has rows on both sides of the split although the entity column was declared | groups.kept_together, groups.no_skill_on_entities |
+| F8b | a panel is scored against the training mean although the entity column was declared | time.panel_previous_value |
+| F7d | a table with an undeclared date column is profiled under a random split without the caller's say | time.undeclared_stops |
+| F11 | a statement the caller did not make is assumed: nothing said about time order, or about entities, and the run goes ahead | statements.time_order_asked, statements.entities_asked |
+| F12 | duplicates='group' forms its sets with the target, so rows that agree in every feature are on both sides of the split | duplicates.group_on_features, duplicates.group_no_skill |
+| F13 | the grouped holdout takes far more than a quarter because a large entity was drawn early | groups.holdout_bounded |
+| F14 | dates written as whole numbers (YYYYMMDD) are a numeric feature | time.date_numbers_seen |

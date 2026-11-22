@@ -130,8 +130,14 @@ def test_values_that_are_no_dates_leave_the_column_what_it_was(case):
     record = _roles(_no_date_case(case))["day"]
     if case == "one_date_throughout":
         assert record["role"] == "excluded" and record["reason"] == "constant", record
-    else:
+    elif case in ("day_first", "yyyymm"):
         assert record["role"] == "feature" and record["kind"] == "numeric", record
+    else:
+        # D59, D69: 200 days and one value that is no date. A number as built, and a
+        # date column once D69 is built; `test_date_sentinels.py` holds the second.
+        as_built = record["role"] == "feature" and record["kind"] == "numeric"
+        as_decided = record["role"] == "excluded" and record["reason"] == "datetime"
+        assert as_built or as_decided, record
 
 
 def test_it_is_judged_on_the_usable_rows():

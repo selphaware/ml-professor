@@ -1038,3 +1038,62 @@ Consequence: identical results are promised only on the pinned set, so the
 output goes on recording the library versions used. Whether the name is
 free on PyPI is checked first when this change is written: two web searches
 found no package of that name, which does not settle it.
+
+## D69 — 2026-11-22 — Sixth review accepted (amends D66 point 3 and D62)
+Decision: The sixth review (`docs\reviews\phase1-review-6.md`, verdict FIX
+FIRST) is accepted in full. (1) The rule for dates written as whole numbers
+tolerates values that are not dates: a column of `YYYYMMDD` dates stays a
+date column when it also holds a sentinel such as `99991231` or `0`. The
+harness stage measures the exact form, a share or a small number of
+distinct values that are not dates, and reports it for approval. When such
+a column is the time column, a value that is not a date stops the run with
+a named error that names it; it is never ordered as a number. (2) Under
+`duplicates="group"`, when the leak screen excludes a column and any
+combination of the remaining feature values is then on both sides of the
+split, the run stops and tells the caller to remove the column and run
+again. (3) The text of the grouped warning and the README say that
+`"group"` asks whether a combination of feature values never seen can be
+predicted, which on a table of few-valued columns can give negative skill
+where `"keep"` finds signal; the bias on noise is measured as the number of
+combinations falls. (4) `YYYYMMDDHH` and period labels join the stated
+limits. (5) The text of `date_column_undeclared` is pinned and names the
+scheme correctly. (6) The dormant branch that would turn a number that is
+not finite into an empty value is replaced by a raise.
+Alternatives considered: for (1), every value a date, as D66 had it
+(rejected on measurement: one cell of 1,800 set to `99991231` or `0` made
+the column a feature and gave skill 0.97 to 0.99 with no warning); a share
+of 95% alone (rejected on the lead's check: with 5% of the cells a sentinel
+the skill was still 0.92 to 0.95, and an open-ended date column can hold
+far more). For (2), forming the sets again after the leak screen (rejected:
+the screen was fitted on the training rows of the first split).
+Consequence: measurements in `docs\measurements\review-6\`.
+
+## D70 — 2026-11-22 — The fast profile and an entity larger than its cap
+Decision: With an entity column and no time column, when an entity holds
+more rows than the fast profile's cap, the fast profile stops with a named
+error that sends the caller to the full profile, as D20 does for a wide
+panel. The same holds for a set of rows kept together under
+`duplicates="group"`.
+Alternatives considered: leaving such an entity out, as built and as the
+spec read (rejected on real data: with Manhattan as one entity of 82% of
+the taxi rows, the fast profile reported skill 0.878 on the other 1,128
+rows, with only a row count to say so); a warning (rejected: the result
+would still describe a different table from the one given).
+Consequence: `docs\measurements\CP7\build-on-real-tables\README.md`.
+
+## D71 — 2026-11-22 — How the hardening passes are run (amends D64)
+Decision: (1) The judge gains a perturbation battery: for every gate
+dataset whose right conclusion is known, small changes are applied (one
+sentinel cell, an added column that copies the target, an added constant or
+identifier column, shuffled rows, a repeated row, and others the harness
+proposes) and the conclusion must still hold. (2) No new detection rule is
+added during the hardening passes; a rule that exists is repaired or
+stated as a limit. (3) Pass 7 builds D69 and D70, the perturbation battery,
+the generated-table test of D56 and a broken copy for each gate check never
+seen failing. Pass 8 builds the broader repeat screen under D60, or the
+ruling that replaces it, and the rest of `docs\BACKLOG.md`.
+Alternatives considered: going on as before (rejected: each of the last
+four reviews found, by changing one cell or adding one column, another form
+of a fault the gate proved in one form only).
+Consequence: one more pass than D64 planned. Phase 1 closes under D56 after
+pass 8's review at the earliest.

@@ -5,14 +5,15 @@ build loop: each item becomes work only through a decision in
 `docs/DECISIONS.md` and a change prompt. Phase 2 starts by reading this file
 (D47).
 
-**Status under D56 and D64 (2026-11-21).** Nothing known to be wrong is
-carried into phase 2. Three hardening passes: pass 5 (CP6: entities,
-`duplicates="group"`, the two stops, the fourth review's findings; built);
-pass 6 (CP7: the fifth review's findings under D62 to D64); pass 7 (the
-broader repeat screen first, under D60; then the judge and every remaining
-weakness here). Only the features stay on the roadmap.
+**Status under D56, D64 and D71 (2026-11-22).** Nothing known to be wrong
+is carried into phase 2. Hardening passes: pass 5 (CP6) and pass 6 (CP7)
+are built; pass 7 (CP8: the sixth review under D69, the fast cap under D70,
+the perturbation battery, the generated-table test, a broken copy for each
+check never seen failing); pass 8 (the broader repeat screen under D60, or
+the ruling that replaces it, and every remaining weakness here). No new
+detection rule is added during hardening (D71).
 
-## Pass 7, first item: the broader repeat screen (D60)
+## Pass 8, first item: the broader repeat screen (D60)
 
 - **Open defect.** Copies disguised by an added column, a batch number or a
   small change pass D49. On real tables with the target shuffled, every row

@@ -1,0 +1,31 @@
+verify/battery.py on the reference carrying the one fault M13 (n_imputed counted over every loaded row):
+  E:\CODE\ml-professor\mlprof_env\Scripts\python.exe -B verify/battery.py <a copy of the reference with BROKEN = 'M13'> --jobs 12 --work <a folder of its own>
+
+FAIL messy:base [base]
+FAIL messy:date_sentinel_9999 [same]
+FAIL messy:date_sentinel_1900 [same]
+FAIL messy:date_sentinel_zero [same]
+FAIL messy:number_sentinel_1e308 [band]
+FAIL messy:copy_two_valued [same]
+FAIL messy:copy_distinct [same]
+FAIL messy:constant_added [same]
+FAIL messy:id_added_int [same]
+FAIL messy:id_added_text [same]
+FAIL messy:second_date_added [same]
+FAIL messy:noise_added [band]
+FAIL messy:blank_line_added [same]
+FAIL messy:missing_cell_feature [band]
+FAIL messy:missing_cell_date [same]
+FAIL messy:missing_cell_target [band]
+FAIL messy:feature_renamed [same]
+FAIL messy:feature_renamed_awkward [same]
+FAIL messy:target_renamed [same]
+FAIL messy:role_column_renamed [same]
+FAIL messy:target_first [same]
+FAIL messy:target_respelt [same]
+FAIL messy:target_respelt_flipped [band]
+FAIL messy:white_space_cells [same]
+FAIL messy:float_whole_numbers [same]
+794 tool runs in 329 s at 12 side by side (3806 s of tool time): 32 gate runs as they are and 762 pairs; 518 pairs left out (--list says why)
+holds 740; stated limit 2 of 2 listed; open 27 of 30 listed (D73, pass 8); on neither list and failing 25
+BATTERY: FAIL (25 of 794 do not hold and are on neither list; holds 740, stated limit 2, open 27)

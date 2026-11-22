@@ -1,0 +1,19 @@
+package: E:\CODE\ml-professor\verify\reference\mlprofessor
+| rows of the large entity | of the usable rows | left out by the cap, of 30 seeds | stopped | rows profiled when left out |
+|---|---|---|---|---|
+| 500 | 25% | 0 | none | - |
+| 1000 | 40% | 0 | none | - |
+| 1500 | 50% | 0 | none | - |
+| 1900 | 56% | 0 | none | - |
+| 2000 | 57% | 0 | {'fast_profile_too_few_rows': 30} | - |
+| 2001 | 57% | 0 | {'fast_profile_group_too_large': 30} | - |
+| 2500 | 62% | 0 | {'fast_profile_group_too_large': 30} | - |
+
+at each tool seed, 0 to 29: kept, out (left out by the cap) or stop
+500: kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept
+1000: kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept
+1500: kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept
+1900: kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept
+2000: stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop
+2001: stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop
+2500: stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop stop

@@ -5,15 +5,19 @@ build loop: each item becomes work only through a decision in
 `docs/DECISIONS.md` and a change prompt. Phase 2 starts by reading this file
 (D47).
 
-**Status under D56, D64 and D71 (2026-11-22).** Nothing known to be wrong
-is carried into phase 2. Hardening passes: pass 5 (CP6) and pass 6 (CP7)
-are built; pass 7 (CP8: the sixth review under D69, the fast cap under D70,
-the perturbation battery, the generated-table test, a broken copy for each
-check never seen failing); pass 8 (the broader repeat screen under D60, or
-the ruling that replaces it, and every remaining weakness here). No new
-detection rule is added during hardening (D71).
+**Status under D56, D71 and D73 (2026-11-22).** Nothing known to be wrong
+is carried into phase 2. Passes 5 and 6 are built. Pass 7 (CP8): the sixth
+review under D69 and D72, the fast cap under D70, the perturbation battery,
+the generated-table test, a broken copy for each check never seen failing.
+Pass 8: everything the two tools still list as open (D73): the
+previous-value baseline at repeated timestamps, the leak screen and an
+exact copy of the target, the row that carries most of the error, the
+identifier under shuffled rows, row order within a fit, and selection folds
+beside a dominant entity. No review until both tools are clean. Then the
+broader repeat screen under D60, or the ruling that replaces it, and every
+remaining weakness here. No new detection rule during hardening (D71).
 
-## Pass 8, first item: the broader repeat screen (D60)
+## After pass 8: the broader repeat screen (D60)
 
 - **Open defect.** Copies disguised by an added column, a batch number or a
   small change pass D49. On real tables with the target shuffled, every row

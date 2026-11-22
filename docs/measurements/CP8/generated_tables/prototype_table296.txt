@@ -1,0 +1,13 @@
+generated tables: 1 table(s) from seed 20261122, 2 worker run(s), 2 at a time, under C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\gentables\work\mlprof-generated-ci8abvwc
+
+table 296: csv, 180 rows x 8 columns ['when', 'f2', 'level_prev', 'notes', 'f1', 'huge', 'seg', 'y']; task='auto', time_col='when', group_col=False, gap=0, profile='full', seed=7, duplicates='error'; small; statement time; target reg; one row for each timestamp; the target is a random walk; level_prev: the level before, of the same series; when: iso_datetime, some cells empty; repeated rows: few (2)
+  application: result: time_ordered, skill 0.9664394832505616, model linear-1
+  reference:   result: time_ordered, skill 0.9664394832505614, model linear-1
+  [fit] models: 'models[6].cv_mean: 8.322782842562049 != 8.658811951929703' | ''  (the same rows on both sides)
+  again: python -B generated_tables.py C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\app\mlprofessor --reference C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\verify\reference\mlprofessor --seed 20261122 --only 296 --keep
+
+reference outcomes: 1 result(s), 0 named error(s) {}, 0 other
+findings by class: {'fit': 1}
+time: 10 s wall-clock (1 s making the tables); in the tool: application 8 s, reference 6 s
+kept: C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\gentables\work\mlprof-generated-ci8abvwc
+GENERATED TABLES: 1 of 1 table(s) with a disagreement

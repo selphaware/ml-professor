@@ -3,6 +3,10 @@
 A fixture builder overwrites this file in its own copy with one value; every
 other line of the package stays the same.
 
+Seventy faults in all: thirty-one the gate's self-test proves a check catches
+(F1 to F22, with the forms F6b, F6c, F6d, F7b, F7c, F7d, F8b, F12b and F14b),
+and thirty-nine that only the test suite is relied on for (M1 to M39).
+
 "F1" .. "F10" the gate's failure modes (spec.md section 8). The gate's
               self-test proves a check catches each.
     F9   the rule on copies is never applied: a table whose holdout rows have
@@ -41,9 +45,42 @@ other line of the package stays the same.
          quarter, so one large unit drawn early makes it far more (D64)
     F14  a column of dates written as whole numbers, YYYYMMDD, is a numeric
          feature and nothing says that the table holds dates (D66)
-"M1" .. "M30" small faults that no gate check is relied on to catch (D39, D46,
-              D52, D57, D62 to D66). They exist for the test suite:
-              verify/mutation_check.py proves a test fails on each.
+"F12b" "F14b" "F15"
+              the failure modes of the seventh pass (D69, D70, D72): the other
+              forms of F12 and F14 that the sixth review found by adding one
+              column and changing one cell, and the fast profile's cap.
+    F12b with `duplicates="group"`, when the leak screen has excluded a
+         column, only the rows that are copies, target and all, are counted:
+         combinations of the features that are left are on both sides of
+         the split and the run goes ahead (D69)
+    F14b every value of a column of dates written YYYYMMDD must read as a
+         date, as built in the sixth pass: one sentinel cell, and the column
+         is a numeric feature again (D69, D72)
+    F15  with an entity column the fast profile's cap takes the entities in
+         an order drawn from the seed, whatever their size: one larger than
+         the cap, or one of a quarter or more of the rows that is drawn
+         late, is left out, and only the row count says so (D70, D72)
+"F16" .. "F22" one broken copy for each of the seven gate checks that gave a
+              reason in place of a failure mode and had never been seen to
+              fail (D64, D71). Each is the fault its own check's message
+              tells a builder to look for.
+    F16  the positive class is inverted: the probability handed on, scored
+         and written is the other class's, so skill that is there is
+         reported as far below zero
+    F17  squared error is read as higher-is-better, so the configuration
+         with the worst cross-validation score is chosen
+    F18  a column of dates under `time_col=False` gets no
+         `date_column_undeclared` warning
+    F19  the result object is not the file: `ProfileResult.headline` holds
+         rounded numbers
+    F20  a part of the output is missing: the limitations statement is empty
+    F21  a clock value is written outside `meta.timing`, so two identical
+         runs differ
+    F22  the resamples are drawn from a stream that depends on the number of
+         cores, so the interval differs between `n_jobs` 1 and 4
+"M1" .. "M39" small faults that no gate check is relied on to catch (D39, D46,
+              D52, D57, D62 to D66, D69 to D72). They exist for the test
+              suite: verify/mutation_check.py proves a test fails on each.
     M1  the final fit's imputation and scaling statistics are learned from
         training and holdout rows together
     M2  one-hot levels are learned from every row of the table in every fit
@@ -106,5 +143,27 @@ other line of the package stays the same.
     M30 the count of step 8a is made on the features alone, like the sets of
         `duplicates="group"`: a holdout row counts as having a copy when a
         training row agrees in every feature, whatever its target (D62)
+    M31 the date rule counts cells, not distinct values: 95% of the cells
+        must read as dates, so a sentinel in a third of the rows makes the
+        column a number again (D69, D72)
+    M32 as the time column, a value that is no date among dates written
+        YYYYMMDD is ordered as the number it is: no stop (D69)
+    M33 the stop under `duplicates="group"` after a removed leak keeps the
+        threshold of the copies rule, more than 1% and at least ten rows:
+        a few combinations on both sides pass (D72)
+    M34 the fast profile's stop for a large entity is raised where the full
+        profile would stop too, in place of the full profile's own error
+    M35 only an entity of more rows than the cap stops the fast profile; one
+        of a quarter or more of the rows that fits is left to the draw
+        (D70 as first worded; D72)
+    M36 the `date_column_undeclared` warning carries the caveat of the
+        random scheme under the grouped scheme too (the sixth review,
+        finding 5)
+    M37 the `same_features_grouped` warning does not say what
+        `duplicates="group"` measures (D69)
+    M38 one `fold_not_scored` record for the run, however many folds were
+        not scored (D72)
+    M39 a row with a cell that cannot be hashed is never counted as a repeat:
+        `input.duplicate_rows` is 0 on such a table (D72)
 """
 BROKEN = None

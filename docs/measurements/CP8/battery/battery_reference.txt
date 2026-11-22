@@ -1,0 +1,267 @@
+STATED LIMIT (D60): dup_noise:noise_added [stop-or-band]
+     the change: a column `noise_added` of normal noise is added
+     must hold: the stop `holdout_copies_in_training`, or no skill (the band of `noise_clf`, borrowed): every row is still present twice and the target is noise. By spec step 8a the rows are no longer copies and the run goes ahead: a copy that differs in one feature is not detected (D60)
+     band:noise_clf: skill is 0.6742, expected between -0.27 and 0.27 (the band of `noise_clf`)
+     seen: rc=0, error=None, skill=0.6742, scheme=random, baseline=chance, model=tree-0, holdout=375, copies=0, cap=0, roles={'noise_added': 'feature/None'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\dup_noise__noise_added.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\reference\dup_noise__noise_added
+     again: python verify/battery.py verify/reference/mlprofessor --only dup_noise:noise_added
+STATED LIMIT (D55): int_stamps:missing_cell_date [structure]
+     the change: one cell of the time column, or of a date column, is emptied
+     must hold: the run's own conclusion (its band, its roles, its counts): a row with no time value is dropped and counted in `dropped_missing_time` (step 2)
+     time_split: the holdout is 377 rows; the judge expects the 375 latest (2 unexpected, 0 missing)
+     walk_baselines: baselines lists ['training_mean']; headline baseline 'training_mean', skill 0.9953458676558754
+     int_keys: training and holdout timestamps, unique, form: (439, 148, False, 'numeric'); the judge counts (1124, 375, True, 'numeric')
+     seen: rc=0, error=None, skill=0.9953, scheme=time_ordered, baseline=training_mean, model=linear-0, holdout=377, copies=None, cap=0, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\int_stamps__missing_cell_date.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\reference\int_stamps__missing_cell_date
+     again: python verify/battery.py verify/reference/mlprofessor --only int_stamps:missing_cell_date
+OPEN (D73, pass 8): signal_reg:number_sentinel_-999 [band]
+     the change: one cell of a numeric feature is set to -999
+     must hold: the run's own conclusion (its band, its roles, its counts): one cell of the numeric feature `f1` set to -999
+     band:signal_reg: skill is 0.6637, expected between 0.76 and 0.93 (the band of `signal_reg`)
+     seen: rc=0, error=None, skill=0.6637, scheme=random, baseline=training_mean, model=tree-0, holdout=375, copies=0, cap=0, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\signal_reg__number_sentinel_-999.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\reference\signal_reg__number_sentinel_-999
+     again: python verify/battery.py verify/reference/mlprofessor --only signal_reg:number_sentinel_-999
+     the finding: one extreme cell in a numeric feature or a regression target moves skill out of its band
+OPEN (D73, pass 8): signal_reg:number_sentinel_999999 [band]
+     the change: one cell of a numeric feature is set to 999999
+     must hold: the run's own conclusion (its band, its roles, its counts): one cell of the numeric feature `f1` set to 999999
+     band:signal_reg: skill is 0.6666, expected between 0.76 and 0.93 (the band of `signal_reg`)
+     seen: rc=0, error=None, skill=0.6666, scheme=random, baseline=training_mean, model=tree-0, holdout=375, copies=0, cap=0, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\signal_reg__number_sentinel_999999.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\reference\signal_reg__number_sentinel_999999
+     again: python verify/battery.py verify/reference/mlprofessor --only signal_reg:number_sentinel_999999
+     the finding: one extreme cell in a numeric feature or a regression target moves skill out of its band
+OPEN (D73, pass 8): signal_reg:target_sentinel_-999 [band]
+     the change: one cell of the regression target is set to -999
+     must hold: the run's own conclusion (its band, its roles, its counts): one target cell set to -999 (the spec has no rule for an outlier in the target; docs/BACKLOG.md, 'One extreme value can dominate')
+     band:signal_reg: skill is 0.2088, expected between 0.76 and 0.93 (the band of `signal_reg`)
+     seen: rc=0, error=None, skill=0.2088, scheme=random, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=0, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\signal_reg__target_sentinel_-999.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\reference\signal_reg__target_sentinel_-999
+     again: python verify/battery.py verify/reference/mlprofessor --only signal_reg:target_sentinel_-999
+     the finding: one extreme cell in a numeric feature or a regression target moves skill out of its band
+OPEN (D73, pass 8): noise_reg:number_sentinel_-999 [band]
+     the change: one cell of a numeric feature is set to -999
+     must hold: the run's own conclusion (its band, its roles, its counts): one cell of the numeric feature `n001` set to -999
+     band:noise_reg: skill is -0.8868, expected between -0.65 and -0.05 (the band of `noise_reg`)
+     seen: rc=0, error=None, skill=-0.8868, scheme=random, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=0, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\noise_reg__number_sentinel_-999.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\reference\noise_reg__number_sentinel_-999
+     again: python verify/battery.py verify/reference/mlprofessor --only noise_reg:number_sentinel_-999
+     the finding: one extreme cell in a numeric feature or a regression target moves skill out of its band
+OPEN (D73, pass 8): noise_reg:number_sentinel_999999 [band]
+     the change: one cell of a numeric feature is set to 999999
+     must hold: the run's own conclusion (its band, its roles, its counts): one cell of the numeric feature `n001` set to 999999
+     band:noise_reg: skill is -519958.7984, expected between -0.65 and -0.05 (the band of `noise_reg`)
+     seen: rc=0, error=None, skill=-519958.7984, scheme=random, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=0, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\noise_reg__number_sentinel_999999.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\reference\noise_reg__number_sentinel_999999
+     again: python verify/battery.py verify/reference/mlprofessor --only noise_reg:number_sentinel_999999
+     the finding: one extreme cell in a numeric feature or a regression target moves skill out of its band
+OPEN (D73, pass 8): noise_reg:target_sentinel_-999 [band]
+     the change: one cell of the regression target is set to -999
+     must hold: the run's own conclusion (its band, its roles, its counts): one target cell set to -999 (the spec has no rule for an outlier in the target; docs/BACKLOG.md, 'One extreme value can dominate')
+     band:noise_reg: skill is -0.0006, expected between -0.65 and -0.05 (the band of `noise_reg`)
+     seen: rc=0, error=None, skill=-0.0006, scheme=random, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=0, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\noise_reg__target_sentinel_-999.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\reference\noise_reg__target_sentinel_-999
+     again: python verify/battery.py verify/reference/mlprofessor --only noise_reg:target_sentinel_-999
+     the finding: one extreme cell in a numeric feature or a regression target moves skill out of its band
+OPEN (D73, pass 8): leak_reg:number_sentinel_-999 [band]
+     the change: one cell of a numeric feature is set to -999
+     must hold: the run's own conclusion (its band, its roles, its counts): one cell of the numeric feature `f1` set to -999
+     band:signal_reg: skill is -1568.7789, expected between 0.76 and 0.93 (the band of `signal_reg`)
+     seen: rc=0, error=None, skill=-1568.7789, scheme=random, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=0, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\leak_reg__number_sentinel_-999.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\reference\leak_reg__number_sentinel_-999
+     again: python verify/battery.py verify/reference/mlprofessor --only leak_reg:number_sentinel_-999
+     the finding: one extreme cell in a numeric feature or a regression target moves skill out of its band
+OPEN (D73, pass 8): leak_reg:number_sentinel_999999 [band]
+     the change: one cell of a numeric feature is set to 999999
+     must hold: the run's own conclusion (its band, its roles, its counts): one cell of the numeric feature `f1` set to 999999
+     band:signal_reg: skill is 0.6114, expected between 0.76 and 0.93 (the band of `signal_reg`)
+     seen: rc=0, error=None, skill=0.6114, scheme=random, baseline=training_mean, model=tree-0, holdout=375, copies=0, cap=0, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\leak_reg__number_sentinel_999999.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\reference\leak_reg__number_sentinel_999999
+     again: python verify/battery.py verify/reference/mlprofessor --only leak_reg:number_sentinel_999999
+     the finding: one extreme cell in a numeric feature or a regression target moves skill out of its band
+OPEN (D73, pass 8): leak_reg:target_sentinel_-999 [band]
+     the change: one cell of the regression target is set to -999
+     must hold: the run's own conclusion (its band, its roles, its counts): one target cell set to -999 (the spec has no rule for an outlier in the target; docs/BACKLOG.md, 'One extreme value can dominate')
+     band:signal_reg: skill is 0.4709, expected between 0.76 and 0.93 (the band of `signal_reg`)
+     leak_reg_roles: `amount_scaled` has role 'feature', reason None; expected 'excluded', 'suspected_leak'
+     seen: rc=0, error=None, skill=0.4709, scheme=random, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=0, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\leak_reg__target_sentinel_-999.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\reference\leak_reg__target_sentinel_-999
+     again: python verify/battery.py verify/reference/mlprofessor --only leak_reg:target_sentinel_-999
+     the finding: one extreme cell in a numeric feature or a regression target moves skill out of its band
+OPEN (D73, pass 8): messy:number_sentinel_-999 [band]
+     the change: one cell of a numeric feature is set to -999
+     must hold: the run's own conclusion (its band, its roles, its counts): one cell of the numeric feature `f1` set to -999
+     band:messy: skill is 0.465, expected between 0.55 and 0.91 (the band of `messy`)
+     seen: rc=0, error=None, skill=0.465, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, roles={'record_id': 'excluded/id_like'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\messy__number_sentinel_-999.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\reference\messy__number_sentinel_-999
+     again: python verify/battery.py verify/reference/mlprofessor --only messy:number_sentinel_-999
+     the finding: one extreme cell in a numeric feature or a regression target moves skill out of its band
+OPEN (D73, pass 8): messy:rows_shuffled [band]
+     the change: the rows are written in another order
+     must hold: the run's own conclusion (its band, its roles, its counts): the order of the rows in the file carries nothing in this table (under time order the rows are put in time order by the tool)
+     messy_roles: `record_id` has role 'feature', reason None; expected 'excluded', 'id_like'
+     seen: rc=0, error=None, skill=0.7021, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, roles={'record_id': 'feature/None'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\messy__rows_shuffled.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\reference\messy__rows_shuffled
+     again: python verify/battery.py verify/reference/mlprofessor --only messy:rows_shuffled
+     the finding: an identifier becomes a feature when the rows are shuffled or one row is repeated
+OPEN (D73, pass 8): messy:row_repeated [band]
+     the change: one row is written twice
+     must hold: the run's own conclusion (its band, its roles, its counts): one row written twice is one more row; `input.duplicate_rows` counts it and a `duplicate_rows` warning says so
+     messy_roles: `record_id` has role 'feature', reason None; expected 'excluded', 'id_like'
+     seen: rc=0, error=None, skill=0.7256, scheme=random, baseline=chance, model=linear-0, holdout=376, copies=0, cap=0, roles={'record_id': 'feature/None'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\messy__row_repeated.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\reference\messy__row_repeated
+     again: python verify/battery.py verify/reference/mlprofessor --only messy:row_repeated
+     the finding: an identifier becomes a feature when the rows are shuffled or one row is repeated
+OPEN (D73, pass 8): random_walk:number_sentinel_-999 [band]
+     the change: one cell of a numeric feature is set to -999
+     must hold: the run's own conclusion (its band, its roles, its counts): one cell of the numeric feature `level_prev` set to -999
+     band:random_walk: skill is -11.9137, expected between -0.3 and 0.05 (the band of `random_walk`)
+     seen: rc=0, error=None, skill=-11.9137, scheme=time_ordered, baseline=previous_value, model=tree-0, holdout=375, copies=None, cap=0, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\random_walk__number_sentinel_-999.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\reference\random_walk__number_sentinel_-999
+     again: python verify/battery.py verify/reference/mlprofessor --only random_walk:number_sentinel_-999
+     the finding: one extreme cell in a numeric feature or a regression target moves skill out of its band
+OPEN (D73, pass 8): random_walk:number_sentinel_999999 [band]
+     the change: one cell of a numeric feature is set to 999999
+     must hold: the run's own conclusion (its band, its roles, its counts): one cell of the numeric feature `level_prev` set to 999999
+     band:random_walk: skill is -2639437387.2697, expected between -0.3 and 0.05 (the band of `random_walk`)
+     seen: rc=0, error=None, skill=-2639437387.2697, scheme=time_ordered, baseline=previous_value, model=linear-0, holdout=375, copies=None, cap=0, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\random_walk__number_sentinel_999999.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\reference\random_walk__number_sentinel_999999
+     again: python verify/battery.py verify/reference/mlprofessor --only random_walk:number_sentinel_999999
+     the finding: one extreme cell in a numeric feature or a regression target moves skill out of its band
+OPEN (D73, pass 8): random_walk:target_sentinel_-999 [band]
+     the change: one cell of the regression target is set to -999
+     must hold: the run's own conclusion (its band, its roles, its counts): one target cell set to -999 (the spec has no rule for an outlier in the target; docs/BACKLOG.md, 'One extreme value can dominate')
+     band:random_walk: skill is -12.9864, expected between -0.3 and 0.05 (the band of `random_walk`)
+     seen: rc=0, error=None, skill=-12.9864, scheme=time_ordered, baseline=previous_value, model=linear-0, holdout=375, copies=None, cap=0, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\random_walk__target_sentinel_-999.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\reference\random_walk__target_sentinel_-999
+     again: python verify/battery.py verify/reference/mlprofessor --only random_walk:target_sentinel_-999
+     the finding: one extreme cell in a numeric feature or a regression target moves skill out of its band
+OPEN (D73, pass 8): random_walk:copy_distinct [same]
+     the change: a column `target_copy` is added: the target made distinct in every row (the class plus a millionth of the row number; for regression the target rescaled)
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: a copy of the target that is distinct in every row (the class plus a millionth of the row number; for regression the target rescaled) is excluded by the leak screen, after the split, so nothing else moves
+     band:random_walk: skill is 0.989, expected between -0.3 and 0.05 (the band of `random_walk`)
+     added:target_copy: the added column `target_copy` has role 'feature', reason None, leak_rule None; expected 'excluded', 'suspected_leak'; skill 0.98899324600362, baseline 'previous_value', warnings []
+     same_as_base: moved against the unperturbed run: headline.score 1.0071539412657424 -> 0.011097059810629533; headline.skill 0.0010420906826066334 -> 0.98899324600362; headline.interval_low 0.8776500769721611 -> 0.009670155549118518; headline.interval_high 1.1919014024324426 -> 0.01313265065319551; headline.skill_low 0.00043134309204543035 -> 0.9889865155176157; headline.skill_high 0.00174730056139161 -> 0.9890010182319482
+     seen: rc=0, error=None, skill=0.989, scheme=time_ordered, baseline=previous_value, model=linear-0, holdout=375, copies=None, cap=0, roles={'target_copy': 'feature/None'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\random_walk__copy_distinct.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\reference\random_walk__copy_distinct
+     again: python verify/battery.py verify/reference/mlprofessor --only random_walk:copy_distinct
+     the finding: an exact rescaled copy of a regression target is not excluded by the leak screen
+OPEN (D73, pass 8): random_walk:row_repeated [band]
+     the change: one row is written twice
+     must hold: the run's own conclusion (its band, its roles, its counts): one row written twice is one more row; `input.duplicate_rows` counts it and a `duplicate_rows` warning says so
+     band:random_walk: skill is 0.9991, expected between -0.3 and 0.05 (the band of `random_walk`)
+     walk_baselines: the timestamps of the source are not all distinct, the baselines are ['training_mean'] and the headline is skill 0.9991210007435922 against 'training_mean': a random walk scored against the training mean; warnings ['autocorrelated_panel_target', 'duplicate_rows', 'interval_approximate']
+     seen: rc=0, error=None, skill=0.9991, scheme=time_ordered, baseline=training_mean, model=linear-0, holdout=376, copies=None, cap=0, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\random_walk__row_repeated.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\reference\random_walk__row_repeated
+     again: python verify/battery.py verify/reference/mlprofessor --only random_walk:row_repeated
+     the finding: one repeated row under time order with no entities: the timestamps are no longer unique and the previous-value baseline is dropped
+OPEN (D73, pass 8): int_stamps:copy_distinct [same]
+     the change: a column `target_copy` is added: the target made distinct in every row (the class plus a millionth of the row number; for regression the target rescaled)
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: a copy of the target that is distinct in every row (the class plus a millionth of the row number; for regression the target rescaled) is excluded by the leak screen, after the split, so nothing else moves
+     added:target_copy: the added column `target_copy` has role 'feature', reason None, leak_rule None; expected 'excluded', 'suspected_leak'; skill 0.9961922836812463, baseline 'previous_value', warnings []
+     same_as_base: moved against the unperturbed run: headline.score 0.979418541750562 -> 0.0037381652181624207; headline.skill 0.0023587116497918448 -> 0.9961922836812463; headline.interval_low 0.8484499319239095 -> 0.003238294615869177; headline.interval_high 1.1099060057609083 -> 0.004236199572912246; headline.skill_low -0.008654540999730693 -> 0.9961502502557208; headline.skill_high 0.014663331289586218 -> 0.996239247512438
+     seen: rc=0, error=None, skill=0.9962, scheme=time_ordered, baseline=previous_value, model=linear-0, holdout=375, copies=None, cap=0, roles={'target_copy': 'feature/None'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\int_stamps__copy_distinct.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\reference\int_stamps__copy_distinct
+     again: python verify/battery.py verify/reference/mlprofessor --only int_stamps:copy_distinct
+     the finding: an exact rescaled copy of a regression target is not excluded by the leak screen
+OPEN (D73, pass 8): int_stamps:row_repeated [structure]
+     the change: one row is written twice
+     must hold: the run's own conclusion (its band, its roles, its counts): one row written twice is one more row; `input.duplicate_rows` counts it and a `duplicate_rows` warning says so
+     walk_baselines: the timestamps of the source are not all distinct, the baselines are ['training_mean'] and the headline is skill 0.9953278779933338 against 'training_mean': a random walk scored against the training mean; warnings ['autocorrelated_panel_target', 'duplicate_rows', 'interval_approximate']
+     seen: rc=0, error=None, skill=0.9953, scheme=time_ordered, baseline=training_mean, model=linear-0, holdout=376, copies=None, cap=0, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\int_stamps__row_repeated.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\reference\int_stamps__row_repeated
+     again: python verify/battery.py verify/reference/mlprofessor --only int_stamps:row_repeated
+     the finding: one repeated row under time order with no entities: the timestamps are no longer unique and the previous-value baseline is dropped
+OPEN (D73, pass 8): flat_tail:row_repeated [structure]
+     the change: one row is written twice
+     must hold: the run's own conclusion (its band, its roles, its counts): one row written twice is one more row; `input.duplicate_rows` counts it and a `duplicate_rows` warning says so
+     flat: the timestamps of the source are not all distinct; baselines ['training_mean'], skill -0.17099534290539764 against 'training_mean'
+     seen: rc=0, error=None, skill=-0.171, scheme=time_ordered, baseline=training_mean, model=linear-0, holdout=376, copies=None, cap=0, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\flat_tail__row_repeated.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\reference\flat_tail__row_repeated
+     again: python verify/battery.py verify/reference/mlprofessor --only flat_tail:row_repeated
+     the finding: one repeated row under time order with no entities: the timestamps are no longer unique and the previous-value baseline is dropped
+OPEN (D73, pass 8): panel:number_sentinel_-999 [band]
+     the change: one cell of a numeric feature is set to -999
+     must hold: the run's own conclusion (its band, its roles, its counts): one cell of the numeric feature `level_prev` set to -999
+     band:panel: skill is -5.069, expected between -0.04 and 0.03 (the band of `panel`)
+     seen: rc=0, error=None, skill=-5.069, scheme=time_ordered, baseline=previous_value, model=tree-0, holdout=384, copies=None, cap=0, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\panel__number_sentinel_-999.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\reference\panel__number_sentinel_-999
+     again: python verify/battery.py verify/reference/mlprofessor --only panel:number_sentinel_-999
+     the finding: one extreme cell in a numeric feature or a regression target moves skill out of its band
+OPEN (D73, pass 8): panel:number_sentinel_999999 [band]
+     the change: one cell of a numeric feature is set to 999999
+     must hold: the run's own conclusion (its band, its roles, its counts): one cell of the numeric feature `level_prev` set to 999999
+     band:panel: skill is -4.9114, expected between -0.04 and 0.03 (the band of `panel`)
+     seen: rc=0, error=None, skill=-4.9114, scheme=time_ordered, baseline=previous_value, model=tree-0, holdout=384, copies=None, cap=0, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\panel__number_sentinel_999999.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\reference\panel__number_sentinel_999999
+     again: python verify/battery.py verify/reference/mlprofessor --only panel:number_sentinel_999999
+     the finding: one extreme cell in a numeric feature or a regression target moves skill out of its band
+OPEN (D73, pass 8): panel:target_sentinel_-999 [band]
+     the change: one cell of the regression target is set to -999
+     must hold: the run's own conclusion (its band, its roles, its counts): one target cell set to -999 (the spec has no rule for an outlier in the target; docs/BACKLOG.md, 'One extreme value can dominate')
+     band:panel: skill is -5.069, expected between -0.04 and 0.03 (the band of `panel`)
+     seen: rc=0, error=None, skill=-5.069, scheme=time_ordered, baseline=previous_value, model=tree-0, holdout=384, copies=None, cap=0, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\panel__target_sentinel_-999.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\reference\panel__target_sentinel_-999
+     again: python verify/battery.py verify/reference/mlprofessor --only panel:target_sentinel_-999
+     the finding: one extreme cell in a numeric feature or a regression target moves skill out of its band
+OPEN (D73, pass 8): panel:copy_distinct [same]
+     the change: a column `target_copy` is added: the target made distinct in every row (the class plus a millionth of the row number; for regression the target rescaled)
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: a copy of the target that is distinct in every row (the class plus a millionth of the row number; for regression the target rescaled) is excluded by the leak screen, after the split, so nothing else moves
+     band:panel: skill is 0.9489, expected between -0.04 and 0.03 (the band of `panel`)
+     added:target_copy: the added column `target_copy` has role 'feature', reason None, leak_rule None; expected 'excluded', 'suspected_leak'; skill 0.9489422100040781, baseline 'previous_value', warnings []
+     same_as_base: moved against the unperturbed run: headline.score 1.0179112494721525 -> 0.05146548047767124; headline.skill -0.009847733425597305 -> 0.9489422100040781; headline.interval_low 0.8380105876393388 -> 0.04236972207191189; headline.interval_high 1.1761789686269484 -> 0.05946747959699928; headline.skill_low -0.017639570322384772 -> 0.9485482554308523; headline.skill_high -0.0016580439191917797 -> 0.9493562797055719
+     seen: rc=0, error=None, skill=0.9489, scheme=time_ordered, baseline=previous_value, model=linear-0, holdout=384, copies=None, cap=0, roles={'target_copy': 'feature/None'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\panel__copy_distinct.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\reference\panel__copy_distinct
+     again: python verify/battery.py verify/reference/mlprofessor --only panel:copy_distinct
+     the finding: an exact rescaled copy of a regression target is not excluded by the leak screen
+OPEN (D73, pass 8): panel:missing_cell_feature [band]
+     the change: one cell of a feature is emptied
+     must hold: the run's own conclusion (its band, its roles, its counts): one empty cell in the feature `level_prev` is counted in `n_missing` and imputed
+     band:panel: skill is -2.6844, expected between -0.04 and 0.03 (the band of `panel`)
+     seen: rc=0, error=None, skill=-2.6844, scheme=time_ordered, baseline=previous_value, model=linear-0, holdout=384, copies=None, cap=0, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\panel__missing_cell_feature.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\reference\panel__missing_cell_feature
+     again: python verify/battery.py verify/reference/mlprofessor --only panel:missing_cell_feature
+     the finding: one empty cell in the lag of a panel moves skill out of its band
+OPEN (D73, pass 8): dominant_entity:copy_distinct [same]
+     the change: a column `target_copy` is added: the target made distinct in every row (the class plus a millionth of the row number; for regression the target rescaled)
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: a copy of the target that is distinct in every row (the class plus a millionth of the row number; for regression the target rescaled) is excluded by the leak screen, after the split, so nothing else moves
+     added:target_copy: the added column `target_copy` has role 'feature', reason None, leak_rule None; expected 'excluded', 'suspected_leak'; skill 0.9999995512596312, baseline 'training_mean', warnings []
+     same_as_base: moved against the unperturbed run: headline.score 0.963822576369907 -> 4.2982886084267954e-07; headline.skill -0.006228612698452318 -> 0.9999995512596312; headline.interval_low 0.8649488054553067 -> 3.8573747442314426e-07; headline.interval_high 1.0803382204684921 -> 4.817907918246536e-07; headline.skill_low -0.01623182873003894 -> 0.9999995467957437; headline.skill_high 0.00145504686515669 -> 0.9999995546932886
+     seen: rc=0, error=None, skill=1.0, scheme=grouped, baseline=training_mean, model=linear-0, holdout=500, copies=0, cap=0, roles={'target_copy': 'feature/None'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\dominant_entity__copy_distinct.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\reference\dominant_entity__copy_distinct
+     again: python verify/battery.py verify/reference/mlprofessor --only dominant_entity:copy_distinct
+     the finding: an exact rescaled copy of a regression target is not excluded by the leak screen
+LISTED AND HOLDS HERE signal_clf:number_sentinel_-999 (open: D73, pass 8)
+LISTED AND HOLDS HERE signal_clf:number_sentinel_999999 (open: D73, pass 8)
+LISTED AND HOLDS HERE binary_numeric:number_sentinel_999999 (open: D73, pass 8)
+LISTED AND HOLDS HERE messy:number_sentinel_999999 (open: D73, pass 8)
+794 tool runs in 226 s at 16 side by side (3435 s of tool time): 32 gate runs as they are and 762 pairs; 518 pairs left out (--list says why)
+holds 766; stated limit 2 of 2 listed; open 26 of 30 listed (D73, pass 8); on neither list and failing 0
+BATTERY: PASS (holds 766, stated limit 2, open 26)

@@ -1,0 +1,1099 @@
+FAIL few_valued:copy_two_valued [stop-or-structure]
+     the change: a column `status_copy` is added: the target relabelled closed and open
+     must hold: the run stops with `holdout_copies_in_training` and names `status_copy`: once the leak screen has excluded it, a combination of the features that are left is on both sides (D69, D72; spec step 8a). Or, if this draw puts none on both sides, it finishes with none on both sides and skill in the band of `few_valued`
+     band:few_valued: skill is -0.8067, expected between -0.2 and 0.2 (the band of `few_valued`)
+     combos_apart: 8 of the 16 combinations of the features that reached the models (['region', 'branch']) have rows on both sides; skill -0.8066666666666666, n_holdout_copies 0
+     seen: rc=0, error=None, skill=-0.8067, scheme=grouped, baseline=chance, model=tree-0, holdout=576, copies=0, cap=0, roles={'status_copy': 'excluded/suspected_leak'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\few_valued__copy_two_valued.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\few_valued__copy_two_valued
+     again: python verify/battery.py mlprofessor --only few_valued:copy_two_valued
+FAIL day_numbers:ymd_sentinel_99991231 [structure]
+     the change: one cell of the YYYYMMDD column is set to 99991231
+     must hold: the run's own conclusion (its band, its roles, its counts): one cell of the date column `day` set to 99991231, a value that is no date: the column is still a column of dates, since a value that is no date counts once and hundreds of distinct dates stand beside it (D69, D72; spec step 5, rule 2a)
+     day_role: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     undeclared_date:day: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     seen: rc=0, error=None, skill=0.9278, scheme=random, baseline=chance, model=tree-0, holdout=450, copies=0, cap=0, roles={'day': 'feature/None'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\day_numbers__ymd_sentinel_99991231.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\day_numbers__ymd_sentinel_99991231
+     again: python verify/battery.py mlprofessor --only day_numbers:ymd_sentinel_99991231
+FAIL day_numbers:ymd_sentinel_0 [structure]
+     the change: one cell of the YYYYMMDD column is set to 0
+     must hold: the run's own conclusion (its band, its roles, its counts): one cell of the date column `day` set to 0, a value that is no date: the column is still a column of dates, since a value that is no date counts once and hundreds of distinct dates stand beside it (D69, D72; spec step 5, rule 2a)
+     day_role: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     undeclared_date:day: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     seen: rc=0, error=None, skill=0.9236, scheme=random, baseline=chance, model=tree-0, holdout=450, copies=0, cap=0, roles={'day': 'feature/None'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\day_numbers__ymd_sentinel_0.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\day_numbers__ymd_sentinel_0
+     again: python verify/battery.py mlprofessor --only day_numbers:ymd_sentinel_0
+FAIL day_numbers:ymd_sentinel_20240230 [structure]
+     the change: one cell of the YYYYMMDD column is set to 20240230, no date
+     must hold: the run's own conclusion (its band, its roles, its counts): one cell of the date column `day` set to 20240230, a value that is no date: the column is still a column of dates, since a value that is no date counts once and hundreds of distinct dates stand beside it (D69, D72; spec step 5, rule 2a)
+     day_role: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     undeclared_date:day: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     seen: rc=0, error=None, skill=0.9236, scheme=random, baseline=chance, model=tree-0, holdout=450, copies=0, cap=0, roles={'day': 'feature/None'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\day_numbers__ymd_sentinel_20240230.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\day_numbers__ymd_sentinel_20240230
+     again: python verify/battery.py mlprofessor --only day_numbers:ymd_sentinel_20240230
+FAIL day_sentinel:base [base]
+     the change: the gate's run as it is
+     must hold: the gate's own conclusion
+     day_role: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     undeclared_date:day: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     seen: rc=0, error=None, skill=0.1314, scheme=random, baseline=chance, model=tree-0, holdout=450, copies=0, cap=0, roles={'day': 'feature/None'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\day_sentinel__base.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\day_sentinel__base
+     again: python verify/battery.py mlprofessor --only day_sentinel:base
+FAIL day_sentinel:ymd_sentinel_99991231 [structure]
+     the change: one cell of the YYYYMMDD column is set to 99991231
+     must hold: the run's own conclusion (its band, its roles, its counts): one cell of the date column `day` set to 99991231, a value that is no date: the column is still a column of dates, since a value that is no date counts once and hundreds of distinct dates stand beside it (D69, D72; spec step 5, rule 2a)
+     day_role: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     undeclared_date:day: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     seen: rc=0, error=None, skill=0.1482, scheme=random, baseline=chance, model=tree-0, holdout=450, copies=0, cap=0, roles={'day': 'feature/None'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\day_sentinel__ymd_sentinel_99991231.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\day_sentinel__ymd_sentinel_99991231
+     again: python verify/battery.py mlprofessor --only day_sentinel:ymd_sentinel_99991231
+FAIL day_sentinel:ymd_sentinel_0 [structure]
+     the change: one cell of the YYYYMMDD column is set to 0
+     must hold: the run's own conclusion (its band, its roles, its counts): one cell of the date column `day` set to 0, a value that is no date: the column is still a column of dates, since a value that is no date counts once and hundreds of distinct dates stand beside it (D69, D72; spec step 5, rule 2a)
+     day_role: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     undeclared_date:day: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     seen: rc=0, error=None, skill=0.1143, scheme=random, baseline=chance, model=tree-0, holdout=450, copies=0, cap=0, roles={'day': 'feature/None'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\day_sentinel__ymd_sentinel_0.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\day_sentinel__ymd_sentinel_0
+     again: python verify/battery.py mlprofessor --only day_sentinel:ymd_sentinel_0
+FAIL day_sentinel:ymd_sentinel_20240230 [structure]
+     the change: one cell of the YYYYMMDD column is set to 20240230, no date
+     must hold: the run's own conclusion (its band, its roles, its counts): one cell of the date column `day` set to 20240230, a value that is no date: the column is still a column of dates, since a value that is no date counts once and hundreds of distinct dates stand beside it (D69, D72; spec step 5, rule 2a)
+     day_role: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     undeclared_date:day: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     seen: rc=0, error=None, skill=0.1275, scheme=random, baseline=chance, model=tree-0, holdout=450, copies=0, cap=0, roles={'day': 'feature/None'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\day_sentinel__ymd_sentinel_20240230.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\day_sentinel__ymd_sentinel_20240230
+     again: python verify/battery.py mlprofessor --only day_sentinel:ymd_sentinel_20240230
+FAIL day_sentinel:ymd_sentinel_in_dropped_row [structure]
+     the change: one cell of the YYYYMMDD column is set to 99991231 in a row whose target is emptied
+     must hold: the run's own conclusion (its band, its roles, its counts): a value that is no date in a row with no target does not count: rule 2a looks at the usable rows (spec step 5)
+     day_role: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     undeclared_date:day: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     seen: rc=0, error=None, skill=0.1468, scheme=random, baseline=chance, model=tree-0, holdout=450, copies=0, cap=0, roles={'day': 'feature/None'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\day_sentinel__ymd_sentinel_in_dropped_row.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\day_sentinel__ymd_sentinel_in_dropped_row
+     again: python verify/battery.py mlprofessor --only day_sentinel:ymd_sentinel_in_dropped_row
+FAIL day_sentinel:number_sentinel_-999 [structure]
+     the change: one cell of a numeric feature is set to -999
+     must hold: the run's own conclusion (its band, its roles, its counts): one cell of the numeric feature `n1` set to -999
+     day_role: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     undeclared_date:day: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     seen: rc=0, error=None, skill=0.1052, scheme=random, baseline=chance, model=tree-0, holdout=450, copies=0, cap=0, roles={'day': 'feature/None'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\day_sentinel__number_sentinel_-999.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\day_sentinel__number_sentinel_-999
+     again: python verify/battery.py mlprofessor --only day_sentinel:number_sentinel_-999
+FAIL day_sentinel:number_sentinel_999999 [structure]
+     the change: one cell of a numeric feature is set to 999999
+     must hold: the run's own conclusion (its band, its roles, its counts): one cell of the numeric feature `n1` set to 999999
+     day_role: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     undeclared_date:day: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     seen: rc=0, error=None, skill=0.1275, scheme=random, baseline=chance, model=tree-0, holdout=450, copies=0, cap=0, roles={'day': 'feature/None'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\day_sentinel__number_sentinel_999999.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\day_sentinel__number_sentinel_999999
+     again: python verify/battery.py mlprofessor --only day_sentinel:number_sentinel_999999
+FAIL day_sentinel:number_sentinel_1e308 [structure]
+     the change: one cell of a numeric feature is set to 1e308
+     must hold: the run's own conclusion (its band, its roles, its counts): one cell of the numeric feature `n1` set to 1e308; a value above 3.4e38 is read as missing, counted in `n_infinite` and named by `infinite_values` (D48)
+     day_role: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     undeclared_date:day: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     seen: rc=0, error=None, skill=0.1314, scheme=random, baseline=chance, model=tree-0, holdout=450, copies=0, cap=0, roles={'day': 'feature/None'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\day_sentinel__number_sentinel_1e308.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\day_sentinel__number_sentinel_1e308
+     again: python verify/battery.py mlprofessor --only day_sentinel:number_sentinel_1e308
+FAIL day_sentinel:copy_two_valued [same]
+     the change: a column `status_copy` is added: the target relabelled closed and open
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: a relabelled copy of the target is excluded by the leak screen (step 8, rule 2), after the split, so nothing else moves
+     day_role: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     undeclared_date:day: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     seen: rc=0, error=None, skill=0.1314, scheme=random, baseline=chance, model=tree-0, holdout=450, copies=0, cap=0, roles={'day': 'feature/None', 'status_copy': 'excluded/suspected_leak'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\day_sentinel__copy_two_valued.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\day_sentinel__copy_two_valued
+     again: python verify/battery.py mlprofessor --only day_sentinel:copy_two_valued
+FAIL day_sentinel:copy_distinct [same]
+     the change: a column `target_copy` is added: the target made distinct in every row (the class plus a millionth of the row number; for regression the target rescaled)
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: a copy of the target that is distinct in every row (the class plus a millionth of the row number; for regression the target rescaled) is excluded by the leak screen, after the split, so nothing else moves
+     day_role: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     undeclared_date:day: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     seen: rc=0, error=None, skill=0.1314, scheme=random, baseline=chance, model=tree-0, holdout=450, copies=0, cap=0, roles={'day': 'feature/None', 'target_copy': 'excluded/suspected_leak'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\day_sentinel__copy_distinct.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\day_sentinel__copy_distinct
+     again: python verify/battery.py mlprofessor --only day_sentinel:copy_distinct
+FAIL day_sentinel:constant_added [same]
+     the change: a column `const_added` of one value is added
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: a column of one value is excluded as `constant` at step 5 and reaches nothing
+     day_role: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     undeclared_date:day: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     seen: rc=0, error=None, skill=0.1314, scheme=random, baseline=chance, model=tree-0, holdout=450, copies=0, cap=0, roles={'day': 'feature/None', 'const_added': 'excluded/constant'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\day_sentinel__constant_added.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\day_sentinel__constant_added
+     again: python verify/battery.py mlprofessor --only day_sentinel:constant_added
+FAIL day_sentinel:id_added_int [same]
+     the change: a column `row_id_added` of consecutive whole numbers is added
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: consecutive whole numbers in file order are `id_like` (rule 8b) and reach nothing; an excluded column plays no part in the copies rule (step 8a)
+     day_role: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     undeclared_date:day: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     seen: rc=0, error=None, skill=0.1314, scheme=random, baseline=chance, model=tree-0, holdout=450, copies=0, cap=0, roles={'day': 'feature/None', 'row_id_added': 'excluded/id_like'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\day_sentinel__id_added_int.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\day_sentinel__id_added_int
+     again: python verify/battery.py mlprofessor --only day_sentinel:id_added_int
+FAIL day_sentinel:id_added_text [same]
+     the change: a column `ref_added` of text distinct in every row is added
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: text distinct in every row is `id_like` (rule 6a) and reaches nothing
+     day_role: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     undeclared_date:day: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     seen: rc=0, error=None, skill=0.1314, scheme=random, baseline=chance, model=tree-0, holdout=450, copies=0, cap=0, roles={'day': 'feature/None', 'ref_added': 'excluded/id_like'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\day_sentinel__id_added_text.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\day_sentinel__id_added_text
+     again: python verify/battery.py mlprofessor --only day_sentinel:id_added_text
+FAIL day_sentinel:second_date_added [same]
+     the change: a column `added_date` of ISO dates is added
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: a text column of ISO dates is excluded as `datetime` (rule 4); under --no-time-order one `date_column_undeclared` warning names it, under a time column none does
+     day_role: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     undeclared_date:day: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     seen: rc=0, error=None, skill=0.1314, scheme=random, baseline=chance, model=tree-0, holdout=450, copies=0, cap=0, roles={'day': 'feature/None', 'added_date': 'excluded/datetime'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\day_sentinel__second_date_added.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\day_sentinel__second_date_added
+     again: python verify/battery.py mlprofessor --only day_sentinel:second_date_added
+FAIL day_sentinel:noise_added [structure]
+     the change: a column `noise_added` of normal noise is added
+     must hold: the run's own conclusion (its band, its roles, its counts): one more column of noise is a feature like any other and predicts nothing
+     day_role: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     undeclared_date:day: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     seen: rc=0, error=None, skill=0.138, scheme=random, baseline=chance, model=tree-0, holdout=450, copies=0, cap=0, roles={'day': 'feature/None', 'noise_added': 'feature/None'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\day_sentinel__noise_added.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\day_sentinel__noise_added
+     again: python verify/battery.py mlprofessor --only day_sentinel:noise_added
+FAIL day_sentinel:rows_shuffled [structure]
+     the change: the rows are written in another order
+     must hold: the run's own conclusion (its band, its roles, its counts): the order of the rows in the file carries nothing in this table (under time order the rows are put in time order by the tool)
+     day_role: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     undeclared_date:day: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     seen: rc=0, error=None, skill=0.0796, scheme=random, baseline=chance, model=tree-0, holdout=450, copies=0, cap=0, roles={'day': 'feature/None'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\day_sentinel__rows_shuffled.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\day_sentinel__rows_shuffled
+     again: python verify/battery.py mlprofessor --only day_sentinel:rows_shuffled
+FAIL day_sentinel:row_repeated [structure]
+     the change: one row is written twice
+     must hold: the run's own conclusion (its band, its roles, its counts): one row written twice is one more row; `input.duplicate_rows` counts it and a `duplicate_rows` warning says so
+     day_role: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     undeclared_date:day: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     seen: rc=0, error=None, skill=0.1386, scheme=random, baseline=chance, model=tree-0, holdout=451, copies=1, cap=0, roles={'day': 'feature/None'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\day_sentinel__row_repeated.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\day_sentinel__row_repeated
+     again: python verify/battery.py mlprofessor --only day_sentinel:row_repeated
+FAIL day_sentinel:blank_line_added [same]
+     the change: one blank line is added between two rows
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: a blank line is not a row (spec section 6), so every row keeps its position
+     day_role: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     undeclared_date:day: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     seen: rc=0, error=None, skill=0.1314, scheme=random, baseline=chance, model=tree-0, holdout=450, copies=0, cap=0, roles={'day': 'feature/None'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\day_sentinel__blank_line_added.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\day_sentinel__blank_line_added
+     again: python verify/battery.py mlprofessor --only day_sentinel:blank_line_added
+FAIL day_sentinel:missing_cell_feature [structure]
+     the change: one cell of a feature is emptied
+     must hold: the run's own conclusion (its band, its roles, its counts): one empty cell in the feature `n1` is counted in `n_missing` and imputed
+     day_role: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     undeclared_date:day: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     seen: rc=0, error=None, skill=0.1314, scheme=random, baseline=chance, model=tree-0, holdout=450, copies=0, cap=0, roles={'day': 'feature/None'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\day_sentinel__missing_cell_feature.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\day_sentinel__missing_cell_feature
+     again: python verify/battery.py mlprofessor --only day_sentinel:missing_cell_feature
+FAIL day_sentinel:missing_cell_date [same]
+     the change: one cell of the time column, or of a date column, is emptied
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: an empty cell is not looked at by the date rules (step 5), and the column reaches nothing either way
+     day_role: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     undeclared_date:day: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     same_as_base: moved against the unperturbed run: headline.score 0.565687602336817 -> 0.5774020093391821; headline.skill 0.13137520467363406 -> 0.15480401867836413; headline.interval_low 0.5223631239935588 -> 0.5329904216895153; headline.interval_high 0.6077210319329627 -> 0.6159765987777268; headline.skill_low 0.044726247987117634 -> 0.06598084337903055; headline.skill_high 0.21544206386592527 -> 0.23195319755545363
+     seen: rc=0, error=None, skill=0.1548, scheme=random, baseline=chance, model=tree-0, holdout=450, copies=0, cap=0, roles={'day': 'feature/None'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\day_sentinel__missing_cell_date.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\day_sentinel__missing_cell_date
+     again: python verify/battery.py mlprofessor --only day_sentinel:missing_cell_date
+FAIL day_sentinel:missing_cell_target [structure]
+     the change: one cell of the target is emptied
+     must hold: the run's own conclusion (its band, its roles, its counts): a row with no target is dropped and counted in `dropped_missing_target`
+     day_role: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     undeclared_date:day: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     seen: rc=0, error=None, skill=0.1672, scheme=random, baseline=chance, model=tree-0, holdout=450, copies=0, cap=0, roles={'day': 'feature/None'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\day_sentinel__missing_cell_target.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\day_sentinel__missing_cell_target
+     again: python verify/battery.py mlprofessor --only day_sentinel:missing_cell_target
+FAIL day_sentinel:feature_renamed [same]
+     the change: a feature is renamed `renamed_feature`
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: a column's name carries nothing
+     day_role: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     undeclared_date:day: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     seen: rc=0, error=None, skill=0.1314, scheme=random, baseline=chance, model=tree-0, holdout=450, copies=0, cap=0, roles={'day': 'feature/None'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\day_sentinel__feature_renamed.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\day_sentinel__feature_renamed
+     again: python verify/battery.py mlprofessor --only day_sentinel:feature_renamed
+FAIL day_sentinel:feature_renamed_awkward [same]
+     the change: a feature is renamed `net value, £ (2024)`
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: a column's name carries nothing, a name with a comma, a space and a non-ASCII letter included
+     day_role: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     undeclared_date:day: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     seen: rc=0, error=None, skill=0.1314, scheme=random, baseline=chance, model=tree-0, holdout=450, copies=0, cap=0, roles={'day': 'feature/None'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\day_sentinel__feature_renamed_awkward.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\day_sentinel__feature_renamed_awkward
+     again: python verify/battery.py mlprofessor --only day_sentinel:feature_renamed_awkward
+FAIL day_sentinel:target_renamed [same]
+     the change: the target is renamed `the outcome`
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: the target's name carries nothing
+     day_role: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     undeclared_date:day: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     seen: rc=0, error=None, skill=0.1314, scheme=random, baseline=chance, model=tree-0, holdout=450, copies=0, cap=0, roles={'day': 'feature/None'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\day_sentinel__target_renamed.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\day_sentinel__target_renamed
+     again: python verify/battery.py mlprofessor --only day_sentinel:target_renamed
+FAIL day_sentinel:role_column_renamed [same]
+     the change: the time or date column is renamed `when`, the entity column `who`
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: the name of the date column carries nothing
+     day_role: `when` has role 'feature', reason None; expected 'excluded', 'datetime'
+     undeclared_date:day: `when` has role 'feature', reason None; expected 'excluded', 'datetime'
+     seen: rc=0, error=None, skill=0.1314, scheme=random, baseline=chance, model=tree-0, holdout=450, copies=0, cap=0, roles={'when': 'feature/None'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\day_sentinel__role_column_renamed.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\day_sentinel__role_column_renamed
+     again: python verify/battery.py mlprofessor --only day_sentinel:role_column_renamed
+FAIL day_sentinel:target_first [same]
+     the change: the target is moved to the first column
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: where the target stands among the columns carries nothing: the features keep their order
+     day_role: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     undeclared_date:day: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     seen: rc=0, error=None, skill=0.1314, scheme=random, baseline=chance, model=tree-0, holdout=450, copies=0, cap=0, roles={'day': 'feature/None'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\day_sentinel__target_first.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\day_sentinel__target_first
+     again: python verify/battery.py mlprofessor --only day_sentinel:target_first
+FAIL day_sentinel:target_respelt [same]
+     the change: the two classes are respelt, in the same sorted order
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: the classes respelt in the same sorted order: the same 0 and 1 reach every step
+     day_role: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     undeclared_date:day: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     seen: rc=0, error=None, skill=0.1314, scheme=random, baseline=chance, model=tree-0, holdout=450, copies=0, cap=0, roles={'day': 'feature/None'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\day_sentinel__target_respelt.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\day_sentinel__target_respelt
+     again: python verify/battery.py mlprofessor --only day_sentinel:target_respelt
+FAIL day_sentinel:target_respelt_flipped [structure]
+     the change: the two classes are respelt so that the other sorts second
+     must hold: the run's own conclusion (its band, its roles, its counts): the classes respelt so that the other one sorts second: the positive class changes and skill, 2 x AUC - 1, does not depend on which it is
+     day_role: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     undeclared_date:day: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     seen: rc=0, error=None, skill=0.1314, scheme=random, baseline=chance, model=tree-0, holdout=450, copies=0, cap=0, roles={'day': 'feature/None'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\day_sentinel__target_respelt_flipped.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\day_sentinel__target_respelt_flipped
+     again: python verify/battery.py mlprofessor --only day_sentinel:target_respelt_flipped
+FAIL day_sentinel:white_space_cells [same]
+     the change: white space is put round some target values, levels and entity values
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: white space round a target value, a categorical level or an entity value is not part of it (D42, D46, step 5)
+     day_role: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     undeclared_date:day: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     seen: rc=0, error=None, skill=0.1314, scheme=random, baseline=chance, model=tree-0, holdout=450, copies=0, cap=0, roles={'day': 'feature/None'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\day_sentinel__white_space_cells.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\day_sentinel__white_space_cells
+     again: python verify/battery.py mlprofessor --only day_sentinel:white_space_cells
+FAIL day_sentinel:float_whole_numbers [same]
+     the change: whole numbers are written as floats (20150101.0)
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: whole numbers written as floats (day) are judged by value: a date number, an identifier, a two-valued target (steps 4 and 5)
+     day_role: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     undeclared_date:day: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     seen: rc=0, error=None, skill=0.1314, scheme=random, baseline=chance, model=tree-0, holdout=450, copies=0, cap=0, roles={'day': 'feature/None'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\day_sentinel__float_whole_numbers.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\day_sentinel__float_whole_numbers
+     again: python verify/battery.py mlprofessor --only day_sentinel:float_whole_numbers
+FAIL few_valued_leak:base [stop]
+     the change: the gate's run as it is
+     must hold: the stop `holdout_copies_in_training`
+     stop: the run finished (exit 0, skill -0.9493592730661696) where it must stop with `holdout_copies_in_training`
+     seen: rc=0, error=None, skill=-0.9494, scheme=grouped, baseline=chance, model=tree-0, holdout=586, copies=0, cap=0, roles={'status': 'excluded/suspected_leak'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\few_valued_leak__base.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\few_valued_leak__base
+     again: python verify/battery.py mlprofessor --only few_valued_leak:base
+FAIL few_valued_leak:copy_two_valued [stop]
+     the change: a column `status_copy` is added: the target relabelled closed and open
+     must hold: the same stop, `holdout_copies_in_training`: a relabelled copy of the target is excluded by the leak screen (step 8, rule 2), after the split, so nothing else moves
+     stop: the run finished (exit 0, skill -0.9493592730661696) where it must stop with `holdout_copies_in_training`
+     seen: rc=0, error=None, skill=-0.9494, scheme=grouped, baseline=chance, model=tree-0, holdout=586, copies=0, cap=0, roles={'status': 'excluded/suspected_leak', 'status_copy': 'excluded/suspected_leak'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\few_valued_leak__copy_two_valued.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\few_valued_leak__copy_two_valued
+     again: python verify/battery.py mlprofessor --only few_valued_leak:copy_two_valued
+FAIL few_valued_leak:constant_added [stop]
+     the change: a column `const_added` of one value is added
+     must hold: the same stop, `holdout_copies_in_training`: a column of one value is excluded as `constant` at step 5 and reaches nothing
+     stop: the run finished (exit 0, skill -0.9493592730661696) where it must stop with `holdout_copies_in_training`
+     seen: rc=0, error=None, skill=-0.9494, scheme=grouped, baseline=chance, model=tree-0, holdout=586, copies=0, cap=0, roles={'status': 'excluded/suspected_leak', 'const_added': 'excluded/constant'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\few_valued_leak__constant_added.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\few_valued_leak__constant_added
+     again: python verify/battery.py mlprofessor --only few_valued_leak:constant_added
+FAIL few_valued_leak:id_added_int [stop]
+     the change: a column `row_id_added` of consecutive whole numbers is added
+     must hold: the same stop, `holdout_copies_in_training`: consecutive whole numbers in file order are `id_like` (rule 8b) and reach nothing; an excluded column plays no part in the copies rule (step 8a)
+     stop: the run finished (exit 0, skill -0.9493592730661696) where it must stop with `holdout_copies_in_training`
+     seen: rc=0, error=None, skill=-0.9494, scheme=grouped, baseline=chance, model=tree-0, holdout=586, copies=0, cap=0, roles={'status': 'excluded/suspected_leak', 'row_id_added': 'excluded/id_like'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\few_valued_leak__id_added_int.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\few_valued_leak__id_added_int
+     again: python verify/battery.py mlprofessor --only few_valued_leak:id_added_int
+FAIL few_valued_leak:id_added_text [stop]
+     the change: a column `ref_added` of text distinct in every row is added
+     must hold: the same stop, `holdout_copies_in_training`: text distinct in every row is `id_like` (rule 6a) and reaches nothing
+     stop: the run finished (exit 0, skill -0.9493592730661696) where it must stop with `holdout_copies_in_training`
+     seen: rc=0, error=None, skill=-0.9494, scheme=grouped, baseline=chance, model=tree-0, holdout=586, copies=0, cap=0, roles={'status': 'excluded/suspected_leak', 'ref_added': 'excluded/id_like'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\few_valued_leak__id_added_text.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\few_valued_leak__id_added_text
+     again: python verify/battery.py mlprofessor --only few_valued_leak:id_added_text
+FAIL few_valued_leak:second_date_added [stop]
+     the change: a column `added_date` of ISO dates is added
+     must hold: the same stop, `holdout_copies_in_training`: a text column of ISO dates is excluded as `datetime` (rule 4); under --no-time-order one `date_column_undeclared` warning names it, under a time column none does
+     stop: the run finished (exit 0, skill -0.9493592730661696) where it must stop with `holdout_copies_in_training`
+     seen: rc=0, error=None, skill=-0.9494, scheme=grouped, baseline=chance, model=tree-0, holdout=586, copies=0, cap=0, roles={'status': 'excluded/suspected_leak', 'added_date': 'excluded/datetime'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\few_valued_leak__second_date_added.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\few_valued_leak__second_date_added
+     again: python verify/battery.py mlprofessor --only few_valued_leak:second_date_added
+FAIL few_valued_leak:noise_added [stop-or-structure]
+     the change: a column `noise_added` of normal noise is added
+     must hold: with a column of noise almost no two rows agree, so there is little to keep together and little for the stop of step 8a to find. The run finishes with `status` excluded as a leak, no combination of the features that are left on both sides and no skill (the band of `few_valued`, borrowed); or, when two rows that agree in region, branch and the noise as written fell on opposite sides, it stops with `holdout_copies_in_training`, naming `status`: one combination on both sides is enough (D72; spec step 8a)
+     combos_apart: 1 of the 1994 combinations of the features that reached the models (['region', 'branch', 'noise_added']) have rows on both sides; skill 0.0036217948717949255, n_holdout_copies 0
+     seen: rc=0, error=None, skill=0.0036, scheme=grouped, baseline=chance, model=linear-0, holdout=500, copies=0, cap=0, roles={'status': 'excluded/suspected_leak', 'noise_added': 'feature/None'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\few_valued_leak__noise_added.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\few_valued_leak__noise_added
+     again: python verify/battery.py mlprofessor --only few_valued_leak:noise_added
+FAIL few_valued_leak:rows_shuffled [stop-or-structure]
+     the change: the rows are written in another order
+     must hold: the same stop, `holdout_copies_in_training`, naming `status`; or, if this draw puts no combination of the features that are left on both sides, a run that finishes with none on both sides, `status` excluded as a leak and no skill (the band of `few_valued`): the order of the rows in the file carries nothing in this table (under time order the rows are put in time order by the tool)
+     band:few_valued: skill is -1.0, expected between -0.2 and 0.2 (the band of `few_valued`)
+     combos_apart: 10 of the 16 combinations of the features that reached the models (['region', 'branch']) have rows on both sides; skill -1.0, n_holdout_copies 0
+     seen: rc=0, error=None, skill=-1.0, scheme=grouped, baseline=chance, model=tree-0, holdout=579, copies=0, cap=0, roles={'status': 'excluded/suspected_leak'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\few_valued_leak__rows_shuffled.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\few_valued_leak__rows_shuffled
+     again: python verify/battery.py mlprofessor --only few_valued_leak:rows_shuffled
+FAIL few_valued_leak:row_repeated [stop-or-structure]
+     the change: one row is written twice
+     must hold: the same stop, `holdout_copies_in_training`, naming `status`; or, if this draw puts no combination of the features that are left on both sides, a run that finishes with none on both sides, `status` excluded as a leak and no skill (the band of `few_valued`): one row written twice is one more row; `input.duplicate_rows` counts it and a `duplicate_rows` warning says so
+     band:few_valued: skill is -0.9492, expected between -0.2 and 0.2 (the band of `few_valued`)
+     combos_apart: 532 rows outside the holdout have a combination of feature values that is held out; the cap left only 1 out
+     seen: rc=0, error=None, skill=-0.9492, scheme=grouped, baseline=chance, model=tree-0, holdout=585, copies=0, cap=1, roles={'status': 'excluded/suspected_leak'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\few_valued_leak__row_repeated.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\few_valued_leak__row_repeated
+     again: python verify/battery.py mlprofessor --only few_valued_leak:row_repeated
+FAIL few_valued_leak:blank_line_added [stop]
+     the change: one blank line is added between two rows
+     must hold: the same stop, `holdout_copies_in_training`: a blank line is not a row (spec section 6), so every row keeps its position
+     stop: the run finished (exit 0, skill -0.9493592730661696) where it must stop with `holdout_copies_in_training`
+     seen: rc=0, error=None, skill=-0.9494, scheme=grouped, baseline=chance, model=tree-0, holdout=586, copies=0, cap=0, roles={'status': 'excluded/suspected_leak'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\few_valued_leak__blank_line_added.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\few_valued_leak__blank_line_added
+     again: python verify/battery.py mlprofessor --only few_valued_leak:blank_line_added
+FAIL few_valued_leak:missing_cell_feature [stop-or-structure]
+     the change: one cell of a feature is emptied
+     must hold: the same stop, `holdout_copies_in_training`, naming `status`; or, if this draw puts no combination of the features that are left on both sides, a run that finishes with none on both sides, `status` excluded as a leak and no skill (the band of `few_valued`): one empty cell in the feature `branch` is counted in `n_missing` and imputed
+     band:few_valued: skill is -0.9494, expected between -0.2 and 0.2 (the band of `few_valued`)
+     combos_apart: 8 of the 17 combinations of the features that reached the models (['region', 'branch']) have rows on both sides; skill -0.9493592730661696, n_holdout_copies 0
+     seen: rc=0, error=None, skill=-0.9494, scheme=grouped, baseline=chance, model=tree-0, holdout=586, copies=0, cap=0, roles={'status': 'excluded/suspected_leak'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\few_valued_leak__missing_cell_feature.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\few_valued_leak__missing_cell_feature
+     again: python verify/battery.py mlprofessor --only few_valued_leak:missing_cell_feature
+FAIL few_valued_leak:missing_cell_target [stop-or-structure]
+     the change: one cell of the target is emptied
+     must hold: the same stop, `holdout_copies_in_training`, naming `status`; or, if this draw puts no combination of the features that are left on both sides, a run that finishes with none on both sides, `status` excluded as a leak and no skill (the band of `few_valued`): a row with no target is dropped and counted in `dropped_missing_target`
+     band:few_valued: skill is -0.9494, expected between -0.2 and 0.2 (the band of `few_valued`)
+     combos_apart: 8 of the 16 combinations of the features that reached the models (['region', 'branch']) have rows on both sides; skill -0.9493592730661696, n_holdout_copies 0
+     seen: rc=0, error=None, skill=-0.9494, scheme=grouped, baseline=chance, model=tree-0, holdout=586, copies=0, cap=0, roles={'status': 'excluded/suspected_leak'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\few_valued_leak__missing_cell_target.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\few_valued_leak__missing_cell_target
+     again: python verify/battery.py mlprofessor --only few_valued_leak:missing_cell_target
+FAIL few_valued_leak:feature_renamed [stop]
+     the change: a feature is renamed `renamed_feature`
+     must hold: the same stop, `holdout_copies_in_training`: a column's name carries nothing
+     stop: the run finished (exit 0, skill -0.9493592730661696) where it must stop with `holdout_copies_in_training`
+     seen: rc=0, error=None, skill=-0.9494, scheme=grouped, baseline=chance, model=tree-0, holdout=586, copies=0, cap=0, roles={'status': 'excluded/suspected_leak'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\few_valued_leak__feature_renamed.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\few_valued_leak__feature_renamed
+     again: python verify/battery.py mlprofessor --only few_valued_leak:feature_renamed
+FAIL few_valued_leak:feature_renamed_awkward [stop]
+     the change: a feature is renamed `net value, £ (2024)`
+     must hold: the same stop, `holdout_copies_in_training`: a column's name carries nothing, a name with a comma, a space and a non-ASCII letter included
+     stop: the run finished (exit 0, skill -0.9493592730661696) where it must stop with `holdout_copies_in_training`
+     seen: rc=0, error=None, skill=-0.9494, scheme=grouped, baseline=chance, model=tree-0, holdout=586, copies=0, cap=0, roles={'status': 'excluded/suspected_leak'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\few_valued_leak__feature_renamed_awkward.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\few_valued_leak__feature_renamed_awkward
+     again: python verify/battery.py mlprofessor --only few_valued_leak:feature_renamed_awkward
+FAIL few_valued_leak:target_renamed [stop]
+     the change: the target is renamed `the outcome`
+     must hold: the same stop, `holdout_copies_in_training`: the target's name carries nothing
+     stop: the run finished (exit 0, skill -0.9493592730661696) where it must stop with `holdout_copies_in_training`
+     seen: rc=0, error=None, skill=-0.9494, scheme=grouped, baseline=chance, model=tree-0, holdout=586, copies=0, cap=0, roles={'status': 'excluded/suspected_leak'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\few_valued_leak__target_renamed.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\few_valued_leak__target_renamed
+     again: python verify/battery.py mlprofessor --only few_valued_leak:target_renamed
+FAIL few_valued_leak:target_first [stop]
+     the change: the target is moved to the first column
+     must hold: the same stop, `holdout_copies_in_training`: where the target stands among the columns carries nothing: the features keep their order
+     stop: the run finished (exit 0, skill -0.9493592730661696) where it must stop with `holdout_copies_in_training`
+     seen: rc=0, error=None, skill=-0.9494, scheme=grouped, baseline=chance, model=tree-0, holdout=586, copies=0, cap=0, roles={'status': 'excluded/suspected_leak'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\few_valued_leak__target_first.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\few_valued_leak__target_first
+     again: python verify/battery.py mlprofessor --only few_valued_leak:target_first
+FAIL few_valued_leak:target_respelt [stop]
+     the change: the two classes are respelt, in the same sorted order
+     must hold: the same stop, `holdout_copies_in_training`: the classes respelt in the same sorted order: the same 0 and 1 reach every step
+     stop: the run finished (exit 0, skill -0.9493592730661696) where it must stop with `holdout_copies_in_training`
+     seen: rc=0, error=None, skill=-0.9494, scheme=grouped, baseline=chance, model=tree-0, holdout=586, copies=0, cap=0, roles={'status': 'excluded/suspected_leak'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\few_valued_leak__target_respelt.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\few_valued_leak__target_respelt
+     again: python verify/battery.py mlprofessor --only few_valued_leak:target_respelt
+FAIL few_valued_leak:target_respelt_flipped [stop-or-structure]
+     the change: the two classes are respelt so that the other sorts second
+     must hold: the same stop, `holdout_copies_in_training`, naming `status`; or, if this draw puts no combination of the features that are left on both sides, a run that finishes with none on both sides, `status` excluded as a leak and no skill (the band of `few_valued`): the classes respelt so that the other one sorts second: the positive class changes and skill, 2 x AUC - 1, does not depend on which it is
+     band:few_valued: skill is -0.6952, expected between -0.2 and 0.2 (the band of `few_valued`)
+     combos_apart: 6 of the 16 combinations of the features that reached the models (['region', 'branch']) have rows on both sides; skill -0.6952039444195428, n_holdout_copies 0
+     seen: rc=0, error=None, skill=-0.6952, scheme=grouped, baseline=chance, model=tree-0, holdout=590, copies=0, cap=0, roles={'status': 'excluded/suspected_leak'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\few_valued_leak__target_respelt_flipped.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\few_valued_leak__target_respelt_flipped
+     again: python verify/battery.py mlprofessor --only few_valued_leak:target_respelt_flipped
+FAIL few_valued_leak:white_space_cells [stop]
+     the change: white space is put round some target values, levels and entity values
+     must hold: the same stop, `holdout_copies_in_training`: white space round a target value, a categorical level or an entity value is not part of it (D42, D46, step 5)
+     stop: the run finished (exit 0, skill -0.9493592730661696) where it must stop with `holdout_copies_in_training`
+     seen: rc=0, error=None, skill=-0.9494, scheme=grouped, baseline=chance, model=tree-0, holdout=586, copies=0, cap=0, roles={'status': 'excluded/suspected_leak'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\few_valued_leak__white_space_cells.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\few_valued_leak__white_space_cells
+     again: python verify/battery.py mlprofessor --only few_valued_leak:white_space_cells
+FAIL large_entity:base [stop]
+     the change: the gate's run as it is
+     must hold: the stop `fast_profile_group_too_large`
+     stop: the run finished (exit 0, skill 0.009947553492203665) where it must stop with `fast_profile_group_too_large`
+     seen: rc=0, error=None, skill=0.0099, scheme=grouped, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=2500, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\large_entity__base.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\large_entity__base
+     again: python verify/battery.py mlprofessor --only large_entity:base
+FAIL large_entity:number_sentinel_-999 [stop]
+     the change: one cell of a numeric feature is set to -999
+     must hold: the same stop, `fast_profile_group_too_large`: one cell of the numeric feature `n1` set to -999
+     stop: the run finished (exit 0, skill 0.009947553492203665) where it must stop with `fast_profile_group_too_large`
+     seen: rc=0, error=None, skill=0.0099, scheme=grouped, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=2500, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\large_entity__number_sentinel_-999.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\large_entity__number_sentinel_-999
+     again: python verify/battery.py mlprofessor --only large_entity:number_sentinel_-999
+FAIL large_entity:number_sentinel_999999 [stop]
+     the change: one cell of a numeric feature is set to 999999
+     must hold: the same stop, `fast_profile_group_too_large`: one cell of the numeric feature `n1` set to 999999
+     stop: the run finished (exit 0, skill -1.3644419781967057) where it must stop with `fast_profile_group_too_large`
+     seen: rc=0, error=None, skill=-1.3644, scheme=grouped, baseline=training_mean, model=tree-0, holdout=375, copies=0, cap=2500, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\large_entity__number_sentinel_999999.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\large_entity__number_sentinel_999999
+     again: python verify/battery.py mlprofessor --only large_entity:number_sentinel_999999
+FAIL large_entity:number_sentinel_1e308 [stop]
+     the change: one cell of a numeric feature is set to 1e308
+     must hold: the same stop, `fast_profile_group_too_large`: one cell of the numeric feature `n1` set to 1e308
+     stop: the run finished (exit 0, skill 0.009947553492203665) where it must stop with `fast_profile_group_too_large`
+     seen: rc=0, error=None, skill=0.0099, scheme=grouped, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=2500, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\large_entity__number_sentinel_1e308.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\large_entity__number_sentinel_1e308
+     again: python verify/battery.py mlprofessor --only large_entity:number_sentinel_1e308
+FAIL large_entity:target_sentinel_-999 [stop]
+     the change: one cell of the regression target is set to -999
+     must hold: the same stop, `fast_profile_group_too_large`: one target cell set to -999 (the spec has no rule for an outlier in the target; docs/BACKLOG.md, 'One extreme value can dominate')
+     stop: the run finished (exit 0, skill -0.685654447194453) where it must stop with `fast_profile_group_too_large`
+     seen: rc=0, error=None, skill=-0.6857, scheme=grouped, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=2500, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\large_entity__target_sentinel_-999.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\large_entity__target_sentinel_-999
+     again: python verify/battery.py mlprofessor --only large_entity:target_sentinel_-999
+FAIL large_entity:copy_distinct [stop]
+     the change: a column `target_copy` is added: the target made distinct in every row (the class plus a millionth of the row number; for regression the target rescaled)
+     must hold: the same stop, `fast_profile_group_too_large`: a copy of the target that is distinct in every row (the class plus a millionth of the row number; for regression the target rescaled) is excluded by the leak screen, after the split, so nothing else moves
+     stop: the run finished (exit 0, skill 0.009947553492203665) where it must stop with `fast_profile_group_too_large`
+     seen: rc=0, error=None, skill=0.0099, scheme=grouped, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=2500, roles={'target_copy': 'excluded/suspected_leak'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\large_entity__copy_distinct.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\large_entity__copy_distinct
+     again: python verify/battery.py mlprofessor --only large_entity:copy_distinct
+FAIL large_entity:constant_added [stop]
+     the change: a column `const_added` of one value is added
+     must hold: the same stop, `fast_profile_group_too_large`: a column of one value is excluded as `constant` at step 5 and reaches nothing
+     stop: the run finished (exit 0, skill 0.009947553492203665) where it must stop with `fast_profile_group_too_large`
+     seen: rc=0, error=None, skill=0.0099, scheme=grouped, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=2500, roles={'const_added': 'excluded/constant'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\large_entity__constant_added.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\large_entity__constant_added
+     again: python verify/battery.py mlprofessor --only large_entity:constant_added
+FAIL large_entity:id_added_int [stop]
+     the change: a column `row_id_added` of consecutive whole numbers is added
+     must hold: the same stop, `fast_profile_group_too_large`: consecutive whole numbers in file order are `id_like` (rule 8b) and reach nothing; an excluded column plays no part in the copies rule (step 8a)
+     stop: the run finished (exit 0, skill 0.009947553492203665) where it must stop with `fast_profile_group_too_large`
+     seen: rc=0, error=None, skill=0.0099, scheme=grouped, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=2500, roles={'row_id_added': 'excluded/id_like'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\large_entity__id_added_int.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\large_entity__id_added_int
+     again: python verify/battery.py mlprofessor --only large_entity:id_added_int
+FAIL large_entity:id_added_text [stop]
+     the change: a column `ref_added` of text distinct in every row is added
+     must hold: the same stop, `fast_profile_group_too_large`: text distinct in every row is `id_like` (rule 6a) and reaches nothing
+     stop: the run finished (exit 0, skill 0.009947553492203665) where it must stop with `fast_profile_group_too_large`
+     seen: rc=0, error=None, skill=0.0099, scheme=grouped, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=2500, roles={'ref_added': 'excluded/id_like'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\large_entity__id_added_text.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\large_entity__id_added_text
+     again: python verify/battery.py mlprofessor --only large_entity:id_added_text
+FAIL large_entity:second_date_added [stop]
+     the change: a column `added_date` of ISO dates is added
+     must hold: the same stop, `fast_profile_group_too_large`: a text column of ISO dates is excluded as `datetime` (rule 4); under --no-time-order one `date_column_undeclared` warning names it, under a time column none does
+     stop: the run finished (exit 0, skill 0.009947553492203665) where it must stop with `fast_profile_group_too_large`
+     seen: rc=0, error=None, skill=0.0099, scheme=grouped, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=2500, roles={'added_date': 'excluded/datetime'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\large_entity__second_date_added.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\large_entity__second_date_added
+     again: python verify/battery.py mlprofessor --only large_entity:second_date_added
+FAIL large_entity:noise_added [stop]
+     the change: a column `noise_added` of normal noise is added
+     must hold: the same stop, `fast_profile_group_too_large`: one more column of noise is a feature like any other and predicts nothing
+     stop: the run finished (exit 0, skill 0.01119048276832113) where it must stop with `fast_profile_group_too_large`
+     seen: rc=0, error=None, skill=0.0112, scheme=grouped, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=2500, roles={'noise_added': 'feature/None'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\large_entity__noise_added.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\large_entity__noise_added
+     again: python verify/battery.py mlprofessor --only large_entity:noise_added
+FAIL large_entity:rows_shuffled [stop]
+     the change: the rows are written in another order
+     must hold: the same stop, `fast_profile_group_too_large`: the order of the rows in the file carries nothing in this table (under time order the rows are put in time order by the tool)
+     stop: the run finished (exit 0, skill -0.005203165752655892) where it must stop with `fast_profile_group_too_large`
+     seen: rc=0, error=None, skill=-0.0052, scheme=grouped, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=2500, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\large_entity__rows_shuffled.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\large_entity__rows_shuffled
+     again: python verify/battery.py mlprofessor --only large_entity:rows_shuffled
+FAIL large_entity:row_repeated [stop]
+     the change: one row is written twice
+     must hold: the same stop, `fast_profile_group_too_large`: one row written twice is one more row; `input.duplicate_rows` counts it and a `duplicate_rows` warning says so
+     stop: the run finished (exit 0, skill 0.009947553492203665) where it must stop with `fast_profile_group_too_large`
+     seen: rc=0, error=None, skill=0.0099, scheme=grouped, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=2501, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\large_entity__row_repeated.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\large_entity__row_repeated
+     again: python verify/battery.py mlprofessor --only large_entity:row_repeated
+FAIL large_entity:blank_line_added [stop]
+     the change: one blank line is added between two rows
+     must hold: the same stop, `fast_profile_group_too_large`: a blank line is not a row (spec section 6), so every row keeps its position
+     stop: the run finished (exit 0, skill 0.009947553492203665) where it must stop with `fast_profile_group_too_large`
+     seen: rc=0, error=None, skill=0.0099, scheme=grouped, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=2500, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\large_entity__blank_line_added.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\large_entity__blank_line_added
+     again: python verify/battery.py mlprofessor --only large_entity:blank_line_added
+FAIL large_entity:missing_cell_feature [stop]
+     the change: one cell of a feature is emptied
+     must hold: the same stop, `fast_profile_group_too_large`: one empty cell in the feature `n1` is counted in `n_missing` and imputed
+     stop: the run finished (exit 0, skill 0.009947553492203665) where it must stop with `fast_profile_group_too_large`
+     seen: rc=0, error=None, skill=0.0099, scheme=grouped, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=2500, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\large_entity__missing_cell_feature.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\large_entity__missing_cell_feature
+     again: python verify/battery.py mlprofessor --only large_entity:missing_cell_feature
+FAIL large_entity:missing_cell_target [stop]
+     the change: one cell of the target is emptied
+     must hold: the same stop, `fast_profile_group_too_large`: a row with no target is dropped and counted in `dropped_missing_target`
+     stop: the run finished (exit 0, skill 0.007434650351244576) where it must stop with `fast_profile_group_too_large`
+     seen: rc=0, error=None, skill=0.0074, scheme=grouped, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=2500, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\large_entity__missing_cell_target.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\large_entity__missing_cell_target
+     again: python verify/battery.py mlprofessor --only large_entity:missing_cell_target
+FAIL large_entity:feature_renamed [stop]
+     the change: a feature is renamed `renamed_feature`
+     must hold: the same stop, `fast_profile_group_too_large`: a column's name carries nothing
+     stop: the run finished (exit 0, skill 0.009947553492203665) where it must stop with `fast_profile_group_too_large`
+     seen: rc=0, error=None, skill=0.0099, scheme=grouped, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=2500, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\large_entity__feature_renamed.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\large_entity__feature_renamed
+     again: python verify/battery.py mlprofessor --only large_entity:feature_renamed
+FAIL large_entity:feature_renamed_awkward [stop]
+     the change: a feature is renamed `net value, £ (2024)`
+     must hold: the same stop, `fast_profile_group_too_large`: a column's name carries nothing, a name with a comma, a space and a non-ASCII letter included
+     stop: the run finished (exit 0, skill 0.009947553492203665) where it must stop with `fast_profile_group_too_large`
+     seen: rc=0, error=None, skill=0.0099, scheme=grouped, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=2500, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\large_entity__feature_renamed_awkward.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\large_entity__feature_renamed_awkward
+     again: python verify/battery.py mlprofessor --only large_entity:feature_renamed_awkward
+FAIL large_entity:target_renamed [stop]
+     the change: the target is renamed `the outcome`
+     must hold: the same stop, `fast_profile_group_too_large`: the target's name carries nothing
+     stop: the run finished (exit 0, skill 0.009947553492203665) where it must stop with `fast_profile_group_too_large`
+     seen: rc=0, error=None, skill=0.0099, scheme=grouped, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=2500, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\large_entity__target_renamed.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\large_entity__target_renamed
+     again: python verify/battery.py mlprofessor --only large_entity:target_renamed
+FAIL large_entity:role_column_renamed [stop]
+     the change: the time or date column is renamed `when`, the entity column `who`
+     must hold: the same stop, `fast_profile_group_too_large`: the name of the entity column carries nothing
+     stop: the run finished (exit 0, skill 0.009947553492203665) where it must stop with `fast_profile_group_too_large`
+     seen: rc=0, error=None, skill=0.0099, scheme=grouped, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=2500, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\large_entity__role_column_renamed.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\large_entity__role_column_renamed
+     again: python verify/battery.py mlprofessor --only large_entity:role_column_renamed
+FAIL large_entity:target_first [stop]
+     the change: the target is moved to the first column
+     must hold: the same stop, `fast_profile_group_too_large`: where the target stands among the columns carries nothing: the features keep their order
+     stop: the run finished (exit 0, skill 0.009947553492203665) where it must stop with `fast_profile_group_too_large`
+     seen: rc=0, error=None, skill=0.0099, scheme=grouped, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=2500, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\large_entity__target_first.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\large_entity__target_first
+     again: python verify/battery.py mlprofessor --only large_entity:target_first
+FAIL large_entity:white_space_cells [stop]
+     the change: white space is put round some target values, levels and entity values
+     must hold: the same stop, `fast_profile_group_too_large`: white space round a target value, a categorical level or an entity value is not part of it (D42, D46, step 5)
+     stop: the run finished (exit 0, skill 0.009947553492203665) where it must stop with `fast_profile_group_too_large`
+     seen: rc=0, error=None, skill=0.0099, scheme=grouped, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=2500, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\large_entity__white_space_cells.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\large_entity__white_space_cells
+     again: python verify/battery.py mlprofessor --only large_entity:white_space_cells
+FAIL quarter_entity:base [base]
+     the change: the gate's run as it is
+     must hold: the gate's own conclusion
+     cap_keeps_large: the cap left 1200 of the 2700 usable rows out, and no set of whole entities that each hold less than a quarter of the usable rows adds up to that: an entity of a quarter or more was left out (the largest holds 1200 rows, 44%). Such an entity is always kept by the cap, and the run stops with `fast_profile_group_too_large` when it cannot be (D70, D72; spec step 6)
+     seen: rc=0, error=None, skill=-0.0001, scheme=grouped, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=1200, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\quarter_entity__base.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\quarter_entity__base
+     again: python verify/battery.py mlprofessor --only quarter_entity:base
+FAIL quarter_entity:number_sentinel_-999 [structure]
+     the change: one cell of a numeric feature is set to -999
+     must hold: the run's own conclusion (its band, its roles, its counts): one cell of the numeric feature `n1` set to -999
+     cap_keeps_large: the cap left 1200 of the 2700 usable rows out, and no set of whole entities that each hold less than a quarter of the usable rows adds up to that: an entity of a quarter or more was left out (the largest holds 1200 rows, 44%). Such an entity is always kept by the cap, and the run stops with `fast_profile_group_too_large` when it cannot be (D70, D72; spec step 6)
+     seen: rc=0, error=None, skill=-0.0001, scheme=grouped, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=1200, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\quarter_entity__number_sentinel_-999.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\quarter_entity__number_sentinel_-999
+     again: python verify/battery.py mlprofessor --only quarter_entity:number_sentinel_-999
+FAIL quarter_entity:number_sentinel_999999 [structure]
+     the change: one cell of a numeric feature is set to 999999
+     must hold: the run's own conclusion (its band, its roles, its counts): one cell of the numeric feature `n1` set to 999999
+     cap_keeps_large: the cap left 1200 of the 2700 usable rows out, and no set of whole entities that each hold less than a quarter of the usable rows adds up to that: an entity of a quarter or more was left out (the largest holds 1200 rows, 44%). Such an entity is always kept by the cap, and the run stops with `fast_profile_group_too_large` when it cannot be (D70, D72; spec step 6)
+     seen: rc=0, error=None, skill=-1.3316, scheme=grouped, baseline=training_mean, model=tree-0, holdout=375, copies=0, cap=1200, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\quarter_entity__number_sentinel_999999.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\quarter_entity__number_sentinel_999999
+     again: python verify/battery.py mlprofessor --only quarter_entity:number_sentinel_999999
+FAIL quarter_entity:number_sentinel_1e308 [structure]
+     the change: one cell of a numeric feature is set to 1e308
+     must hold: the run's own conclusion (its band, its roles, its counts): one cell of the numeric feature `n1` set to 1e308; a value above 3.4e38 is read as missing, counted in `n_infinite` and named by `infinite_values` (D48)
+     cap_keeps_large: the cap left 1200 of the 2700 usable rows out, and no set of whole entities that each hold less than a quarter of the usable rows adds up to that: an entity of a quarter or more was left out (the largest holds 1200 rows, 44%). Such an entity is always kept by the cap, and the run stops with `fast_profile_group_too_large` when it cannot be (D70, D72; spec step 6)
+     seen: rc=0, error=None, skill=-0.0001, scheme=grouped, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=1200, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\quarter_entity__number_sentinel_1e308.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\quarter_entity__number_sentinel_1e308
+     again: python verify/battery.py mlprofessor --only quarter_entity:number_sentinel_1e308
+FAIL quarter_entity:target_sentinel_-999 [structure]
+     the change: one cell of the regression target is set to -999
+     must hold: the run's own conclusion (its band, its roles, its counts): one target cell set to -999 (the spec has no rule for an outlier in the target; docs/BACKLOG.md, 'One extreme value can dominate')
+     cap_keeps_large: the cap left 1200 of the 2700 usable rows out, and no set of whole entities that each hold less than a quarter of the usable rows adds up to that: an entity of a quarter or more was left out (the largest holds 1200 rows, 44%). Such an entity is always kept by the cap, and the run stops with `fast_profile_group_too_large` when it cannot be (D70, D72; spec step 6)
+     seen: rc=0, error=None, skill=-0.0001, scheme=grouped, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=1200, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\quarter_entity__target_sentinel_-999.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\quarter_entity__target_sentinel_-999
+     again: python verify/battery.py mlprofessor --only quarter_entity:target_sentinel_-999
+FAIL quarter_entity:target_sentinel_max_double [stop]
+     the change: one cell of the regression target is set to 1.7976931348623157e308
+     must hold: the stop `non_finite_score`: one target cell of 1.7976931348623157e308 makes a baseline's squared error infinite, before any fit (D44, rule 1)
+     stop: the run finished (exit 0, skill -8.093168162814912e-05) where it must stop with `non_finite_score`
+     seen: rc=0, error=None, skill=-0.0001, scheme=grouped, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=1200, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\quarter_entity__target_sentinel_max_double.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\quarter_entity__target_sentinel_max_double
+     again: python verify/battery.py mlprofessor --only quarter_entity:target_sentinel_max_double
+FAIL quarter_entity:copy_distinct [same]
+     the change: a column `target_copy` is added: the target made distinct in every row (the class plus a millionth of the row number; for regression the target rescaled)
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: a copy of the target that is distinct in every row (the class plus a millionth of the row number; for regression the target rescaled) is excluded by the leak screen, after the split, so nothing else moves
+     cap_keeps_large: the cap left 1200 of the 2700 usable rows out, and no set of whole entities that each hold less than a quarter of the usable rows adds up to that: an entity of a quarter or more was left out (the largest holds 1200 rows, 44%). Such an entity is always kept by the cap, and the run stops with `fast_profile_group_too_large` when it cannot be (D70, D72; spec step 6)
+     seen: rc=0, error=None, skill=-0.0001, scheme=grouped, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=1200, roles={'target_copy': 'excluded/suspected_leak'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\quarter_entity__copy_distinct.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\quarter_entity__copy_distinct
+     again: python verify/battery.py mlprofessor --only quarter_entity:copy_distinct
+FAIL quarter_entity:constant_added [same]
+     the change: a column `const_added` of one value is added
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: a column of one value is excluded as `constant` at step 5 and reaches nothing
+     cap_keeps_large: the cap left 1200 of the 2700 usable rows out, and no set of whole entities that each hold less than a quarter of the usable rows adds up to that: an entity of a quarter or more was left out (the largest holds 1200 rows, 44%). Such an entity is always kept by the cap, and the run stops with `fast_profile_group_too_large` when it cannot be (D70, D72; spec step 6)
+     seen: rc=0, error=None, skill=-0.0001, scheme=grouped, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=1200, roles={'const_added': 'excluded/constant'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\quarter_entity__constant_added.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\quarter_entity__constant_added
+     again: python verify/battery.py mlprofessor --only quarter_entity:constant_added
+FAIL quarter_entity:id_added_int [same]
+     the change: a column `row_id_added` of consecutive whole numbers is added
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: consecutive whole numbers in file order are `id_like` (rule 8b) and reach nothing; an excluded column plays no part in the copies rule (step 8a)
+     cap_keeps_large: the cap left 1200 of the 2700 usable rows out, and no set of whole entities that each hold less than a quarter of the usable rows adds up to that: an entity of a quarter or more was left out (the largest holds 1200 rows, 44%). Such an entity is always kept by the cap, and the run stops with `fast_profile_group_too_large` when it cannot be (D70, D72; spec step 6)
+     seen: rc=0, error=None, skill=-0.0001, scheme=grouped, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=1200, roles={'row_id_added': 'excluded/id_like'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\quarter_entity__id_added_int.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\quarter_entity__id_added_int
+     again: python verify/battery.py mlprofessor --only quarter_entity:id_added_int
+FAIL quarter_entity:id_added_text [same]
+     the change: a column `ref_added` of text distinct in every row is added
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: text distinct in every row is `id_like` (rule 6a) and reaches nothing
+     cap_keeps_large: the cap left 1200 of the 2700 usable rows out, and no set of whole entities that each hold less than a quarter of the usable rows adds up to that: an entity of a quarter or more was left out (the largest holds 1200 rows, 44%). Such an entity is always kept by the cap, and the run stops with `fast_profile_group_too_large` when it cannot be (D70, D72; spec step 6)
+     seen: rc=0, error=None, skill=-0.0001, scheme=grouped, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=1200, roles={'ref_added': 'excluded/id_like'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\quarter_entity__id_added_text.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\quarter_entity__id_added_text
+     again: python verify/battery.py mlprofessor --only quarter_entity:id_added_text
+FAIL quarter_entity:second_date_added [same]
+     the change: a column `added_date` of ISO dates is added
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: a text column of ISO dates is excluded as `datetime` (rule 4); under --no-time-order one `date_column_undeclared` warning names it, under a time column none does
+     cap_keeps_large: the cap left 1200 of the 2700 usable rows out, and no set of whole entities that each hold less than a quarter of the usable rows adds up to that: an entity of a quarter or more was left out (the largest holds 1200 rows, 44%). Such an entity is always kept by the cap, and the run stops with `fast_profile_group_too_large` when it cannot be (D70, D72; spec step 6)
+     seen: rc=0, error=None, skill=-0.0001, scheme=grouped, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=1200, roles={'added_date': 'excluded/datetime'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\quarter_entity__second_date_added.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\quarter_entity__second_date_added
+     again: python verify/battery.py mlprofessor --only quarter_entity:second_date_added
+FAIL quarter_entity:noise_added [structure]
+     the change: a column `noise_added` of normal noise is added
+     must hold: the run's own conclusion (its band, its roles, its counts): one more column of noise is a feature like any other and predicts nothing
+     cap_keeps_large: the cap left 1200 of the 2700 usable rows out, and no set of whole entities that each hold less than a quarter of the usable rows adds up to that: an entity of a quarter or more was left out (the largest holds 1200 rows, 44%). Such an entity is always kept by the cap, and the run stops with `fast_profile_group_too_large` when it cannot be (D70, D72; spec step 6)
+     seen: rc=0, error=None, skill=-0.0006, scheme=grouped, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=1200, roles={'noise_added': 'feature/None'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\quarter_entity__noise_added.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\quarter_entity__noise_added
+     again: python verify/battery.py mlprofessor --only quarter_entity:noise_added
+FAIL quarter_entity:row_repeated [structure]
+     the change: one row is written twice
+     must hold: the run's own conclusion (its band, its roles, its counts): one row written twice is one more row; `input.duplicate_rows` counts it and a `duplicate_rows` warning says so
+     cap_keeps_large: the cap left 1201 of the 2701 usable rows out, and no set of whole entities that each hold less than a quarter of the usable rows adds up to that: an entity of a quarter or more was left out (the largest holds 1201 rows, 44%). Such an entity is always kept by the cap, and the run stops with `fast_profile_group_too_large` when it cannot be (D70, D72; spec step 6)
+     seen: rc=0, error=None, skill=-0.0001, scheme=grouped, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=1201, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\quarter_entity__row_repeated.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\quarter_entity__row_repeated
+     again: python verify/battery.py mlprofessor --only quarter_entity:row_repeated
+FAIL quarter_entity:blank_line_added [same]
+     the change: one blank line is added between two rows
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: a blank line is not a row (spec section 6), so every row keeps its position
+     cap_keeps_large: the cap left 1200 of the 2700 usable rows out, and no set of whole entities that each hold less than a quarter of the usable rows adds up to that: an entity of a quarter or more was left out (the largest holds 1200 rows, 44%). Such an entity is always kept by the cap, and the run stops with `fast_profile_group_too_large` when it cannot be (D70, D72; spec step 6)
+     seen: rc=0, error=None, skill=-0.0001, scheme=grouped, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=1200, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\quarter_entity__blank_line_added.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\quarter_entity__blank_line_added
+     again: python verify/battery.py mlprofessor --only quarter_entity:blank_line_added
+FAIL quarter_entity:missing_cell_feature [structure]
+     the change: one cell of a feature is emptied
+     must hold: the run's own conclusion (its band, its roles, its counts): one empty cell in the feature `n1` is counted in `n_missing` and imputed
+     cap_keeps_large: the cap left 1200 of the 2700 usable rows out, and no set of whole entities that each hold less than a quarter of the usable rows adds up to that: an entity of a quarter or more was left out (the largest holds 1200 rows, 44%). Such an entity is always kept by the cap, and the run stops with `fast_profile_group_too_large` when it cannot be (D70, D72; spec step 6)
+     seen: rc=0, error=None, skill=-0.0001, scheme=grouped, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=1200, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\quarter_entity__missing_cell_feature.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\quarter_entity__missing_cell_feature
+     again: python verify/battery.py mlprofessor --only quarter_entity:missing_cell_feature
+FAIL quarter_entity:missing_cell_target [structure]
+     the change: one cell of the target is emptied
+     must hold: the run's own conclusion (its band, its roles, its counts): a row with no target is dropped and counted in `dropped_missing_target`
+     cap_keeps_large: the cap left 1200 of the 2699 usable rows out, and no set of whole entities that each hold less than a quarter of the usable rows adds up to that: an entity of a quarter or more was left out (the largest holds 1200 rows, 44%). Such an entity is always kept by the cap, and the run stops with `fast_profile_group_too_large` when it cannot be (D70, D72; spec step 6)
+     seen: rc=0, error=None, skill=-0.0, scheme=grouped, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=1200, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\quarter_entity__missing_cell_target.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\quarter_entity__missing_cell_target
+     again: python verify/battery.py mlprofessor --only quarter_entity:missing_cell_target
+FAIL quarter_entity:feature_renamed [same]
+     the change: a feature is renamed `renamed_feature`
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: a column's name carries nothing
+     cap_keeps_large: the cap left 1200 of the 2700 usable rows out, and no set of whole entities that each hold less than a quarter of the usable rows adds up to that: an entity of a quarter or more was left out (the largest holds 1200 rows, 44%). Such an entity is always kept by the cap, and the run stops with `fast_profile_group_too_large` when it cannot be (D70, D72; spec step 6)
+     seen: rc=0, error=None, skill=-0.0001, scheme=grouped, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=1200, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\quarter_entity__feature_renamed.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\quarter_entity__feature_renamed
+     again: python verify/battery.py mlprofessor --only quarter_entity:feature_renamed
+FAIL quarter_entity:feature_renamed_awkward [same]
+     the change: a feature is renamed `net value, £ (2024)`
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: a column's name carries nothing, a name with a comma, a space and a non-ASCII letter included
+     cap_keeps_large: the cap left 1200 of the 2700 usable rows out, and no set of whole entities that each hold less than a quarter of the usable rows adds up to that: an entity of a quarter or more was left out (the largest holds 1200 rows, 44%). Such an entity is always kept by the cap, and the run stops with `fast_profile_group_too_large` when it cannot be (D70, D72; spec step 6)
+     seen: rc=0, error=None, skill=-0.0001, scheme=grouped, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=1200, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\quarter_entity__feature_renamed_awkward.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\quarter_entity__feature_renamed_awkward
+     again: python verify/battery.py mlprofessor --only quarter_entity:feature_renamed_awkward
+FAIL quarter_entity:target_renamed [same]
+     the change: the target is renamed `the outcome`
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: the target's name carries nothing
+     cap_keeps_large: the cap left 1200 of the 2700 usable rows out, and no set of whole entities that each hold less than a quarter of the usable rows adds up to that: an entity of a quarter or more was left out (the largest holds 1200 rows, 44%). Such an entity is always kept by the cap, and the run stops with `fast_profile_group_too_large` when it cannot be (D70, D72; spec step 6)
+     seen: rc=0, error=None, skill=-0.0001, scheme=grouped, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=1200, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\quarter_entity__target_renamed.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\quarter_entity__target_renamed
+     again: python verify/battery.py mlprofessor --only quarter_entity:target_renamed
+FAIL quarter_entity:role_column_renamed [same]
+     the change: the time or date column is renamed `when`, the entity column `who`
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: the name of the entity column carries nothing
+     cap_keeps_large: the cap left 1200 of the 2700 usable rows out, and no set of whole entities that each hold less than a quarter of the usable rows adds up to that: an entity of a quarter or more was left out (the largest holds 1200 rows, 44%). Such an entity is always kept by the cap, and the run stops with `fast_profile_group_too_large` when it cannot be (D70, D72; spec step 6)
+     seen: rc=0, error=None, skill=-0.0001, scheme=grouped, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=1200, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\quarter_entity__role_column_renamed.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\quarter_entity__role_column_renamed
+     again: python verify/battery.py mlprofessor --only quarter_entity:role_column_renamed
+FAIL quarter_entity:target_first [same]
+     the change: the target is moved to the first column
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: where the target stands among the columns carries nothing: the features keep their order
+     cap_keeps_large: the cap left 1200 of the 2700 usable rows out, and no set of whole entities that each hold less than a quarter of the usable rows adds up to that: an entity of a quarter or more was left out (the largest holds 1200 rows, 44%). Such an entity is always kept by the cap, and the run stops with `fast_profile_group_too_large` when it cannot be (D70, D72; spec step 6)
+     seen: rc=0, error=None, skill=-0.0001, scheme=grouped, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=1200, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\quarter_entity__target_first.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\quarter_entity__target_first
+     again: python verify/battery.py mlprofessor --only quarter_entity:target_first
+FAIL quarter_entity:white_space_cells [same]
+     the change: white space is put round some target values, levels and entity values
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: white space round a target value, a categorical level or an entity value is not part of it (D42, D46, step 5)
+     cap_keeps_large: the cap left 1200 of the 2700 usable rows out, and no set of whole entities that each hold less than a quarter of the usable rows adds up to that: an entity of a quarter or more was left out (the largest holds 1200 rows, 44%). Such an entity is always kept by the cap, and the run stops with `fast_profile_group_too_large` when it cannot be (D70, D72; spec step 6)
+     seen: rc=0, error=None, skill=-0.0001, scheme=grouped, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=1200, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\quarter_entity__white_space_cells.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\quarter_entity__white_space_cells
+     again: python verify/battery.py mlprofessor --only quarter_entity:white_space_cells
+STATED LIMIT (D60): dup_noise:noise_added [stop-or-band]
+     the change: a column `noise_added` of normal noise is added
+     must hold: the stop `holdout_copies_in_training`, or no skill (the band of `noise_clf`, borrowed): every row is still present twice and the target is noise. By spec step 8a the rows are no longer copies and the run goes ahead: a copy that differs in one feature is not detected (D60)
+     band:noise_clf: skill is 0.7609, expected between -0.27 and 0.27 (the band of `noise_clf`)
+     seen: rc=0, error=None, skill=0.7609, scheme=random, baseline=chance, model=tree-0, holdout=375, copies=0, cap=0, roles={'noise_added': 'feature/None'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\dup_noise__noise_added.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\dup_noise__noise_added
+     again: python verify/battery.py mlprofessor --only dup_noise:noise_added
+STATED LIMIT (D55): int_stamps:missing_cell_date [structure]
+     the change: one cell of the time column, or of a date column, is emptied
+     must hold: the run's own conclusion (its band, its roles, its counts): a row with no time value is dropped and counted in `dropped_missing_time` (step 2)
+     time_split: the holdout is 377 rows; the judge expects the 375 latest (2 unexpected, 0 missing)
+     walk_baselines: baselines lists ['training_mean']; headline baseline 'training_mean', skill 0.9953458676558754
+     int_keys: training and holdout timestamps, unique, form: (439, 148, False, 'numeric'); the judge counts (1124, 375, True, 'numeric')
+     seen: rc=0, error=None, skill=0.9953, scheme=time_ordered, baseline=training_mean, model=linear-0, holdout=377, copies=None, cap=0, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\int_stamps__missing_cell_date.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\int_stamps__missing_cell_date
+     again: python verify/battery.py mlprofessor --only int_stamps:missing_cell_date
+OPEN (D73, pass 8): signal_clf:number_sentinel_-999 [band]
+     the change: one cell of a numeric feature is set to -999
+     must hold: the run's own conclusion (its band, its roles, its counts): one cell of the numeric feature `f1` set to -999
+     band:signal_clf: skill is 0.5285, expected between 0.54 and 0.91 (the band of `signal_clf`)
+     seen: rc=0, error=None, skill=0.5285, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\signal_clf__number_sentinel_-999.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\signal_clf__number_sentinel_-999
+     again: python verify/battery.py mlprofessor --only signal_clf:number_sentinel_-999
+     the finding: one extreme cell in a numeric feature or a regression target moves skill out of its band
+OPEN (D73, pass 8): signal_clf:number_sentinel_999999 [band]
+     the change: one cell of a numeric feature is set to 999999
+     must hold: the run's own conclusion (its band, its roles, its counts): one cell of the numeric feature `f1` set to 999999
+     band:signal_clf: skill is 0.5279, expected between 0.54 and 0.91 (the band of `signal_clf`)
+     seen: rc=0, error=None, skill=0.5279, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\signal_clf__number_sentinel_999999.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\signal_clf__number_sentinel_999999
+     again: python verify/battery.py mlprofessor --only signal_clf:number_sentinel_999999
+     the finding: one extreme cell in a numeric feature or a regression target moves skill out of its band
+OPEN (D73, pass 8): signal_reg:number_sentinel_-999 [band]
+     the change: one cell of a numeric feature is set to -999
+     must hold: the run's own conclusion (its band, its roles, its counts): one cell of the numeric feature `f1` set to -999
+     band:signal_reg: skill is 0.6437, expected between 0.76 and 0.93 (the band of `signal_reg`)
+     seen: rc=0, error=None, skill=0.6437, scheme=random, baseline=training_mean, model=tree-0, holdout=375, copies=0, cap=0, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\signal_reg__number_sentinel_-999.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\signal_reg__number_sentinel_-999
+     again: python verify/battery.py mlprofessor --only signal_reg:number_sentinel_-999
+     the finding: one extreme cell in a numeric feature or a regression target moves skill out of its band
+OPEN (D73, pass 8): signal_reg:number_sentinel_999999 [band]
+     the change: one cell of a numeric feature is set to 999999
+     must hold: the run's own conclusion (its band, its roles, its counts): one cell of the numeric feature `f1` set to 999999
+     band:signal_reg: skill is 0.6798, expected between 0.76 and 0.93 (the band of `signal_reg`)
+     seen: rc=0, error=None, skill=0.6798, scheme=random, baseline=training_mean, model=tree-0, holdout=375, copies=0, cap=0, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\signal_reg__number_sentinel_999999.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\signal_reg__number_sentinel_999999
+     again: python verify/battery.py mlprofessor --only signal_reg:number_sentinel_999999
+     the finding: one extreme cell in a numeric feature or a regression target moves skill out of its band
+OPEN (D73, pass 8): signal_reg:target_sentinel_-999 [band]
+     the change: one cell of the regression target is set to -999
+     must hold: the run's own conclusion (its band, its roles, its counts): one target cell set to -999 (the spec has no rule for an outlier in the target; docs/BACKLOG.md, 'One extreme value can dominate')
+     band:signal_reg: skill is 0.318, expected between 0.76 and 0.93 (the band of `signal_reg`)
+     seen: rc=0, error=None, skill=0.318, scheme=random, baseline=training_mean, model=linear-0, holdout=375, copies=0, cap=0, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\signal_reg__target_sentinel_-999.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\signal_reg__target_sentinel_-999
+     again: python verify/battery.py mlprofessor --only signal_reg:target_sentinel_-999
+     the finding: one extreme cell in a numeric feature or a regression target moves skill out of its band
+OPEN (D73, pass 8): noise_reg:number_sentinel_999999 [band]
+     the change: one cell of a numeric feature is set to 999999
+     must hold: the run's own conclusion (its band, its roles, its counts): one cell of the numeric feature `n001` set to 999999
+     band:noise_reg: skill is -1.0043, expected between -0.65 and -0.05 (the band of `noise_reg`)
+     seen: rc=0, error=None, skill=-1.0043, scheme=random, baseline=training_mean, model=tree-0, holdout=375, copies=0, cap=0, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\noise_reg__number_sentinel_999999.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\noise_reg__number_sentinel_999999
+     again: python verify/battery.py mlprofessor --only noise_reg:number_sentinel_999999
+     the finding: one extreme cell in a numeric feature or a regression target moves skill out of its band
+OPEN (D73, pass 8): leak_reg:number_sentinel_-999 [band]
+     the change: one cell of a numeric feature is set to -999
+     must hold: the run's own conclusion (its band, its roles, its counts): one cell of the numeric feature `f1` set to -999
+     band:signal_reg: skill is 0.5966, expected between 0.76 and 0.93 (the band of `signal_reg`)
+     seen: rc=0, error=None, skill=0.5966, scheme=random, baseline=training_mean, model=tree-0, holdout=375, copies=0, cap=0, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\leak_reg__number_sentinel_-999.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\leak_reg__number_sentinel_-999
+     again: python verify/battery.py mlprofessor --only leak_reg:number_sentinel_-999
+     the finding: one extreme cell in a numeric feature or a regression target moves skill out of its band
+OPEN (D73, pass 8): leak_reg:number_sentinel_999999 [band]
+     the change: one cell of a numeric feature is set to 999999
+     must hold: the run's own conclusion (its band, its roles, its counts): one cell of the numeric feature `f1` set to 999999
+     band:signal_reg: skill is 0.5945, expected between 0.76 and 0.93 (the band of `signal_reg`)
+     seen: rc=0, error=None, skill=0.5945, scheme=random, baseline=training_mean, model=tree-0, holdout=375, copies=0, cap=0, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\leak_reg__number_sentinel_999999.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\leak_reg__number_sentinel_999999
+     again: python verify/battery.py mlprofessor --only leak_reg:number_sentinel_999999
+     the finding: one extreme cell in a numeric feature or a regression target moves skill out of its band
+OPEN (D73, pass 8): leak_reg:target_sentinel_-999 [band]
+     the change: one cell of the regression target is set to -999
+     must hold: the run's own conclusion (its band, its roles, its counts): one target cell set to -999 (the spec has no rule for an outlier in the target; docs/BACKLOG.md, 'One extreme value can dominate')
+     band:signal_reg: skill is -407.756, expected between 0.76 and 0.93 (the band of `signal_reg`)
+     leak_reg_roles: `amount_scaled` has role 'feature', reason None; expected 'excluded', 'suspected_leak'
+     seen: rc=0, error=None, skill=-407.756, scheme=random, baseline=training_mean, model=tree-0, holdout=375, copies=0, cap=0, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\leak_reg__target_sentinel_-999.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\leak_reg__target_sentinel_-999
+     again: python verify/battery.py mlprofessor --only leak_reg:target_sentinel_-999
+     the finding: one extreme cell in a numeric feature or a regression target moves skill out of its band
+OPEN (D73, pass 8): binary_numeric:number_sentinel_999999 [band]
+     the change: one cell of a numeric feature is set to 999999
+     must hold: the run's own conclusion (its band, its roles, its counts): one cell of the numeric feature `f1` set to 999999
+     band:signal_clf: skill is 0.508, expected between 0.54 and 0.91 (the band of `signal_clf`)
+     seen: rc=0, error=None, skill=0.508, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\binary_numeric__number_sentinel_999999.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\binary_numeric__number_sentinel_999999
+     again: python verify/battery.py mlprofessor --only binary_numeric:number_sentinel_999999
+     the finding: one extreme cell in a numeric feature or a regression target moves skill out of its band
+OPEN (D73, pass 8): messy:number_sentinel_-999 [band]
+     the change: one cell of a numeric feature is set to -999
+     must hold: the run's own conclusion (its band, its roles, its counts): one cell of the numeric feature `f1` set to -999
+     band:messy: skill is 0.4672, expected between 0.55 and 0.91 (the band of `messy`)
+     seen: rc=0, error=None, skill=0.4672, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, roles={'record_id': 'excluded/id_like'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\messy__number_sentinel_-999.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\messy__number_sentinel_-999
+     again: python verify/battery.py mlprofessor --only messy:number_sentinel_-999
+     the finding: one extreme cell in a numeric feature or a regression target moves skill out of its band
+OPEN (D73, pass 8): messy:number_sentinel_999999 [band]
+     the change: one cell of a numeric feature is set to 999999
+     must hold: the run's own conclusion (its band, its roles, its counts): one cell of the numeric feature `f1` set to 999999
+     band:messy: skill is 0.4665, expected between 0.55 and 0.91 (the band of `messy`)
+     seen: rc=0, error=None, skill=0.4665, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, roles={'record_id': 'excluded/id_like'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\messy__number_sentinel_999999.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\messy__number_sentinel_999999
+     again: python verify/battery.py mlprofessor --only messy:number_sentinel_999999
+     the finding: one extreme cell in a numeric feature or a regression target moves skill out of its band
+OPEN (D73, pass 8): messy:rows_shuffled [band]
+     the change: the rows are written in another order
+     must hold: the run's own conclusion (its band, its roles, its counts): the order of the rows in the file carries nothing in this table (under time order the rows are put in time order by the tool)
+     messy_roles: `record_id` has role 'feature', reason None; expected 'excluded', 'id_like'
+     seen: rc=0, error=None, skill=0.7378, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, roles={'record_id': 'feature/None'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\messy__rows_shuffled.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\messy__rows_shuffled
+     again: python verify/battery.py mlprofessor --only messy:rows_shuffled
+     the finding: an identifier becomes a feature when the rows are shuffled or one row is repeated
+OPEN (D73, pass 8): messy:row_repeated [band]
+     the change: one row is written twice
+     must hold: the run's own conclusion (its band, its roles, its counts): one row written twice is one more row; `input.duplicate_rows` counts it and a `duplicate_rows` warning says so
+     messy_roles: `record_id` has role 'feature', reason None; expected 'excluded', 'id_like'
+     seen: rc=0, error=None, skill=0.6665, scheme=random, baseline=chance, model=linear-0, holdout=376, copies=1, cap=0, roles={'record_id': 'feature/None'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\messy__row_repeated.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\messy__row_repeated
+     again: python verify/battery.py mlprofessor --only messy:row_repeated
+     the finding: an identifier becomes a feature when the rows are shuffled or one row is repeated
+OPEN (D73, pass 8): random_walk:number_sentinel_-999 [band]
+     the change: one cell of a numeric feature is set to -999
+     must hold: the run's own conclusion (its band, its roles, its counts): one cell of the numeric feature `level_prev` set to -999
+     band:random_walk: skill is -11.9137, expected between -0.3 and 0.05 (the band of `random_walk`)
+     seen: rc=0, error=None, skill=-11.9137, scheme=time_ordered, baseline=previous_value, model=tree-0, holdout=375, copies=None, cap=0, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\random_walk__number_sentinel_-999.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\random_walk__number_sentinel_-999
+     again: python verify/battery.py mlprofessor --only random_walk:number_sentinel_-999
+     the finding: one extreme cell in a numeric feature or a regression target moves skill out of its band
+OPEN (D73, pass 8): random_walk:number_sentinel_999999 [band]
+     the change: one cell of a numeric feature is set to 999999
+     must hold: the run's own conclusion (its band, its roles, its counts): one cell of the numeric feature `level_prev` set to 999999
+     band:random_walk: skill is -2639437387.2697, expected between -0.3 and 0.05 (the band of `random_walk`)
+     seen: rc=0, error=None, skill=-2639437387.2697, scheme=time_ordered, baseline=previous_value, model=linear-0, holdout=375, copies=None, cap=0, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\random_walk__number_sentinel_999999.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\random_walk__number_sentinel_999999
+     again: python verify/battery.py mlprofessor --only random_walk:number_sentinel_999999
+     the finding: one extreme cell in a numeric feature or a regression target moves skill out of its band
+OPEN (D73, pass 8): random_walk:target_sentinel_-999 [band]
+     the change: one cell of the regression target is set to -999
+     must hold: the run's own conclusion (its band, its roles, its counts): one target cell set to -999 (the spec has no rule for an outlier in the target; docs/BACKLOG.md, 'One extreme value can dominate')
+     band:random_walk: skill is -12.9864, expected between -0.3 and 0.05 (the band of `random_walk`)
+     seen: rc=0, error=None, skill=-12.9864, scheme=time_ordered, baseline=previous_value, model=linear-0, holdout=375, copies=None, cap=0, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\random_walk__target_sentinel_-999.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\random_walk__target_sentinel_-999
+     again: python verify/battery.py mlprofessor --only random_walk:target_sentinel_-999
+     the finding: one extreme cell in a numeric feature or a regression target moves skill out of its band
+OPEN (D73, pass 8): random_walk:copy_distinct [same]
+     the change: a column `target_copy` is added: the target made distinct in every row (the class plus a millionth of the row number; for regression the target rescaled)
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: a copy of the target that is distinct in every row (the class plus a millionth of the row number; for regression the target rescaled) is excluded by the leak screen, after the split, so nothing else moves
+     band:random_walk: skill is 0.989, expected between -0.3 and 0.05 (the band of `random_walk`)
+     added:target_copy: the added column `target_copy` has role 'feature', reason None, leak_rule None; expected 'excluded', 'suspected_leak'; skill 0.9889932460036537, baseline 'previous_value', warnings []
+     same_as_base: moved against the unperturbed run: headline.score 1.0071539412657424 -> 0.01109705981059562; headline.skill 0.0010420906826066334 -> 0.9889932460036537; headline.interval_low 0.8679297615086661 -> 0.009563055410157036; headline.interval_high 1.200587351010615 -> 0.01322835397745983; headline.skill_low 0.0004008833691097364 -> 0.9889861822584141; headline.skill_high 0.0016242893802221466 -> 0.9889996606388844
+     seen: rc=0, error=None, skill=0.989, scheme=time_ordered, baseline=previous_value, model=linear-0, holdout=375, copies=None, cap=0, roles={'target_copy': 'feature/None'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\random_walk__copy_distinct.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\random_walk__copy_distinct
+     again: python verify/battery.py mlprofessor --only random_walk:copy_distinct
+     the finding: an exact rescaled copy of a regression target is not excluded by the leak screen
+OPEN (D73, pass 8): random_walk:row_repeated [band]
+     the change: one row is written twice
+     must hold: the run's own conclusion (its band, its roles, its counts): one row written twice is one more row; `input.duplicate_rows` counts it and a `duplicate_rows` warning says so
+     band:random_walk: skill is 0.9991, expected between -0.3 and 0.05 (the band of `random_walk`)
+     walk_baselines: the timestamps of the source are not all distinct, the baselines are ['training_mean'] and the headline is skill 0.9991210007435922 against 'training_mean': a random walk scored against the training mean; warnings ['autocorrelated_panel_target', 'duplicate_rows', 'interval_approximate']
+     seen: rc=0, error=None, skill=0.9991, scheme=time_ordered, baseline=training_mean, model=linear-0, holdout=376, copies=None, cap=0, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\random_walk__row_repeated.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\random_walk__row_repeated
+     again: python verify/battery.py mlprofessor --only random_walk:row_repeated
+     the finding: one repeated row under time order with no entities: the timestamps are no longer unique and the previous-value baseline is dropped
+OPEN (D73, pass 8): int_stamps:copy_distinct [same]
+     the change: a column `target_copy` is added: the target made distinct in every row (the class plus a millionth of the row number; for regression the target rescaled)
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: a copy of the target that is distinct in every row (the class plus a millionth of the row number; for regression the target rescaled) is excluded by the leak screen, after the split, so nothing else moves
+     added:target_copy: the added column `target_copy` has role 'feature', reason None, leak_rule None; expected 'excluded', 'suspected_leak'; skill 0.9961922836812538, baseline 'previous_value', warnings []
+     same_as_base: moved against the unperturbed run: headline.score 0.9794185417505622 -> 0.0037381652181551874; headline.skill 0.0023587116497916227 -> 0.9961922836812538; headline.interval_low 0.8563865813491136 -> 0.0032685873168081334; headline.interval_high 1.1156342529589625 -> 0.004258062806111713; headline.skill_low -0.009756374392370986 -> 0.9961460440608598; headline.skill_high 0.016400382035993245 -> 0.9962458774548519
+     seen: rc=0, error=None, skill=0.9962, scheme=time_ordered, baseline=previous_value, model=linear-0, holdout=375, copies=None, cap=0, roles={'target_copy': 'feature/None'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\int_stamps__copy_distinct.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\int_stamps__copy_distinct
+     again: python verify/battery.py mlprofessor --only int_stamps:copy_distinct
+     the finding: an exact rescaled copy of a regression target is not excluded by the leak screen
+OPEN (D73, pass 8): int_stamps:row_repeated [structure]
+     the change: one row is written twice
+     must hold: the run's own conclusion (its band, its roles, its counts): one row written twice is one more row; `input.duplicate_rows` counts it and a `duplicate_rows` warning says so
+     walk_baselines: the timestamps of the source are not all distinct, the baselines are ['training_mean'] and the headline is skill 0.9953278779933338 against 'training_mean': a random walk scored against the training mean; warnings ['autocorrelated_panel_target', 'duplicate_rows', 'interval_approximate']
+     seen: rc=0, error=None, skill=0.9953, scheme=time_ordered, baseline=training_mean, model=linear-0, holdout=376, copies=None, cap=0, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\int_stamps__row_repeated.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\int_stamps__row_repeated
+     again: python verify/battery.py mlprofessor --only int_stamps:row_repeated
+     the finding: one repeated row under time order with no entities: the timestamps are no longer unique and the previous-value baseline is dropped
+OPEN (D73, pass 8): flat_tail:row_repeated [structure]
+     the change: one row is written twice
+     must hold: the run's own conclusion (its band, its roles, its counts): one row written twice is one more row; `input.duplicate_rows` counts it and a `duplicate_rows` warning says so
+     flat: the timestamps of the source are not all distinct; baselines ['training_mean'], skill -0.17099534290539742 against 'training_mean'
+     seen: rc=0, error=None, skill=-0.171, scheme=time_ordered, baseline=training_mean, model=linear-0, holdout=376, copies=None, cap=0, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\flat_tail__row_repeated.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\flat_tail__row_repeated
+     again: python verify/battery.py mlprofessor --only flat_tail:row_repeated
+     the finding: one repeated row under time order with no entities: the timestamps are no longer unique and the previous-value baseline is dropped
+OPEN (D73, pass 8): panel:number_sentinel_-999 [band]
+     the change: one cell of a numeric feature is set to -999
+     must hold: the run's own conclusion (its band, its roles, its counts): one cell of the numeric feature `level_prev` set to -999
+     band:panel: skill is -5.069, expected between -0.04 and 0.03 (the band of `panel`)
+     seen: rc=0, error=None, skill=-5.069, scheme=time_ordered, baseline=previous_value, model=tree-0, holdout=384, copies=None, cap=0, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\panel__number_sentinel_-999.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\panel__number_sentinel_-999
+     again: python verify/battery.py mlprofessor --only panel:number_sentinel_-999
+     the finding: one extreme cell in a numeric feature or a regression target moves skill out of its band
+OPEN (D73, pass 8): panel:number_sentinel_999999 [band]
+     the change: one cell of a numeric feature is set to 999999
+     must hold: the run's own conclusion (its band, its roles, its counts): one cell of the numeric feature `level_prev` set to 999999
+     band:panel: skill is -4.9114, expected between -0.04 and 0.03 (the band of `panel`)
+     seen: rc=0, error=None, skill=-4.9114, scheme=time_ordered, baseline=previous_value, model=tree-0, holdout=384, copies=None, cap=0, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\panel__number_sentinel_999999.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\panel__number_sentinel_999999
+     again: python verify/battery.py mlprofessor --only panel:number_sentinel_999999
+     the finding: one extreme cell in a numeric feature or a regression target moves skill out of its band
+OPEN (D73, pass 8): panel:target_sentinel_-999 [band]
+     the change: one cell of the regression target is set to -999
+     must hold: the run's own conclusion (its band, its roles, its counts): one target cell set to -999 (the spec has no rule for an outlier in the target; docs/BACKLOG.md, 'One extreme value can dominate')
+     band:panel: skill is -5.069, expected between -0.04 and 0.03 (the band of `panel`)
+     seen: rc=0, error=None, skill=-5.069, scheme=time_ordered, baseline=previous_value, model=tree-0, holdout=384, copies=None, cap=0, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\panel__target_sentinel_-999.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\panel__target_sentinel_-999
+     again: python verify/battery.py mlprofessor --only panel:target_sentinel_-999
+     the finding: one extreme cell in a numeric feature or a regression target moves skill out of its band
+OPEN (D73, pass 8): panel:copy_distinct [same]
+     the change: a column `target_copy` is added: the target made distinct in every row (the class plus a millionth of the row number; for regression the target rescaled)
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: a copy of the target that is distinct in every row (the class plus a millionth of the row number; for regression the target rescaled) is excluded by the leak screen, after the split, so nothing else moves
+     band:panel: skill is 0.9489, expected between -0.04 and 0.03 (the band of `panel`)
+     added:target_copy: the added column `target_copy` has role 'feature', reason None, leak_rule None; expected 'excluded', 'suspected_leak'; skill 0.9489422100041134, baseline 'previous_value', warnings []
+     same_as_base: moved against the unperturbed run: headline.score 1.017911249472153 -> 0.051465480477635696; headline.skill -0.009847733425597749 -> 0.9489422100041134; headline.interval_low 0.8174038744134132 -> 0.04132784957663792; headline.interval_high 1.1557995165333435 -> 0.05843709441019699; headline.skill_low -0.018870789689770465 -> 0.9484860052551098; headline.skill_high 0.00012383731295934164 -> 0.9494463703059747
+     seen: rc=0, error=None, skill=0.9489, scheme=time_ordered, baseline=previous_value, model=linear-0, holdout=384, copies=None, cap=0, roles={'target_copy': 'feature/None'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\panel__copy_distinct.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\panel__copy_distinct
+     again: python verify/battery.py mlprofessor --only panel:copy_distinct
+     the finding: an exact rescaled copy of a regression target is not excluded by the leak screen
+OPEN (D73, pass 8): panel:missing_cell_feature [band]
+     the change: one cell of a feature is emptied
+     must hold: the run's own conclusion (its band, its roles, its counts): one empty cell in the feature `level_prev` is counted in `n_missing` and imputed
+     band:panel: skill is -2.6844, expected between -0.04 and 0.03 (the band of `panel`)
+     seen: rc=0, error=None, skill=-2.6844, scheme=time_ordered, baseline=previous_value, model=linear-0, holdout=384, copies=None, cap=0, roles={}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\panel__missing_cell_feature.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\panel__missing_cell_feature
+     again: python verify/battery.py mlprofessor --only panel:missing_cell_feature
+     the finding: one empty cell in the lag of a panel moves skill out of its band
+OPEN (D73, pass 8): dominant_entity:copy_distinct [same]
+     the change: a column `target_copy` is added: the target made distinct in every row (the class plus a millionth of the row number; for regression the target rescaled)
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: a copy of the target that is distinct in every row (the class plus a millionth of the row number; for regression the target rescaled) is excluded by the leak screen, after the split, so nothing else moves
+     added:target_copy: the added column `target_copy` has role 'feature', reason None, leak_rule None; expected 'excluded', 'suspected_leak'; skill 0.999999550021168, baseline 'training_mean', warnings []
+     same_as_base: moved against the unperturbed run: headline.score 2.04296723172 -> 4.320293925606461e-07; headline.model 'tree-0' -> 'linear-0'; headline.skill -1.1278459860073755 -> 0.999999550021168; headline.interval_low 1.8163238128235004 -> 3.8500591495229503e-07; headline.interval_high 2.3306875354514998 -> 4.844704581562766e-07; headline.skill_low -1.3904296528089906 -> 0.9999995451299392
+     seen: rc=0, error=None, skill=1.0, scheme=grouped, baseline=training_mean, model=linear-0, holdout=500, copies=0, cap=0, roles={'target_copy': 'feature/None'}
+     table: E:\CODE\ml-professor\verify\artifacts\battery\data\dominant_entity__copy_distinct.csv
+     output: E:\CODE\ml-professor\verify\artifacts\battery\runs\build\dominant_entity__copy_distinct
+     again: python verify/battery.py mlprofessor --only dominant_entity:copy_distinct
+     the finding: an exact rescaled copy of a regression target is not excluded by the leak screen
+LISTED AND HOLDS HERE noise_reg:number_sentinel_-999 (open: D73, pass 8)
+LISTED AND HOLDS HERE noise_reg:target_sentinel_-999 (open: D73, pass 8)
+794 tool runs in 193 s at 16 side by side (2935 s of tool time): 32 gate runs as they are and 762 pairs; 518 pairs left out (--list says why)
+holds 667; stated limit 2 of 2 listed; open 28 of 30 listed (D73, pass 8); on neither list and failing 97
+BATTERY: FAIL (97 of 794 do not hold and are on neither list; holds 667, stated limit 2, open 28)

@@ -1,0 +1,16 @@
+## the application as it stood
+C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\app\mlprofessor
+  fit on 21 rows: index in increasing position: True; in time order: False; columns ['f2', 'level_prev', 'f1', 'seg=A', 'seg=B', 'seg=C', 'seg=D']
+  fit on 42 rows: index in increasing position: True; in time order: False; columns ['f2', 'level_prev', 'f1', 'seg=(missing)', 'seg=A', 'seg=B', 'seg=C', 'seg=D']
+  fit on 64 rows: index in increasing position: True; in time order: False; columns ['f2', 'level_prev', 'f1', 'seg=(missing)', 'seg=A', 'seg=B', 'seg=C', 'seg=D']
+  fit on 85 rows: index in increasing position: True; in time order: False; columns ['f2', 'level_prev', 'f1', 'seg=(missing)', 'seg=A', 'seg=B', 'seg=C', 'seg=D']
+  fit on 106 rows: index in increasing position: True; in time order: False; columns ['f2', 'level_prev', 'f1', 'seg=(missing)', 'seg=A', 'seg=B', 'seg=C', 'seg=D']
+  fit on 126 rows: index in increasing position: True; in time order: False; columns ['f2', 'level_prev', 'f1', 'seg=(missing)', 'seg=A', 'seg=B', 'seg=C', 'seg=D']
+## the reference as it stood
+C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\verify\reference\mlprofessor
+  fit on 21 rows: index in increasing position: False; in time order: True; columns ['f2', 'level_prev', 'f1', 'seg=A', 'seg=B', 'seg=C', 'seg=D']
+  fit on 42 rows: index in increasing position: False; in time order: True; columns ['f2', 'level_prev', 'f1', 'seg=(missing)', 'seg=A', 'seg=B', 'seg=C', 'seg=D']
+  fit on 64 rows: index in increasing position: False; in time order: True; columns ['f2', 'level_prev', 'f1', 'seg=(missing)', 'seg=A', 'seg=B', 'seg=C', 'seg=D']
+  fit on 85 rows: index in increasing position: False; in time order: True; columns ['f2', 'level_prev', 'f1', 'seg=(missing)', 'seg=A', 'seg=B', 'seg=C', 'seg=D']
+  fit on 106 rows: index in increasing position: False; in time order: True; columns ['f2', 'level_prev', 'f1', 'seg=(missing)', 'seg=A', 'seg=B', 'seg=C', 'seg=D']
+  fit on 126 rows: index in increasing position: False; in time order: True; columns ['f2', 'level_prev', 'f1', 'seg=(missing)', 'seg=A', 'seg=B', 'seg=C', 'seg=D']

@@ -1,0 +1,131 @@
+d: distinct values that read as dates; x: distinct values that do not
+  A every value (D66)
+  B 95% of cells
+  C x<=2
+  D x<=2, d>=5
+  E d>=9x
+  F d>=9x, x<=2
+  U adopted: E or D
+
+MUST BE a date column (each cell: the seeds, of 30, on which the rule calls the column a date column; it must be: all of them)
+
+| Column | d, x over the seeds | share of cells that are dates | A every value (D66) | B 95% of cells | C x<=2 | D x<=2, d>=5 | E d>=9x | F d>=9x, x<=2 | U adopted: E or D |
+|---|---|---|---|---|---|---|---|---|---|
+| clean (the gate's day_numbers) | d 600..600, x 0..0 | 1.000..1.000 | 30 | 30 | 30 | 30 | 30 | 30 | 30 |
+| one cell of 99991231 | d 600..600, x 1..1 | 0.999..0.999 | 0 | 30 | 30 | 30 | 30 | 30 | 30 |
+| one cell of 0 | d 600..600, x 1..1 | 0.999..0.999 | 0 | 30 | 30 | 30 | 30 | 30 | 30 |
+| one cell of 20240230 | d 600..600, x 1..1 | 0.999..0.999 | 0 | 30 | 30 | 30 | 30 | 30 | 30 |
+| 5% of the rows 99991231 | d 599..600, x 1..1 | 0.950..0.950 | 0 | 30 | 30 | 30 | 30 | 30 | 30 |
+| 30% of the rows 99991231 | d 579..590, x 1..1 | 0.700..0.700 | 0 | 0 | 30 | 30 | 30 | 30 | 30 |
+| 60% of the rows 99991231 | d 456..479, x 1..1 | 0.400..0.400 | 0 | 0 | 30 | 30 | 30 | 30 | 30 |
+| two sentinels, one cell each (0 and 99991231) | d 600..600, x 2..2 | 0.999..0.999 | 0 | 30 | 30 | 30 | 30 | 30 | 30 |
+| two sentinels in 30% of the rows (0 and 99991231) | d 574..592, x 2..2 | 0.700..0.700 | 0 | 0 | 30 | 30 | 30 | 30 | 30 |
+| three sentinels, one cell each (0, 99991231, 99999999) | d 600..600, x 3..3 | 0.998..0.998 | 0 | 30 | 0 | 0 | 30 | 0 | 30 |
+| floats with gaps, one cell of 99991231 | d 599..600, x 1..1 | 0.999..0.999 | 0 | 30 | 30 | 30 | 30 | 30 | 30 |
+| floats with gaps, clean | d 599..600, x 0..0 | 1.000..1.000 | 30 | 30 | 30 | 30 | 30 | 30 | 30 |
+| eight-digit text, one cell of 99991231 | d 600..600, x 1..1 | 0.999..0.999 | 0 | 30 | 30 | 30 | 30 | 30 | 30 |
+| eight-digit text, one cell of 0 | d 600..600, x 1..1 | 0.999..0.999 | 0 | 30 | 30 | 30 | 30 | 30 | 30 |
+| eight-digit text, 30% of the rows 00000000 | d 577..591, x 1..1 | 0.700..0.700 | 0 | 0 | 30 | 30 | 30 | 30 | 30 |
+| eight-digit text, clean | d 600..600, x 0..0 | 1.000..1.000 | 30 | 30 | 30 | 30 | 30 | 30 | 30 |
+| CP7 control, reversed by D69: one cell of 20231301 | d 600..600, x 1..1 | 0.999..0.999 | 0 | 30 | 30 | 30 | 30 | 30 | 30 |
+| 96 month ends, 30% of the rows 99991231 | d 95..96, x 1..1 | 0.700..0.700 | 0 | 0 | 30 | 30 | 30 | 30 | 30 |
+| 12 month ends, 30% of the rows 99991231 | d 12..12, x 1..1 | 0.700..0.700 | 0 | 0 | 30 | 30 | 30 | 30 | 30 |
+| 8 quarter ends, 30% of the rows 99991231 | d 8..8, x 1..1 | 0.700..0.700 | 0 | 0 | 30 | 30 | 0 | 0 | 30 |
+| 5 month ends, 0 and 99991231 in 30% of the rows | d 5..5, x 2..2 | 0.700..0.700 | 0 | 0 | 30 | 30 | 0 | 0 | 30 |
+| columns on which the rule is wrong | | | 18 | 8 | 1 | 1 | 2 | 3 | 0 |
+
+MUST NOT be: the controls of the CP7 measurement (each cell: the seeds, of 30, on which the rule calls the column a date column; it must be: none)
+
+| Column | d, x over the seeds | share of cells that are dates | A every value (D66) | B 95% of cells | C x<=2 | D x<=2, d>=5 | E d>=9x | F d>=9x, x<=2 | U adopted: E or D |
+|---|---|---|---|---|---|---|---|---|---|
+| eight-digit identifiers drawn at random | d 0..4, x 596..600 | 0.000..0.007 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| identifiers counting up from 20230101 | d 181..181, x 419..419 | 0.302..0.302 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| whole numbers drawn at random between 19000101 and 21001231 | d 12..32, x 568..588 | 0.020..0.053 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| years only (1990 to 2024) | d 0..0, x 35..35 | 0.000..0.000 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| year and month as YYYYMM | d 0..0, x 240..240 | 0.000..0.000 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| seconds since 1970 | d 0..0, x 600..600 | 0.000..0.000 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| days since 1970 | d 0..0, x 200..200 | 0.000..0.000 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| prices in whole cents | d 0..0, x 599..600 | 0.000..0.000 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| counts | d 0..0, x 9..12 | 0.000..0.000 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| ages | d 0..0, x 72..72 | 0.000..0.000 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| post codes | d 0..0, x 594..600 | 0.000..0.000 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| dates as DDMMYYYY whole numbers | d 0..0, x 200..200 | 0.000..0.000 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| columns on which the rule is wrong | | | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+
+MUST NOT be: code columns of a few distinct eight-digit values (each cell: the seeds, of 30, on which the rule calls the column a date column; it must be: none)
+
+| Column | d, x over the seeds | share of cells that are dates | A every value (D66) | B 95% of cells | C x<=2 | D x<=2, d>=5 | E d>=9x | F d>=9x, x<=2 | U adopted: E or D |
+|---|---|---|---|---|---|---|---|---|---|
+| 2 distinct codes, 1 of them read as dates | d 1..1, x 1..1 | 0.452..0.543 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 2 distinct codes, 1 read as dates, as text | d 1..1, x 1..1 | 0.452..0.543 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 3 distinct codes, 1 of them read as dates | d 1..1, x 2..2 | 0.285..0.363 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 3 distinct codes, 1 read as dates, as text | d 1..1, x 2..2 | 0.285..0.363 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 3 distinct codes, 2 of them read as dates | d 2..2, x 1..1 | 0.640..0.693 | 0 | 0 | 30 | 0 | 0 | 0 | 0 |
+| 3 distinct codes, 2 read as dates, as text | d 2..2, x 1..1 | 0.640..0.693 | 0 | 0 | 30 | 0 | 0 | 0 | 0 |
+| 5 distinct codes, 1 of them read as dates | d 1..1, x 4..4 | 0.145..0.223 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 5 distinct codes, 1 read as dates, as text | d 1..1, x 4..4 | 0.145..0.223 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 5 distinct codes, 2 of them read as dates | d 2..2, x 3..3 | 0.372..0.438 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 5 distinct codes, 2 read as dates, as text | d 2..2, x 3..3 | 0.372..0.438 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 5 distinct codes, 3 of them read as dates | d 3..3, x 2..2 | 0.562..0.645 | 0 | 0 | 30 | 0 | 0 | 0 | 0 |
+| 5 distinct codes, 3 read as dates, as text | d 3..3, x 2..2 | 0.562..0.645 | 0 | 0 | 30 | 0 | 0 | 0 | 0 |
+| 5 distinct codes, 4 of them read as dates | d 4..4, x 1..1 | 0.772..0.877 | 0 | 0 | 30 | 0 | 0 | 0 | 0 |
+| 5 distinct codes, 4 read as dates, as text | d 4..4, x 1..1 | 0.772..0.877 | 0 | 0 | 30 | 0 | 0 | 0 | 0 |
+| columns on which the rule is wrong | | | 0 | 0 | 6 | 0 | 0 | 0 | 0 |
+
+The limits of the adopted rule: columns of dates it does not name (each cell: the seeds, of 30, on which the rule calls the column a date column; it must be: shown for the record)
+
+| Column | d, x over the seeds | share of cells that are dates | A every value (D66) | B 95% of cells | C x<=2 | D x<=2, d>=5 | E d>=9x | F d>=9x, x<=2 | U adopted: E or D |
+|---|---|---|---|---|---|---|---|---|---|
+| 4 quarter ends, 30% of the rows 99991231 | d 4..4, x 1..1 | 0.700..0.700 | 0 | 0 | 30 | 0 | 0 | 0 | 0 |
+| 26 days and three sentinels | d 26..26, x 3..3 | 0.900..0.900 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+
+MUST NOT be: every column of every gate dataset but the two made for the rule (day_numbers, day_sentinel), and of examples/customers.csv (the target included: a rule that named it would show)
+
+| Table | data seeds | columns | of them, columns rule 2a looks at | A every value (D66) | B 95% of cells | C x<=2 | D x<=2, d>=5 | E d>=9x | F d>=9x, x<=2 | U adopted: E or D |
+|---|---|---|---|---|---|---|---|---|---|---|
+| gate `signal_clf` | 30 | 240 | 240 | none | none | none | none | none | none | none |
+| gate `signal_reg` | 30 | 210 | 210 | none | none | none | none | none | none | none |
+| gate `noise_clf` | 30 | 9030 | 9030 | none | none | none | none | none | none | none |
+| gate `noise_reg` | 30 | 9030 | 9030 | none | none | none | none | none | none | none |
+| gate `imbalanced` | 30 | 240 | 240 | none | none | none | none | none | none | none |
+| gate `leak` | 30 | 330 | 330 | none | none | none | none | none | none | none |
+| gate `leak_reg` | 30 | 240 | 240 | none | none | none | none | none | none | none |
+| gate `binary_numeric` | 30 | 240 | 240 | none | none | none | none | none | none | none |
+| gate `ambiguous_target` | 30 | 120 | 120 | none | none | none | none | none | none | none |
+| gate `messy` | 30 | 390 | 390 | none | none | none | none | none | none | none |
+| gate `time_blocks` | 30 | 300 | 300 | none | none | none | none | none | none | none |
+| gate `time_dayfirst` | 30 | 300 | 300 | none | none | none | none | none | none | none |
+| gate `random_walk` | 30 | 90 | 90 | none | none | none | none | none | none | none |
+| gate `noise_small` | 30 | 330 | 330 | none | none | none | none | none | none | none |
+| gate `signal_clf_small` | 30 | 240 | 240 | none | none | none | none | none | none | none |
+| gate `signal_reg_small` | 30 | 210 | 210 | none | none | none | none | none | none | none |
+| gate `near_leak` | 30 | 270 | 270 | none | none | none | none | none | none | none |
+| gate `long_rows` | 30 | 240 | 240 | none | none | none | none | none | none | none |
+| gate `flat_tail` | 30 | 120 | 120 | none | none | none | none | none | none | none |
+| gate `dup_noise` | 30 | 330 | 330 | none | none | none | none | none | none | none |
+| gate `int_stamps` | 30 | 90 | 90 | none | none | none | none | none | none | none |
+| gate `entities` | 30 | 240 | 240 | none | none | none | none | none | none | none |
+| gate `panel` | 30 | 120 | 120 | none | none | none | none | none | none | none |
+| gate `few_valued` | 30 | 90 | 90 | none | none | none | none | none | none | none |
+| gate `dominant_entity` | 30 | 180 | 180 | none | none | none | none | none | none | none |
+| gate `few_valued_leak` | 30 | 120 | 120 | none | none | none | none | none | none | none |
+| gate `large_entity` | 30 | 180 | 180 | none | none | none | none | none | none | none |
+| gate `quarter_entity` | 30 | 180 | 180 | none | none | none | none | none | none | none |
+| examples/customers.csv | - | 8 | 8 | none | none | none | none | none | none | none |
+| columns named in all | | | | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+
+The gate's two tables made for the rule, the column `day`, over the same seeds:
+  `day_numbers`: A every value (D66): 30, B 95% of cells: 30, C x<=2: 30, D x<=2, d>=5: 30, E d>=9x: 30, F d>=9x, x<=2: 30, U adopted: E or D: 30
+  `day_sentinel`: A every value (D66): 0, B 95% of cells: 0, C x<=2: 30, D x<=2, d>=5: 30, E d>=9x: 30, F d>=9x, x<=2: 30, U adopted: E or D: 30
+
+The smallest change that defeats each rule on the gate's `day_numbers` (600 distinct dates, 1,800 cells): the number of distinct values that are no dates, one cell each (99991231, 99991230, ...), at which the column is no longer a date column
+
+| Rule | cells changed, min..max over the seeds |
+|---|---|
+| A every value (D66) | 1..1 |
+| B 95% of cells | 91..91 |
+| C x<=2 | 3..3 |
+| D x<=2, d>=5 | 3..3 |
+| E d>=9x | 67..67 |
+| F d>=9x, x<=2 | 3..3 |
+| U adopted: E or D | 67..67 |

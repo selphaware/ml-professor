@@ -1,0 +1,22 @@
+Seconds for one gate run on a known-good package, three runs for each setting, with nothing
+else loading the machine (2026-11-22). Printed by docs/measurements/CP8/gate_timing.py, once
+for each gate file; the first column is added here.
+
+| Gate | start spacing, side by side | full: seconds | per edit (--fast): seconds | verdicts |
+|---|---|---|---|---|
+| as committed at f8edec4 (38 runs, 43 checks), on the reference as it stood | 0.5 s, 8 | 22.6, 22.6, 22.5 | 17.3, 17.3, 17.2 | GATE: PASS (41 checks); GATE: PASS (43 checks) |
+| as committed at f8edec4 (38 runs, 43 checks), on the reference as it stood | 0.25 s, 8 | 19.7, 19.7, 19.5 | 13.6, 13.6, 13.7 | GATE: PASS (41 checks); GATE: PASS (43 checks) |
+| as committed at f8edec4 (38 runs, 43 checks), on the reference as it stood | 0.25 s, 16 | 13.1, 13.1, 13.0 | 10.5, 10.6, 10.5 | GATE: PASS (41 checks); GATE: PASS (43 checks) |
+| as committed at f8edec4 (38 runs, 43 checks), on the reference as it stood | 0.1 s, 16 | 12.4, 12.3, 12.4 | 8.4, 8.4, 8.5 | GATE: PASS (41 checks); GATE: PASS (43 checks) |
+| during the pass, before `quarter_entity` was added (41 runs, 46 checks) | 0.5 s, 8 | 24.0, 24.0, 24.0 | 18.7, 18.8, 18.7 | GATE: PASS (44 checks); GATE: PASS (46 checks) |
+| during the pass, before `quarter_entity` was added (41 runs, 46 checks) | 0.25 s, 8 | 21.0, 21.2, 20.9 | 15.1, 15.2, 15.3 | GATE: PASS (44 checks); GATE: PASS (46 checks) |
+| during the pass, before `quarter_entity` was added (41 runs, 46 checks) | 0.25 s, 16 | 14.0, 13.8, 13.9 | 11.3, 11.3, 11.2 | GATE: PASS (44 checks); GATE: PASS (46 checks) |
+| during the pass, before `quarter_entity` was added (41 runs, 46 checks) | 0.1 s, 16 | 12.7, 12.7, 12.6 | 10.0, 10.0, 9.9 | GATE: PASS (44 checks); GATE: PASS (46 checks) |
+| as it is after CP8 (42 runs, 47 checks), on the reference as changed | 0.5 s, 8 | 29.2, 28.9, 29.0 | 20.9, 20.8, 20.9 | GATE: PASS (45 checks); GATE: PASS (47 checks) |
+| as it is after CP8 (42 runs, 47 checks), on the reference as changed | 0.25 s, 8 | 27.1, 27.1, 27.1 | 18.8, 19.0, 18.9 | GATE: PASS (45 checks); GATE: PASS (47 checks) |
+| as it is after CP8 (42 runs, 47 checks), on the reference as changed | 0.25 s, 16 (D72: the gate's own) | 17.7, 17.6, 17.6 | 12.9, 12.9, 12.8 | GATE: PASS (45 checks); GATE: PASS (47 checks) |
+| as it is after CP8 (42 runs, 47 checks), on the reference as changed | 0.1 s, 16 | 16.8, 16.8, 16.6 | 12.4, 12.5, 12.4 | GATE: PASS (45 checks); GATE: PASS (47 checks) |
+
+The budget for a per-edit run is 20 seconds (loop/loop.json, hook_gate_budget_sec). At the
+settings the gate had until D72 (0.5 s, 8) the gate as it is after CP8 takes 20.9 seconds
+on each edit: over the budget. At the settings of D72 it takes 12.9.

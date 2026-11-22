@@ -3703,3 +3703,850 @@ autocorrelation the panel warning uses: the guard holds either. A check that
 the levels of a column are series of their own: not built (D66). Day counts
 and `YYYYMM` as dates: not seen, by decision (D66). How `--help` words that a
 pair is needed. Run time at 100,000 rows.
+
+# Seventh pass (CP8): a date column with a sentinel, `"group"` after a removed leak, the fast cap and a large entity, and the judge's two other tools
+
+Decisions D69 to D73. The spec sections are named beside each file. **No test
+of this pass is about anything the judge's tools list as open:** one repeated
+row under time order with no entities, a copy of a regression target that the
+leak screen misses, one extreme cell, an identifier under shuffled rows, the
+order of rows within a fit. Those are pass 8 (D73), and each will change a
+pinned rule.
+
+## Ground rules of the seventh pass
+
+1. **The application already exists, and this is the seventh pass.**
+   `mlprofessor/` is built and passes all 1,841 cases of the first six
+   passes. Your role prompt says you write the suite before the application
+   exists and that every test must fail now. In this pass that is not so:
+   most of your tests must fail today, the guards and some other tests must
+   pass today, and every existing test must pass today and after the build.
+   Rule 5 says which.
+
+2. **The first six passes are final. Do not edit them, with the one exception
+   of rule 3, which D59 allows and which is given there exactly.** That means
+   the 58 existing test files, `tests/conftest.py`, `tests/mlp_helpers.py`,
+   `tests/cp3_helpers.py` to `tests/cp7_helpers.py` and everything under
+   `tests/fixtures/`. New shared helpers go in one new file,
+   `tests/cp8_helpers.py`. The owner's lead reads the diff of every existing
+   file against the committed one afterwards, and any change other than that
+   of rule 3 sends the whole stage back.
+
+3. **THE LOOSENING (D59). One replacement in one existing file, and no other
+   change to it or to any other.**
+
+   D69 reverses what one existing test holds. Rule 2a of step 5 used to ask that
+   every value of the column be a date, and
+   `tests/test_date_numbers.py::test_values_that_are_no_dates_leave_the_column_what_it_was`
+   holds fourteen columns to that. Eleven of them are 200 days with one value
+   that is no date, which the rule of D72 calls a date column. For those eleven
+   the one assertion accepts the column as built or as decided, so the test
+   passes against the application as it stands and after T55 is built. The other
+   three cases stay exact, and nothing else in the file changes. D65 is not
+   needed: no helper changes.
+
+   **The exact text is in `docs/measurements/CP8/loosening.py`**
+   (`python -B docs/measurements/CP8/loosening.py --table` prints it). It matches
+   the file once. Keep the file's line endings as they are.
+
+   Before:
+
+   ```python
+       record = _roles(_no_date_case(case))["day"]
+       if case == "one_date_throughout":
+           assert record["role"] == "excluded" and record["reason"] == "constant", record
+       else:
+           assert record["role"] == "feature" and record["kind"] == "numeric", record
+   ```
+
+   After:
+
+   ```python
+       record = _roles(_no_date_case(case))["day"]
+       if case == "one_date_throughout":
+           assert record["role"] == "excluded" and record["reason"] == "constant", record
+       elif case in ("day_first", "yyyymm"):
+           assert record["role"] == "feature" and record["kind"] == "numeric", record
+       else:
+           # D59, D69: 200 days and one value that is no date. A number as built, and a
+           # date column once D69 is built; `test_date_sentinels.py` holds the second.
+           as_built = record["role"] == "feature" and record["kind"] == "numeric"
+           as_decided = record["role"] == "excluded" and record["reason"] == "datetime"
+           assert as_built or as_decided, record
+   ```
+
+   | No longer pinned | By | Pinned again by |
+   |---|---|---|
+   | one value that is no date leaves a column of dates a numeric feature (the cases `before_1900`, `after_2100`, `29_feb_2023`, `29_feb_1900`, `month_13`, `day_0`, `31_april`, `a_fraction`, `an_infinite_cell`, `nine_digit_text`, `seven_digit_text`) | the one test above | `test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column`, which holds the same eleven columns to the opposite, and `::test_too_many_values_that_are_no_dates_leave_the_column_a_number`, which holds where the rule now ends |
+
+   The loosened test still fails on nothing it failed on before: F14 and M29
+   leave those eleven columns numeric features, as they did.
+
+   **No existing test is ever edited so that it fails against the library as
+   built:** run the whole suite against the application before you finish and
+   see all 1,841 cases pass.
+
+4. **You write seven new test files and the helper file, and nothing else.**
+   The files are listed below, each with the tests it must hold, **under the
+   names given**: the lists of rule 5 and the mutation check go by name. Split
+   a named test into parameter cases as the text says. If you add a test of
+   your own, say so in your final report, with the list of rule 5 it belongs
+   to.
+
+5. **Which tests fail today and which pass today is fixed, by name.** The
+   lists are at the end of this section. A test on the red list fails against
+   the application as it stands, in every one of its parameter cases unless
+   the list says otherwise. A test on the green list passes today in every
+   case. Run the new files before you finish and compare with the lists. **Do
+   not weaken a guard to make it fail, and do not weaken a red test to make
+   it pass.** If a test on the green list fails, or one on the red list
+   passes, and you believe your test is what the spec says, stop and report
+   it with the output.
+
+6. **Every new variant must fail a test, and `verify/mutation_check.py` is how
+   that will be judged.** It runs the whole suite against a copy of the
+   reference implementation and again with the reference broken in one way at
+   a time: thirty-one forms the gate also catches (F1 to F22, F6b, F6c, F6d,
+   F7b, F7c, F7d, F8b, F12b, F14b) and thirty-nine smaller faults (M1 to M39;
+   spec 8 and 8.1). It passes only if the good reference fails none of your
+   tests (the README tests apart) and every variant fails at least one.
+   Nineteen are new. Seven of them (F16 to F22) are caught by tests that
+   exist already. The other twelve each have a test of this pass named for
+   them, and so does each of the eleven older variants that one test held
+   alone until now:
+
+   | Variant | The test that must fail on it | Cases that fail on it in these files |
+   |---|---|---|
+   | F12b | `test_group_after_leak.py::test_a_copy_of_the_target_under_group_stops_the_run` | 4 |
+   | F14b | `test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column` | 37 |
+   | F15 | `test_fast_cap_groups.py::test_an_entity_larger_than_the_cap_stops_the_fast_profile` | 7 |
+   | M31 | `test_date_sentinels.py::test_a_sentinel_counts_once_however_many_cells_hold_it` | 19 |
+   | M32 | `test_date_sentinels.py::test_as_the_time_column_a_value_that_is_no_date_stops_the_run` | 8 |
+   | M33 | `test_group_after_leak.py::test_one_combination_on_both_sides_is_enough` | 1 |
+   | M34 | `test_fast_cap_groups.py::test_when_the_full_profile_would_stop_too_its_error_is_raised` | 1 |
+   | M35 | `test_fast_cap_groups.py::test_an_entity_of_a_quarter_or_more_that_fits_is_always_kept` | 4 |
+   | M36 | `test_review6_small.py::test_the_date_warning_holds_the_caveat_of_its_scheme`, its two grouped cases | 2 |
+   | M37 | `test_group_after_leak.py::test_the_grouped_warning_says_what_group_measures` | 1 |
+   | M38 | `test_guard_review6.py::test_m38_one_fold_not_scored_record_for_each_fold_not_scored` | 2 |
+   | M39 | `test_guard_review6.py::test_m39_rows_with_a_cell_that_cannot_be_hashed_are_counted_as_repeats` | 1 |
+   | M1, M5, M6, M8, M10, M11, M12, M17, M21, M23, M28 | the test of `test_guard_review6.py` named for each (`test_m1_...` to `test_m28_...`), beside the test that held it before | one each; M12 two |
+
+   You may run it yourself, from the repo root, with the project interpreter:
+   `E:\CODE\ml-professor\mlprof_env\Scripts\python.exe verify/mutation_check.py --jobs 8`.
+   It writes nothing inside the repo, and takes a little over an hour. Do not
+   read the reference implementation to tune a test to it. The README test of this
+   pass goes in a file named `tests/test_readme_review6.py`: files named
+   `tests/test_readme*.py` are shown on a line of their own and not counted.
+   **`tests/test_judge_tools.py` is not run by the mutation check at all:** it
+   runs the judge's two other tools on the application, and a throwaway
+   project has no `verify/`.
+
+7. **A test of this pass says both things in every call, or is about a stop.**
+   As in the sixth pass, the new files call through `cp7_helpers.run`,
+   `raised` and `run_cli`, which add no statement, and pass `time_col` and
+   `group_col` in every call that is meant to finish (`**s.SAID` for "no" to
+   both).
+
+8. **Which of the smaller entities the fast profile's cap keeps is open (spec
+   step 6 and 11), and so is which units a grouped split holds out.** A test
+   asserts the four properties of the cap and the properties of the split,
+   through the rows a recording family was handed, and never a particular
+   row or entity. What is pinned and does not depend on the seed: an entity of
+   a quarter or more of the usable rows is kept, and the run stops when the
+   cap cannot do that.
+
+9. **Leave what pass 8 will change unpinned (D73).** Do not assert which
+   baselines a regression has under time order with repeated timestamps and
+   `group_col=False`; do not assert that a column which copies a regression
+   target is, or is not, excluded under time order or beside a dominant
+   entity; do not assert the fold scores of a forest under time order. The
+   recipes below already keep clear of all three.
+
+10. **The rules of the earlier passes still hold**: the documented surface only
+    (spec 2.1 to 2.7); pin what the spec pins and nothing else; recompute, do
+    not trust; assert on values as the application produced them; **no skipped
+    or expected-to-fail test**; nothing written outside `tmp_path`; the
+    application imported inside test functions; the command line run one
+    process at a time. What a message must hold is pinned in spec 11 and 5.4
+    and nowhere else. Tiny tables: the tests of the fast cap need a little
+    over 2,000 rows, one guard needs 3,000 and one 1,500; nothing else needs
+    more than 700. Use a recording family or a constant family through the
+    seam wherever a run only has to finish.
+
+## Files of the seventh pass
+
+Each file belongs to exactly one task of `plan/tasks.json`.
+
+| File | Task | About | Today |
+|---|---|---|---|
+| `tests/test_guard_review6.py` | T54 | a second test for eleven faults that one test each held; a date beyond the nanosecond range; the two readings D72 pins (D71, D72) | green |
+| `tests/test_date_sentinels.py` | T55 | a column of dates written `YYYYMMDD` with values that are no dates, as a spare column and as the time column (D69, D72) | red, four tests green in part or in whole |
+| `tests/test_group_after_leak.py` | T56 | `duplicates="group"` and a column the leak screen removes; what `"group"` measures (D69, D72) | red, three tests green |
+| `tests/test_fast_cap_groups.py` | T57 | the fast profile's cap and a large entity (D70, D72) | red, three tests green |
+| `tests/test_review6_small.py` | T58 | the text of the date warning (D69) | red |
+| `tests/test_readme_review6.py` | T59 | the README on this pass | red |
+| `tests/test_judge_tools.py` | T60 | the perturbation battery and the generated-table test, run on the application (D56, D71, D72) | red |
+| `tests/cp8_helpers.py` | none | shared helpers of the seventh pass; holds no test | |
+| `tests/test_date_numbers.py` | (T52) | one replacement, as rule 3 says; nothing else | green before and after |
+
+### `tests/cp8_helpers.py`
+
+Import the earlier helper files and build on them; do not copy from them. Like
+`cp7_helpers`, nothing here makes a statement the call did not make: the
+tests of this pass call through `cp7_helpers.run`, `raised` and `run_cli`.
+
+- **`CAP`**: 2000. **`CAP_CODE`**: `fast_profile_group_too_large`.
+  **`SENTINEL`**: 99991231. **`OTHERS`**: `(99991231, 0, 99999999)`, three
+  values that are no dates.
+- **`GROUP_MEASURES`**: the fixed passage of spec 5.4 that the
+  `same_features_grouped` warning holds, exactly. **`RANDOM_CAVEAT`** and
+  **`GROUPED_CAVEAT`**: the two caveats of 5.4, taken from `mlp_helpers.CAVEAT`
+  and `cp6_helpers.GROUPED_CAVEAT`.
+- **`roles(frame, target="y", **kw)`**: `stages.column_roles` as a mapping
+  from a column's name to its record. **`is_date(record)`**: role `excluded`
+  and reason `datetime`. **`is_number(record)`**: role `feature` and kind
+  `numeric`.
+- **`rows_reached(result, log)`**: for an `h.Log`, the holdout rows together
+  with every row a model was fitted on or asked to predict: the rows a cap
+  kept.
+- **`feature_keys(result, frame)`**: for every row of `frame`, the tuple of
+  its values in the columns the result gives the role `feature`, as step 8a
+  compares them: a number as a float, text without the white space round it,
+  an empty cell as `(missing)`.
+- **`whole_numbers_in(text)`**: the whole numbers written in a text.
+  **`holds_count_and_share(text, n_rows)`**: whether a message holds two
+  whole numbers a <= b, with b at least a quarter of `n_rows` and fewer than
+  `n_rows`, and some number within 0.1 of 100 x a / b.
+- **`days(n_dates, start="2021-03-01")`**: that many consecutive days, each as
+  the whole number `YYYYMMDD`.
+- **`planted(frame, values, cells=1, share=None, seed=0, column="day")`**: a
+  copy of `frame` with `values` planted in the column: `cells` cells for each
+  value, or with `share` that share of the rows, dealt out among the values in
+  turn. The cells are drawn from the seed and the column keeps its type.
+- **`dates_with(n_dates, others=(), n=300, cells=2, seed=0)`**: a table whose
+  `int64` column `day` holds exactly `n_dates` distinct dates, each many
+  times, and each of `others` in `cells` cells; a noise column `x` and a 0/1
+  target `y`; rows shuffled.
+- **`with_copy_of_target(frame, name="status", target="y")`**: `frame` with a
+  text column before the target that copies a 0/1 target: `closed` for 1 and
+  `open` for 0.
+- **`one_row_alike_in_every_entity(n_entities=24, per=20, seed=0)`**: `who`,
+  four noise measures `n1` to `n4`, a column `leak` that is the 0/1 target
+  plus (row number + 1) / (2 x rows), so that it copies the target and is
+  distinct in every row, and `y`. The first row of each entity holds the
+  measures 0.125, -0.5, 0.75 and -1.25, with the classes 0 and 1 in turn. So
+  no two rows agree in every column, and without `leak` those rows, one in
+  each entity, agree in every feature that is left. Rows shuffled.
+- **`large_entities(large, small=300, per=5, seed=0, labels=None)`**:
+  `s.sized_entities` with the large entities first (`e000`, `e001`, ...
+  hold the rows given in `large`) and `small` more of `per` rows each.
+
+## The guards (task T54; all green today)
+
+### `tests/test_guard_review6.py`
+
+Spec 8.1, with steps 3, 6, 8, 9, 10, 11 and 12, 2.2, 2.5 and 5.2. Fourteen
+tests, seventeen cases. **Every one passes against the application as it
+stands and against the reference, and fails on the variant it is named for;**
+none of them fails on any other of the thirteen variants. If one fails
+against the application, the application is wrong.
+
+Eleven are **second tests**. `docs/BACKLOG.md` lists the small faults that one
+test held alone (M1, M5, M6, M8, M10, M11, M12, M17, M21, M23, M28); each now
+has a second one, by another route than the first: another scheme, another
+task, another entry point. Do not write the first test again with other
+numbers: the route is the point, and it is given with each test below. Two
+hold what D72 pinned as the application already has it (M38, M39). One has no
+variant: a date beyond the nanosecond range among ordinary ones, which ended
+the process inside pandas in the reference until this pass.
+
+The file imports the helper files that exist today (`mlp_helpers` as `h`,
+`cp3_helpers` as `c`, `cp4_helpers` as `k`, `cp7_helpers` as `s`) and keeps
+its own small helpers inside itself; it does not import `cp8_helpers`. Every
+call says both things: `**s.SAID`, or the columns. Three helpers of its own
+serve several tests:
+
+- `_lookup(values)`: one seam family, `h.family("lookup", h.Log(),
+  estimator=h.LookupEstimator, values=values)`.
+- `_cli(csv_path, target, out, *more)`: `s.run_cli(["profile", "--data",
+  csv_path, "--target", target, "--out", out, "--profile", "fast",
+  "--n-jobs", "1", *more])`, which adds no flag.
+- `_files(out)`: `h.load_json_strict(out / "profile.json")` and the rows of
+  `predictions.csv` read with `csv.DictReader`.
+
+The whole file takes about 25 seconds: six runs of the command line, and
+about 110 runs through the seam.
+
+- `test_m1_the_final_fit_is_centred_on_its_own_rows` (fails on **M1**). Spec
+  step 8, 2.6. *The first test changes the holdout rows of a random split and
+  asks that no fit's matrix moves. This one is under time order, for a
+  regression, and reads one matrix by hand.* 240 rows, `t = 0.0, 1.0, ...`,
+  from `default_rng(6101)`, drawn in this order: `rising = 0.05·t` plus
+  standard normal noise; `gappy = 0.05·t` plus standard normal noise, then
+  empty where a uniform draw is below 0.15; `y`, standard normal. If the
+  number of filled `gappy` cells among rows 0 to 179 is even, empty the first
+  filled one, so that the median of those cells is the value of one row. Both
+  columns grow with time, so the holdout, the latest rows, holds their largest
+  values. Run with a `c.KeepLog` and `h.family("keep", log,
+  c.MatrixEstimator)`, `time_col="t"`, `group_col=False`,
+  `task="regression"`. Assert: the holdout is rows 180 to 239; the model was
+  fitted six times, no fit was handed a row from 180 on, and exactly one was
+  handed rows 0 to 179; **in every one of the six matrices the column `rising`
+  has mean 0 within 1e-9 and a standard deviation of 1 within 1e-9** (the
+  population or the sample deviation: which of the two is open); in the fit
+  of 180 rows, **every row whose `gappy` cell is empty holds, in the column
+  `gappy`, the value of the one row whose cell is the median of the filled
+  training cells**, within 1e-12; and `n_imputed` of `gappy` is the number of
+  its empty cells. Measured on M1: in the fit of 180 rows `rising` has mean
+  -0.424 and deviation 0.762, and the empty cells hold +0.059 where the median
+  row holds -0.406; the five fold fits are as they should be.
+- `test_m5_a_shuffle_that_ties_counts_where_only_some_of_them_tie` (fails on
+  **M5**). Spec step 12. *The first test makes every shuffle tie, with a
+  constant prediction. This one makes a known share of them tie, and counts
+  it.* 400 rows from `default_rng(6501)`: a target of 200 zeros and 200 ones,
+  shuffled; `x1`, standard normal; predictions of 0.9 on 16 rows and 0.1 on
+  the others (0.9 where the position is a multiple of 25, then shuffled), in
+  a `_lookup` family. With two predicted values the ROC AUC of a shuffle
+  depends only on how many positives fall among the rows predicted 0.9, which
+  has a hypergeometric law, so the share of shuffles whose skill is **at
+  least** the observed one is a sum the test can make exactly. For each
+  `seed` from 0 to 39, with `**s.SAID`: `n_permutations == 200`;
+  `headline.score` equals `h.auc_by_hand` of the predictions within 1e-12;
+  from `result.predictions` take the holdout rows *H*, its positives *P*, the
+  rows predicted 0.9, *A*, and the positives among them, *k*. Twice *P*·*N*
+  times the AUC with *j* positives among the *A* is the whole number
+  `2·j·(N − A + j) + j·(A − j) + (P − j)·(N − A + j)`, with *N* = *H* − *P*;
+  sum `comb(P, j)·comb(N, A − j) ÷ comb(H, A)` over every possible *j* for
+  which that number is at least its value at *k* (use `fractions.Fraction`).
+  Record `p_value − (1 + 200 × that share) ÷ 201`, and the share for which the
+  number equals its value at *k*. Assert that the mean of the second over the
+  40 seeds is above 0.15 (the table makes shuffles tie), and that **the mean
+  of the first is below 0.05 in absolute value**. Measured over the 40 seeds:
+  the reference -0.001 and the application +0.005, one run moving by 0.02 to
+  0.03, so the mean by about 0.005; M5 -0.321; a third of the shuffles tie
+  (0.32 to 0.33). Do not use fewer seeds and do not tighten the 0.05. A
+  holdout that holds none of the 16 rows is allowed for: every shuffle then
+  ties.
+- `test_m6_an_infinite_holdout_prediction_in_a_regression_falls_back` (fails
+  on **M6**). Spec steps 9 and 10, "Numbers that are not finite" rule 4.
+  *The first test is a classification with not-a-number predictions, where
+  ROC AUC stays finite. This one is a regression with infinite ones, where the
+  fault ends in the wrong named error.* `h.reg_frame(n=240, seed=6601)`; from
+  `default_rng(6602)`, `sharp = y + 0.3·noise` and `sound = y + 1.5·noise`.
+  A first run with `sound` alone gives the holdout rows (a regression's split
+  depends on the rows and the seed only), and a run with `sharp` alone its
+  five fold scores. Then `wild` is `sharp` with `+inf` and `-inf` in the
+  first two holdout rows; families `sharp` (values `wild`) then `sound`, with
+  an output folder. Assert: the run finishes; `sharp-0` has status `failed`,
+  an error text, `chosen` false, **the fold scores and the `cv_mean` of the
+  clean run** (within 1e-12, relative) and a lower `cv_mean` than `sound-0`,
+  so it was the first choice; `sound-0` is chosen and is `headline.model`;
+  one `model_failed` warning; the holdout rows are those of the first run;
+  every `y_pred` is finite and equals `sound` there; `headline.score` is the
+  squared error by hand; `k.assert_raw_numbers(result)`; and every `y_pred`
+  written to `predictions.csv` is finite. On M6 the infinite prediction is
+  scored, the score is infinite, and the run stops with `non_finite_score`.
+- `test_m8_the_interval_from_whole_entities_is_the_middle_95_percent` (fails
+  on **M8**). Spec step 12. *The first test averages the row bootstrap of the
+  random scheme. This one averages the bootstrap of whole entities.*
+  `s.sized_entities([3] * 160, seed=6801)`, and predictions of `y` plus
+  standard normal noise from `default_rng(6802)` in a `_lookup` family. For
+  each `seed` from 0 to 59, with `task="regression"`, `time_col=False`,
+  `group_col="who"`: `interval_method == "bootstrap_groups"`,
+  `interval_level == 0.95`, `n_resamples_used == 200`; the squared errors of
+  the holdout rows have `headline.score` as their mean; group them by the
+  entity of each row (read from the frame): at least 30 entities, three rows
+  each. Draw 4,000 resamples of those entities with replacement from a
+  generator of the test's own (`default_rng(6803)`, one generator across the
+  60 runs), the mean of a resample being the sum of its entities' squared
+  errors over three times their number; take the 2.5th and 97.5th percentiles
+  and the standard deviation of the 4,000 means; record `(interval_low − own
+  2.5th) ÷ sd` and `(interval_high − own 97.5th) ÷ sd`. **Assert that the mean
+  of each over the 60 seeds is below 0.22 in absolute value.** Measured over
+  the 60 seeds: the reference +0.019 and -0.074, the application +0.046 and
+  -0.080 (one run moves by 0.18 to 0.20, so the mean by about 0.025); M8
+  +0.290 and -0.383. With 40 entities in the holdout the ends sit a little
+  inside the test's own, on both implementations alike, which is why the
+  allowance is 0.22 and not the 0.18 of the first test. Do not use fewer
+  seeds. About four seconds.
+- `test_m10_the_fast_cap_is_a_sample_whatever_the_order_of_the_file` (fails
+  on **M10**). Spec step 6. *The first test counts, through the seam, the kept
+  rows that lie beyond position 2,000. This one goes through the command
+  line, on a file whose order makes the head of the file useless.* A CSV of
+  3,000 rows written under `tmp_path`: `x1` and `z1` standard normal from
+  `default_rng(6001)`, and a target `y` that is `a` in the first 2,000 rows
+  and `b` in the last 1,000. For `--seed 0` and `--seed 1`, with
+  `--no-time-order --no-entities`: exit code 0; `rows` has `dropped_row_cap`
+  1000, `training` 1500 and `holdout` 500; `task.classes` is `["a", "b"]`;
+  every row of `predictions.csv` at position 2,000 or beyond has `y_true`
+  `b`, and **between 140 and 195 of the 500 holdout rows lie there** (a sample
+  of 2,000 from 3,000 rows holds about 667 of the last 1,000, and a quarter of
+  those are held out; the head of the file holds none). The two seeds hold
+  out different rows. On M10 the 2,000 rows kept hold one class, and the run
+  ends with exit code 3, `fast_profile_too_few_rows`.
+- `test_m11_cv_std_of_two_scored_folds_is_their_sample_deviation` (fails on
+  **M11**). Spec step 9, 5.2. *The first test has five scored folds under the
+  random scheme. This one has two, under time order, where the two deviations
+  differ by the square root of two.* The table `_late_classes(4)`: 400 rows
+  from `default_rng(6111)`, drawn in this order: `t = 0.0, 1.0, ...`; `y`, a
+  whole number 0 or 1 for each row, then set to 0 in the first `50 × (b − 1)`
+  rows, where `b` is the argument, the first block that holds both classes;
+  `x1`, standard normal; predictions `0.3·y` plus a uniform draw on 0 to 0.7,
+  in a `_lookup` family. The holdout is the last 100 timestamps and the
+  training timestamps fall into six blocks of 50, so with `b = 4` folds 1, 2
+  and 3 train on rows that hold one class. With `time_col="t"`,
+  `group_col=False`: the task is classification;
+  `validation.folds[].scored` is false, false, false, true, true;
+  `cv.n_scored_folds == 2`; the one configuration has three null fold scores
+  and two numbers *a* and *b* that differ; `cv_mean` is their mean; **`cv_std`
+  equals `abs(a − b) ÷ sqrt(2)`**, and `statistics.stdev([a, b])`, within 1e-9
+  (relative); `cv.chosen_std` is that `cv_std`. Measured: the two scores are
+  0.836 and 0.963 on both implementations, `cv_std` 0.0895, and on M11 0.0633.
+- `test_m38_one_fold_not_scored_record_for_each_fold_not_scored`, two cases
+  (fails on **M38**). Spec 2.5, step 7 (D72 point 6). The same table: case
+  `three_folds` is `_late_classes(4)`, case `two_folds` is `_late_classes(3)`,
+  in which folds 1 and 2 are not scored. With `time_col="t"`,
+  `group_col=False`: the folds not scored are 1 to 3, or 1 and 2; **the
+  number of `fold_not_scored` warnings equals the number of folds not
+  scored**, and is at least two; each has a null `column`;
+  `cv.n_scored_folds` is 5 less that number. On M38 there is one record in
+  both cases. This is a guard of what D72 pinned: the application already
+  writes one for each fold.
+- `test_m12_tied_predictions_in_a_resample_of_blocks_and_of_entities`, two
+  cases (fails on **M12**, both). Spec steps 11 and 12. *The first test
+  resamples rows. These are the other two bootstraps.* A coin-flip target and
+  an `h.LookupEstimator` predicting 0.5 for every row, from
+  `default_rng(6121)`. Case `blocks`: 240 rows, `t = 0.0, 1.0, ...`, `x1`
+  standard normal, `y` 0 or 1; `time_col="t"`, `group_col=False`; the method
+  is `bootstrap_blocks`. Case `entities`: 480 rows, `who` naming 160 entities
+  of three rows, `x1`, `y` 0 or 1 for each row, the rows shuffled;
+  `time_col=False`, `group_col="who"`; the method is `bootstrap_groups`. In
+  both: `score == 0.5`, `skill == 0.0`, `n_resamples_used == 200`,
+  **`interval_low == interval_high == 0.5` and `skill_low == skill_high ==
+  0.0`, exactly**, and no p-value. Measured on M12: 0.348 to 0.654 under
+  blocks, 0.405 to 0.604 under entities.
+- `test_m17_the_fast_cap_keeps_whole_entities_of_seven_rows` (fails on
+  **M17**). Spec step 6. *The first test reads the kept rows through the seam,
+  with entities of every size from 1 to 11. This one goes through the command
+  line with entities of one size that does not divide the cap.* A CSV of
+  `s.sized_entities([7] * 400, seed=6171)`, 2,800 rows, with
+  `--no-time-order --group-col who`: exit code 0. Whole entities of seven
+  rows under a cap of 2,000 are 285 entities, 1,995 rows, and never 2,000:
+  **`training + holdout == 1995` and `dropped_row_cap == 805`**; the scheme is
+  `grouped`; `n_groups_training + n_groups_holdout == 285`; and every entity
+  named by a row of `predictions.csv` has exactly seven rows there, as many
+  entities as `n_groups_holdout`. On M17 2,000 rows are kept.
+- `test_m21_a_resample_of_whole_entities_has_one_score` (fails on **M21**).
+  Spec step 12. *The first test asks for an interval wider than 0.18, by
+  effect. This one is exact, as the block bootstrap's guard is.* From
+  `default_rng(6211)`: 160 entities of two rows; `y` is a standard normal
+  draw rounded to an eighth, plus 3; `x1` standard normal; the prediction is
+  `y` for the first row of each entity and `y + 1.0` for the second; then the
+  rows are shuffled, the predictions with them. So every squared error is
+  exactly 0 or 1 (assert it), every entity holds one of each, and any resample
+  of whole entities has a squared error of exactly 0.5. With
+  `task="regression"`, `time_col=False`, `group_col="who"`: at least 30
+  entities in the holdout; `interval_method == "bootstrap_groups"` and a null
+  `block_length`; `score == 0.5`; `n_resamples_used == 200`; **`interval_low`
+  and `interval_high` within 1e-12 of 0.5**; no p-value. Measured on M21, five
+  seeds: 0.37 to 0.40 at the lower end and 0.59 to 0.61 at the upper.
+- `test_m23_a_panel_between_the_two_cut_offs_is_warned_about_on_the_command_line`
+  (fails on **M23**). Spec step 11, 4.3, 2.2. *The first test holds the
+  cut-off from just above and just below, through the function. This one sits
+  midway between 0.5 and the abandoned 0.8, goes through the command line with
+  dates as text, and has two to four rows a date.* 80 dates from 2022-01-03,
+  written `YYYY-MM-DD`, holding 2, 3, 4, 2, 3, 4, ... rows (239 rows). From
+  `default_rng(6239)`, in this order: 80 shocks; the level of a date is 0.68
+  times the level before plus its shock, and all levels are then multiplied
+  by 3; `x`, standard normal for each row; the target `sales`, the level of the
+  row's date plus 0.2 times a standard normal draw; then the rows are
+  shuffled. The test
+  works out the training dates itself (the holdout is the latest whole dates
+  that together hold at least a quarter of the rows) and asserts, **as its own
+  precondition, that the lag-1 autocorrelation of the per-date means of the
+  training dates lies between 0.62 and 0.74 by both usual estimators** (those
+  of `test_guard_review5.py`; from this seed both are 0.669, over 59 dates).
+  If your generator gives other values, choose a seed that puts both there:
+  the range is what is pinned. Then the CSV with `--time-col date
+  --no-entities`: exit code 0; the scheme is `time_ordered`,
+  `timestamps_unique` is false and `n_train_timestamps` is the test's own
+  count; exactly one warning has the code `autocorrelated_panel_target`, with
+  the column `sales`; and some line of standard output holds that code and
+  `sales` (the name is one no other word of a message holds).
+  It does not assert which baselines are listed: D73 changes that in pass 8.
+- `test_m28_eight_digit_text_orders_a_panel_and_read_time_reads_it` (fails on
+  **M28**). Spec step 3, 2.7, step 11. *The first test is one series of a
+  string-typed column. This one is a panel with its entities, in an object
+  column, with white space and an empty cell.* Six random walks on 60 days
+  from 2023-11-01, from `default_rng(6281)`: series `s00` to `s05`, each
+  starting ten apart, with `prev` (the level one step before) and `y`; the
+  rows shuffled; `day` written `YYYYMMDD` as text in an `object` column, with
+  a space on each side in every seventh row, and `None` in row 11. With a
+  recording family, `time_col="day"`, `group_col="who"`: the holdout is the
+  rows of the latest whole days that together hold a quarter of the 359 rows
+  with a day, by the test's own count; the scheme is `time_ordered` and
+  `time_form` is `numeric`; `dropped_missing_time == 1`; `train_end`,
+  `holdout_start` and `holdout_end` are the test's own whole numbers, not
+  text; `day` has the role `time`; the baselines are `training_mean` then
+  `previous_value`; `n_holdout_without_previous == 0`. And
+  `stages.read_time(frame["day"])` gives the form `numeric` and `float64`
+  keys: not-a-number at row 11, and elsewhere the number each cell reads as.
+  On M28 the run ends with `time_column_invalid`.
+- `test_one_date_beyond_the_nanosecond_range_among_ordinary_ones_is_the_named_error`,
+  two cases (no variant). Spec step 3, 2.2. A time column of 1,500 ordinary
+  days from 2015-01-01 with `9999-12-31` in row 700, `x` and `y` standard
+  normal. **Each case runs in a process of its own**, so that a build which
+  dies there fails the test and does not end pytest: on a column of this
+  size pandas 3.1.1 does not raise when it turns such a column into
+  nanoseconds, and the process ended with an access violation in the
+  reference until it asked first. Case `iso_text` (`default_rng(6901)`): the
+  CSV through `_cli` with `--time-col date --no-entities`: exit code 3, one
+  line on standard error and it starts with `error: time_column_invalid:`.
+  Case `datetime_in_seconds` (`default_rng(6902)`): `subprocess.run([h.PYTHON,
+  "-c", script, out], cwd=h.REPO_ROOT)` with bytecode off, where the script
+  builds the same table with the column typed `datetime64[s]` (assert the
+  type), calls `profile(..., time_col="date", group_col=False,
+  profile="fast", n_jobs=1, out_dir=out)` and prints `named:` and the code of
+  the `ProfileError`: exit code 0 and `named: time_column_invalid`. In both,
+  nothing is written under the output folder. A table of 400 rows does not
+  show the fault: keep the 1,500.
+- `test_m39_rows_with_a_cell_that_cannot_be_hashed_are_counted_as_repeats`
+  (fails on **M39**). Spec 5.2 (D72 point 6). 200 rows from
+  `default_rng(6391)`: a column `tags` of lists of two whole numbers (the
+  first from 0 to 4, the second from 5 to 8), `x1` and `z1` standard normal,
+  `y` 0 or 1. Add rows 10 to 24 again, each with a new list of the same
+  content, and rows 40 to 44 again with the list turned round, which is
+  another text; shuffle the 220 rows. By hand, with the list compared by its
+  text, 15 rows repeat an earlier row (assert it). With a constant `_lookup`
+  family, `duplicates="keep"` and `**s.SAID`: **`input.duplicate_rows` is
+  15**, there is exactly one `duplicate_rows` warning, and `tags` is excluded
+  as `unsupported_type`. On M39 the count is 0 and there is no warning. This
+  is a guard of what D72 pinned: the application already counts so.
+  `duplicates="keep"` is there because the twenty added rows also agree with
+  another row in both features and the target, which is step 8a's business
+  and not this test's.
+
+## A: a column of dates with values that are no dates (task T55)
+
+### `tests/test_date_sentinels.py`
+
+Spec: 2.4, 2.5, 2.7, steps 3 and 5 (rule 2a), 4.2, 4.3, 11. A column is
+judged through `stages.column_roles` unless a run is needed. `_days(seed,
+form)` is `s.day_numbers(seed=seed)`, 600 rows, three for each of 200 days,
+with `day` as `int64`, as floats or as text of eight digits.
+
+- `test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column`,
+  21 cases. **F14b.** A column of 200 days with: one cell of 99991231; of 0;
+  of 20240230; 99991231 in 5%, 30% and 60% of the rows; one cell each of
+  99991231 and 0; one cell each of the three `OTHERS`; floats with every
+  seventeenth cell empty and one infinite cell; text with one cell `0`; and
+  the eleven columns of `test_date_numbers.py` that hold one value that is no
+  date (18991231, 21010101, 20230229, 19000229, 20231301, 20230100, 20230431,
+  a fraction, an infinite cell, text of nine digits, text of seven). Each:
+  role `excluded`, reason `datetime`, and `n_coerced`, `n_infinite` and
+  `n_imputed` 0.
+- `test_a_sentinel_counts_once_however_many_cells_hold_it`. **M31.** 600
+  rows: twenty days in 60 cells and 99991231 in the other 540: a date column.
+  The same 60 cells of days with 60 distinct values that are no dates in the
+  other 540: a numeric feature.
+- `test_the_rule_from_both_sides`, seven cases, through
+  `e.dates_with(n_dates, e.OTHERS[:n_others])`, whose column holds exactly
+  that many distinct values of each kind. A date column: two dates and
+  nothing else (**green today**); five dates and one other value; five and
+  two; 27 and three. A numeric feature (**green today**): four dates and one
+  other value; four and two; 26 and three.
+- `test_a_few_codes_of_which_some_read_as_dates_are_no_date_column`, nine
+  cases. **Green today.** 300 rows of two, three or five distinct eight-digit
+  codes, of which one to four read as dates (20230115, 20240229, 19991231,
+  20110704) and the others do not (31415926, 20231301, 12345678, 99999999):
+  two codes with one date; three with one and with two; five with one, two,
+  three and four, as `int64`; three with two and five with four as text. Each
+  has the role `feature`.
+- `test_too_many_values_that_are_no_dates_leave_the_column_a_number`.
+  **Green today**; fails on M31. 200 days, with one of the three cells of 23
+  of them, and then of 70, set to a value of its own that is no date
+  (99991231, 99991230, ...): 200 dates beside 23 other values, then beside
+  70, each a numeric feature. This is the stated limit of the rule.
+- `test_the_date_rule_is_judged_on_the_usable_rows`. One cell of 99991231;
+  then 60 other rows lose their target and are each given a value of their
+  own that is no date (30000000 to 30000059). Over the usable rows the column holds at least 190
+  days and one other value: a date column.
+- `test_it_is_excluded_named_and_handed_to_no_step`. 99991231 in 30% of the
+  rows, both statements, a recording family and step: the role, the reason
+  and the three counts as above; exactly one `date_column_undeclared`
+  warning, and it names `day`; the scheme `random`; no step is handed a
+  column `day`.
+- `test_it_is_named_when_nothing_is_said_and_by_the_copies_stop`. 99991231
+  in 30% of the rows and nothing said: `time_order_undeclared`, and the
+  message holds `'day'`. Then `p.noise_frame(300)` with a column `visit_day` of 300 days in
+  which every fourth cell is 99991231, every row twice, both statements:
+  `HoldoutCopiesError`, whose message holds `visit_day` and `time_col`.
+- `test_under_another_time_column_it_is_excluded_without_a_word`.
+  `h.time_frame(200)` with a column `closed` of 200 days in which every third
+  cell is 99991231, shuffled, under `time_col="date"`: `excluded`,
+  `datetime`, and no `date_column_undeclared`.
+- `test_as_the_time_column_a_value_that_is_no_date_stops_the_run`, three
+  cases. **M32.** `day` as `int64`, as floats (with three empty cells) and as
+  text, with 99991231 in 37 cells, under `time_col="day", group_col=False`
+  with an `out_dir`: exactly `TimeColumnError`, the code
+  `time_column_invalid`, the message holds `99991231` and the whole number
+  37, and nothing is written.
+- `test_the_message_names_the_value_that_most_rows_hold`. 99991231 in 37
+  cells and 0 in five: `TimeColumnError`, with `99991231` and 37.
+- `test_the_time_column_is_judged_over_every_value_whatever_its_row`. The 37
+  rows that hold 99991231 have no target: `TimeColumnError` all the same,
+  with `99991231`.
+- `test_read_time_refuses_it_too`, three cases. `stages.read_time` on the
+  column of each of the three forms raises `TimeColumnError` with `99991231`
+  and 37; on the clean column it returns `float64` keys and the form
+  `numeric`.
+- `test_a_time_column_that_is_no_date_column_is_a_number_as_before`. **Green
+  today.** 200 days with 30 cells each set to a value of its own that is no
+  date (30000000 to 30000029), under `time_col="day"`: `time_ordered`,
+  `numeric`, `holdout_end` 30000029, the role `time`. And a column that
+  counts the rows from 0 with one cell of 99991231: it runs, and
+  `holdout_end` is 99991231.
+
+## B: `duplicates="group"` and a column the leak screen removes (task T56)
+
+### `tests/test_group_after_leak.py`
+
+Spec: 2.4, 2.5, steps 7 and 8a, 5.4, 11. `_few_valued_with_status(seed)` is
+`e.with_copy_of_target(s.few_valued(600, (4, 4), seed=seed))`.
+
+- `test_a_copy_of_the_target_under_group_stops_the_run`. **F12b.** That
+  table with `duplicates="group"`, both statements, a recording family and
+  step and an `out_dir`: exactly `HoldoutCopiesError`, the code
+  `holdout_copies_in_training`; the message holds `status`, `group`, `keep`
+  and `s.COPIES_ADVICE`, and a count and a share that agree
+  (`e.holds_count_and_share`); the log holds no event; nothing is written.
+- `test_the_stop_names_a_date_column_that_was_excluded_too`. The table of
+  `_few_valued_with_status(1910)` with a first column `seen on` of 600
+  consecutive days from 2022-01-03 written `YYYY-MM-DD`, `duplicates="group"`
+  and both statements: exactly `HoldoutCopiesError`, and the message holds
+  `status`, `seen on` and `time_col`. Every message of this error names a
+  date column that was excluded because no time column was declared (spec
+  11), the message of this stop included.
+- `test_one_combination_on_both_sides_is_enough`. **M33.**
+  `e.one_row_alike_in_every_entity(24, 20)`, whose own checks are part of the
+  test: no two rows agree in the four measures and `leak`; 24 rows, one in
+  each entity and twelve of each class, agree in the four measures. With
+  `duplicates="group"`, `time_col=False` and `group_col="who"`: exactly
+  `HoldoutCopiesError`; the message holds `leak` and `group`, a whole number
+  from 1 to 9 (each held-out entity gives one such holdout row, and a quarter
+  of 24 entities is never ten), and a count and a share that agree.
+- `test_no_combination_of_the_features_is_on_both_sides_in_a_finished_run`,
+  three cases. **Green today.** `s.few_valued(600, (4, 4))`: `grouped`.
+  `e.with_copy_of_target(p.noise_frame(400))`: `random`, and `status` is
+  excluded as a suspected leak. The same of `p.twice(p.noise_frame(300))`:
+  `grouped`, `status` excluded. Each with `duplicates="group"`, both
+  statements and a recording family: every row was reached, and no tuple of
+  `e.feature_keys` is held by both a holdout row and another row.
+- `test_the_grouped_warning_says_what_group_measures`. **M37.**
+  `s.few_valued(600, (4, 4))` with `duplicates="group"`: exactly one
+  `same_features_grouped` warning, and its message holds `e.GROUP_MEASURES`.
+- `test_under_keep_and_error_nothing_changes`. **Green today.** The table
+  with `status` under `duplicates="keep"`: it runs, `status` is excluded as a
+  suspected leak, the scheme is `random`, `n_rows_same_features` is null and
+  there is exactly one `holdout_copies_kept` warning. Under the default:
+  `HoldoutCopiesError` with `s.COPIES_ADVICE`.
+- `test_the_command_line_stops_too`. The table as a CSV, `--duplicates group`
+  with both flags, through `s.run_cli`: exit 3, one line on standard error
+  starting `error: holdout_copies_in_training: ` that holds `status`, and no
+  file.
+- `test_without_the_leak_the_same_table_runs`. **Green today.** The table of
+  the first test without `status`, `duplicates="group"`: `grouped`,
+  `n_holdout_copies` 0, and the result is strict JSON.
+
+## C: the fast profile's cap and a large entity (task T57)
+
+### `tests/test_fast_cap_groups.py`
+
+Spec: 2.4, steps 6 and 7, 4.2, 7, 11. Errors are compared by exact class.
+Every table is `e.large_entities(...)`: noise, with the large entities named
+`e000`, `e001`. `_entity_stop(frame, **kw)` is `s.raised` with a flat family,
+`time_col=False` and `group_col="who"`. `_assert_too_large(err)`: exactly
+`FastProfileGroupError`, the code, the cap as `2000` or `2,000` and the word
+`full` in the message.
+
+- `test_the_error_is_named`. `errors.FastProfileGroupError` is a subclass of
+  `ProfileError` with the code `fast_profile_group_too_large`; the two older
+  codes of the fast profile are as they were.
+- `test_an_entity_larger_than_the_cap_stops_the_fast_profile`. **F15.** One
+  entity of 2,500 rows and 300 of five (4,000 rows), seeds 0, 1 and 2, with
+  an `out_dir`: `_assert_too_large` each time, and nothing is written.
+- `test_an_entity_of_a_quarter_or_more_that_fits_is_always_kept`. **M35.**
+  One entity of 1,200 rows and 300 of five (2,700 rows), a recording family,
+  seeds 0 to 5: every row of `e000` is among `e.rows_reached`; 2,000 rows are
+  kept, which is `training` plus `holdout`; `dropped_row_cap` is 700.
+- `test_entities_of_a_quarter_or_more_that_do_not_fit_together_stop_the_run`.
+  Two entities of 1,100 rows and 360 of five (4,000 rows), seeds 0 and 1:
+  `_assert_too_large`. Two of 900 and 300 of five (3,300 rows), seeds 0 to 3:
+  the run finishes, every row of both large entities is reached, and 2,000
+  rows are kept.
+- `test_the_cap_itself_is_the_boundary`, two cases, seeds 0 and 1. One entity
+  of 2,000 rows and 300 of five: `fast_profile_too_few_rows` (the entity is
+  kept and fills the cap; one entity cannot be split, and the full profile
+  could). One of 2,001 rows: `fast_profile_group_too_large`. The message
+  holds `full` in both.
+- `test_when_the_full_profile_would_stop_too_its_error_is_raised`. **M34.**
+  **Green today.** One entity of 2,500 rows and three of 300: the full
+  profile stops with `too_few_groups`. One of 2,500 and 300 of five, with one
+  label for each entity and the label 1 for a single entity of five rows: the
+  full profile stops with `too_few_rows`. In both the fast profile raises an
+  error of exactly the class the full profile raises, with the same code.
+- `test_the_cap_keeps_whole_entities_every_large_one_and_no_more_than_it_can`.
+  `s.sized_entities` of one entity of 700 rows and 320 of 1 to 11 rows drawn
+  from seed 2008 (more than 2,500 rows, of which 700 is a quarter or more), a
+  recording family, seeds 0 to 3. Each: at most 2,000 rows are kept, and they
+  are `training` plus `holdout`; `dropped_row_cap` is the rest; the kept rows
+  are whole entities; `e000` is kept; some entity is left out, and the
+  smallest left out would not have fitted. And the holdouts of the four seeds
+  are not all the same.
+- `test_the_full_profile_runs_the_same_table`. **Green today.** The table of
+  2,500 and 300 of five under `profile="full"`: `grouped`, no row left out by
+  a cap, 4,000 rows split.
+- `test_it_is_for_an_entity_column_with_no_time_column_only`. **Green
+  today.** That table with a numeric time column of its own, `time_col="t"`
+  and `group_col="who"`: `time_ordered`, 2,000 rows kept and 2,000 left out.
+  And `s.few_valued(40_000, (4, 4))`, where each combination holds more rows
+  than the cap, under `duplicates="group"` with both statements: 2,000 rows
+  kept, 38,000 left out, `grouped`, sixteen units.
+- `test_the_command_line_exits_three`. The table of 2,500 as a CSV with
+  `--profile fast --group-col who --no-time-order`: exit 3, one line starting
+  `error: fast_profile_group_too_large: `, no file.
+
+## D: the text of the date warning (task T58)
+
+### `tests/test_review6_small.py`
+
+Spec: 2.5, 5.4. Every table holds a date column named `signed up`.
+
+- `test_the_date_warning_holds_the_caveat_of_its_scheme`, three cases.
+  **M36** (its two grouped cases). `random`: `p.noise_frame(300)` with a
+  datetime column, both statements. `grouped_by_an_entity_column`:
+  `g.entity_frame(60, sizes=5)` with the dates as ISO text, `time_col=False`
+  and `group_col="who"`. `grouped_by_rows_that_agree`:
+  `p.twice(p.noise_frame(300))` with the dates as whole numbers `YYYYMMDD`,
+  `duplicates="group"` and both statements. Each: the scheme, and
+  `validation.caveat` equal to the fixed caveat of that scheme; exactly one
+  `date_column_undeclared` warning, on `signed up`; its message holds
+  `'signed up'` as `repr` writes it, `time_col=False` and the run's
+  `validation.caveat`, and does not hold the other scheme's caveat.
+
+The dormant branch of D69 point 6 has no test of its own: nothing can reach
+it. `test_review4_small.py::test_no_part_of_the_output_can_hold_a_number_that_is_not_finite`
+(M18) stays its guard.
+
+## The README (task T59)
+
+### `tests/test_readme_review6.py`
+
+Spec: 1. It judges `README.md`, which the builder owns; do not edit it. It
+imports `test_readme_examples` for the function that reads the README and for
+its pattern of paths under the judge's folders. Pin no wording beyond these.
+
+- `test_the_readme_names_what_the_seventh_pass_added`. The text holds
+  `fast_profile_group_too_large`, `99991231` and `YYYYMMDDHH`, and names no
+  path under `verify/` or `tests/`.
+
+## The judge's other tools (task T60)
+
+### `tests/test_judge_tools.py`
+
+Spec: 8.2. Each test runs one script of `verify/` from the repo root in a new
+process, with the project interpreter (`h.PYTHON`), `-B`, bytecode off in the
+environment and `PYTHONPATH`, `PYTHONSTARTUP` and `PYTHONHOME` removed from
+it, on the package `mlprofessor`, and asserts exit code 0; on any other code
+the assertion shows the last 40 lines of what the script printed. The file
+imports nothing from `verify/`. `verify/mutation_check.py` does not run this
+file: a throwaway project has no `verify/`.
+
+- `test_the_perturbation_battery_holds`: `verify/battery.py mlprofessor`,
+  with a time limit of 1,500 seconds.
+- `test_the_generated_tables_agree_with_the_reference`:
+  `verify/generated_tables.py mlprofessor`, with a time limit of 900 seconds.
+
+Those limits only keep a hung script from holding the suite for ever: the
+loop's own limit for the whole suite, 900 seconds, is the one that binds.
+Measured on 2026-11-22, on a machine doing nothing else: the battery takes
+three to four minutes at its default of 16 runs side by side (193 and 226
+seconds) and the generated tables a little over a minute and a half (97
+seconds); the rest of the suite, with the files of this pass, about six
+minutes. So the whole suite takes about eleven minutes of the loop's
+fifteen. Both tools fail on the application as it stands, and each then says
+which pair or which table, and how to run it again.
+
+## What must fail today, and what must pass today
+
+Checked on 2026-11-22 with prototypes of every test of this section and of
+the one replacement of rule 3, run against the application as it stands,
+against the reference implementation, and against the reference carrying each
+of F12b, F14b, F15, M31 to M39 and the eleven older variants named in rule 6.
+The prototypes were written outside the repo and are not kept in it: they
+are the proof that the recipes work, not text to copy. What they printed is
+in `docs/measurements/CP8/` (its README, section 8).
+
+**Red today.** They fail against the application until the build stage has
+done D69, D70 and D72, and pass against the reference.
+
+| File | Tests |
+|---|---|
+| `test_date_sentinels.py` | all but those on the green list: 37 cases |
+| `test_group_after_leak.py` | `test_a_copy_of_the_target_under_group_stops_the_run`, `test_the_stop_names_a_date_column_that_was_excluded_too`, `test_one_combination_on_both_sides_is_enough`, `test_the_grouped_warning_says_what_group_measures`, `test_the_command_line_stops_too` |
+| `test_fast_cap_groups.py` | all but the three on the green list: 8 cases |
+| `test_review6_small.py` | `test_the_date_warning_holds_the_caveat_of_its_scheme`, all three cases |
+| `test_readme_review6.py` | its one test; red against the reference too, until T59 is built: it judges `README.md` |
+| `test_judge_tools.py` | both tests, until T55 to T57 are built: each tool fails on the application until then. Not run against the reference by the mutation check |
+
+**Green today.** They pass against the application and against the
+reference, and must go on passing through every task of the build.
+
+| File | Test | Fails on |
+|---|---|---|
+| `test_date_sentinels.py` | `test_the_rule_from_both_sides`, four of its seven cases: `two_dates_and_nothing_else`, `four_dates_and_one_other`, `four_dates_and_two_others`, `twenty_six_dates_and_three_others` | M31 (the last three) |
+| `test_date_sentinels.py` | `test_a_few_codes_of_which_some_read_as_dates_are_no_date_column`, nine cases | |
+| `test_date_sentinels.py` | `test_too_many_values_that_are_no_dates_leave_the_column_a_number` | M31 |
+| `test_date_sentinels.py` | `test_a_time_column_that_is_no_date_column_is_a_number_as_before` | M31 |
+| `test_group_after_leak.py` | `test_no_combination_of_the_features_is_on_both_sides_in_a_finished_run` (three cases), `test_under_keep_and_error_nothing_changes`, `test_without_the_leak_the_same_table_runs` | |
+| `test_fast_cap_groups.py` | `test_when_the_full_profile_would_stop_too_its_error_is_raised` | M34 |
+| `test_fast_cap_groups.py` | `test_the_full_profile_runs_the_same_table`, `test_it_is_for_an_entity_column_with_no_time_column_only` | |
+| `test_date_numbers.py` | every test, the loosened one in all fourteen cases | not a guard: it passes before the change and after it |
+| `test_guard_review6.py` | every test: fourteen tests, seventeen cases | each on the variant it is named for, and on no other of M1, M5, M6, M8, M10, M11, M12, M17, M21, M23, M28, M38, M39; the test of a date beyond the nanosecond range on none |
+
+Measured with the prototypes: 96 cases in the seven new test files: 17 in
+`test_guard_review6.py`, 77 in the five files of T55 to T59 (52, 10, 11, 3
+and 1), and 2 in `test_judge_tools.py`. Against the application as it stands,
+of the first 94, 40 pass and 54 fail. Against the reference 93 pass and one
+fails, the README's. With the one replacement in place, all 33 cases of
+`test_date_numbers.py` and all 1,808 other existing cases pass against the
+application as it stands, and all against the reference.
+
+**What the mutation check must then print**, run after your stage and before
+the build: the good reference fails 0 of 1921 (the 1,828 counted today, 17 of
+the guards and 76 of the files of T55 to T58); each of the seventy variants
+fails at least one test, and each of the twelve new ones, and of the eleven
+older ones of rule 6, the test named for it; on the README line, 1 failing of
+14, the test of `test_readme_review6.py`; and a note that
+`tests/test_judge_tools.py` is not run there.
+**Before your stage it ends in `FAIL` for two reasons, both expected:** the
+good reference fails eleven cases, all of
+`test_date_numbers.py::test_values_that_are_no_dates_leave_the_column_what_it_was`
+(the reference has the new rule and the test is not yet loosened); and it
+prints `NOT CAUGHT` for twelve of the seventy variants, F12b, F14b, F15 and
+M31 to M39, which have no test yet. Your stage closes both.
+
+## Not tested in the seventh pass
+
+Everything D73 gives to pass 8 (rule 9). A date with its hour, `YYYYMMDDHH`,
+period labels, day counts and `YYYYMM` as dates: not seen, by decision (D66,
+D69, D71). The wording of any message beyond what spec 11 and 5.4 pin. Which
+of several values that are no dates the time-column stop names beyond the one
+most rows hold. Which of the smaller entities the fast cap keeps, and which
+units a grouped split holds out (rule 8). The branch that would have turned a
+number that is not finite into null (D69 point 6): nothing can reach it, and
+`test_review4_small.py::test_no_part_of_the_output_can_hold_a_number_that_is_not_finite`
+stays its guard. A set of rows that agree, however large, under the fast cap
+with `duplicates="group"` and no entity column, beyond the one case of
+`test_fast_cap_groups.py`. The time the gate takes. What the judge's two
+tools find on a variant of the reference: the lead runs them by hand.

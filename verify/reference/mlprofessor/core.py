@@ -1,7 +1,7 @@
 """Reference implementation of spec.md, in the spec's order of operations.
 
-Judge fixture: the gate measures its bands on this code and breaks it in twenty-one
-named ways; the test suite is proved against those and against thirty smaller
+Judge fixture: the gate measures its bands on this code and breaks it in thirty-one
+named ways; the test suite is proved against those and against thirty-nine smaller
 faults (see _variant.py). One module on purpose, so each step of the
 methodology can be read top to bottom in `_run`.
 """
@@ -117,6 +117,18 @@ LARGE_IS_HOLDOUT = ("The units smaller than a quarter do not together hold a qua
 # D66: a whole number reads as a calendar date written YYYYMMDD when its year is in
 # this range, both ends included, and its month and day exist.
 DATE_NUMBER_YEARS = (1900, 2100)
+# D69: a column of such dates may hold values that are no dates (a sentinel such as
+# 99991231 or 0): for each distinct value that is no date, at least this many
+# distinct values that are.
+DATES_PER_OTHER_VALUE = 9
+# D72: or at least this many distinct dates beside at most that many distinct
+# values that are no dates: a short column of dates with a sentinel or two.
+FEW_DATES, FEW_OTHER_VALUES = 5, 2
+# D69: what `duplicates="group"` measures. A fixed text.
+GROUP_MEASURES = ("With duplicates='group' the headline measures whether a combination of "
+                  "feature values that the model has not seen can be predicted. On a table of "
+                  "few-valued columns that can give negative skill where duplicates='keep' "
+                  "finds signal.")
 RANDOM_CAVEAT = ("Random split: this number is optimistic if the rows are ordered in time "
                  "or one entity appears on many rows.")
 GROUPED_CAVEAT = ("Random split of whole entities: this number is optimistic if the rows are "
@@ -156,6 +168,9 @@ class ProfileResult:
         _require_finite(doc)
         self._doc = doc
         self.headline = dict(doc["headline"])
+        if BROKEN == "F19":
+            self.headline = {k: round(v, 3) if isinstance(v, float) else v
+                             for k, v in self.headline.items()}
         self.rows = pd.DataFrame(doc["rows"], columns=["item", "count"])
         self.columns = pd.DataFrame(doc["columns"], columns=COLUMN_KEYS)
         self.models = pd.DataFrame(doc["models"], columns=MODEL_KEYS)
@@ -255,6 +270,8 @@ def profile(data, target, task="auto", time_col=None, gap=0, profile="full", see
         doc, predictions = _run(data, target, task, time_col, int(gap), profile, int(seed), threads,
                                 duplicates, group_col)
     doc["meta"]["timing"] = {"seconds": round(time.perf_counter() - started, 3)}
+    if BROKEN == "F21":
+        doc["meta"]["finished"] = time.time()
     result = ProfileResult(doc, predictions)
     if out_dir is not None:
         out = Path(out_dir)
@@ -533,12 +550,19 @@ def _exact_integers(series):
 def _to_nanoseconds(series, name):
     """A datetime column as nanosecond stamps, or the time-column error when a
     date lies outside what nanoseconds since 1970 can hold."""
+    beyond = E.TimeColumnError(
+        f"time column {name!r} holds a date outside the range a nanosecond timestamp can "
+        "hold (1677-09-21 to 2262-04-11), so its order cannot be read")
+    # Asked before the conversion, never left to it: on a column of a coarser unit that
+    # holds such a date beside ordinary ones, pandas 3.1.1 does not always raise. On
+    # 1,500 rows with one cell of 9999-12-31 the conversion ended the process with an
+    # access violation (found by the perturbation battery, 2026-11-22).
+    if bool(((series < pd.Timestamp.min) | (series > pd.Timestamp.max)).any()):
+        raise beyond
     try:
         return series.to_numpy("datetime64[ns]")
     except (OverflowError, ValueError) as exc:
-        raise E.TimeColumnError(
-            f"time column {name!r} holds a date outside the range a nanosecond timestamp can "
-            "hold (1677-09-21 to 2262-04-11), so its order cannot be read") from exc
+        raise beyond from exc
 
 
 def _time_keys(series, name, judged=None):
@@ -556,6 +580,7 @@ def _time_keys(series, name, judged=None):
         return stamps.astype("int64"), np.isnat(stamps), "datetime", _show_stamp
     if pt.is_numeric_dtype(dtype) and not pt.is_bool_dtype(dtype) \
             and not pt.is_complex_dtype(dtype):
+        _no_other_value_among_dates(series, name)
         whole = pt.is_integer_dtype(dtype)
         if whole and BROKEN != "F7c":
             # D50, D53: above 2**53 two distinct whole numbers can be one float, so
@@ -574,6 +599,8 @@ def _time_keys(series, name, judged=None):
     present = series.dropna()
     if (pt.is_string_dtype(dtype) or dtype == object) and all(isinstance(v, str) for v in present):
         text = present.str.strip()
+        if BROKEN != "M28":
+            _no_other_value_among_dates(series, name)
         if BROKEN != "M28" and len(text) and text.map(_date_digits).all() \
                 and _calendar_dates(text.astype("int64").to_numpy()):
             # D66: dates written as eight digits are ordered as the numbers they are
@@ -749,24 +776,28 @@ def _whole_number_id(x):
     return int(x.max()) - int(x.min()) + 1 == len(x)
 
 
-def _calendar_dates(values):
-    """Whether every one of `values`, whole numbers in a numpy array, reads as a
-    calendar date written YYYYMMDD: a year from 1900 to 2100, a month from 1 to 12
-    and a day that month has, 29 February only in a leap year (D66)."""
+def _reads_as_date(values):
+    """Which of `values`, whole numbers in a numpy array, read as a calendar date
+    written YYYYMMDD: a year from 1900 to 2100, a month from 1 to 12 and a day that
+    month has, 29 February only in a leap year (D66)."""
     values = np.asarray(values)
-    if len(values) == 0:
-        return False
     low, high = DATE_NUMBER_YEARS[0] * 10000 + 101, DATE_NUMBER_YEARS[1] * 10000 + 1231
-    if int(values.min()) < low or int(values.max()) > high:
-        return False
-    values = values.astype("int64")
-    year, month, day = values // 10000, values // 100 % 100, values % 100
-    if not ((month >= 1) & (month <= 12) & (day >= 1)).all():
-        return False
+    ok = (values >= low) & (values <= high)
+    held = np.where(ok, values, low).astype("int64")
+    year, month, day = held // 10000, held // 100 % 100, held % 100
+    ok = ok & (month >= 1) & (month <= 12) & (day >= 1)
+    month = np.where(ok, month, 1)
     length = np.array([0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31])[month]
     leap = (year % 4 == 0) & ((year % 100 != 0) | (year % 400 == 0))
     length = np.where((month == 2) & leap, 29, length)
-    return bool((day <= length).all())
+    return ok & (day <= length)
+
+
+def _calendar_dates(values):
+    """Whether every one of `values`, whole numbers in a numpy array, reads as a
+    calendar date written YYYYMMDD, and there is at least one (D66)."""
+    values = np.asarray(values)
+    return len(values) > 0 and bool(_reads_as_date(values).all())
 
 
 def _date_digits(text):
@@ -774,36 +805,98 @@ def _date_digits(text):
     return len(text) == 8 and text.isascii() and text.isdigit()
 
 
-def _date_numbers(series, rows):
-    """D66: whether a column holds dates written as whole numbers, YYYYMMDD.
+def _date_values(series, rows):
+    """D66, D69: the distinct values of a column among `rows`, as rule 2a reads them.
 
-    Judged on the cells of `rows` that are not empty: every one is a whole number
-    that reads as a calendar date, and at least two of them differ. The column is
-    of integer type; or of float type with every value whole (an infinite cell is
-    a value, and not a date); or text of eight digits. A boolean column is not.
+    Returns (how many distinct values read as a calendar date written YYYYMMDD, the
+    distinct values that do not as [(value, cells that hold it), ...], the most
+    frequent first, how many cells hold a date), or None when the rule does not
+    look at the column: a boolean,
+    a complex number, mixed objects. In a float column a value with a fractional
+    part and an infinite cell are values, and no dates; in a text column a value
+    is its text without the white space round it, and reads as a date when it is
+    eight digits that form one.
     """
     dtype = series.dtype
+    low, high = DATE_NUMBER_YEARS[0] * 10000 + 101, DATE_NUMBER_YEARS[1] * 10000 + 1231
     if pt.is_bool_dtype(dtype) or pt.is_complex_dtype(dtype):
-        return False
+        return None
     if pt.is_integer_dtype(dtype):
         exact, gone = _exact_integers(series)
-        values = exact[rows & ~gone]
+        distinct, cells = np.unique(exact[rows & ~gone], return_counts=True)
+        dates = _reads_as_date(distinct)
+        shown = [int(v) for v in distinct[~dates]]
     elif pt.is_float_dtype(dtype):
         values = series.to_numpy(dtype="float64", na_value=np.nan)[rows]
-        values = values[~np.isnan(values)]
-        if not np.isfinite(values).all() or not np.all(values == np.floor(values)):
-            return False
+        distinct, cells = np.unique(values[~np.isnan(values)], return_counts=True)
+        with np.errstate(invalid="ignore"):
+            whole = np.isfinite(distinct) & (distinct == np.floor(distinct))
+        dates = whole & (distinct >= low) & (distinct <= high)
+        dates[dates] = _reads_as_date(distinct[dates].astype("int64"))
+        shown = [int(v) if w and abs(v) < 2 ** 53 else float(v)
+                 for v, w in zip(distinct[~dates].tolist(), whole[~dates].tolist())]
     elif pt.is_string_dtype(dtype) or dtype == object:
         present = series[rows].dropna()
         if not all(isinstance(v, str) for v in present):
-            return False
-        stripped = [v.strip() for v in present]
-        if not all(_date_digits(v) for v in stripped):
-            return False
-        values = np.array([int(v) for v in stripped], dtype="int64")
+            return None
+        counted = pd.Series([v.strip() for v in present], dtype=object).value_counts(sort=False)
+        distinct, cells = counted.index.to_numpy(dtype=object), counted.to_numpy()
+        dates = np.array([_date_digits(v) for v in distinct], dtype=bool)
+        if dates.any():
+            dates[dates] = _reads_as_date(np.array([int(v) for v in distinct[dates]],
+                                                   dtype="int64"))
+        shown = list(distinct[~dates])
     else:
-        return False
-    return _calendar_dates(values) and len(np.unique(values)) >= 2
+        return None
+    others = sorted(zip(shown, (int(c) for c in cells[~dates])), key=lambda pair: -pair[1])
+    return int(dates.sum()), others, int(cells[dates].sum())
+
+
+def _date_numbers(series, rows):
+    """D66, D69: whether a column holds dates written as whole numbers, YYYYMMDD.
+    Returns (whether it does, the distinct values that are no dates with their cells).
+
+    Judged on the cells of `rows` that are not empty, by their distinct values: at
+    least two read as calendar dates, and for each one that does not, at least
+    `DATES_PER_OTHER_VALUE` do. So a sentinel counts once, however many cells
+    hold it, and a column of a few codes of which some read as dates is no date
+    column. F14b: every value must read as a date, as built in the sixth pass:
+    one sentinel cell, and the column is a number again.
+    """
+    found = _date_values(series, rows)
+    if found is None:
+        return False, []
+    dates, others, date_cells = found
+    if BROKEN == "F14b":
+        return dates >= 2 and not others, others
+    if BROKEN == "M31":
+        # M31: the cells are counted, not the distinct values: 95% of them must be
+        # dates, so a sentinel in a third of the rows makes the column a number
+        held = sum(cells for _, cells in others)
+        return dates >= 2 and 20 * held <= held + date_cells, others
+    enough = dates >= DATES_PER_OTHER_VALUE * len(others) \
+        or (len(others) <= FEW_OTHER_VALUES and dates >= FEW_DATES)
+    return dates >= 2 and enough, others
+
+
+def _no_other_value_among_dates(series, name):
+    """D69: a time column of dates written YYYYMMDD that also holds a value that is
+    no date stops the run. Such a value has no place in time: it is never ordered
+    as a number, and its rows are never dropped without the caller's say. Judged
+    on every non-missing value of the column."""
+    dates, others = _date_numbers(series, np.ones(len(series), dtype=bool))
+    if not (dates and others) or BROKEN == "M32":   # M32: it is ordered as a number
+        return
+    total = sum(cells for _, cells in others)
+    shown = ", ".join(f"{value!r} in {cells} row{'' if cells == 1 else 's'}"
+                      for value, cells in others[:5])
+    more = "" if len(others) <= 5 else f", and {len(others) - 5} other value(s)"
+    raise E.TimeColumnError(
+        f"time column {name!r} holds dates written as whole numbers (YYYYMMDD), and {total} "
+        f"row{'' if total == 1 else 's'} with a value that is no date: {shown}{more}. Such a "
+        "value has no place in time, so it is not ordered as a number, and its rows are not "
+        "dropped without your say. Replace it with an empty cell, and those rows are dropped "
+        "and counted; or with the date it stands for. Then run again")
 
 
 def _separated(text):
@@ -855,7 +948,7 @@ def _roles(df, usable, target, time_col, loaded=None, group_col=None):
             rec.update(role="excluded", reason="all_missing")
         elif pt.is_datetime64_any_dtype(dtype):
             rec.update(role="excluded", reason="datetime", kind="datetime")
-        elif BROKEN not in ("F14", "M29") and _date_numbers(series, usable):
+        elif BROKEN not in ("F14", "M29") and _date_numbers(series, usable)[0]:
             # D66: dates written as whole numbers are dates, before any rule that would
             # read them as a measure or as an identifier. F14: they are a feature.
             rec.update(role="excluded", reason="datetime", kind="datetime")
@@ -917,7 +1010,7 @@ def _roles(df, usable, target, time_col, loaded=None, group_col=None):
                 rec.update(role="excluded", reason="constant")
             elif _whole_number_id(seen):
                 rec.update(role="excluded", reason="id_like")
-            elif BROKEN == "M29" and _date_numbers(series, usable):
+            elif BROKEN == "M29" and _date_numbers(series, usable)[0]:
                 # M29: the id-like rule is asked first, so one row a day in date order
                 # is an identifier and nothing says that the table holds dates
                 rec.update(role="excluded", reason="datetime", kind="datetime")
@@ -1155,7 +1248,14 @@ def _cap_groups(groups, seed):
     groups = pd.factorize(np.asarray(groups))[0]        # numbered as they first appear
     sizes = np.bincount(groups)
     kept, total = np.zeros(len(sizes), dtype=bool), 0
+    if BROKEN not in ("F15", "M35"):
+        # D72: an entity that holds a quarter or more of the rows is always kept; the
+        # caller has seen to it that those fit. F15, M35: it is left to the draw.
+        for g in np.flatnonzero(4 * sizes >= len(groups)).tolist():
+            kept[g], total = True, total + int(sizes[g])
     for g in np.random.default_rng([seed, 1]).permutation(len(sizes)).tolist():
+        if kept[g]:
+            continue
         if total + sizes[g] <= FAST_ROW_CAP:
             kept[g], total = True, total + int(sizes[g])
     return np.flatnonzero(kept[groups])
@@ -1429,7 +1529,7 @@ def _fit_predict(family, model, x_fit, y_fit, x_new, classification, frames=None
         if proba.ndim != 2 or proba.shape != (len(x_new), 2):
             raise ValueError(f"predict_proba returned shape {proba.shape}; expected "
                              f"({len(x_new)}, 2)")
-        return proba[:, 1].copy()
+        return proba[:, 0 if BROKEN == "F16" else 1].copy()
     values = np.asarray(model.predict(x_new), dtype="float64").reshape(-1)
     if len(values) != len(x_new):
         raise ValueError(f"predict returned {len(values)} values for {len(x_new)} rows")
@@ -1591,6 +1691,9 @@ def _screen_column(values, numeric, y, folds, classification, seed, prev, also_f
     return 1 - own / base if base > 0 else None
 
 
+_CORES = [1]            # F22 only: the cores of the run in hand
+
+
 def _cube_root_up(n):
     """Smallest whole L with L**3 >= n."""
     length = max(1, round(n ** (1 / 3)))
@@ -1623,7 +1726,7 @@ def _uncertainty(y, pred, base_pred, classification, time_groups, n_resamples, s
         mse, base = _mse(y[rows], pred[rows]), _mse(y[rows], base_pred[rows])
         return mse, (1 - mse / base if base > 0 else None)
 
-    rng = np.random.default_rng([seed, 5])
+    rng = np.random.default_rng([seed, 5, _CORES[0]] if BROKEN == "F22" else [seed, 5])
     n = len(y)
     if entity_groups is not None and len(entity_groups[1]) < MIN_BOOT_GROUPS:
         draws = ()
@@ -1726,6 +1829,36 @@ def _plain(value):
 
 # --------------------------------------------------------------------- run --
 
+def _repeated_rows(df):
+    """How many rows exactly repeat an earlier row (`input.duplicate_rows`).
+
+    A cell that cannot be hashed (a list, a dictionary, a set) is compared by its
+    text (D72): pandas raises on such a column, and until D72 the count was then
+    0. M39: it still is.
+    """
+    try:
+        return int(df.duplicated().sum())
+    except (TypeError, ArithmeticError):
+        if BROKEN == "M39":
+            return 0
+
+    def text_of(value):
+        try:
+            hash(value)
+        except TypeError:
+            return repr(value)
+        return value
+
+    held = df.copy()
+    for name in held.columns:
+        if held[name].dtype == object:
+            held[name] = held[name].map(text_of)
+    try:
+        return int(held.duplicated().sum())
+    except (TypeError, ArithmeticError):
+        return int(held.astype(str).duplicated().sum())
+
+
 def _missing_cells(series):
     """Which cells of a column are empty, without asking pandas about a decimal."""
     if series.dtype == object:
@@ -1737,6 +1870,7 @@ def _missing_cells(series):
 def _run(data, target, requested, time_col, gap, profile, seed, n_jobs, duplicates="error",
          group_col=None):
     warnings = []
+    _CORES[0] = n_jobs
     # `time_col=False` is the caller's statement that the rows have no time order,
     # and `group_col=False` that there are no entities (D63). Either way the column
     # is not used: what the caller passed is reported in `input`.
@@ -1750,10 +1884,7 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs, duplicat
         if name is not None and name not in df.columns:
             raise E.ColumnNotFoundError(f"no column named {name!r}")
     n_loaded = len(df)
-    try:
-        duplicate_rows = int(df.duplicated().sum()) if n_loaded else 0
-    except (TypeError, ArithmeticError):            # cells that cannot be hashed or compared
-        duplicate_rows = 0
+    duplicate_rows = _repeated_rows(df) if n_loaded else 0
     if duplicate_rows:
         _warn(warnings, "duplicate_rows",
               f"{duplicate_rows} row(s) are exact copies of an earlier row; they are kept")
@@ -1863,9 +1994,9 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs, duplicat
                   "float), and are treated as missing", rec["name"])
         if rec["reason"] == "datetime" and time_col is None:
             undeclared.append(rec["name"])
-            _warn(warnings, "date_column_undeclared",
-                  f"column {rec['name']!r} holds dates but no time_col was declared, so the "
-                  "rows were split at random; " + RANDOM_CAVEAT, rec["name"])
+            # its text ends with the caveat of the scheme, which step 7 decides (D69)
+            if BROKEN != "F18":
+                _warn(warnings, "date_column_undeclared", "", rec["name"])
     # D58: a column of dates and no word from the caller about time order. The tool
     # does not go ahead under a random split on its own say: on the VIX level that
     # gave skill 0.939, against 0.023 with the time column declared. F7d: it does.
@@ -1911,6 +2042,42 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs, duplicat
         rows = rows[np.argsort(keys_all[rows], kind="stable")]
     capped = 0
     usable_rows = rows                      # every usable row: what the full profile splits
+    if profile == "fast" and len(rows) > FAST_ROW_CAP and time_col is None \
+            and groups_all is not None and BROKEN != "F15":
+        # D70, D72: the cap keeps whole entities. One of more rows than the cap could
+        # only be left out; and one that holds a quarter or more of the usable rows is
+        # never left to the draw: left out, the run would describe another table. So
+        # such entities are always kept (`_cap_groups`), and when they cannot be, the
+        # run stops and sends the caller to the full profile. For entity columns
+        # only: under `duplicates="group"` the sets are formed among the rows the
+        # cap keeps. F15: left to the draw, and only the row count says so.
+        whole = np.unique(groups_all[rows], return_inverse=True)[1]
+        sizes = np.bincount(whole)
+        large = sizes[4 * sizes >= len(rows)]
+        if BROKEN == "M35":                 # M35: only an entity above the cap stops the run
+            large = large[:0]
+        if int(sizes.max()) > FAST_ROW_CAP or int(large.sum()) > FAST_ROW_CAP:
+            y_rows = y_work_all[rows]
+            if BROKEN != "M34":             # M34: the full profile's own error is masked
+                if classification and min(int(y_rows.sum()),
+                                          int(len(y_rows) - y_rows.sum())) < MIN_CLASS_ROWS:
+                    raise E.TooFewRowsError(
+                        f"the rarer class has fewer than {MIN_CLASS_ROWS} usable rows")
+                _split_grouped(whole, y_rows, classification, seed)     # its own error
+            if int(sizes.max()) > FAST_ROW_CAP:
+                found = (f"one entity of the column {group_name!r} holds {int(sizes.max())} of "
+                         f"the {len(rows)} usable rows "
+                         f"({100 * int(sizes.max()) / len(rows):.1f}%), more than the fast "
+                         f"profile's cap of {FAST_ROW_CAP} rows")
+            else:
+                found = (f"{len(large)} entities of the column {group_name!r} each hold a "
+                         f"quarter or more of the {len(rows)} usable rows and together "
+                         f"{int(large.sum())}, more than the fast profile's cap of "
+                         f"{FAST_ROW_CAP} rows")
+            raise E.FastProfileGroupError(
+                f"{found}. The cap keeps whole entities and never leaves out one that holds a "
+                "quarter or more of the rows: the result would describe another table. The "
+                "full profile can split these rows: use profile='full'")
     if profile == "fast" and len(rows) > FAST_ROW_CAP:
         if time_col is not None:
             stamps, counts = np.unique(keys_all[rows], return_counts=True)
@@ -2001,7 +2168,8 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs, duplicat
                       f"{n_same_features} of the {len(rows)} rows agree with another row in "
                       "every feature column. With duplicates='group' the rows that agree are "
                       "kept together: no combination of feature values is on both sides of "
-                      "the split or in two folds")
+                      "the split or in two folds"
+                      + ("" if BROKEN == "M37" else ". " + GROUP_MEASURES))
         if units is not None and BROKEN != "F10":
             try:
                 split = _split_grouped(units, y, classification, seed)
@@ -2039,6 +2207,12 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs, duplicat
                          n_holdout_stamps=len(np.unique(keys[split["holdout"]])),
                          unique=bool(counts.max() == 1))
     train, holdout = split["train"], split["holdout"]
+    for w in warnings:
+        if w["code"] == "date_column_undeclared":
+            w["message"] = (f"column {w['column']!r} holds dates and time_col=False was passed, "
+                            "so the rows were not split by time. "
+                            + (GROUPED_CAVEAT if grouped and BROKEN != "M36"
+                               else RANDOM_CAVEAT))
     if classification:
         if len(np.unique(y[holdout])) < 2 or len(np.unique(y[train])) < 2:
             raise E.OneClassError("the holdout or the training rows hold a single class, so "
@@ -2052,9 +2226,14 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs, duplicat
     unscored = [i + 1 for i, f in enumerate(split["folds"]) if not f["scored"]]
     if len(unscored) == len(split["folds"]):
         raise E.OneClassError("every fold holds a single class in its training or validation rows")
-    if unscored:
+    if unscored and BROKEN == "M38":             # M38: one record for the run
         _warn(warnings, "fold_not_scored",
               f"fold(s) {', '.join(map(str, unscored))} hold a single class and were not scored")
+    elif unscored:
+        for k in unscored:                          # one for each fold not scored (D72)
+            _warn(warnings, "fold_not_scored",
+                  f"fold {k} holds a single class in its training or its validation rows "
+                  "and was not scored")
     used = np.concatenate([train, holdout])
     for name, values in prepared.items():
         # counted over the rows that reach a model. M13: over every loaded row
@@ -2183,6 +2362,37 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs, duplicat
     # one timestamp are on one side of the split. Judged on the features that are
     # left, before any model is fitted, so a run that stops has cost nothing.
     n_copies = copy_share = None
+    leaks = [r["name"] for r in records if r["reason"] == "suspected_leak"]
+    if time_col is None and duplicates == "group" and leaks and BROKEN != "F12b":
+        # D69: the units were formed on the features of step 5. With a column excluded
+        # by the screen, rows that differed only in it agree in every feature that is
+        # left, whatever their targets, and may be on both sides: a held-out
+        # combination then has rows among the training rows after all. F12b: only
+        # the rows that are copies, target and all, are counted, as built.
+        code = _row_keys([values[rows] for values in prepared.values()], None,
+                         np.concatenate([train, holdout]))
+        both = np.isin(code[len(train):], code[:len(train)])
+        # M33: the stop keeps the threshold of the copies rule, 1% and ten rows
+        enough = both.any() if BROKEN != "M33" else \
+            (both.sum() >= COPY_ROWS and both.mean() > COPY_SHARE)
+        if enough:
+            n_both, combos = int(both.sum()), len(np.unique(code[len(train):][both]))
+            # every message of this error names a date column that was excluded because
+            # no time column was declared (spec 11): rows that differ only there agree too
+            dates = [r["name"] for r in records if r["reason"] == "datetime"]
+            raise E.HoldoutCopiesError(
+                f"{n_both} of the {len(holdout)} holdout rows "
+                f"({100 * n_both / len(holdout):.1f}%) agree with a training row in every "
+                f"feature column that is left: {combos} combination(s) of feature values are "
+                "on both sides of the split. duplicates='group' kept together the rows that "
+                "agreed in every feature column before the split, and the leak screen then "
+                "excluded " + ", ".join(repr(n) for n in leaks) + ". Remove the excluded "
+                "column(s) and run again. " + COPIES_ADVICE + (
+                    " Note: the column(s) " + ", ".join(repr(d) for d in dates)
+                    + " hold dates and were excluded because no time column was declared, "
+                    "so rows that differ only in their date agree as well. If the rows are "
+                    "ordered in time, declare time_col: under time order this rule does not "
+                    "apply." if dates else ""))
     if time_col is None:
         n_copies = _holdout_copies([values[rows] for values in prepared.values()], y,
                                    train, holdout)
@@ -2307,7 +2517,7 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs, duplicat
             makers.append((family, params))
     # best mean first; a tie goes to the earlier family, then the earlier grid position
     ranked = sorted((i for i, m in enumerate(models) if m["cv_mean"] is not None),
-                    key=lambda i: (-models[i]["cv_mean"] if classification
+                    key=lambda i: (-models[i]["cv_mean"] if classification or BROKEN == "F17"
                                    else models[i]["cv_mean"], i))
 
     def all_failed():
@@ -2489,7 +2699,7 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs, duplicat
         "models": models if BROKEN != "F6c"
         else [m for m in models if m["family"] == chosen["family"]],
         "warnings": warnings,
-        "limitations": list(LIMITATIONS),
+        "limitations": [] if BROKEN == "F20" else list(LIMITATIONS),
     }
     _require_finite(doc)
     return doc, predictions

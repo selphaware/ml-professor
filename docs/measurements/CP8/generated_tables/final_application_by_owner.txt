@@ -1,0 +1,38 @@
+E:\CODE\ml-professor\mlprofessor against E:\CODE\ml-professor\verify\reference\mlprofessor: 1000 tables from seed 20261122, 96.9 s at 24 workers
+tables by class: {'agrees': 940, 'stated limit': 0, 'open': 21, 'fails': 39, 'harness': 0}
+
+failing tables by owner
+  T55, the date rule (D69 point 1, D72 point 1): 27 table(s): 8, 37, 72, 103, 185, 284, 339, 351, 429, 470, 484, 538, 653, 701, 720, 728, 732, 737, 770, 808, 819, 864, 873, 918, 930, 950, 990
+        21  [property] a column of dates written YYYYMMDD is excluded as a date, also when it holds a value that is no
+        20  [exact] columns[daynum] role, reason, leak rule
+        13  [exact] warnings[date_column_undeclared, daynum] (count)
+         7  [fit] cv.chosen_mean
+         7  [fit] cv.chosen_std
+         7  [fit] models
+         7  [fit] predictions.csv (y_pred)
+         6  [property] a time column of dates written YYYYMMDD with a value that is no date stops the run (step 3; D69
+         6  [outcome] a result on one side, a named error on the other
+         6  [fit] headline.score
+         6  [fit] headline.skill
+         1  [fit] headline.model
+  T56, duplicates='group' after a removed leak (D69 point 2): 5 table(s): 88, 152, 229, 400, 722
+         5  [property] with duplicates='group' no combination of the features that reached the models is on both sides
+  T57, the fast profile's cap with an entity column (D70, D72 point 5): 7 table(s): 301, 312, 330, 338, 740, 741, 795
+         4  [property] an entity of a quarter or more of the usable rows is kept by the fast cap (step 6; D72)
+         3  [property] the fast profile stops when an entity it must keep does not fit under its cap (step 6; D70, D72
+         3  [outcome] a result on one side, a named error on the other
+  NONE OF THE THREE: 0 table(s): 
+
+open: {'forests_under_time_order': 8, 'target_copy_kept': 15} | stated limits: {} | not compared: {'rows': 44, 'two_errors': 1}
+
+what the 1000 tables of seed 20261122 reach
+    17  a YYYYMMDD column with one sentinel cell
+     9  a YYYYMMDD column with a sentinel in a third of the rows
+     4  a YYYYMMDD column with two sentinels
+    11  a YYYYMMDD time column with a value that is no date
+     9  a two-valued copy of the target beside few-valued columns
+     7  the same under duplicates='group'
+   117  an exact copy of the target (any table)
+    56  an entity of a quarter or more of the usable rows (grouped scheme)
+    15  the same, past the fast cap under the fast profile
+     4  an entity of more rows than the fast cap

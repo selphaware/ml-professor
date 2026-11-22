@@ -1,0 +1,25 @@
+package: E:\CODE\ml-professor\mlprofessor
+
+-- D69: duplicates='group' and a column the leak screen removes (noise: the truth is 0)
+copy of the label: None; duplicates=group: ran: scheme grouped, skill +0.046, training 1291, holdout 709, left out by the cap 0, copies 0, warnings ['duplicate_rows', 'no_interval', 'same_features_grouped']
+copy of the label: None; duplicates=keep: ran: scheme random, skill +0.010, training 1500, holdout 500, left out by the cap 0, copies 500, warnings ['duplicate_rows', 'holdout_copies_kept']
+copy of the label: None; duplicates=error: holdout_copies_in_training: 500 of the 500 holdout rows (100.0%) have a copy among the training rows: the same value in every feature column and the same target. A model that recalls a row scores on them, so the headline would be inflated. Pass duplicates='k
+copy of the label: two-valued; duplicates=group: ran: scheme grouped, skill -0.943, training 1459, holdout 541, left out by the cap 0, copies 0, warnings ['duplicate_rows', 'no_interval', 'same_features_grouped', 'suspected_leak']
+copy of the label: two-valued; duplicates=keep: ran: scheme random, skill +0.010, training 1500, holdout 500, left out by the cap 0, copies 500, warnings ['duplicate_rows', 'holdout_copies_kept', 'suspected_leak']
+copy of the label: two-valued; duplicates=error: holdout_copies_in_training: 500 of the 500 holdout rows (100.0%) have a copy among the training rows: the same value in every feature column and the same target. A model that recalls a row scores on them, so the headline would be inflated. Pass duplicates='k
+copy of the label: distinct in every row; duplicates=group: holdout_copies_in_training: 500 of the 500 holdout rows (100.0%) have a copy among the training rows: the same value in every feature column and the same target. A model that recalls a row scores on them, so the headline would be inflated. duplicates='group'
+copy of the label: distinct in every row; duplicates=keep: ran: scheme random, skill +0.010, training 1500, holdout 500, left out by the cap 0, copies 500, warnings ['holdout_copies_kept', 'suspected_leak']
+copy of the label: distinct in every row; duplicates=error: holdout_copies_in_training: 500 of the 500 holdout rows (100.0%) have a copy among the training rows: the same value in every feature column and the same target. A model that recalls a row scores on them, so the headline would be inflated. Pass duplicates='k
+
+-- D70, D72: one entity and 300 of five rows, the fast profile
+an entity of 1200 rows among 2700: ran: scheme grouped, skill +0.029, training 695, holdout 1305, left out by the cap 700, copies 0, warnings ['large_group_is_holdout', 'no_interval']
+an entity of 1500 rows among 3000: ran: scheme grouped, skill +0.057, training 440, holdout 1560, left out by the cap 1000, copies 0, warnings ['large_group_is_holdout', 'no_interval']
+an entity of 2000 rows among 3500: ran: scheme grouped, skill -0.071, training 1125, holdout 375, left out by the cap 2000, copies 0, warnings []
+an entity of 2001 rows among 3501: ran: scheme grouped, skill -0.033, training 1120, holdout 380, left out by the cap 2001, copies 0, warnings []
+an entity of 2500 rows among 4000: ran: scheme grouped, skill -0.132, training 1125, holdout 375, left out by the cap 2500, copies 0, warnings []
+an entity of 6000 rows among 7500: ran: scheme grouped, skill +0.106, training 1125, holdout 375, left out by the cap 6000, copies 0, warnings []
+the 2,500, full profile: ran: scheme grouped, skill -0.004, training 1310, holdout 2690, left out by the cap 0, copies 0, warnings ['large_group_is_holdout']
+2,500 and three small entities (the full profile cannot split either): too_few_groups: The rows split hold 4 entities; a split of whole entities needs at least 6.
+two entities of 1,100 rows among 4000 (each a quarter or more; 2,200 together): ran: scheme grouped, skill -0.023, training 1500, holdout 500, left out by the cap 2000, copies 0, warnings ['large_group_kept_in_training']
+a few-valued table of 40,000 rows (sets of 2,500), duplicates='group', no entity column: ran: scheme grouped, skill +0.016, training 1386, holdout 614, left out by the cap 38000, copies 0, warnings ['duplicate_rows', 'no_interval', 'same_features_grouped']
+an entity of 2,500 rows under a time column (the rule does not apply): ran: scheme time_ordered, skill +0.042, training 1500, holdout 500, left out by the cap 2000, copies None, warnings ['interval_approximate']

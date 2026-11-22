@@ -1,0 +1,137 @@
+70 broken copies; the good reference fails 1 case(s): test_readme_review6.py::test_the_readme_names_what_the_seventh_pass_added
+| Copy | Cases failing on it | Test named for it | Cases of that test failing |
+|---|---|---|---|
+| F1 | 29 | (the gate's; none named) | |
+| F2 | 18 | (the gate's; none named) | |
+| F3 | 24 | (the gate's; none named) | |
+| F4 | 14 | (the gate's; none named) | |
+| F5 | 59 | (the gate's; none named) | |
+| F6 | 150 | (the gate's; none named) | |
+| F6b | 50 | (the gate's; none named) | |
+| F6c | 19 | (the gate's; none named) | |
+| F6d | 6 | (the gate's; none named) | |
+| F7 | 155 | (the gate's; none named) | |
+| F7b | 34 | (the gate's; none named) | |
+| F7c | 12 | (the gate's; none named) | |
+| F7d | 7 | (the gate's; none named) | |
+| F8 | 16 | (the gate's; none named) | |
+| F8b | 6 | (the gate's; none named) | |
+| F9 | 17 | (the gate's; none named) | |
+| F10 | 39 | (the gate's; none named) | |
+| F11 | 26 | (the gate's; none named) | |
+| F12 | 6 | (the gate's; none named) | |
+| F12b | 4 | `test_group_after_leak.py::test_a_copy_of_the_target_under_group_stops_the_run` | 1 |
+| F13 | 11 | (the gate's; none named) | |
+| F14 | 47 | (the gate's; none named) | |
+| F14b | 37 | `test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column` | 21 |
+| F15 | 7 | `test_fast_cap_groups.py::test_an_entity_larger_than_the_cap_stops_the_fast_profile` | 1 |
+| F16 | 14 | (the gate's; none named) | |
+| F17 | 4 | (the gate's; none named) | |
+| F18 | 17 | (the gate's; none named) | |
+| F19 | 27 | (the gate's; none named) | |
+| F20 | 4 | (the gate's; none named) | |
+| F21 | 12 | (the gate's; none named) | |
+| F22 | 1 | (the gate's; none named) | |
+| M1 | 2 | `test_guard_final_fit.py::test_m1_final_fit_statistics_ignore_the_holdout` | 1 |
+|  |  | `test_guard_review6.py::test_m1_the_final_fit_is_centred_on_its_own_rows` | 1 |
+| M2 | 2 | `test_guard_final_fit.py::test_m2_levels_come_from_the_rows_of_each_fit` | 1 |
+| M3 | 2 | `test_guard_leak_screen.py::test_m3_single_column_skill_is_fitted_on_fold_training_rows_only` | 1 |
+|  |  | `test_guard_leak_screen.py::test_m3_missing_by_class_counts_training_rows_only` | 1 |
+| M4 | 3 | `test_guard_uncertainty.py::test_m4_block_bootstrap_draws_whole_blocks` | 1 |
+| M5 | 2 | `test_guard_uncertainty.py::test_m5_ties_count_in_the_p_value` | 1 |
+|  |  | `test_guard_review6.py::test_m5_a_shuffle_that_ties_counts_where_only_some_of_them_tie` | 1 |
+| M6 | 2 | `test_non_finite.py::test_a_prediction_that_is_not_finite_counts_as_raising` | 1 |
+|  |  | `test_guard_review6.py::test_m6_an_infinite_holdout_prediction_in_a_regression_falls_back` | 1 |
+| M7 | 4 | `test_fast_profile_error.py::test_fast_error_stands_when_the_full_profile_would_run` | 2 |
+|  |  | `test_time_pipeline.py::test_wide_panel_under_fast_raises` | 1 |
+| M8 | 2 | `test_guard_review3.py::test_m8_the_interval_is_the_middle_95_percent` | 1 |
+|  |  | `test_guard_review6.py::test_m8_the_interval_from_whole_entities_is_the_middle_95_percent` | 1 |
+| M9 | 8 | `test_guard_review3.py::test_m9_the_leak_screen_uses_the_previous_value` | 1 |
+| M10 | 2 | `test_guard_review3.py::test_m10_the_fast_cap_is_a_sample_from_the_seed` | 1 |
+|  |  | `test_guard_review6.py::test_m10_the_fast_cap_is_a_sample_whatever_the_order_of_the_file` | 1 |
+| M11 | 2 | `test_guard_review3.py::test_m11_cv_std_is_the_sample_deviation` | 1 |
+|  |  | `test_guard_review6.py::test_m11_cv_std_of_two_scored_folds_is_their_sample_deviation` | 1 |
+| M12 | 3 | `test_guard_review3.py::test_m12_tied_predictions_in_a_resample` | 1 |
+|  |  | `test_guard_review6.py::test_m12_tied_predictions_in_a_resample_of_blocks_and_of_entities` | 2 |
+| M13 | 1 | `test_guard_review3.py::test_m13_n_imputed_counts_rows_that_reach_a_model` | 1 |
+| M14 | 4 | `test_read_once.py::` | 4 |
+| M15 | 4 | `test_groups_random.py::test_no_entity_on_both_sides_or_in_two_folds` | 2 |
+| M16 | 7 | `test_groups_time.py::test_the_leak_screen_measures_a_lag_against_the_entity_baseline` | 1 |
+| M17 | 6 | `test_groups_random.py::test_the_fast_cap_keeps_whole_entities` | 1 |
+|  |  | `test_guard_review6.py::test_m17_the_fast_cap_keeps_whole_entities_of_seven_rows` | 1 |
+| M18 | 6 | `test_review4_small.py::test_no_part_of_the_output_can_hold_a_number_that_is_not_finite` | 6 |
+| M19 | 7 | `test_panel_stop.py::test_a_persistent_panel_with_no_entity_column_stops` | 1 |
+|  |  | `test_statements.py::test_nothing_said_about_entities_stops_whatever_the_table_holds` | 3 |
+| M20 | 3 | `test_guard_review4.py::test_m20_infinite_cells_of_the_target_and_the_time_column_are_counted` | 1 |
+| M21 | 2 | `test_groups_random.py::test_the_interval_resamples_whole_entities_and_there_is_no_p_value` | 1 |
+|  |  | `test_guard_review6.py::test_m21_a_resample_of_whole_entities_has_one_score` | 1 |
+| M22 | 17 | `test_duplicates_group.py::test_each_set_of_copies_stays_on_one_side_and_in_one_fold` | 1 |
+| M23 | 2 | `test_guard_review5.py::test_m23_the_panel_warning_starts_just_above_one_half` | 1 |
+|  |  | `test_guard_review6.py::test_m23_a_panel_between_the_two_cut_offs_is_warned_about_on_the_command_line` | 1 |
+| M24 | 2 | `test_statements.py::test_one_message_asks_for_everything_that_is_missing` | 1 |
+| M25 | 3 | `test_duplicates_features.py::test_the_count_is_of_rows_that_agree_in_every_feature` | 1 |
+| M26 | 5 | `test_grouped_holdout.py::test_what_the_holdout_can_spare_goes_back` | 1 |
+| M27 | 3 | `test_grouped_holdout.py::test_a_large_unit_kept_in_training_is_named` | 1 |
+| M28 | 4 | `test_date_numbers.py::test_eight_digit_text_is_accepted_as_the_time_column` | 1 |
+|  |  | `test_guard_review6.py::test_m28_eight_digit_text_orders_a_panel_and_read_time_reads_it` | 1 |
+| M29 | 5 | `test_date_numbers.py::test_the_date_rule_comes_before_the_id_like_rule` | 2 |
+| M30 | 2 | `test_guard_review5.py::test_m30_a_copy_at_step_8a_still_needs_the_same_target` | 1 |
+| M31 | 19 | `test_date_sentinels.py::test_a_sentinel_counts_once_however_many_cells_hold_it` | 1 |
+| M32 | 8 | `test_date_sentinels.py::test_as_the_time_column_a_value_that_is_no_date_stops_the_run` | 3 |
+| M33 | 1 | `test_group_after_leak.py::test_one_combination_on_both_sides_is_enough` | 1 |
+| M34 | 1 | `test_fast_cap_groups.py::test_when_the_full_profile_would_stop_too_its_error_is_raised` | 1 |
+| M35 | 4 | `test_fast_cap_groups.py::test_an_entity_of_a_quarter_or_more_that_fits_is_always_kept` | 1 |
+| M36 | 2 | `test_review6_small.py::test_the_date_warning_holds_the_caveat_of_its_scheme` | 2 |
+| M37 | 1 | `test_group_after_leak.py::test_the_grouped_warning_says_what_group_measures` | 1 |
+| M38 | 2 | `test_guard_review6.py::test_m38_one_fold_not_scored_record_for_each_fold_not_scored` | 2 |
+| M39 | 1 | `test_guard_review6.py::test_m39_rows_with_a_cell_that_cannot_be_hashed_are_counted_as_repeats` | 1 |
+
+Cases of the new test files that fail on each copy:
+  F1: test_guard_review6.py::test_m1_the_final_fit_is_centred_on_its_own_rows
+  F2: test_group_after_leak.py::test_a_copy_of_the_target_under_group_stops_the_run, test_group_after_leak.py::test_no_combination_of_the_features_is_on_both_sides_in_a_finished_run[a_leak_beside_measures], test_group_after_leak.py::test_no_combination_of_the_features_is_on_both_sides_in_a_finished_run[twins_and_a_leak], test_group_after_leak.py::test_one_combination_on_both_sides_is_enough, test_group_after_leak.py::test_the_command_line_stops_too, test_group_after_leak.py::test_the_stop_names_a_date_column_that_was_excluded_too, test_group_after_leak.py::test_under_keep_and_error_nothing_changes
+  F3: test_guard_review6.py::test_m5_a_shuffle_that_ties_counts_where_only_some_of_them_tie, test_guard_review6.py::test_m6_an_infinite_holdout_prediction_in_a_regression_falls_back, test_guard_review6.py::test_m8_the_interval_from_whole_entities_is_the_middle_95_percent
+  F4: test_guard_review6.py::test_m12_tied_predictions_in_a_resample_of_blocks_and_of_entities[blocks], test_guard_review6.py::test_m12_tied_predictions_in_a_resample_of_blocks_and_of_entities[entities]
+  F5: test_fast_cap_groups.py::test_when_the_full_profile_would_stop_too_its_error_is_raised, test_guard_review6.py::test_m11_cv_std_of_two_scored_folds_is_their_sample_deviation, test_guard_review6.py::test_m12_tied_predictions_in_a_resample_of_blocks_and_of_entities[blocks], test_guard_review6.py::test_m12_tied_predictions_in_a_resample_of_blocks_and_of_entities[entities], test_guard_review6.py::test_m38_one_fold_not_scored_record_for_each_fold_not_scored[three_folds], test_guard_review6.py::test_m38_one_fold_not_scored_record_for_each_fold_not_scored[two_folds], test_guard_review6.py::test_m5_a_shuffle_that_ties_counts_where_only_some_of_them_tie
+  F6: test_date_sentinels.py::test_the_time_column_is_judged_over_every_value_whatever_its_row, test_guard_review6.py::test_m1_the_final_fit_is_centred_on_its_own_rows, test_guard_review6.py::test_m28_eight_digit_text_orders_a_panel_and_read_time_reads_it
+  F6c: test_guard_review6.py::test_m6_an_infinite_holdout_prediction_in_a_regression_falls_back
+  F7: test_date_sentinels.py::test_a_time_column_that_is_no_date_column_is_a_number_as_before, test_date_sentinels.py::test_under_another_time_column_it_is_excluded_without_a_word, test_guard_review6.py::test_m11_cv_std_of_two_scored_folds_is_their_sample_deviation, test_guard_review6.py::test_m1_the_final_fit_is_centred_on_its_own_rows, test_guard_review6.py::test_m23_a_panel_between_the_two_cut_offs_is_warned_about_on_the_command_line, test_guard_review6.py::test_m28_eight_digit_text_orders_a_panel_and_read_time_reads_it, test_guard_review6.py::test_m38_one_fold_not_scored_record_for_each_fold_not_scored[three_folds], test_guard_review6.py::test_m38_one_fold_not_scored_record_for_each_fold_not_scored[two_folds]
+  F7d: test_date_sentinels.py::test_it_is_named_when_nothing_is_said_and_by_the_copies_stop
+  F8b: test_guard_review6.py::test_m28_eight_digit_text_orders_a_panel_and_read_time_reads_it
+  F9: test_date_sentinels.py::test_it_is_named_when_nothing_is_said_and_by_the_copies_stop, test_group_after_leak.py::test_under_keep_and_error_nothing_changes
+  F10: test_fast_cap_groups.py::test_it_is_for_an_entity_column_with_no_time_column_only, test_fast_cap_groups.py::test_the_cap_itself_is_the_boundary[exactly_the_cap], test_fast_cap_groups.py::test_when_the_full_profile_would_stop_too_its_error_is_raised, test_group_after_leak.py::test_no_combination_of_the_features_is_on_both_sides_in_a_finished_run[few_valued], test_group_after_leak.py::test_no_combination_of_the_features_is_on_both_sides_in_a_finished_run[twins_and_a_leak], test_group_after_leak.py::test_the_grouped_warning_says_what_group_measures, test_group_after_leak.py::test_without_the_leak_the_same_table_runs, test_guard_review6.py::test_m17_the_fast_cap_keeps_whole_entities_of_seven_rows, test_guard_review6.py::test_m21_a_resample_of_whole_entities_has_one_score, test_guard_review6.py::test_m8_the_interval_from_whole_entities_is_the_middle_95_percent, test_review6_small.py::test_the_date_warning_holds_the_caveat_of_its_scheme[grouped_by_rows_that_agree]
+  F11: test_date_sentinels.py::test_it_is_named_when_nothing_is_said_and_by_the_copies_stop
+  F12: test_fast_cap_groups.py::test_it_is_for_an_entity_column_with_no_time_column_only, test_group_after_leak.py::test_no_combination_of_the_features_is_on_both_sides_in_a_finished_run[few_valued]
+  F12b: test_group_after_leak.py::test_a_copy_of_the_target_under_group_stops_the_run, test_group_after_leak.py::test_one_combination_on_both_sides_is_enough, test_group_after_leak.py::test_the_command_line_stops_too, test_group_after_leak.py::test_the_stop_names_a_date_column_that_was_excluded_too
+  F14: test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column[29_feb_1900], test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column[29_feb_2023], test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column[31_april], test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column[a_fraction], test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column[after_2100], test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column[an_infinite_cell], test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column[before_1900], test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column[day_0], test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column[five_percent], test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column[float_with_gaps_and_an_infinite_cell], test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column[month_13], test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column[nine_digit_text], test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column[one_cell_0], test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column[one_cell_20240230], test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column[one_cell_99991231], test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column[seven_digit_text], test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column[sixty_percent], test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column[text_with_0], test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column[thirty_percent], test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column[three_sentinels], test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column[two_sentinels], test_date_sentinels.py::test_a_sentinel_counts_once_however_many_cells_hold_it, test_date_sentinels.py::test_it_is_excluded_named_and_handed_to_no_step, test_date_sentinels.py::test_it_is_named_when_nothing_is_said_and_by_the_copies_stop, test_date_sentinels.py::test_the_date_rule_is_judged_on_the_usable_rows, test_date_sentinels.py::test_the_rule_from_both_sides[five_dates_and_one_other], test_date_sentinels.py::test_the_rule_from_both_sides[five_dates_and_two_others], test_date_sentinels.py::test_the_rule_from_both_sides[twenty_seven_dates_and_three_others], test_date_sentinels.py::test_the_rule_from_both_sides[two_dates_and_nothing_else], test_date_sentinels.py::test_under_another_time_column_it_is_excluded_without_a_word, test_review6_small.py::test_the_date_warning_holds_the_caveat_of_its_scheme[grouped_by_rows_that_agree]
+  F14b: test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column[29_feb_1900], test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column[29_feb_2023], test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column[31_april], test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column[a_fraction], test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column[after_2100], test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column[an_infinite_cell], test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column[before_1900], test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column[day_0], test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column[five_percent], test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column[float_with_gaps_and_an_infinite_cell], test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column[month_13], test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column[nine_digit_text], test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column[one_cell_0], test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column[one_cell_20240230], test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column[one_cell_99991231], test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column[seven_digit_text], test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column[sixty_percent], test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column[text_with_0], test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column[thirty_percent], test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column[three_sentinels], test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column[two_sentinels], test_date_sentinels.py::test_a_sentinel_counts_once_however_many_cells_hold_it, test_date_sentinels.py::test_as_the_time_column_a_value_that_is_no_date_stops_the_run[float], test_date_sentinels.py::test_as_the_time_column_a_value_that_is_no_date_stops_the_run[int64], test_date_sentinels.py::test_as_the_time_column_a_value_that_is_no_date_stops_the_run[text], test_date_sentinels.py::test_it_is_excluded_named_and_handed_to_no_step, test_date_sentinels.py::test_it_is_named_when_nothing_is_said_and_by_the_copies_stop, test_date_sentinels.py::test_read_time_refuses_it_too[float], test_date_sentinels.py::test_read_time_refuses_it_too[int64], test_date_sentinels.py::test_read_time_refuses_it_too[text], test_date_sentinels.py::test_the_date_rule_is_judged_on_the_usable_rows, test_date_sentinels.py::test_the_message_names_the_value_that_most_rows_hold, test_date_sentinels.py::test_the_rule_from_both_sides[five_dates_and_one_other], test_date_sentinels.py::test_the_rule_from_both_sides[five_dates_and_two_others], test_date_sentinels.py::test_the_rule_from_both_sides[twenty_seven_dates_and_three_others], test_date_sentinels.py::test_the_time_column_is_judged_over_every_value_whatever_its_row, test_date_sentinels.py::test_under_another_time_column_it_is_excluded_without_a_word
+  F15: test_fast_cap_groups.py::test_an_entity_larger_than_the_cap_stops_the_fast_profile, test_fast_cap_groups.py::test_an_entity_of_a_quarter_or_more_that_fits_is_always_kept, test_fast_cap_groups.py::test_entities_of_a_quarter_or_more_that_do_not_fit_together_stop_the_run, test_fast_cap_groups.py::test_the_cap_itself_is_the_boundary[exactly_the_cap], test_fast_cap_groups.py::test_the_cap_itself_is_the_boundary[one_row_more], test_fast_cap_groups.py::test_the_cap_keeps_whole_entities_every_large_one_and_no_more_than_it_can, test_fast_cap_groups.py::test_the_command_line_exits_three
+  F16: test_guard_review6.py::test_m5_a_shuffle_that_ties_counts_where_only_some_of_them_tie
+  F17: test_guard_review6.py::test_m6_an_infinite_holdout_prediction_in_a_regression_falls_back
+  F18: test_date_sentinels.py::test_it_is_excluded_named_and_handed_to_no_step, test_review6_small.py::test_the_date_warning_holds_the_caveat_of_its_scheme[grouped_by_an_entity_column], test_review6_small.py::test_the_date_warning_holds_the_caveat_of_its_scheme[grouped_by_rows_that_agree], test_review6_small.py::test_the_date_warning_holds_the_caveat_of_its_scheme[random]
+  F19: test_guard_review6.py::test_m6_an_infinite_holdout_prediction_in_a_regression_falls_back, test_guard_review6.py::test_m8_the_interval_from_whole_entities_is_the_middle_95_percent
+  M1: test_guard_review6.py::test_m1_the_final_fit_is_centred_on_its_own_rows
+  M5: test_guard_review6.py::test_m5_a_shuffle_that_ties_counts_where_only_some_of_them_tie
+  M6: test_guard_review6.py::test_m6_an_infinite_holdout_prediction_in_a_regression_falls_back
+  M8: test_guard_review6.py::test_m8_the_interval_from_whole_entities_is_the_middle_95_percent
+  M9: test_guard_review6.py::test_m28_eight_digit_text_orders_a_panel_and_read_time_reads_it
+  M10: test_guard_review6.py::test_m10_the_fast_cap_is_a_sample_whatever_the_order_of_the_file
+  M11: test_guard_review6.py::test_m11_cv_std_of_two_scored_folds_is_their_sample_deviation
+  M12: test_guard_review6.py::test_m12_tied_predictions_in_a_resample_of_blocks_and_of_entities[blocks], test_guard_review6.py::test_m12_tied_predictions_in_a_resample_of_blocks_and_of_entities[entities]
+  M16: test_guard_review6.py::test_m28_eight_digit_text_orders_a_panel_and_read_time_reads_it
+  M17: test_fast_cap_groups.py::test_an_entity_of_a_quarter_or_more_that_fits_is_always_kept, test_fast_cap_groups.py::test_entities_of_a_quarter_or_more_that_do_not_fit_together_stop_the_run, test_fast_cap_groups.py::test_the_cap_itself_is_the_boundary[exactly_the_cap], test_fast_cap_groups.py::test_the_cap_keeps_whole_entities_every_large_one_and_no_more_than_it_can, test_guard_review6.py::test_m17_the_fast_cap_keeps_whole_entities_of_seven_rows
+  M21: test_guard_review6.py::test_m21_a_resample_of_whole_entities_has_one_score
+  M22: test_fast_cap_groups.py::test_it_is_for_an_entity_column_with_no_time_column_only, test_group_after_leak.py::test_no_combination_of_the_features_is_on_both_sides_in_a_finished_run[few_valued], test_group_after_leak.py::test_no_combination_of_the_features_is_on_both_sides_in_a_finished_run[twins_and_a_leak], test_group_after_leak.py::test_the_grouped_warning_says_what_group_measures, test_group_after_leak.py::test_without_the_leak_the_same_table_runs, test_review6_small.py::test_the_date_warning_holds_the_caveat_of_its_scheme[grouped_by_rows_that_agree]
+  M23: test_guard_review6.py::test_m23_a_panel_between_the_two_cut_offs_is_warned_about_on_the_command_line
+  M26: test_fast_cap_groups.py::test_entities_of_a_quarter_or_more_that_do_not_fit_together_stop_the_run
+  M28: test_date_sentinels.py::test_as_the_time_column_a_value_that_is_no_date_stops_the_run[text], test_date_sentinels.py::test_read_time_refuses_it_too[text], test_guard_review6.py::test_m28_eight_digit_text_orders_a_panel_and_read_time_reads_it
+  M29: test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column[an_infinite_cell], test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column[float_with_gaps_and_an_infinite_cell], test_review6_small.py::test_the_date_warning_holds_the_caveat_of_its_scheme[grouped_by_rows_that_agree]
+  M31: test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column[sixty_percent], test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column[thirty_percent], test_date_sentinels.py::test_a_sentinel_counts_once_however_many_cells_hold_it, test_date_sentinels.py::test_a_time_column_that_is_no_date_column_is_a_number_as_before, test_date_sentinels.py::test_as_the_time_column_a_value_that_is_no_date_stops_the_run[float], test_date_sentinels.py::test_as_the_time_column_a_value_that_is_no_date_stops_the_run[int64], test_date_sentinels.py::test_as_the_time_column_a_value_that_is_no_date_stops_the_run[text], test_date_sentinels.py::test_it_is_excluded_named_and_handed_to_no_step, test_date_sentinels.py::test_it_is_named_when_nothing_is_said_and_by_the_copies_stop, test_date_sentinels.py::test_read_time_refuses_it_too[float], test_date_sentinels.py::test_read_time_refuses_it_too[int64], test_date_sentinels.py::test_read_time_refuses_it_too[text], test_date_sentinels.py::test_the_message_names_the_value_that_most_rows_hold, test_date_sentinels.py::test_the_rule_from_both_sides[four_dates_and_one_other], test_date_sentinels.py::test_the_rule_from_both_sides[four_dates_and_two_others], test_date_sentinels.py::test_the_rule_from_both_sides[twenty_six_dates_and_three_others], test_date_sentinels.py::test_the_time_column_is_judged_over_every_value_whatever_its_row, test_date_sentinels.py::test_too_many_values_that_are_no_dates_leave_the_column_a_number, test_date_sentinels.py::test_under_another_time_column_it_is_excluded_without_a_word
+  M32: test_date_sentinels.py::test_as_the_time_column_a_value_that_is_no_date_stops_the_run[float], test_date_sentinels.py::test_as_the_time_column_a_value_that_is_no_date_stops_the_run[int64], test_date_sentinels.py::test_as_the_time_column_a_value_that_is_no_date_stops_the_run[text], test_date_sentinels.py::test_read_time_refuses_it_too[float], test_date_sentinels.py::test_read_time_refuses_it_too[int64], test_date_sentinels.py::test_read_time_refuses_it_too[text], test_date_sentinels.py::test_the_message_names_the_value_that_most_rows_hold, test_date_sentinels.py::test_the_time_column_is_judged_over_every_value_whatever_its_row
+  M33: test_group_after_leak.py::test_one_combination_on_both_sides_is_enough
+  M34: test_fast_cap_groups.py::test_when_the_full_profile_would_stop_too_its_error_is_raised
+  M35: test_fast_cap_groups.py::test_an_entity_of_a_quarter_or_more_that_fits_is_always_kept, test_fast_cap_groups.py::test_entities_of_a_quarter_or_more_that_do_not_fit_together_stop_the_run, test_fast_cap_groups.py::test_the_cap_itself_is_the_boundary[exactly_the_cap], test_fast_cap_groups.py::test_the_cap_keeps_whole_entities_every_large_one_and_no_more_than_it_can
+  M36: test_review6_small.py::test_the_date_warning_holds_the_caveat_of_its_scheme[grouped_by_an_entity_column], test_review6_small.py::test_the_date_warning_holds_the_caveat_of_its_scheme[grouped_by_rows_that_agree]
+  M37: test_group_after_leak.py::test_the_grouped_warning_says_what_group_measures
+  M38: test_guard_review6.py::test_m38_one_fold_not_scored_record_for_each_fold_not_scored[three_folds], test_guard_review6.py::test_m38_one_fold_not_scored_record_for_each_fold_not_scored[two_folds]
+  M39: test_guard_review6.py::test_m39_rows_with_a_cell_that_cannot_be_hashed_are_counted_as_repeats
+NAMED TESTS: PASS (every broken copy fails each test named for it)

@@ -1,11 +1,11 @@
 """Does the test suite catch what it is there to catch? (D39)
 
 The gate's self-test proves the gate against the reference implementation
-broken in twenty-one ways (F1 to F14, and the other forms F6b, F6c, F6d, F7b,
-F7c, F7d and F8b: D46, D49, D50, D57, D58, D62 to D66). This script proves the
-test suite the same way, against those twenty-one and against thirty
-smaller faults no gate check is relied on to catch (M1 to M30;
-verify/reference/mlprofessor/_variant.py lists them all).
+broken in thirty-one ways (F1 to F22, and the other forms F6b, F6c, F6d, F7b,
+F7c, F7d, F8b, F12b and F14b: D46, D49, D50, D57, D58, D62 to D66, D69 to
+D72). This script proves the test suite the same way, against those thirty-one
+and against thirty-nine smaller faults no gate check is relied on to catch (M1
+to M39; verify/reference/mlprofessor/_variant.py lists them all).
 
 For the known-good reference and for each variant it builds a throwaway
 project outside the repo and runs the whole suite there:
@@ -31,7 +31,7 @@ Exit codes
     1  otherwise: a variant no test catches, or a test the good reference fails
     3  HARNESS ERROR: a project could not be built or its suite could not run
 
-Three things to know.
+Four things to know.
 
 - The suite must judge the copy, not the application. tests/conftest.py puts
   the folder above tests/ first on the import path, and at the repo root that
@@ -46,6 +46,12 @@ Three things to know.
 - A data file the README names is copied from the repo. One under
   verify/artifacts/data/ is written by the gate's own generator instead,
   because that folder exists only after the gate has run.
+- tests/test_judge_tools.py is not run here (D72). Its tests run the judge's
+  two other tools, verify/battery.py and verify/generated_tables.py, on the
+  package beside them: they need verify/, which a throwaway project does not
+  have, and they judge the application against the reference, not a variant
+  of the reference. To see what those tools make of a variant, run each on a
+  copy of it by hand.
 
 Run it one at a time. It writes nothing inside the repo. Standard library only.
 """
@@ -71,8 +77,11 @@ GATE_FILE = HERE / "smoke_test.py"
 GATE_DATA = "verify/artifacts/data/"
 CASES = (["good"] + [f"F{i}" for i in range(1, 10)] + ["F6b", "F6c", "F6d", "F7b", "F7c"]
          + ["F10", "F7d", "F8b"] + [f"F{i}" for i in range(11, 15)]
-         + [f"M{i}" for i in range(1, 31)])
+         + ["F12b", "F14b"] + [f"F{i}" for i in range(15, 23)]
+         + [f"M{i}" for i in range(1, 40)])
 PROBE = "test_mutation_check_probe.py"
+# Run by the loop against the application, never against a variant (see the docstring).
+NOT_RUN_HERE = "tests/test_judge_tools.py"
 README_TESTS = re.compile(r"^test_readme\w*\.py::")
 RUN_SECONDS = 1800
 EXIT_OK, EXIT_FAIL, EXIT_HARNESS = 0, 1, 3
@@ -177,7 +186,7 @@ def run_suite(project, case):
     env.update(PYTHONDONTWRITEBYTECODE="1", PYTHONIOENCODING="utf-8")
     cmd = [sys.executable, "-m", "pytest", "-c", "tests/pytest.ini", "--rootdir", ".",
            "--confcutdir", "tests", "-p", "no:cacheprovider", "-q", "--junitxml", str(report),
-           "tests"]
+           "--ignore", NOT_RUN_HERE, "tests"]
     try:
         proc = subprocess.run(cmd, cwd=str(project), env=env, capture_output=True, text=True,
                               encoding="utf-8", errors="replace", timeout=RUN_SECONDS)
@@ -269,6 +278,11 @@ def main(argv=None):
             shutil.rmtree(root, ignore_errors=True)
     for note in sorted(notes):
         print(f"  note: {note}")
+    if (REPO / NOT_RUN_HERE).is_file() or (args.overlay is not None
+                                           and (Path(args.overlay) / Path(NOT_RUN_HERE).name)
+                                           .is_file()):
+        print(f"  note: {NOT_RUN_HERE} is not run here: it runs the judge's other tools on "
+              "the application")
     if problems:
         for problem in problems:
             print(f"HARNESS ERROR - this says nothing about the suite: {problem}")

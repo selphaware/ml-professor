@@ -1,0 +1,131 @@
+FAIL signal_reg:number_sentinel_-999 [band]
+     band:signal_reg: skill is 0.6637, expected between 0.76 and 0.93 (the band of `signal_reg`)
+     seen: rc=0, error=None, skill=0.6637, scheme=random, baseline=training_mean, model=tree-0, holdout=375, copies=0, roles={}
+FAIL signal_reg:number_sentinel_999999 [band]
+     band:signal_reg: skill is 0.6666, expected between 0.76 and 0.93 (the band of `signal_reg`)
+     seen: rc=0, error=None, skill=0.6666, scheme=random, baseline=training_mean, model=tree-0, holdout=375, copies=0, roles={}
+FAIL signal_reg:target_sentinel_-999 [band]
+     band:signal_reg: skill is 0.2088, expected between 0.76 and 0.93 (the band of `signal_reg`)
+     seen: rc=0, error=None, skill=0.2088, scheme=random, baseline=training_mean, model=linear-0, holdout=375, copies=0, roles={}
+FAIL noise_reg:number_sentinel_-999 [band]
+     band:noise_reg: skill is -0.8868, expected between -0.65 and -0.05 (the band of `noise_reg`)
+     seen: rc=0, error=None, skill=-0.8868, scheme=random, baseline=training_mean, model=linear-0, holdout=375, copies=0, roles={}
+FAIL noise_reg:number_sentinel_999999 [band]
+     band:noise_reg: skill is -519958.7984, expected between -0.65 and -0.05 (the band of `noise_reg`)
+     seen: rc=0, error=None, skill=-519958.7984, scheme=random, baseline=training_mean, model=linear-0, holdout=375, copies=0, roles={}
+FAIL noise_reg:target_sentinel_-999 [band]
+     band:noise_reg: skill is -0.0006, expected between -0.65 and -0.05 (the band of `noise_reg`)
+     seen: rc=0, error=None, skill=-0.0006, scheme=random, baseline=training_mean, model=linear-0, holdout=375, copies=0, roles={}
+FAIL leak_reg:number_sentinel_-999 [band]
+     band:signal_reg: skill is -1568.7789, expected between 0.76 and 0.93 (the band of `signal_reg`)
+     seen: rc=0, error=None, skill=-1568.7789, scheme=random, baseline=training_mean, model=linear-0, holdout=375, copies=0, roles={}
+FAIL leak_reg:number_sentinel_999999 [band]
+     band:signal_reg: skill is 0.6114, expected between 0.76 and 0.93 (the band of `signal_reg`)
+     seen: rc=0, error=None, skill=0.6114, scheme=random, baseline=training_mean, model=tree-0, holdout=375, copies=0, roles={}
+FAIL leak_reg:target_sentinel_-999 [band]
+     band:signal_reg: skill is 0.4709, expected between 0.76 and 0.93 (the band of `signal_reg`)
+     leak_reg_roles: `amount_scaled` has role 'feature', reason None; expected 'excluded', 'suspected_leak'
+     seen: rc=0, error=None, skill=0.4709, scheme=random, baseline=training_mean, model=linear-0, holdout=375, copies=0, roles={}
+FAIL messy:number_sentinel_-999 [band]
+     band:messy: skill is 0.465, expected between 0.55 and 0.91 (the band of `messy`)
+     seen: rc=0, error=None, skill=0.465, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, roles={'record_id': 'excluded/id_like'}
+FAIL messy:rows_shuffled [band]
+     messy_roles: `record_id` has role 'feature', reason None; expected 'excluded', 'id_like'
+     seen: rc=0, error=None, skill=0.7021, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, roles={'record_id': 'feature/None'}
+FAIL messy:row_repeated [band]
+     messy_roles: `record_id` has role 'feature', reason None; expected 'excluded', 'id_like'
+     seen: rc=0, error=None, skill=0.7256, scheme=random, baseline=chance, model=linear-0, holdout=376, copies=0, roles={'record_id': 'feature/None'}
+FAIL dup_noise:noise_added [stop-or-band] (D60: a copy that differs in a feature is a stated limit (pass 8))
+     band:noise_clf: skill is 0.6742, expected between -0.27 and 0.27 (the band of `noise_clf`)
+     seen: rc=0, error=None, skill=0.6742, scheme=random, baseline=chance, model=tree-0, holdout=375, copies=0, roles={'noise_added': 'feature/None'}
+FAIL time_blocks:date_sentinel_9999 [stop]
+     stop: exit code 3221225477 (a named error is exit 3); stderr: 
+     seen: rc=3221225477, error=None
+FAIL time_blocks_gap:date_sentinel_9999 [stop]
+     stop: exit code 3221225477 (a named error is exit 3); stderr: 
+     seen: rc=3221225477, error=None
+FAIL random_walk:date_sentinel_9999 [stop]
+     stop: exit code 3221225477 (a named error is exit 3); stderr: 
+     seen: rc=3221225477, error=None
+FAIL random_walk:number_sentinel_-999 [band]
+     band:random_walk: skill is -11.9137, expected between -0.3 and 0.05 (the band of `random_walk`)
+     seen: rc=0, error=None, skill=-11.9137, scheme=time_ordered, baseline=previous_value, model=tree-0, holdout=375, copies=None, roles={}
+FAIL random_walk:number_sentinel_999999 [band]
+     band:random_walk: skill is -2639437387.2697, expected between -0.3 and 0.05 (the band of `random_walk`)
+     seen: rc=0, error=None, skill=-2639437387.2697, scheme=time_ordered, baseline=previous_value, model=linear-0, holdout=375, copies=None, roles={}
+FAIL random_walk:target_sentinel_-999 [band]
+     band:random_walk: skill is -12.9864, expected between -0.3 and 0.05 (the band of `random_walk`)
+     seen: rc=0, error=None, skill=-12.9864, scheme=time_ordered, baseline=previous_value, model=linear-0, holdout=375, copies=None, roles={}
+FAIL random_walk:copy_distinct [same]
+     band:random_walk: skill is 0.989, expected between -0.3 and 0.05 (the band of `random_walk`)
+     added:target_copy: the added column `target_copy` has role 'feature', reason None, leak_rule None; expected 'excluded', 'suspected_leak'; skill 0.98899324600362, baseline 'previous_value', warnings []
+     same_as_base: moved against the unperturbed run: headline.score 1.0071539412657424 -> 0.011097059810629533; headline.skill 0.0010420906826066334 -> 0.98899324600362; headline.interval_low 0.8776500769721611 -> 0.009670155549118518; headline.interval_high 1.1919014024324426 -> 0.01313265065319551; headline.skill_low 0.00043134309204543035 -> 0.9889865155176157; headline.skill_high 0.00174730056139161 -> 0.9890010182319482
+     seen: rc=0, error=None, skill=0.989, scheme=time_ordered, baseline=previous_value, model=linear-0, holdout=375, copies=None, roles={'target_copy': 'feature/None'}
+FAIL random_walk:row_repeated [band]
+     band:random_walk: skill is 0.9991, expected between -0.3 and 0.05 (the band of `random_walk`)
+     walk_baselines: the timestamps of the source are not all distinct, the baselines are ['training_mean'] and the headline is skill 0.9991210007435922 against 'training_mean': a random walk scored against the training mean; warnings ['autocorrelated_panel_target', 'duplicate_rows', 'interval_approximate']
+     seen: rc=0, error=None, skill=0.9991, scheme=time_ordered, baseline=training_mean, model=linear-0, holdout=376, copies=None, roles={}
+FAIL int_stamps:copy_distinct [same]
+     added:target_copy: the added column `target_copy` has role 'feature', reason None, leak_rule None; expected 'excluded', 'suspected_leak'; skill 0.9961922836812463, baseline 'previous_value', warnings []
+     same_as_base: moved against the unperturbed run: headline.score 0.979418541750562 -> 0.0037381652181624207; headline.skill 0.0023587116497918448 -> 0.9961922836812463; headline.interval_low 0.8484499319239095 -> 0.003238294615869177; headline.interval_high 1.1099060057609083 -> 0.004236199572912246; headline.skill_low -0.008654540999730693 -> 0.9961502502557208; headline.skill_high 0.014663331289586218 -> 0.996239247512438
+     seen: rc=0, error=None, skill=0.9962, scheme=time_ordered, baseline=previous_value, model=linear-0, holdout=375, copies=None, roles={'target_copy': 'feature/None'}
+FAIL int_stamps:row_repeated [structure]
+     walk_baselines: the timestamps of the source are not all distinct, the baselines are ['training_mean'] and the headline is skill 0.9953278779933338 against 'training_mean': a random walk scored against the training mean; warnings ['autocorrelated_panel_target', 'duplicate_rows', 'interval_approximate']
+     seen: rc=0, error=None, skill=0.9953, scheme=time_ordered, baseline=training_mean, model=linear-0, holdout=376, copies=None, roles={}
+FAIL int_stamps:missing_cell_date [structure] (D55 point 3: a CSV whole-number column with an empty cell loads as floats, already rounded (a stated limit))
+     time_split: the holdout is 377 rows; the judge expects the 375 latest (2 unexpected, 0 missing)
+     walk_baselines: baselines lists ['training_mean']; headline baseline 'training_mean', skill 0.9953458676558754
+     int_keys: training and holdout timestamps, unique, form: (439, 148, False, 'numeric'); the judge counts (1124, 375, True, 'numeric')
+     seen: rc=0, error=None, skill=0.9953, scheme=time_ordered, baseline=training_mean, model=linear-0, holdout=377, copies=None, roles={}
+FAIL flat_tail:date_sentinel_9999 [stop]
+     stop: exit code 3221225477 (a named error is exit 3); stderr: 
+     seen: rc=3221225477, error=None
+FAIL flat_tail:row_repeated [structure]
+     flat: the timestamps of the source are not all distinct; baselines ['training_mean'], skill -0.17099534290539764 against 'training_mean'
+     seen: rc=0, error=None, skill=-0.171, scheme=time_ordered, baseline=training_mean, model=linear-0, holdout=376, copies=None, roles={}
+FAIL panel:date_sentinel_9999 [stop]
+     stop: exit code 3221225477 (a named error is exit 3); stderr: 
+     seen: rc=3221225477, error=None
+FAIL panel:number_sentinel_-999 [band]
+     band:panel: skill is -5.069, expected between -0.04 and 0.03 (the band of `panel`)
+     seen: rc=0, error=None, skill=-5.069, scheme=time_ordered, baseline=previous_value, model=tree-0, holdout=384, copies=None, roles={}
+FAIL panel:number_sentinel_999999 [band]
+     band:panel: skill is -4.9114, expected between -0.04 and 0.03 (the band of `panel`)
+     seen: rc=0, error=None, skill=-4.9114, scheme=time_ordered, baseline=previous_value, model=tree-0, holdout=384, copies=None, roles={}
+FAIL panel:target_sentinel_-999 [band]
+     band:panel: skill is -5.069, expected between -0.04 and 0.03 (the band of `panel`)
+     seen: rc=0, error=None, skill=-5.069, scheme=time_ordered, baseline=previous_value, model=tree-0, holdout=384, copies=None, roles={}
+FAIL panel:copy_distinct [same]
+     band:panel: skill is 0.9489, expected between -0.04 and 0.03 (the band of `panel`)
+     added:target_copy: the added column `target_copy` has role 'feature', reason None, leak_rule None; expected 'excluded', 'suspected_leak'; skill 0.9489422100040781, baseline 'previous_value', warnings []
+     same_as_base: moved against the unperturbed run: headline.score 1.0179112494721525 -> 0.05146548047767124; headline.skill -0.009847733425597305 -> 0.9489422100040781; headline.interval_low 0.8380105876393388 -> 0.04236972207191189; headline.interval_high 1.1761789686269484 -> 0.05946747959699928; headline.skill_low -0.017639570322384772 -> 0.9485482554308523; headline.skill_high -0.0016580439191917797 -> 0.9493562797055719
+     seen: rc=0, error=None, skill=0.9489, scheme=time_ordered, baseline=previous_value, model=linear-0, holdout=384, copies=None, roles={'target_copy': 'feature/None'}
+FAIL panel:missing_cell_feature [band]
+     band:panel: skill is -2.6844, expected between -0.04 and 0.03 (the band of `panel`)
+     seen: rc=0, error=None, skill=-2.6844, scheme=time_ordered, baseline=previous_value, model=linear-0, holdout=384, copies=None, roles={}
+FAIL unsaid_entities:date_sentinel_9999 [stop]
+     stop: exit code 3221225477 (a named error is exit 3); stderr: 
+     seen: rc=3221225477, error=None
+FAIL few_valued:copy_two_valued [stop-or-structure] (CP8 finding 2 (D69 point 2))
+     band:few_valued: skill is -1.0, expected between -0.2 and 0.2 (the band of `few_valued`)
+     combos_apart: 10 of the 16 combinations of the features that reached the models (['region', 'branch']) have rows on both sides; skill -1.0, n_holdout_copies 0
+     seen: rc=0, error=None, skill=-1.0, scheme=grouped, baseline=chance, model=tree-0, holdout=587, copies=0, roles={'status_copy': 'excluded/suspected_leak'}
+FAIL dominant_entity:copy_distinct [same]
+     added:target_copy: the added column `target_copy` has role 'feature', reason None, leak_rule None; expected 'excluded', 'suspected_leak'; skill 0.9999995512596312, baseline 'training_mean', warnings []
+     same_as_base: moved against the unperturbed run: headline.score 0.963822576369907 -> 4.2982886084267954e-07; headline.skill -0.006228612698452318 -> 0.9999995512596312; headline.interval_low 0.8649488054553067 -> 3.8573747442314426e-07; headline.interval_high 1.0803382204684921 -> 4.817907918246536e-07; headline.skill_low -0.01623182873003894 -> 0.9999995467957437; headline.skill_high 0.00145504686515669 -> 0.9999995546932886
+     seen: rc=0, error=None, skill=1.0, scheme=grouped, baseline=training_mean, model=linear-0, holdout=500, copies=0, roles={'target_copy': 'feature/None'}
+FAIL day_numbers:ymd_sentinel_99991231 [structure] (CP8 finding 1 (D69 point 1))
+     day_role: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     undeclared_date:day: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     seen: rc=0, error=None, skill=0.9871, scheme=random, baseline=chance, model=tree-0, holdout=450, copies=0, roles={'day': 'feature/None'}
+FAIL day_numbers:ymd_sentinel_0 [structure] (CP8 finding 1 (D69 point 1))
+     day_role: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     undeclared_date:day: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     seen: rc=0, error=None, skill=1.0, scheme=random, baseline=chance, model=tree-0, holdout=450, copies=0, roles={'day': 'feature/None'}
+FAIL day_numbers:ymd_sentinel_20240230 [structure] (CP8 finding 1 (D69 point 1))
+     day_role: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     undeclared_date:day: `day` has role 'feature', reason None; expected 'excluded', 'datetime'
+     seen: rc=0, error=None, skill=1.0, scheme=random, baseline=chance, model=tree-0, holdout=450, copies=0, roles={'day': 'feature/None'}
+694 tool runs in 305 s at 24 side by side (7197 s of tool time); 454 pairs left out
+BATTERY: FAIL (38 of 694 do not hold)
+exit 1

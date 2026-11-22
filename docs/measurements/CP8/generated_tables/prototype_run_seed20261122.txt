@@ -1,0 +1,144 @@
+generated tables: 1000 table(s) from seed 20261122, 334 worker run(s), 24 at a time, under C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\gentables\work\mlprof-generated-yz5bs3pm
+
+table 142: dataframe, 96 rows x 7 columns ['when', 'flag', 'f1', 'count', 'f2', 'y', 'seg']; task='auto', time_col='when', group_col=False, gap=0, profile='fast', seed=1, duplicates='group'; tiny; statement time; target reg; one row for each timestamp; when: dayfirst
+  application: error too_few_rows
+  reference:   error time_column_invalid
+  [open] the named error: 'too_few_rows' | 'time_column_invalid'  (the table earns both, and which is raised is then open (2.4) | application: 96 usable rows (with a target and a time value); at least 100 are needed. | reference: time column 'when' holds text that is not ISO 8601 with the year first (for example '11/02/2018'). Day-first and month-first dates are never guessed: parse the column yourself and pass a DataFrame)
+  again: python -B generated_tables.py C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\app\mlprofessor --reference C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\verify\reference\mlprofessor --seed 20261122 --only 142 --keep
+
+table 175: dataframe, 113 rows x 7 columns ['dec', 'y', 'f1', 'daynum', 'f2', 'who', 'seg']; task='auto', time_col=False, group_col='who', gap=0, profile='full', seed=7, duplicates='error'; tiny; statement entity; target clf_text; entities: long_tail, 37 of them; f1 identifies the entity; daynum: dates written YYYYMMDD (int)
+  application: result: grouped, skill 0.8166666666666667, model forest-2
+  reference:   result: grouped, skill 0.9166666666666667, model linear-3
+  [split] cv.n_scored_folds: 4 | 5
+  [split] warnings[fold_not_scored, None] (count): 1 | 0  (may depend on the rows a split picked, or on an open choice)
+  again: python -B generated_tables.py C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\app\mlprofessor --reference C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\verify\reference\mlprofessor --seed 20261122 --only 175 --keep
+
+table 212: csv, 128 rows x 7 columns ['f1', 'seg', 'y_copy', 'y', 'f2', 'flag', 'count']; task='regression', time_col=False, group_col=False, gap=0, profile='full', seed=123456, duplicates='group'; small; statement none; target ambiguous_int; y_copy: a copy of the target
+  application: result: random, skill 0.9999999821792592, model linear-1
+  reference:   result: random, skill 0.48229946225463094, model boosting-0
+  [split] columns[y_copy] role, reason, leak rule: ('feature', None, None) | ('excluded', 'suspected_leak', 'predicts_target')  (the leak screen ran on different folds)
+  [split] warnings[strong_single_column, y_copy] (count): 1 | 0  (may depend on the rows a split picked, or on an open choice)
+  [split] warnings[suspected_leak, y_copy] (count): 0 | 1  (may depend on the rows a split picked, or on an open choice)
+  again: python -B generated_tables.py C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\app\mlprofessor --reference C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\verify\reference\mlprofessor --seed 20261122 --only 212 --keep
+
+table 296: csv, 180 rows x 8 columns ['when', 'f2', 'level_prev', 'notes', 'f1', 'huge', 'seg', 'y']; task='auto', time_col='when', group_col=False, gap=0, profile='full', seed=7, duplicates='error'; small; statement time; target reg; one row for each timestamp; the target is a random walk; level_prev: the level before, of the same series; when: iso_datetime, some cells empty; repeated rows: few (2)
+  application: result: time_ordered, skill 0.9664394832505616, model linear-1
+  reference:   result: time_ordered, skill 0.9664394832505614, model linear-1
+  [open] models (fold scores of the forests): '6 configurations differ' | ''  (a forest draws its rows by their place in the matrix, and the order of the rows of one fit is not pinned (2.6))
+  again: python -B generated_tables.py C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\app\mlprofessor --reference C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\verify\reference\mlprofessor --seed 20261122 --only 296 --keep
+
+table 332: dataframe, 144 rows x 6 columns ['who', 'seg', 'y', 'when', 'f1', 'f2']; task='classification', time_col='when', group_col='who', gap=1, profile='full', seed=0, duplicates='error'; small; statement time_entity; target clf_int; panel of 12 entities on 12 timestamps; when: yyyymmdd_text
+  application: result: time_ordered, skill 0.03492063492063502, model forest-5
+  reference:   result: time_ordered, skill 0.03809523809523818, model forest-4
+  [open] headline.score: 0.5174603174603175 | 0.5190476190476191  (a forest draws its rows by their place in the matrix, and the order of the rows of one fit is not pinned (2.6))
+  [open] headline.skill: 0.03492063492063502 | 0.03809523809523818  (a forest draws its rows by their place in the matrix, and the order of the rows of one fit is not pinned (2.6))
+  [open] headline.model: 'forest-5' | 'forest-4'  (a forest draws its rows by their place in the matrix, and the order of the rows of one fit is not pinned (2.6))
+  [open] cv.chosen: 'forest-5' | 'forest-4'  (a forest draws its rows by their place in the matrix, and the order of the rows of one fit is not pinned (2.6))
+  [open] cv.chosen_mean: 0.5913392857142857 | 0.5767857142857142  (a forest draws its rows by their place in the matrix, and the order of the rows of one fit is not pinned (2.6))
+  [open] cv.chosen_std: 0.14359866146304984 | 0.13534960401169427  (a forest draws its rows by their place in the matrix, and the order of the rows of one fit is not pinned (2.6))
+  [open] models (fold scores of the forests): '6 configurations differ' | ''  (a forest draws its rows by their place in the matrix, and the order of the rows of one fit is not pinned (2.6))
+  [open] predictions.csv (y_pred): '36 of 36 rows differ' | ''  (a forest draws its rows by their place in the matrix, and the order of the rows of one fit is not pinned (2.6))
+  again: python -B generated_tables.py C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\app\mlprofessor --reference C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\verify\reference\mlprofessor --seed 20261122 --only 332 --keep
+
+table 347: csv, 1125 rows x 7 columns ['signup', 'big', 'y', 'who', 'f2', 'f1', 'count']; task='auto', time_col=False, group_col=False, gap=0, profile='fast', seed=123456, duplicates='keep'; large; statement none; target clf_text; entities: one_large, 31 of them; one label for each entity; white space round some target values
+  application: result: random, skill 0.9845415778251598, model linear-0
+  reference:   result: random, skill 0.1577825159914712, model linear-0
+  [split] columns[who] role, reason, leak rule: ('feature', None, None) | ('excluded', 'suspected_leak', 'predicts_target')  (the leak screen ran on different folds)
+  [split] warnings[strong_single_column, who] (count): 1 | 0  (may depend on the rows a split picked, or on an open choice)
+  [split] warnings[suspected_leak, who] (count): 0 | 1  (may depend on the rows a split picked, or on an open choice)
+  again: python -B generated_tables.py C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\app\mlprofessor --reference C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\verify\reference\mlprofessor --seed 20261122 --only 347 --keep
+
+table 458: dataframe, 448 rows x 11 columns ['f2', 'f1', 'const', 'strong', 'spend', 'empty', 'when', 'seg', 'y', 'who', 'odd']; task='auto', time_col='when', group_col=False, gap=0, profile='fast', seed=0, duplicates='keep'; medium; statement time; target clf_text; panel of 8 entities on 53 timestamps, irregular; odd: a column of timedelta; when: iso_date; repeated rows: heavy (128)
+  application: result: time_ordered, skill 0.9387387387387387, model linear-0
+  reference:   result: time_ordered, skill 0.9387387387387387, model linear-0
+  [open] warnings[fold_not_scored, None] (count): 3 | 1  (both raise it; how many records of this code is not pinned (2.5))
+  again: python -B generated_tables.py C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\app\mlprofessor --reference C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\verify\reference\mlprofessor --seed 20261122 --only 458 --keep
+
+table 487: csv, 259 rows x 9 columns ['revenue', 'f2', 'odd', 'const', 'f1', 'who', 'seg', 'y_copy', 'y']; task='auto', time_col=False, group_col='who', gap=0, profile='fast', seed=0, duplicates='error'; small; statement entity; target reg; entities: one_large, 183 of them; f1 identifies the entity; y_copy: a copy of the target; odd: a column of complex
+  application: result: grouped, skill 0.885916289458261, model linear-0
+  reference:   result: grouped, skill 0.9998978578079922, model linear-0
+  [split] columns[y_copy] role, reason, leak rule: ('excluded', 'suspected_leak', 'predicts_target') | ('feature', None, None)  (the leak screen ran on different folds)
+  [split] warnings[strong_single_column, y_copy] (count): 0 | 1  (may depend on the rows a split picked, or on an open choice)
+  [split] warnings[suspected_leak, y_copy] (count): 1 | 0  (may depend on the rows a split picked, or on an open choice)
+  again: python -B generated_tables.py C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\app\mlprofessor --reference C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\verify\reference\mlprofessor --seed 20261122 --only 487 --keep
+
+table 626: dataframe, 165 rows x 6 columns ['y', 'f1', 'optint', 'when', 'seg', 'f2']; task='auto', time_col='when', group_col=False, gap=0, profile='full', seed=0, duplicates='error'; small; statement time; target clf_int; some timestamps hold several rows; when: iso_datetime
+  application: result: time_ordered, skill 0.15458937198067635, model boosting-1
+  reference:   result: time_ordered, skill 0.15458937198067635, model boosting-1
+  [open] models (fold scores of the forests): '6 configurations differ' | ''  (a forest draws its rows by their place in the matrix, and the order of the rows of one fit is not pinned (2.6))
+  again: python -B generated_tables.py C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\app\mlprofessor --reference C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\verify\reference\mlprofessor --seed 20261122 --only 626 --keep
+
+table 644: dataframe, 171 rows x 8 columns ['f1', 'const', 'f2', 'signup', 'seg', 'when', 'y', 'row_id']; task='regression', time_col='when', group_col=False, gap=0, profile='full', seed=4294967295, duplicates='keep'; small; statement time; target reg; some timestamps hold several rows; row_id: an identifier (increasing); when: iso_datetime
+  application: result: time_ordered, skill 0.017073056556440314, model linear-4
+  reference:   result: time_ordered, skill 0.017073056556440314, model linear-4
+  [open] models (fold scores of the forests): '6 configurations differ' | ''  (a forest draws its rows by their place in the matrix, and the order of the rows of one fit is not pinned (2.6))
+  again: python -B generated_tables.py C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\app\mlprofessor --reference C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\verify\reference\mlprofessor --seed 20261122 --only 644 --keep
+
+table 683: dataframe, 119 rows x 9 columns ['f1', 'y_copy', 'odd', 'y', 'who', 'seg', 'f2', 'y_near', 'const']; task='auto', time_col=False, group_col='who', gap=0, profile='fast', seed=0, duplicates='error'; tiny; statement entity; target reg; entities: equal, 60 of them; f1 identifies the entity; y_copy: a copy of the target; y_near: a near-copy of the target; odd: a column of bytes
+  application: result: grouped, skill 0.9952364648312801, model linear-0
+  reference:   result: grouped, skill 0.9960376305105886, model linear-0
+  [split] warnings[strong_single_column, y_near] (count): 0 | 1  (may depend on the rows a split picked, or on an open choice)
+  again: python -B generated_tables.py C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\app\mlprofessor --reference C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\verify\reference\mlprofessor --seed 20261122 --only 683 --keep
+
+table 754: dataframe, 376 rows x 8 columns ['row_id', 'f1', 'odd', 'strong', 'f2', 'count', 'y', 'who']; task='auto', time_col=False, group_col='who', gap=0, profile='fast', seed=123456, duplicates='error'; small; statement entity; target reg; entities: own, 188 of them; row_id: an identifier (consecutive); odd: a column of list; repeated rows: heavy (188)
+  application: result: grouped, skill 0.8674093544747242, model linear-0
+  reference:   result: grouped, skill 0.9320379462894701, model linear-0
+  [exact] input.duplicate_rows: 188 | 0
+  [exact] warnings[duplicate_rows, None] (count): 1 | 0
+  again: python -B generated_tables.py C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\app\mlprofessor --reference C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\verify\reference\mlprofessor --seed 20261122 --only 754 --keep
+
+table 812: csv, 164 rows x 9 columns ['f2', 'f1', 'y_copy', 'huge', 'seg', 'y', 'count', 'signup', 'notes']; task='auto', time_col=False, group_col=False, gap=0, profile='fast', seed=123456, duplicates='error'; small; statement none; target reg; y_copy: a copy of the target
+  application: result: random, skill 0.9986679981511701, model linear-0
+  reference:   result: random, skill 0.9710911757371535, model linear-0
+  [split] columns[y_copy] role, reason, leak rule: ('feature', None, None) | ('excluded', 'suspected_leak', 'predicts_target')  (the leak screen ran on different folds)
+  [split] warnings[strong_single_column, y_copy] (count): 1 | 0  (may depend on the rows a split picked, or on an open choice)
+  [split] warnings[suspected_leak, y_copy] (count): 0 | 1  (may depend on the rows a split picked, or on an open choice)
+  again: python -B generated_tables.py C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\app\mlprofessor --reference C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\verify\reference\mlprofessor --seed 20261122 --only 812 --keep
+
+table 816: csv, 149 rows x 6 columns ['f2', 'count', 'seg', 'f1', 'when', 'y']; task='auto', time_col='when', group_col=False, gap=0, profile='full', seed=0, duplicates='error'; small; statement time; target reg_whole; one row for each timestamp; when: iso_date
+  application: result: time_ordered, skill 0.9200731562438162, model linear-0
+  reference:   result: time_ordered, skill 0.9200731562438162, model linear-0
+  [open] models (fold scores of the forests): '6 configurations differ' | ''  (a forest draws its rows by their place in the matrix, and the order of the rows of one fit is not pinned (2.6))
+  again: python -B generated_tables.py C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\app\mlprofessor --reference C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\verify\reference\mlprofessor --seed 20261122 --only 816 --keep
+
+table 819: csv, 129 rows x 6 columns ['f1', 'y', 'when', 'seg', 'f2', 'daynum']; task='auto', time_col='when', group_col=False, gap=5, profile='full', seed=7, duplicates='error'; small; statement time; target clf_text; one row for each timestamp; white space round some target values; daynum: dates written YYYYMMDD (text); when: iso_date
+  application: result: time_ordered, skill 0.645021645021645, model linear-0
+  reference:   result: time_ordered, skill 0.645021645021645, model linear-0
+  [open] models (fold scores of the forests): '6 configurations differ' | ''  (a forest draws its rows by their place in the matrix, and the order of the rows of one fit is not pinned (2.6))
+  again: python -B generated_tables.py C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\app\mlprofessor --reference C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\verify\reference\mlprofessor --seed 20261122 --only 819 --keep
+
+table 823: dataframe, 2691 rows x 7 columns ['y', 'who', 'f2', 'f1', 'when', 'strong', 'seg']; task='auto', time_col=False, group_col='who', gap=0, profile='fast', seed=1, duplicates='group'; medium; statement entity; target clf_text; panel of 300 entities on 12 timestamps, irregular; when: number, some cells empty
+  application: result: grouped, skill 0.7913967779438631, model linear-0
+  reference:   result: grouped, skill 0.7343061674008811, model linear-0
+  [split] warnings[small_holdout, None] (count): 0 | 1  (may depend on the rows a split picked, or on an open choice)
+  again: python -B generated_tables.py C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\app\mlprofessor --reference C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\verify\reference\mlprofessor --seed 20261122 --only 823 --keep
+
+table 836: dataframe, 170 rows x 7 columns ['when', 'seg', 'f1', 'revenue', 'count', 'f2', 'y']; task='auto', time_col='when', group_col=False, gap=0, profile='full', seed=123456, duplicates='group'; small; statement time; target clf_text; one row for each timestamp; when: datetime
+  application: result: time_ordered, skill 0.40740740740740744, model linear-4
+  reference:   result: time_ordered, skill 0.40740740740740744, model linear-4
+  [open] models (fold scores of the forests): '6 configurations differ' | ''  (a forest draws its rows by their place in the matrix, and the order of the rows of one fit is not pinned (2.6))
+  again: python -B generated_tables.py C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\app\mlprofessor --reference C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\verify\reference\mlprofessor --seed 20261122 --only 836 --keep
+
+table 859: csv, 220 rows x 6 columns ['f1', 'who', 'y', 'f2', 'seg', 'signup']; task='auto', time_col=False, group_col='who', gap=0, profile='fast', seed=7, duplicates='group'; small; statement entity; target clf_text; entities: one_large, 10 of them; f1 identifies the entity; white space round some target values
+  application: result: grouped, skill 0.6071714057325568, model linear-0
+  reference:   result: grouped, skill 0.6071714057325568, model linear-0
+  [split] cv.n_scored_folds: 3 | 2
+  [split] warnings[fold_not_scored, None] (count): 2 | 1  (may depend on the rows a split picked, or on an open choice)
+  again: python -B generated_tables.py C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\app\mlprofessor --reference C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\verify\reference\mlprofessor --seed 20261122 --only 859 --keep
+
+table 974: dataframe, 110 rows x 8 columns ['who', 'seg', 'f1', 'f2', 'when', 'y', 'count', 'signup']; task='auto', time_col='when', group_col='who', gap=0, profile='full', seed=0, duplicates='keep'; small; statement time_entity; target reg_whole; panel of 12 entities on 13 timestamps, irregular; when: datetime
+  application: result: time_ordered, skill 0.9260444736760612, model linear-0
+  reference:   result: time_ordered, skill 0.9260444736760612, model linear-0
+  [open] models (fold scores of the forests): '6 configurations differ' | ''  (a forest draws its rows by their place in the matrix, and the order of the rows of one fit is not pinned (2.6))
+  again: python -B generated_tables.py C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\app\mlprofessor --reference C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\verify\reference\mlprofessor --seed 20261122 --only 974 --keep
+
+table 993: dataframe, 131 rows x 8 columns ['revenue', 'y', 'f2', 'row_id', 'when', 'seg', 'signup', 'f1']; task='classification', time_col='when', group_col=False, gap=1, profile='full', seed=123456, duplicates='group'; small; statement time; target clf_text; one row for each timestamp; row_id: an identifier (text); when: yyyymmdd_text
+  application: result: time_ordered, skill 0.9777777777777779, model linear-5
+  reference:   result: time_ordered, skill 0.9777777777777779, model linear-5
+  [open] models (fold scores of the forests): '4 configurations differ' | ''  (a forest draws its rows by their place in the matrix, and the order of the rows of one fit is not pinned (2.6))
+  again: python -B generated_tables.py C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\app\mlprofessor --reference C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\verify\reference\mlprofessor --seed 20261122 --only 993 --keep
+
+reference outcomes: 601 result(s), 399 named error(s) {'column_not_found': 8, 'duplicate_columns': 11, 'entities_undeclared': 34, 'fast_profile_too_few_rows': 1, 'fast_profile_too_few_timestamps': 4, 'feature_name_collision': 11, 'gap_too_large': 13, 'group_column_invalid': 27, 'holdout_copies_in_training': 44, 'input_error': 8, 'non_finite_score': 11, 'target_constant': 21, 'task_ambiguous': 35, 'task_unsupported': 32, 'time_column_invalid': 14, 'time_order_undeclared': 57, 'too_few_groups': 26, 'too_few_rows': 42}, 0 other
+findings by class: {'exact': 2, 'open': 18, 'split': 18}
+time: 77 s wall-clock (5 s making the tables); in the tool: application 602 s, reference 212 s
+GENERATED TABLES: 1 of 1000 table(s) with a disagreement

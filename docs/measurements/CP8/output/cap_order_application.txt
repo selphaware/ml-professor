@@ -1,0 +1,19 @@
+package: E:\CODE\ml-professor\mlprofessor
+| rows of the large entity | of the usable rows | left out by the cap, of 30 seeds | stopped | rows profiled when left out |
+|---|---|---|---|---|
+| 500 | 25% | 0 | none | - |
+| 1000 | 40% | 12 | none | [1500] |
+| 1500 | 50% | 21 | none | [1500] |
+| 1900 | 56% | 28 | none | [1500] |
+| 2000 | 57% | 30 | none | [1500] |
+| 2001 | 57% | 30 | none | [1500] |
+| 2500 | 62% | 30 | none | [1500] |
+
+at each tool seed, 0 to 29: kept, out (left out by the cap) or stop
+500: kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept kept
+1000: kept kept kept kept out kept kept kept kept kept kept kept out kept out out kept out kept out kept out out kept out out out out kept kept
+1500: kept out out out out out kept kept out out out kept out out out out kept out out kept kept out out kept out out out kept out out
+1900: out kept out out out out out out out out out out out out out out out out out out out out out out out kept out out out out
+2000: out out out out out out out out out out out out out out out out out out out out out out out out out out out out out out
+2001: out out out out out out out out out out out out out out out out out out out out out out out out out out out out out out
+2500: out out out out out out out out out out out out out out out out out out out out out out out out out out out out out out

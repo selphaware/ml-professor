@@ -1,0 +1,17 @@
+tests/test_date_numbers.py as it is (not loosened), run against verify/reference/mlprofessor as changed:
+FAILED tests/test_date_numbers.py::test_values_that_are_no_dates_leave_the_column_what_it_was[before_1900]
+FAILED tests/test_date_numbers.py::test_values_that_are_no_dates_leave_the_column_what_it_was[after_2100]
+FAILED tests/test_date_numbers.py::test_values_that_are_no_dates_leave_the_column_what_it_was[29_feb_2023]
+FAILED tests/test_date_numbers.py::test_values_that_are_no_dates_leave_the_column_what_it_was[29_feb_1900]
+FAILED tests/test_date_numbers.py::test_values_that_are_no_dates_leave_the_column_what_it_was[month_13]
+FAILED tests/test_date_numbers.py::test_values_that_are_no_dates_leave_the_column_what_it_was[day_0]
+FAILED tests/test_date_numbers.py::test_values_that_are_no_dates_leave_the_column_what_it_was[31_april]
+FAILED tests/test_date_numbers.py::test_values_that_are_no_dates_leave_the_column_what_it_was[a_fraction]
+FAILED tests/test_date_numbers.py::test_values_that_are_no_dates_leave_the_column_what_it_was[an_infinite_cell]
+FAILED tests/test_date_numbers.py::test_values_that_are_no_dates_leave_the_column_what_it_was[nine_digit_text]
+FAILED tests/test_date_numbers.py::test_values_that_are_no_dates_leave_the_column_what_it_was[seven_digit_text]
+11 failed, 22 passed in 4.42s
+
+the same file with the one replacement of the loosening, against the reference as changed and against the application as it stands:
+33 passed in 3.70s
+33 passed in 3.26s

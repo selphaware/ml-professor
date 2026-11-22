@@ -50,6 +50,15 @@ class FastProfileRowsError(ProfileError):
     code = "fast_profile_too_few_rows"
 
 
+class FastProfileGroupError(ProfileError):
+    """With an entity column and no time column, the fast profile's cap cannot keep
+    an entity it must keep: one holds more rows than the cap, or those that each
+    hold a quarter or more of the usable rows do not fit under it together; and
+    the full profile would run (D70, D72)."""
+
+    code = "fast_profile_group_too_large"
+
+
 class GapError(ProfileError):
     code = "gap_too_large"
 

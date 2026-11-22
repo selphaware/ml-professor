@@ -1,0 +1,120 @@
+ok  [temp dir] F1 caught by model.noise_clf, model.noise_p_value, model.noise_reg
+ok  [temp dir] F2 caught by leak.excluded, leak.regression, leak.near_leak_warned
+ok  [temp dir] F3 caught by model.headline_recomputed, model.selection_full
+ok  [temp dir] F4 caught by model.headline_recomputed, model.metric_clf
+ok  [temp dir] F5 caught by task.binary_numeric, task.ambiguous_stops
+ok  [temp dir] F6 caught by data.rows_reconcile, data.coercion_reported
+ok  [temp dir] F7 caught by time.order_respected, time.no_skill_on_blocks, time.gap_applied
+ok  [temp dir] F8 caught by time.persistence_baseline
+ok  [temp dir] F6b caught by data.columns_accounted
+ok  [temp dir] F6c caught by models.all_accounted
+ok  [temp dir] F6d caught by data.long_rows_stop
+ok  [temp dir] F7b caught by time.dayfirst_stops
+ok  [temp dir] F7c caught by time.integer_keys_distinct
+ok  [temp dir] F9 caught by data.holdout_copies_stop
+ok  [temp dir] F10 caught by groups.kept_together, groups.no_skill_on_entities
+ok  [temp dir] F8b caught by time.panel_previous_value
+ok  [temp dir] F7d caught by time.undeclared_stops
+ok  [temp dir] F11 caught by statements.time_order_asked, statements.entities_asked
+ok  [temp dir] F12 caught by duplicates.group_on_features, duplicates.group_no_skill
+ok  [temp dir] F13 caught by groups.holdout_bounded
+ok  [temp dir] F14 caught by time.date_numbers_seen
+ok  [temp dir] F12b caught by duplicates.group_leak_stops
+ok  [temp dir] F14b caught by time.date_sentinel_seen
+ok  [temp dir] F15 caught by fast.large_entity_stops, fast.large_entity_kept
+ok  [temp dir] F16 caught by model.signal_clf
+ok  [temp dir] F17 caught by model.signal_reg
+ok  [temp dir] F18 caught by time.undeclared_warns
+ok  [temp dir] F19 caught by result.matches_json
+ok  [temp dir] F20 caught by output.complete
+ok  [temp dir] F21 caught by output.deterministic
+ok  [temp dir] F22 caught by output.same_at_any_n_jobs
+ok  [project dir] F1 caught by model.noise_clf, model.noise_p_value, model.noise_reg
+ok  [project dir] F2 caught by leak.excluded, leak.regression, leak.near_leak_warned
+ok  [project dir] F3 caught by model.headline_recomputed, model.selection_full
+ok  [project dir] F4 caught by model.headline_recomputed, model.metric_clf
+ok  [project dir] F5 caught by task.binary_numeric, task.ambiguous_stops
+ok  [project dir] F6 caught by data.rows_reconcile, data.coercion_reported
+ok  [project dir] F7 caught by time.order_respected, time.no_skill_on_blocks, time.gap_applied
+ok  [project dir] F8 caught by time.persistence_baseline
+ok  [project dir] F6b caught by data.columns_accounted
+ok  [project dir] F6c caught by models.all_accounted
+ok  [project dir] F6d caught by data.long_rows_stop
+ok  [project dir] F7b caught by time.dayfirst_stops
+ok  [project dir] F7c caught by time.integer_keys_distinct
+ok  [project dir] F9 caught by data.holdout_copies_stop
+ok  [project dir] F10 caught by groups.kept_together, groups.no_skill_on_entities
+ok  [project dir] F8b caught by time.panel_previous_value
+ok  [project dir] F7d caught by time.undeclared_stops
+ok  [project dir] F11 caught by statements.time_order_asked, statements.entities_asked
+ok  [project dir] F12 caught by duplicates.group_on_features, duplicates.group_no_skill
+ok  [project dir] F13 caught by groups.holdout_bounded
+ok  [project dir] F14 caught by time.date_numbers_seen
+ok  [project dir] F12b caught by duplicates.group_leak_stops
+ok  [project dir] F14b caught by time.date_sentinel_seen
+ok  [project dir] F15 caught by fast.large_entity_stops, fast.large_entity_kept
+ok  [project dir] F16 caught by model.signal_clf
+ok  [project dir] F17 caught by model.signal_reg
+ok  [project dir] F18 caught by time.undeclared_warns
+ok  [project dir] F19 caught by result.matches_json
+ok  [project dir] F20 caught by output.complete
+ok  [project dir] F21 caught by output.deterministic
+ok  [project dir] F22 caught by output.same_at_any_n_jobs
+TIMING: full gate 19.8s, per-edit (--fast) 12.6s on the good fixture (2 slow check(s) skipped per edit)
+
+PROOF: every check that names a failure mode, run on that mode's own fixture
+| Check | Names | Failed on that fixture | Also failed on the fixture of |
+|---|---|---|---|
+| data.rows_reconcile | F6 | F6: yes, 2 of 2 runs | - |
+| data.columns_accounted | F6b | F6b: yes, 2 of 2 runs | F4, F16 |
+| data.coercion_reported | F6 | F6: yes, 2 of 2 runs | - |
+| data.long_rows_stop | F6d | F6d: yes, 2 of 2 runs | - |
+| data.holdout_copies_stop | F9 | F9: yes, 2 of 2 runs | - |
+| models.all_accounted | F6c | F6c: yes, 2 of 2 runs | - |
+| task.binary_numeric | F5 | F5: yes, 2 of 2 runs | F4 |
+| task.ambiguous_stops | F5 | F5: yes, 2 of 2 runs | - |
+| leak.excluded | F2 | F2: yes, 2 of 2 runs | F6, F16 |
+| leak.regression | F2 | F2: yes, 2 of 2 runs | F17 |
+| leak.near_leak_warned | F2 | F2: yes, 2 of 2 runs | - |
+| model.signal_clf | F16 | F16: yes, 2 of 2 runs | - |
+| model.signal_reg | F17 | F17: yes, 2 of 2 runs | - |
+| model.noise_clf | F1 | F1: yes, 2 of 2 runs | - |
+| model.noise_p_value | F1 | F1: yes, 2 of 2 runs | - |
+| model.noise_reg | F1 | F1: yes, 2 of 2 runs | F17 |
+| model.headline_recomputed | F3, F4 | F3: yes, 2 of 2 runs; F4: yes, 2 of 2 runs | - |
+| model.metric_clf | F4 | F4: yes, 2 of 2 runs | F3 |
+| model.selection_full | F3 | F3: yes, 2 of 2 runs | F1, F4, F6c |
+| time.order_respected | F7 | F7: yes, 2 of 2 runs | - |
+| time.no_skill_on_blocks | F7 | F7: yes, 2 of 2 runs | F1 |
+| time.gap_applied | F7 | F7: yes, 2 of 2 runs | - |
+| time.dayfirst_stops | F7b | F7b: yes, 2 of 2 runs | - |
+| time.persistence_baseline | F8 | F8: yes, 2 of 2 runs | F3, F7, F17 |
+| time.integer_keys_distinct | F7c | F7c: yes, 2 of 2 runs | F3, F7, F8 |
+| time.undeclared_warns | F18 | F18: yes, 2 of 2 runs | - |
+| time.undeclared_stops | F7d | F7d: yes, 2 of 2 runs | F11 |
+| time.panel_previous_value | F8b | F8b: yes, 2 of 2 runs | F3, F7, F8, F17 |
+| groups.kept_together | F10 | F10: yes, 2 of 2 runs | - |
+| groups.no_skill_on_entities | F10 | F10: yes, 2 of 2 runs | - |
+| statements.time_order_asked | F11 | F11: yes, 2 of 2 runs | - |
+| statements.entities_asked | F11 | F11: yes, 2 of 2 runs | - |
+| duplicates.group_on_features | F12 | F12: yes, 2 of 2 runs | F10 |
+| duplicates.group_no_skill | F12 | F12: yes, 2 of 2 runs | F10 |
+| groups.holdout_bounded | F13 | F13: yes, 2 of 2 runs | F10 |
+| time.date_numbers_seen | F14 | F14: yes, 2 of 2 runs | F18 |
+| time.date_sentinel_seen | F14b | F14b: yes, 2 of 2 runs | F14, F18 |
+| duplicates.group_leak_stops | F12b | F12b: yes, 2 of 2 runs | F2 |
+| fast.large_entity_stops | F15 | F15: yes, 2 of 2 runs | - |
+| fast.large_entity_kept | F15 | F15: yes, 2 of 2 runs | F10, F13 |
+| result.matches_json | F19 | F19: yes, 2 of 2 runs | - |
+| output.complete | F20 | F20: yes, 2 of 2 runs | - |
+| output.deterministic | F21 | F21: yes, 2 of 2 runs | - |
+| output.same_at_any_n_jobs | F22 | F22: yes, 2 of 2 runs | F21 |
+45 of 45 pairs of a check and a failure mode it names were seen failing, over 31 broken fixtures.
+
+FOR INFORMATION: checks that give a reason in place of a failure mode, and the broken fixtures they failed on (no part of the verdict)
+| Check | Failed on the fixture of |
+|---|---|
+| leak.control_kept | F6 |
+| time.flat_holdout_reported | F3, F7, F8 |
+| uncertainty.reported | F1, F4, F16 |
+SELFTEST: PASS (good fixture passes twice with identical results; 31 failure mode(s) each caught by a check that names it; temp and project dirs agree)

@@ -2,7 +2,7 @@
 
 A Python package, `mlprofessor`, that measures how predictable one target
 column of one table is. The contract is `spec.md`. The decisions behind it are
-`docs/DECISIONS.md` (D1 to D66). The build order is `plan/tasks.json`; what the
+`docs/DECISIONS.md` (D1 to D73). The build order is `plan/tasks.json`; what the
 tests prove is `plan/test-plan.md`. The method and the table of common failures
 are in the skill `mlprofessor-build`.
 
@@ -21,6 +21,12 @@ names the dataset, the value and the likely cause; the files it read are in
 `verify/artifacts/runs/<run>/` and the data in `verify/artifacts/data/`. That
 folder always holds the last gate run on the build: the gate's own self-test
 writes to `verify/artifacts/selftest_runs/<fixture>/` instead (D46).
+
+One file of the suite takes several minutes: `tests/test_judge_tools.py` runs
+the judge's two other tools on the build, the perturbation battery and the
+generated-table test ("The judge's two other tools", below; D72). It belongs
+to the last task of the seventh pass and is red until the tasks before it are
+built. While working on another task, run that task's own test files.
 
 ## The methodology in five lines
 
@@ -55,7 +61,13 @@ feature column, whatever their target: no combination of feature values is on
 both sides of the split or in two folds. The target plays no part in forming
 those sets, and the count of step 8a still reads it: a copy is equal in every
 feature and the target. The message of the stop says when each answer fits,
-`"keep"` first (spec 5.4). **A copy is an exact copy.** One that differs in any
+`"keep"` first (spec 5.4). **Under `"group"`, when the leak screen excludes a
+column and one holdout row then agrees with a training row in every feature
+that is left, the run stops** with `holdout_copies_in_training`, with no
+threshold, and names the column (D69, D72): in every finished run under
+`"group"` no combination of the features that reached the models is on both
+sides. The `same_features_grouped` warning says what `"group"` measures: whether
+a combination the model has not seen can be predicted. **A copy is an exact copy.** One that differs in any
 column (an added column, a batch number, a value changed by 1e-9) is not
 detected in this version; the broader screen was measured and withdrawn (D60;
 `docs/measurements/CP6/`). The caller's control is `group_col`.
@@ -85,6 +97,17 @@ float column with gaps, or text of eight digits) is excluded with the reason
 column, ordered as numbers. Day counts and `YYYYMM` are not seen: a stated
 limit (spec 11).
 
+**A sentinel does not switch that rule off (D69, D72).** The column is judged
+by its distinct values, so a value that is no date (`99991231`, `0`, a
+mistyped date) counts once however many cells hold it: it is a date column
+when at least two distinct values read as dates, and at least nine do for
+each distinct value that does not, or at least five beside at most two. A
+share of the cells is never the rule. **As the time column, a value that is no
+date stops the run** with `time_column_invalid`, naming the value and the rows
+that hold it: it is never ordered as a number, and never dropped without the
+caller's say. `YYYYMMDDHH` and period labels are not seen: stated limits, and
+no rule is added for them in the hardening passes (D71).
+
 **A declared entity column keeps the rows of one entity together (D57).** With
 no time column: the grouped scheme, whole entities on one side of the holdout
 and in one fold; under the fast profile whole entities under the cap; the
@@ -104,6 +127,27 @@ for the units of each class). A unit of a quarter or more of the rows it is
 drawn among is named: `large_group_kept_in_training` when smaller units fill
 the quarter, so the headline never tests it; `large_group_is_holdout` when
 they cannot, and that one unit is the holdout.
+
+**The fast profile never leaves out a large entity (D70, D72).** With an
+entity column and no time column its cap keeps whole entities, and always one
+that holds a quarter or more of the usable rows; the smaller ones are taken in
+an order drawn from the seed. When an entity is larger than the cap of 2,000
+rows, or the large ones do not fit under it together, the run stops with
+`fast_profile_group_too_large` and sends the caller to the full profile; when
+the full profile would stop too, its own error is raised. For entity columns
+only: under `duplicates="group"` the cap is a sample of rows.
+
+**Two readings are pinned as the application has them (D72):** one
+`fold_not_scored` warning for each fold not scored, and `input.duplicate_rows`
+counted with a cell that cannot be hashed compared by its text.
+
+**What is open is not a limit (D73).** Five faults found by the judge's two
+other tools are listed by them as open and owned by pass 8: one repeated row
+under time order with no entities, an exact rescaled copy of a regression
+target that the leak screen misses, one extreme cell, the identifier of
+`messy` under shuffled rows, and forests under time order. Spec section 11
+has each with its numbers. **Do not fix them in a task that does not own
+them:** each changes a pinned rule and needs its decision first.
 
 **No input ends in an error that is not named (D50 to D52).** Whatever type a
 column has and whatever it holds, in any role, the run ends in a result or in
@@ -166,13 +210,39 @@ document that holds a float that is not finite, in any part of it.
 | F12 | `duplicates="group"` forms its sets with the target, so a held-out set has only its opposite class in training (D62) | duplicates.group_on_features, duplicates.group_no_skill |
 | F13 | the grouped holdout takes far more than a quarter because a large entity was drawn early (D64) | groups.holdout_bounded |
 | F14 | dates written as whole numbers, `YYYYMMDD`, are a numeric feature (D66) | time.date_numbers_seen |
+| F12b | `duplicates="group"` and a column the leak screen removes: feature combinations are on both sides and the run goes ahead (D69) | duplicates.group_leak_stops |
+| F14b | one value that is no date, and a column of dates written `YYYYMMDD` is a numeric feature (D69, D72) | time.date_sentinel_seen |
+| F15 | the fast profile leaves out an entity larger than its cap, or one of a quarter or more of the rows, and reports on the rest (D70, D72) | fast.large_entity_stops, fast.large_entity_kept |
+| F16 | the positive class is inverted: skill that is there is reported as far below zero | model.signal_clf |
+| F17 | squared error is read as higher-is-better: the worst configuration is chosen | model.signal_reg |
+| F18 | a date column under `--no-time-order` gets no warning | time.undeclared_warns |
+| F19 | the result object is not the file: `ProfileResult.headline` holds rounded numbers | result.matches_json |
+| F20 | a part of the output is missing: the limitations statement is empty | output.complete |
+| F21 | a clock value outside `meta.timing`: two identical runs differ | output.deterministic |
+| F22 | the resamples depend on the number of cores | output.same_at_any_n_jobs |
 
-F6b, F6c, F6d, F7b, F7c, F7d and F8b are the other forms of F6, F7 and F8,
-each with a broken copy of the reference of its own (D46, D50, D57, D58).
+F6b, F6c, F6d, F7b, F7c, F7d, F8b, F12b and F14b are the other forms of F6,
+F7, F8, F12 and F14, each with a broken copy of the reference of its own (D46,
+D50, D57, D58, D69). F16 to F22 are one broken copy for each of the seven
+checks that used to give a reason in place of a failure mode and had never
+been seen to fail (D64, D71): each is the fault its own check's message names.
 **Every check in this table is seen to fail on the broken copy of the mode it
 names**, in every run of the gate's self-test (`verify/smoke_test.py
---selftest`, about eighteen minutes with twenty-one broken copies), which
+--selftest`, about nineteen minutes with thirty-one broken copies), which
 prints the table that proves it and fails if one pair is missing.
+
+Four checks came with the seventh pass, all structural.
+`time.date_sentinel_seen` runs `day_numbers` with the day of three rows in ten
+set to `99991231`: the column is still excluded as a date and the warning
+names it. `duplicates.group_leak_stops` runs `few_valued` with a column that
+copies the label, under `--duplicates group`: exit 3,
+`holdout_copies_in_training`, the column named, no headline.
+`fast.large_entity_stops` runs one entity of 2,500 rows beside 300 of five
+under the fast profile: exit 3, `fast_profile_group_too_large`, the full
+profile named. `fast.large_entity_kept` runs one entity of 1,200 rows beside
+300 of five: the cap keeps it, so 2,000 rows are kept and 700 left out, by the
+gate's own count. **The gate starts its runs 0.25 seconds apart, 16 side by
+side (D72):** a per-edit run takes about 13 seconds and a full one about 18.
 
 Six checks came with the sixth pass. `statements.time_order_asked` runs
 `signal_clf` with nothing said at all: exit 3, `time_order_undeclared`, all
@@ -210,10 +280,48 @@ previous value. One older run changed: `time.undeclared_warns` passes
 `--duplicates keep`, because with its date column excluded every holdout row
 of that table has a copy among the training rows (D53).
 
-Ten gate checks name no failure mode and say why they exist instead
-(`--list` shows them). One is `time.flat_holdout_reported` (D36), on a target
-that is flat across the holdout, where skill has no value and must be reported
-as null.
+Three gate checks name no failure mode and say why they exist instead
+(`--list` shows them): `leak.control_kept`, `uncertainty.reported` and
+`time.flat_holdout_reported` (D36), which is on a target that is flat across
+the holdout, where skill has no value and must be reported as null. Each is
+seen to fail on another mode's broken copy in every self-test: its list of
+checks never seen to fail is empty.
+
+## The judge's two other tools (D56, D71, D72, D73)
+
+Neither is part of the gate, so neither runs on an edit. Each has its own
+command, the gate's exit codes, and writes under `verify/artifacts/` only.
+
+```
+E:\CODE\ml-professor\mlprof_env\Scripts\python.exe verify/battery.py mlprofessor
+E:\CODE\ml-professor\mlprof_env\Scripts\python.exe verify/generated_tables.py mlprofessor
+```
+
+- **The perturbation battery** takes every fast run of the gate, whose right
+  conclusion is known, applies each of a fixed list of small changes to its
+  table (one cell set to a sentinel, a column added that copies the target, a
+  constant, an identifier or a noise column added, the rows shuffled, one row
+  repeated, a column renamed, the classes respelt, a cell emptied, and more)
+  and asserts that the conclusion still holds: the same stop, the same numbers
+  as the unperturbed run where the change cannot move one, the run's band, or
+  a count the judge makes itself. `--only run:change` runs one pair again;
+  `--list` shows every pair and every pair left out, with the reason.
+- **The generated-table test** makes 1,000 tables from a seed, runs each
+  through the package and through the reference with the same arguments, and
+  compares: the same named error, or the same output apart from what spec 11
+  leaves open. Agreement proves neither right; **a disagreement is a finding,
+  and the spec says which side is wrong.** Never bend the application to the
+  reference: if the spec does not settle it, stop and say so. `--only i`
+  makes table i again; `--describe` says what it holds.
+- **Three classes.** Each prints the count of what holds (or agrees), of what
+  is a stated limit, with its decision number, and of what is open and owned
+  by pass 8 (D73). The two lists are fixed in the judge. A failure on neither
+  list fails the tool. Spec 8.2 has both lists.
+- **Who runs them.** A builder, when a task says so. The loop, once a pass's
+  last task is reached: `tests/test_judge_tools.py` runs both on the
+  application, and from then on they are part of the full suite. The lead, by
+  hand before a review, with the mutation check. **No review is run while
+  either lists something as open (D73).**
 
 The gate catches the large forms. The small forms are caught by the test
 suite, each in the way that can see it:
@@ -259,6 +367,15 @@ suite, each in the way that can see it:
 | M28 | dates written as eight digits of text are refused as the time column | `test_date_numbers.py::test_eight_digit_text_is_accepted_as_the_time_column` |
 | M29 | the id-like rule is asked before the date-number rule | `test_date_numbers.py::test_the_date_rule_comes_before_the_id_like_rule` |
 | M30 | the count of step 8a is made on the features alone, whatever the target | `test_guard_review5.py::test_m30_a_copy_at_step_8a_still_needs_the_same_target` |
+| M31 | the date rule counts cells, not distinct values: a sentinel in a third of the rows makes the column a number again | `test_date_sentinels.py::test_a_sentinel_counts_once_however_many_cells_hold_it` |
+| M32 | as the time column, a value that is no date among dates written `YYYYMMDD` is ordered as a number | `test_date_sentinels.py::test_as_the_time_column_a_value_that_is_no_date_stops_the_run` |
+| M33 | the stop under `"group"` after a removed leak keeps the threshold of the copies rule | `test_group_after_leak.py::test_one_combination_on_both_sides_is_enough` |
+| M34 | the fast profile's stop for a large entity is raised where the full profile would stop too | `test_fast_cap_groups.py::test_when_the_full_profile_would_stop_too_its_error_is_raised` |
+| M35 | only an entity larger than the cap stops the fast profile; one of a quarter or more that fits is left to the draw | `test_fast_cap_groups.py::test_an_entity_of_a_quarter_or_more_that_fits_is_always_kept` |
+| M36 | `date_column_undeclared` carries the caveat of the random scheme under the grouped scheme | `test_review6_small.py::test_the_date_warning_holds_the_caveat_of_its_scheme` |
+| M37 | `same_features_grouped` does not say what `"group"` measures | `test_group_after_leak.py::test_the_grouped_warning_says_what_group_measures` |
+| M38 | one `fold_not_scored` record for the run, however many folds were not scored | `test_guard_review6.py::test_m38_one_fold_not_scored_record_for_each_fold_not_scored` |
+| M39 | a row with a cell that cannot be hashed is never counted as a repeat | `test_guard_review6.py::test_m39_rows_with_a_cell_that_cannot_be_hashed_are_counted_as_repeats` |
 
 A guard that fails means the application is wrong, not the test. Three more
 tests of that kind hold what was decided and the application already does:
@@ -269,8 +386,16 @@ is never skipped, before a header of two columns as before one of three
 (`test_guard_header_lines.py`, which fails on F6d).
 
 The mutation check runs the whole suite against the reference and against
-each of fifty-one variants of it: the twenty-one of the table above and M1 to
-M30. The good reference must fail nothing, and every variant at least one test.
+each of seventy variants of it: the thirty-one of the table above and M1 to
+M39. The good reference must fail nothing, and every variant at least one
+test. It leaves out `tests/test_judge_tools.py`, which runs the judge's two
+other tools on the application.
+
+Eleven of these faults were each held by one test until the seventh pass (M1,
+M5, M6, M8, M10, M11, M12, M17, M21, M23, M28). Each has a second, by another
+route, in `test_guard_review6.py`, which also holds a date beyond the
+nanosecond range in one cell of an ordinary time column: `time_column_invalid`,
+never a process that ends inside pandas (spec section 9).
 
 **How an existing test follows a changed contract (D59, D65).** The tests of
 the first five passes were written when a call could leave both statements
@@ -280,7 +405,11 @@ with the missing statement only when the run stops for one. A test that pins
 the stop itself opts out (`as_called=True`, `as_given=True`), and the tests of
 the sixth pass use `cp7_helpers`, which adds nothing. So a failure in an older
 test after a change to the stop is a real one: the helper never hides another
-error.
+error. The seventh pass loosened one test in the same way (D59): for eleven
+cases of a column of dates with one value that is no date,
+`test_date_numbers.py::test_values_that_are_no_dates_leave_the_column_what_it_was`
+accepts the column as it was built or as D69 decides it, and
+`test_date_sentinels.py` pins the decided outcome exactly.
 
 **The type matrix (D52).** `tests/test_type_matrix.py` runs `profile()` on
 about 800 small tables: every kind of pandas column (each integer and float
@@ -336,9 +465,15 @@ same for a fourth role, the entity column: 353 tables.
   share, and Python processes started at the same instant blocked each other
   for exactly 35 or 70 seconds. Measured again on 2026-11-16 with the local
   path: eight processes started at the same instant, 30 rounds, twice; none
-  blocked, and each run took about 3 seconds. The gate still spaces its own
-  runs 0.5 seconds apart and retries once. Running Python processes one after
-  another is still the simplest habit, but it is no longer a rule.
+  blocked, and each run took about 3 seconds. Since D72 the gate starts its
+  own runs 0.25 seconds apart, 16 side by side (it was 0.5 and 8, which had
+  become most of its time), and still retries once. Running Python processes
+  one after another is still the simplest habit, but it is no longer a rule.
+- A date beyond the nanosecond range (measured 2026-11-22,
+  `docs/measurements/CP8`): on an ISO 8601 text column of 1,500 rows with one
+  cell of `9999-12-31`, `Series.to_numpy("datetime64[ns]")` did not raise. The
+  process ended with an access violation, which no `except` can catch. Ask the
+  range first, by comparing with `pandas.Timestamp.min` and `.max`.
 - Windows, PowerShell 7. The project is on a local disk.
 - The built library, measured once on 2026-11-17 (`docs/measurements/CP3`): a
   full run on 100,000 rows by 100 columns on all cores takes 174 seconds for
@@ -360,9 +495,11 @@ same for a fourth role, the entity column: 353 tables.
 - Do not edit the harness: `verify/`, `plan/`, `spec.md`, `CLAUDE.md`,
   `tests/`, `loop/`, `.claude/`. If a check, a test or the spec looks wrong,
   stop and say so plainly, with the evidence. Never widen a band.
-- `verify/reference/` is the judge's own fixture, with fifty-one deliberate
-  faults wired into it (twenty-one the gate catches, thirty only the tests
-  are relied on for). It is not a starting point: do not copy from it.
+- `verify/reference/` is the judge's own fixture, with seventy deliberate
+  faults wired into it (thirty-one the gate catches, thirty-nine only the
+  tests are relied on for). It is not a starting point: do not copy from it.
+- `verify/battery.py` and `verify/generated_tables.py` are the judge's too.
+  Run them; never edit them, and never add a pair or a finding to their lists.
 - Application code never mentions the gate, the tests or the loop.
 - No git. The human owns every git operation.
 - Write only inside `mlprofessor/` and `examples/`, and `requirements.txt` and

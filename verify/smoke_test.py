@@ -34,6 +34,21 @@ The sixth pass added four (D62 to D66):
       drawn early (D64)
   F14 dates written as whole numbers, YYYYMMDD, are a numeric feature (D66)
 
+The seventh pass added three (D69, D70, D72): the forms of F12 and F14 that the sixth
+review found by adding one column and changing one cell, and the fast profile's cap:
+  F12b `duplicates="group"` and a column the leak screen removes: combinations of the
+       features that are left are on both sides of the split, and the run goes ahead
+  F14b one value that is no date, and a column of dates written YYYYMMDD is a numeric
+       feature again
+  F15  the fast profile leaves out an entity larger than its cap, or one of a quarter
+       or more of the rows that is drawn late, and reports on the rest
+And it gave a broken fixture to each of the seven checks that named no failure mode and
+had never been seen to fail (D64, D71), each the fault its own message names:
+  F16 the positive class is inverted            F20 a part of the output is missing
+  F17 the worst configuration is chosen         F21 a clock value outside meta.timing
+  F18 a date column gets no warning             F22 the resamples depend on the cores
+  F19 the result object is not the file
+
 The self-test proves more than gatekit asks. gatekit accepts a failure mode as
 soon as one check that names it fails on its fixture. Here every check that
 names a mode must fail on that mode's own fixture, and the self-test prints
@@ -211,7 +226,7 @@ gate = ProvenGate("mlprofessor")
 
 HERE = Path(__file__).resolve().parent
 REFERENCE = HERE / "reference" / "mlprofessor"
-PARALLEL = 8                 # tool runs side by side, each single-threaded
+PARALLEL = 16                # tool runs side by side, each single-threaded (D72)
 # Seconds between process starts. Measured on this machine on 2026-11-15, when the
 # interpreter's base and standard library sat on A:, a drive mapped to a loopback
 # network share: interpreters started at the same instant (eight, four, or just
@@ -219,8 +234,12 @@ PARALLEL = 8                 # tool runs side by side, each single-threaded
 # seconds is the share's lock-break timeout. Rounds of eight starts that blocked,
 # by spacing: none 6 of 6, 0.1 s 2 of 2, 0.2 s 3 of 30, 0.3 s 0 of 30, 0.5 s 0 of 30.
 # Since D32 the base is a local path. Measured again on 2026-11-16: eight starts at
-# the same instant, 30 rounds, twice, and none blocked. The spacing is kept.
-START_SPACING = 0.5
+# the same instant, 30 rounds, twice, and none blocked. Until D72 the spacing stayed at
+# 0.5 seconds with 8 runs side by side, and it was most of the gate's time: 17.3
+# seconds on each edit and 22.6 in full. Measured on 2026-11-22, three gate runs for
+# each setting, every verdict the same (docs/measurements/CP8): at 0.25 seconds and 16
+# side by side, 10.5 and 13.1 seconds. That is the setting now (D72).
+START_SPACING = 0.25
 FAST_CAP = 2000              # spec.md: the fast profile's row cap
 SEED = 1115                  # base seed of every dataset the gate uses
 MISSING_TOKENS = {"", "n/a"}  # the only missing-value spellings the gate writes
@@ -725,6 +744,88 @@ def make_day_numbers(seed, days=600, per=3, block=5, features=4):
     return ["day"] + [f"n{i + 1}" for i in range(features)] + ["regime"], rows, ()
 
 
+SENTINEL_DAY, SENTINEL_SHARE = 99991231, 0.30
+
+
+def make_day_sentinel(seed):
+    """`day_numbers`, with the day of three rows in ten set to 99991231: an open-ended
+    date, as a column of end dates holds for whatever has not ended (D69; the sixth
+    review, finding 1).
+
+    The rows to change come from their own stream. One value of the column is no
+    date, and it sits in 540 of the 1,800 cells; the others are 600 days or a few
+    fewer. Read by a rule that asks every value to be a date, or 95% of the cells,
+    the column is a number again and places every row in its block of five days.
+    """
+    header, rows, blank_after = make_day_numbers(seed)
+    chosen = random.Random(f"day_sentinel.open.{seed}").sample(
+        range(len(rows)), round(SENTINEL_SHARE * len(rows)))
+    for i in chosen:
+        rows[i][0] = SENTINEL_DAY
+    return header, rows, blank_after
+
+
+def make_few_valued_leak(seed):
+    """`few_valued`, with a column that copies the label: `status` is `closed` where
+    the outcome is `yes` and `open` where it is `no` (D69; the sixth review, finding 2).
+
+    With `--duplicates group` the rows that agree in region, branch and status are
+    kept together: 32 sets, two for each branch. The leak screen then excludes
+    `status`, and what is left is region and branch: the two sets of a branch
+    agree in both, and where they fell on opposite sides a held-out set has only
+    the other class of its branch among the training rows.
+    """
+    header, rows, blank_after = make_few_valued(seed)
+    rows = [row[:-1] + ["closed" if row[-1] == "yes" else "open", row[-1]] for row in rows]
+    return header[:-1] + ["status", header[-1]], rows, blank_after
+
+
+LARGE_ENTITY_ROWS = 2500        # more than the fast profile's cap
+
+
+def make_large_entity(seed, small=300, per=5, features=4):
+    """One entity of 2,500 rows and 300 of five rows each: 4,000 rows (D70).
+
+    The fast profile keeps at most 2,000 rows, in whole entities, so the large one
+    can never be kept: left out, the run would describe the other 1,500 rows, with
+    only a row count to say so. The full profile splits the table as it is. The
+    target and the measures are noise; no two rows agree.
+    """
+    rng = random.Random(seed)
+    names = ["C0000"] * LARGE_ENTITY_ROWS
+    for e in range(small):
+        names += [f"C{e + 1:04d}"] * per
+    rows = [[name] + [_f(rng.gauss(0, 1)) for _ in range(features)] + [_f(rng.gauss(0, 1))]
+            for name in names]
+    rng.shuffle(rows)
+    return ["customer"] + [f"n{i + 1}" for i in range(features)] + ["amount"], rows, ()
+
+
+QUARTER_ENTITY_ROWS = 1200      # under the cap, and far more than a quarter of the rows
+
+
+def make_quarter_entity(seed, small=300, per=5, features=4):
+    """One entity of 1,200 rows and 300 of five rows each: 2,700 rows (D72).
+
+    The large entity holds more than a quarter of the rows and fits under the fast
+    profile's cap of 2,000. Taken in an order drawn from the seed, it is kept only
+    when it is drawn before the small ones have filled the cap around it, and is
+    otherwise left out with only a row count to say so: the outcome of F15 below
+    the cap (measured: an entity of 40% to 57% of the rows was left out on 12 to 30
+    of 30 seeds). An entity of a quarter or more is always kept: here the cap keeps
+    it and 800 rows of the small ones, 2,000 rows in all. The target and the
+    measures are noise; no two rows agree.
+    """
+    rng = random.Random(seed)
+    names = ["C0000"] * QUARTER_ENTITY_ROWS
+    for e in range(small):
+        names += [f"C{e + 1:04d}"] * per
+    rows = [[name] + [_f(rng.gauss(0, 1)) for _ in range(features)] + [_f(rng.gauss(0, 1))]
+            for name in names]
+    rng.shuffle(rows)
+    return ["customer"] + [f"n{i + 1}" for i in range(features)] + ["amount"], rows, ()
+
+
 # name -> (builder, target column). Seeds are SEED + position.
 DATASETS = {
     "signal_clf": (lambda s: make_signal_clf(s), "outcome"),
@@ -759,6 +860,11 @@ DATASETS = {
     "few_valued": (lambda s: make_few_valued(s), "outcome"),
     "dominant_entity": (lambda s: make_dominant_entity(s), "amount"),
     "day_numbers": (lambda s: make_day_numbers(s), "regime"),
+    # Added last again (CP8), for the same reason.
+    "day_sentinel": (lambda s: make_day_sentinel(s), "regime"),
+    "few_valued_leak": (lambda s: make_few_valued_leak(s), "outcome"),
+    "large_entity": (lambda s: make_large_entity(s), "amount"),
+    "quarter_entity": (lambda s: make_quarter_entity(s), "amount"),
 }
 
 
@@ -993,6 +1099,11 @@ RUNS = {
     "few_valued": ("few_valued", ["--duplicates", "group"] + NEITHER, "fast", 1),
     "dominant_entity": ("dominant_entity", ["--group-col", "customer"] + NO_TIME, "fast", 1),
     "day_numbers": ("day_numbers", NEITHER, "fast", 1),
+    # Added with the seventh pass (D69, D70), last, so the order above stays.
+    "day_sentinel": ("day_sentinel", NEITHER, "fast", 1),
+    "few_valued_leak": ("few_valued_leak", ["--duplicates", "group"] + NEITHER, "fast", 1),
+    "large_entity": ("large_entity", ["--group-col", "customer"] + NO_TIME, "fast", 1),
+    "quarter_entity": ("quarter_entity", ["--group-col", "customer"] + NO_TIME, "fast", 1),
 }
 # Time limits per run. Measured on the reference: a fast run 3 to 6 seconds, a full
 # run 9 to 17 alone and about 20 when eight run side by side. Two waves of hung fast
@@ -1045,6 +1156,10 @@ CHECK_RUNS = {
     "duplicates.group_no_skill": ["few_valued"],
     "groups.holdout_bounded": ["dominant_entity"],
     "time.date_numbers_seen": ["day_numbers"],
+    "time.date_sentinel_seen": ["day_sentinel"],
+    "duplicates.group_leak_stops": ["few_valued_leak"],
+    "fast.large_entity_stops": ["large_entity"],
+    "fast.large_entity_kept": ["quarter_entity"],
 }
 SLOW_CHECKS = {"model.selection_full", "output.same_at_any_n_jobs"}
 
@@ -1285,7 +1400,7 @@ def _runs_dir(ctx):
 
     A gate run on a build writes to verify/artifacts/runs, the folder a failure
     message and CLAUDE.md send the builder to. The self-test runs the reference
-    and twenty-one broken copies of it through the same checks; it writes to a folder
+    and thirty-one broken copies of it through the same checks; it writes to a folder
     per fixture under verify/artifacts/selftest_runs, so that after it `runs/`
     still holds the last gate run on the build and not a broken fixture's output
     (D46; second review, finding 6).
@@ -1700,7 +1815,7 @@ def leak_near_leak_warned(ctx):
                 "none for an ordinary feature")
 
 
-@gate.check("model.signal_clf",
+@gate.check("model.signal_clf", catches=["F16"],
             why="proves the tool can find skill at all, so that 'none' elsewhere means something",
             doc="clear skill where a binary target depends on three features")
 def model_signal_clf(ctx):
@@ -1710,7 +1825,7 @@ def model_signal_clf(ctx):
          "the positive class is inverted. Too high: something leaks")
 
 
-@gate.check("model.signal_reg",
+@gate.check("model.signal_reg", catches=["F17"],
             why="proves the tool can find skill at all, so that 'none' elsewhere means something",
             doc="clear skill where a numeric target is a known function of two features")
 def model_signal_reg(ctx):
@@ -2101,7 +2216,7 @@ def time_integer_keys_distinct(ctx):
                 f"error, recomputed by the gate, is {1 - mine / base_previous:.6g}")
 
 
-@gate.check("time.undeclared_warns",
+@gate.check("time.undeclared_warns", catches=["F18"],
             why="a date column with no declared time column is the commonest way to get a "
                 "random split on ordered data without noticing",
             doc="a date column and --no-time-order: random scheme, with a warning, and the "
@@ -2497,6 +2612,126 @@ def time_date_numbers_seen(ctx):
                 "is `random` and the statement is recorded as `false`")
 
 
+@gate.check("time.date_sentinel_seen", catches=["F14b"],
+            doc="a day written YYYYMMDD with 99991231 in three rows of ten: the column is "
+                "still excluded as a date and the warning names it")
+def time_date_sentinel_seen(ctx):
+    result = _with_hint(
+        ctx, "day_sentinel",
+        "This run passes `--no-time-order --no-entities` (spec.md 2.1; D63).")
+    day_at = result["header"].index("day")
+    cells = [row[day_at] for row in result["source"]]
+    held = sum(cell == str(SENTINEL_DAY) for cell in cells)
+    if held != round(SENTINEL_SHARE * len(cells)) or len(set(cells)) < 500:
+        ctx.harness_error("the dataset `day_sentinel` is not what the gate built it to be: "
+                          f"{held} of {len(cells)} cells hold {SENTINEL_DAY} and the column has "
+                          f"{len(set(cells))} distinct values")
+    column = {c["name"]: c for c in records(result, "columns", ["name", "role", "reason"])}
+    day = column.get("day", {})
+    ctx.record("day_sentinel role of `day`", f"{day.get('role')}/{day.get('reason')}")
+    ctx.require((day.get("role"), day.get("reason")) == ("excluded", "datetime"),
+                f"the column `day` of `day_sentinel` has role {day.get('role')!r} and reason "
+                f"{day.get('reason')!r}. It holds {len(set(cells)) - 1} distinct days written "
+                f"YYYYMMDD and one value that is no date, {SENTINEL_DAY}, in {held} of its "
+                f"{len(cells)} cells: an open-ended date. Such a column is still a column of "
+                "dates, excluded with the reason `datetime`: a value that is no date counts "
+                "once, however many cells hold it, and here 600 distinct values or so are dates "
+                "for one that is not (D69; spec.md step 5, rule 2a). As a numeric feature it "
+                "places every row in time, and the label is random per block of five days")
+    ctx.require(any(w["column"] == "day" for w in warnings_of(result, "date_column_undeclared")),
+                "no warning with the code `date_column_undeclared` names the column `day` of "
+                "`day_sentinel` (spec.md 2.5; D63, D69)")
+    scheme = at(result, "validation.scheme")
+    ctx.require(scheme == "random" and at(result, "input.time_col") is False,
+                f"validation.scheme is {scheme!r} and input.time_col "
+                f"{at(result, 'input.time_col')!r} on a run given `--no-time-order`")
+
+
+@gate.check("duplicates.group_leak_stops", catches=["F12b"],
+            doc="--duplicates group and a column that copies the label: once the leak screen "
+                "has excluded it, feature combinations are on both sides, and the run stops")
+def duplicates_group_leak_stops(ctx):
+    stopped(ctx, "few_valued_leak", "holdout_copies_in_training",
+            "`few_valued_leak` is `few_valued` with a column `status` that copies the label. "
+            "With `--duplicates group` the rows that agree in region, branch and status are "
+            "kept together, and the leak screen then excludes `status`: the rows of one branch "
+            "now agree in every feature that is left, whatever their label, and they are on "
+            "both sides of the split. A held-out set then has only the other class of its "
+            "branch among the training rows, and noise scores near -1. So the run stops, "
+            "names the excluded column and tells the caller to remove it and run again (D69; "
+            "spec.md step 8a)")
+    result = run(ctx, "few_valued_leak")
+    ctx.require(result["rc"] == 3, f"the tool exited {result['rc']} on `few_valued_leak`; a "
+                                   "named error is exit code 3")
+    ctx.require("status" in result["stderr"],
+                "the message of `holdout_copies_in_training` on `few_valued_leak` does not name "
+                "the column the leak screen excluded, `status` (spec.md step 8a, 11). stderr "
+                f"was: {_tail(result['stderr'], 500) or '(empty)'}")
+
+
+@gate.check("fast.large_entity_stops", catches=["F15"],
+            doc="the fast profile and an entity of more rows than its cap: the run stops and "
+                "sends the caller to the full profile")
+def fast_large_entity_stops(ctx):
+    stopped(ctx, "large_entity", "fast_profile_group_too_large",
+            f"one entity of `large_entity` holds {LARGE_ENTITY_ROWS} of its 4,000 rows, more "
+            f"than the fast profile's cap of {FAST_CAP}. The cap keeps whole entities, so it "
+            "could only leave that one out, and the run would describe the other 1,500 rows "
+            "with only a row count to say so. The fast profile stops and sends the caller to "
+            "`--profile full` (D70; spec.md step 6)")
+    result = run(ctx, "large_entity")
+    ctx.require(result["rc"] == 3, f"the tool exited {result['rc']} on `large_entity`; a named "
+                                   "error is exit code 3")
+    ctx.require("full" in result["stderr"],
+                "the message of `fast_profile_group_too_large` does not send the caller to the "
+                f"full profile. stderr was: {_tail(result['stderr'], 500) or '(empty)'}")
+
+
+@gate.check("fast.large_entity_kept", catches=["F15"],
+            doc="the fast profile and an entity of a quarter or more of the rows that fits "
+                "under its cap: the entity is kept, by the gate's own count")
+def fast_large_entity_kept(ctx):
+    result = _with_hint(
+        ctx, "quarter_entity",
+        "This run passes `--group-col customer --no-time-order` under the fast profile "
+        "(spec.md 2.1, step 6; D57, D63, D72).")
+    entity_at = result["header"].index("customer")
+    entity = [row[entity_at] for row in result["source"]]
+    n, size = len(entity), {}
+    for name in entity:
+        size[name] = size.get(name, 0) + 1
+    large = max(size, key=size.get)
+    small = sorted(v for k, v in size.items() if k != large)
+    if not (4 * size[large] >= n and size[large] < FAST_CAP and n > FAST_CAP
+            and len(set(small)) == 1 and (FAST_CAP - size[large]) % small[0] == 0
+            and sum(small) > FAST_CAP - size[large]):
+        ctx.harness_error("the dataset `quarter_entity` is not what the gate built it to be: "
+                          f"{n} rows, the largest entity {size[large]}, the others "
+                          f"{sorted(set(small))}")
+    got = row_counts(result)
+    kept = (got.get("training") or 0) + (got.get("holdout") or 0)
+    ctx.record("quarter_entity rows left out by the cap", got.get("dropped_row_cap"))
+    ctx.require(got.get("dropped_row_cap") == n - FAST_CAP and kept == FAST_CAP,
+                f"rows on `quarter_entity`: dropped_row_cap {got.get('dropped_row_cap')!r}, "
+                f"training + holdout {kept}. One entity holds {size[large]} of the {n} rows "
+                f"({size[large] / n:.0%}): a quarter or more, and fewer than the fast profile's "
+                f"cap of {FAST_CAP}. Such an entity is always kept by the cap, and the entities "
+                f"of {small[0]} rows fill the rest: {FAST_CAP} rows kept and {n - FAST_CAP} left "
+                "out (D72; spec.md step 6). Taken in an order drawn from the seed like any "
+                f"other, it is left out, and the run describes the other {n - size[large]} "
+                "rows with only this count to say so")
+    held = holdout_check(ctx, result, "quarter_entity")
+    held_entities = {entity[i] for i in held}
+    kept_warning = warnings_of(result, "large_group_kept_in_training")
+    ctx.require(large not in held_entities and len(kept_warning) == 1,
+                f"on `quarter_entity` the large entity is {'in' if large in held_entities else 'not in'} "
+                f"the holdout and {len(kept_warning)} warning(s) have the code "
+                f"`large_group_kept_in_training`. Among the {FAST_CAP} rows kept it holds "
+                f"{size[large] / FAST_CAP:.0%}, and the smaller entities can fill a quarter: it "
+                "is among the training rows, and exactly one warning says that the headline "
+                "does not test it (D66; spec.md step 7)")
+
+
 @gate.check("time.flat_holdout_reported",
             why="a baseline that scores exactly zero is where skill, 1 - error / baseline "
                 "error, has no value. The first build died there with a ZeroDivisionError and "
@@ -2687,7 +2922,7 @@ def _api_payload(ctx):
     return result, result["payload"]
 
 
-@gate.check("result.matches_json",
+@gate.check("result.matches_json", catches=["F19"],
             why="two accounts of one run that disagree make every other check meaningless "
                 "to the user",
             doc="through the Python function, every part of ProfileResult equals profile.json")
@@ -2753,7 +2988,7 @@ MAY_BE_NULL = {"validation.time_col", "validation.time_form",
                "headline.interval_reason", "headline.p_value_reason"}
 
 
-@gate.check("output.complete",
+@gate.check("output.complete", catches=["F20"],
             why="a blank or NaN field looks like a result",
             doc="every required key is present and populated; no NaN or infinity anywhere")
 def output_complete(ctx):
@@ -2802,7 +3037,7 @@ def _without(doc, *paths):
     return doc
 
 
-@gate.check("output.deterministic",
+@gate.check("output.deterministic", catches=["F21"],
             why="a number that moves between identical runs cannot be checked",
             doc="two runs with the same seed give identical files apart from meta.timing")
 def output_deterministic(ctx):
@@ -2819,7 +3054,7 @@ def output_deterministic(ctx):
                 "two runs on `signal_clf` with seed 0 wrote different predictions.csv files")
 
 
-@gate.check("output.same_at_any_n_jobs", slow=True,
+@gate.check("output.same_at_any_n_jobs", slow=True, catches=["F22"],
             why="the default uses every core, so a result that depends on the core count "
                 "differs between machines",
             doc="full profile at --n-jobs 1 and 4: identical files apart from timing and n_jobs")
@@ -2999,6 +3234,69 @@ def broken_holdout_overshoots(tmp):
 @gate.failure_mode("F14", "dates written as whole numbers (YYYYMMDD) are a numeric feature")
 def broken_date_numbers_as_feature(tmp):
     return _fixture(tmp, "F14")
+
+
+# The other forms of F12 and F14 that the sixth review found by changing one column
+# and one cell, and the fast profile's cap (D69, D70). Registered last.
+
+@gate.failure_mode("F12b", "duplicates='group' and a column the leak screen removes: feature "
+                           "combinations are on both sides and the run goes ahead")
+def broken_group_after_leak(tmp):
+    return _fixture(tmp, "F12b")
+
+
+@gate.failure_mode("F14b", "one value that is no date, and a column of dates written YYYYMMDD "
+                           "is a numeric feature")
+def broken_date_sentinel(tmp):
+    return _fixture(tmp, "F14b")
+
+
+@gate.failure_mode("F15", "the fast profile leaves out an entity larger than its cap, or one "
+                          "of a quarter or more of the rows, and reports on the rest")
+def broken_large_entity_left_out(tmp):
+    return _fixture(tmp, "F15")
+
+
+# One broken copy for each of the seven checks that gave a reason in place of a
+# failure mode and had never been seen to fail (D64, D71). Each is the fault its
+# own check's message tells a builder to look for.
+
+@gate.failure_mode("F16", "the positive class is inverted: skill that is there is reported "
+                          "as far below zero")
+def broken_inverted_class(tmp):
+    return _fixture(tmp, "F16")
+
+
+@gate.failure_mode("F17", "squared error is read as higher-is-better: the worst configuration "
+                          "is chosen")
+def broken_worst_chosen(tmp):
+    return _fixture(tmp, "F17")
+
+
+@gate.failure_mode("F18", "a date column under --no-time-order gets no warning")
+def broken_no_date_warning(tmp):
+    return _fixture(tmp, "F18")
+
+
+@gate.failure_mode("F19", "the result object is not the file: ProfileResult.headline holds "
+                          "rounded numbers")
+def broken_result_differs(tmp):
+    return _fixture(tmp, "F19")
+
+
+@gate.failure_mode("F20", "a part of the output is missing: the limitations statement is empty")
+def broken_output_incomplete(tmp):
+    return _fixture(tmp, "F20")
+
+
+@gate.failure_mode("F21", "a clock value outside meta.timing: two identical runs differ")
+def broken_clock_value(tmp):
+    return _fixture(tmp, "F21")
+
+
+@gate.failure_mode("F22", "the resamples depend on the number of cores")
+def broken_depends_on_cores(tmp):
+    return _fixture(tmp, "F22")
 
 
 if __name__ == "__main__":

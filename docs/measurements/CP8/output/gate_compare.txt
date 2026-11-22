@@ -1,0 +1,42 @@
+before: gate 64ad4eedb5c2, core.py b06a6b267f8c
+after: gate 7b4a47aa674b, core.py fbf41f8829af
+
+datasets (seed, target, bytes): 26 before, 30 after
+  78 values before; 0 moved, 0 gone, 0 new under an existing name
+  only after: day_sentinel, few_valued_leak, large_entity, quarter_entity
+
+checks (verdict, message, failure modes named): 43 before, 47 after
+  130 values before; 0 moved, 7 gone, 7 new under an existing name
+    gone  model.signal_clf: catches: [] -> None
+    gone  model.signal_reg: catches: [] -> None
+    gone  time.undeclared_warns: catches: [] -> None
+    gone  result.matches_json: catches: [] -> None
+    gone  output.complete: catches: [] -> None
+    gone  output.deterministic: catches: [] -> None
+    gone  output.same_at_any_n_jobs: catches: [] -> None
+    new  model.signal_clf: catches[0]: None -> 'F16'
+    new  model.signal_reg: catches[0]: None -> 'F17'
+    new  time.undeclared_warns: catches[0]: None -> 'F18'
+    new  result.matches_json: catches[0]: None -> 'F19'
+    new  output.complete: catches[0]: None -> 'F20'
+    new  output.deterministic: catches[0]: None -> 'F21'
+    new  output.same_at_any_n_jobs: catches[0]: None -> 'F22'
+  only after: time.date_sentinel_seen, duplicates.group_leak_stops, fast.large_entity_stops, fast.large_entity_kept
+
+values the gate recorded: 119 before, 123 after
+  119 values before; 0 moved, 0 gone, 0 new under an existing name
+  only after: day_sentinel role of `day`, few_valued_leak exit code, large_entity exit code, quarter_entity rows left out by the cap
+
+runs (exit code, both streams, files, every field of profile.json but meta.timing, bytes of predictions.csv): 34 before, 38 after
+  15862 values before; 8 moved, 0 gone, 0 new under an existing name
+    moved  messy: stdout: "task: classification (rule); scheme: random\nrows: 1540 loaded, 1125 training, 375 holdout\nheadline: skill 0.721972 (roc_auc 0.860986 against chance 0.5), model linear-0\n95% interval on roc_auc: 0. -> "task: classification (rule); scheme: random\nrows: 1540 loaded, 1125 training, 375 holdout\nheadline: skill 0.721972 (roc_auc 0.860986 against chance 0.5), model linear-0\n95% interval on roc_auc: 0.
+    moved  messy: profile.warnings[1].message: "column 'signup_date' holds dates but no time_col was declared, so the rows were split at random; Random split: this number is optimistic if the rows are ordered in time or one entity appears on many  -> "column 'signup_date' holds dates and time_col=False was passed, so the rows were not split by time. Random split: this number is optimistic if the rows are ordered in time or one entity appears on ma
+    moved  time_blocks_undeclared: stdout: "task: classification (rule); scheme: random\nrows: 2223 loaded, 1500 training, 500 holdout\nheadline: skill 0.999019 (roc_auc 0.99951 against chance 0.5), model tree-0\n95% interval on roc_auc: 0.998 -> "task: classification (rule); scheme: random\nrows: 2223 loaded, 1500 training, 500 holdout\nheadline: skill 0.999019 (roc_auc 0.99951 against chance 0.5), model tree-0\n95% interval on roc_auc: 0.998
+    moved  time_blocks_undeclared: profile.warnings[1].message: "column 'date' holds dates but no time_col was declared, so the rows were split at random; Random split: this number is optimistic if the rows are ordered in time or one entity appears on many rows." -> "column 'date' holds dates and time_col=False was passed, so the rows were not split by time. Random split: this number is optimistic if the rows are ordered in time or one entity appears on many rows
+    moved  few_valued: stdout: "task: classification (rule); scheme: grouped\nrows: 2000 loaded, 1410 training, 590 holdout\nheadline: skill 0.0183404 (roc_auc 0.50917 against chance 0.5), model tree-0\n95% interval: none. the hold -> "task: classification (rule); scheme: grouped\nrows: 2000 loaded, 1410 training, 590 holdout\nheadline: skill 0.0183404 (roc_auc 0.50917 against chance 0.5), model tree-0\n95% interval: none. the hold
+    moved  few_valued: profile.warnings[1].message: "2000 of the 2000 rows agree with another row in every feature column. With duplicates='group' the rows that agree are kept together: no combination of feature values is on both sides of the split or  -> "2000 of the 2000 rows agree with another row in every feature column. With duplicates='group' the rows that agree are kept together: no combination of feature values is on both sides of the split or 
+    moved  day_numbers: stdout: "task: classification (rule); scheme: random\nrows: 1800 loaded, 1350 training, 450 holdout\nheadline: skill -0.0331778 (roc_auc 0.483411 against chance 0.5), model linear-0\n95% interval on roc_auc:  -> "task: classification (rule); scheme: random\nrows: 1800 loaded, 1350 training, 450 holdout\nheadline: skill -0.0331778 (roc_auc 0.483411 against chance 0.5), model linear-0\n95% interval on roc_auc: 
+    moved  day_numbers: profile.warnings[0].message: "column 'day' holds dates but no time_col was declared, so the rows were split at random; Random split: this number is optimistic if the rows are ordered in time or one entity appears on many rows." -> "column 'day' holds dates and time_col=False was passed, so the rows were not split by time. Random split: this number is optimistic if the rows are ordered in time or one entity appears on many rows.
+  only after: day_sentinel, few_valued_leak, large_entity, quarter_entity
+
+22 VALUES MOVED

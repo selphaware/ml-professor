@@ -1097,3 +1097,66 @@ four reviews found, by changing one cell or adding one column, another form
 of a fault the gate proved in one form only).
 Consequence: one more pass than D64 planned. Phase 1 closes under D56 after
 pass 8's review at the earliest.
+
+## D72 — 2026-11-22 — Rulings on the plan of pass 7 (CP8) (amends D69 point 1 and D70)
+Decision: (1) The date rule is judged by the column's distinct values, so a
+sentinel counts once however many cells hold it: a column is a date column
+when at least two distinct values read as `YYYYMMDD` dates and at least
+nine do for each distinct value that does not. A second clause, at least
+five distinct dates beside at most two values that are not, is added if the
+harness measures no wrong flag with it. As the time column, a value that is
+no date stops the run with `time_column_invalid`, naming the value and its
+rows. (2) The stop under `duplicates="group"` after a removed leak reuses
+`holdout_copies_in_training`, with no threshold: one combination of feature
+values on both sides stops the run. (3) The two fixed texts are as the
+harness session worded them. (4) D70's error is a new code of the fast
+profile's family, `fast_profile_group_too_large`; when the full profile
+would stop too, its own error is raised. (5) D70 is corrected in two ways:
+an entity that holds a quarter or more of the usable rows is always kept by
+the fast profile's cap, and the run stops when such entities do not fit;
+and the rule is for entity columns only, since under `duplicates="group"`
+the sets are formed among the rows the cap keeps. (6) Where the library and
+the reference differ and the spec was silent, the library's reading is
+pinned: a cell that cannot be hashed is compared by its text when repeated
+rows are counted, and there is one `fold_not_scored` record for each fold
+not scored. (7) The gate starts its runs 0.25 seconds apart, 16 side by
+side. (8) The battery and the generated-table test are run by the loop
+through one test file once a pass's last task is reached, and by the lead
+by hand before a review.
+Alternatives considered: for (1), a share of the cells (rejected on
+measurement: wrong on every column with its sentinel in 30% or 60% of the
+rows); at most two values that are no dates (rejected alone: three
+sentinels of one cell each defeat it). For (5), an entity below the cap
+left to the draw (rejected on measurement: one of 40% to 57% of the rows
+was left out on 12 to 30 of 30 seeds).
+Consequence: stated limits of the date rule: more than one distinct value
+in ten that is no date, or too few distinct dates beside a sentinel.
+
+## D73 — 2026-11-22 — What the judge's new tools found, and the order of work (amends D10, D11 and D71)
+Decision: On their first run the perturbation battery and the
+generated-table test found faults that no review had. Each is fixed, none
+is carried as a limit: (1) Under time order with no entities, one repeated
+row makes the timestamps no longer unique, the previous-value baseline is
+dropped, and a random walk is reported at 0.999. The previous-value
+baseline is extended to repeated timestamps: the mean target of the
+timestamp before. (2) An exact rescaled copy of a regression target is not
+excluded by the leak screen under time order, or beside a dominant entity
+(skill 0.95 to 1.0; 27 of 123 generated tables that carried one). The
+screen is repaired so that a column which reproduces the target is always
+excluded; the harness measures the repair first. (3) One extreme cell can
+move a regression skill out of its band, and one in the target can switch
+the leak screen off. The tool reports when one row carries most of the
+error, which is a statement about the result and not a new rule about the
+data. (4) The order in which rows are handed to a fit under time order is
+pinned, so that forests agree between the library and the reference. (5)
+Pass 7 goes ahead as planned; the battery lists these, and the identifier
+that becomes a feature when rows are shuffled, as open and owned. Pass 8
+fixes everything the battery and the generated-table test still list.
+There is no review after pass 7: a review is run when both tools are
+clean. The broader repeat screen and the rest of the backlog follow pass 8.
+Alternatives considered: stating (1) or (2) as limits (rejected: each is a
+confidently wrong headline from one row or one column); building them in
+pass 7 (rejected: each changes a pinned rule and needs its own
+measurement, and pass 7 is already large).
+Consequence: one more pass than D71 planned. D56's closing rule gains a
+condition: the battery lists nothing as open.

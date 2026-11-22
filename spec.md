@@ -2,7 +2,7 @@
 
 This file is what the application is built from and what the tests are written
 against. It restates the owner's decisions (`docs/DECISIONS.md`, cited as D1 to
-D66) without changing them, pins every value they leave to this stage, and
+D73) without changing them, pins every value they leave to this stage, and
 defines the interface precisely enough to test without seeing the code.
 
 Words used throughout: **pinned** means part of the contract; **open** means
@@ -239,14 +239,15 @@ command line prints. The message says what was found and what the caller can do.
 | `TargetConstantError` | `target_constant` | The target has fewer than two distinct values among the usable rows. |
 | `TaskAmbiguousError` | `task_ambiguous` | `task="auto"` and the rule cannot decide (D4). |
 | `TaskUnsupportedError` | `task_unsupported` | A declared task the target does not support: classification with other than two distinct values, regression on a non-numeric target. A complex-number target is not numeric (step 4; D48). Also, whatever task was asked for: a target that holds whole numbers too large for 64 bits (D50), and a target whose values cannot be compared for equality, such as lists, dictionaries or sets, so that its distinct values cannot be counted (D53). |
-| `TimeColumnError` | `time_column_invalid` | The time column is not in an accepted form (D18). That includes a column of whole numbers too large for 64 bits (D50), a complex-number column, and a datetime or ISO 8601 column holding a date that a nanosecond timestamp cannot hold (step 3). |
+| `TimeColumnError` | `time_column_invalid` | The time column is not in an accepted form (D18). That includes a column of whole numbers too large for 64 bits (D50), a complex-number column, a datetime or ISO 8601 column holding a date that a nanosecond timestamp cannot hold, and a column of dates written `YYYYMMDD`, as numbers or as text, that also holds a value that is no date: the message names that value and the rows that hold it (step 3; D69, D72). |
 | `TooFewRowsError` | `too_few_rows` | Fewer than 100 usable rows; fewer than 10 usable rows of a class; under time order, too few distinct timestamps to form the holdout and six blocks. |
 | `FastProfileRowsError` | `fast_profile_too_few_rows` | Under `profile="fast"`, the row cap left rows out and the rows it kept are fewer than 100, or hold fewer than 10 of a class, **and the same call with `profile="full"` would get past that point and form its split** (step 6; D52, D53). The message names the cap and tells the caller to use `profile="full"`. When the full profile would stop too, this error is not raised: the error the full profile would raise is. It has a code of its own because no timestamp need be involved: it arises under the random scheme as well. |
 | `FastProfileError` | `fast_profile_too_few_timestamps` | Under `profile="fast"` with a time column, the rows kept by the row cap cannot form the split (the most recent timestamp alone is over the cap, or the rows kept hold too few distinct timestamps for the holdout and six blocks), **and the same call with `profile="full"` would get past the split** (D20, D46). The message tells the caller to use `profile="full"`. When the full profile would stop there too, this error is not raised: the error the full profile would raise is, `too_few_rows` or `gap_too_large` (step 7). |
+| `FastProfileGroupError` | `fast_profile_group_too_large` | Under `profile="fast"` with an entity column and no time column, when the row cap applies: one entity holds more rows than the cap, or the entities that each hold a quarter or more of the usable rows hold more than the cap together, **and the same call with `profile="full"` would get past its split** (step 6; D70, D72). The cap keeps whole entities and never leaves out one of a quarter or more of the rows, so it cannot be applied. The message names the cap and tells the caller to use `profile="full"`. When the full profile would stop too, this error is not raised: the error the full profile would raise is (`too_few_rows`, `too_few_groups`). It is the third code of the fast profile's family: the other two name something too few, and here the cap would have kept enough rows of another table. |
 | `GapError` | `gap_too_large` | The gap leaves fewer than six training timestamps, or no training rows before a validation block. |
 | `FeatureNameCollisionError` | `feature_name_collision` | Two feature columns would give the preprocessed matrix a column of the same name (step 5; D37). The message names every column involved. |
 | `NoFeaturesError` | `no_features` | No column has the role feature after the leak screen. An error returns no column accounting, so the message carries it: the name of every excluded column and, for each, its reason as `columns[].reason` spells it (D39). |
-| `HoldoutCopiesError` | `holdout_copies_in_training` | With no time column and `duplicates` other than `"keep"`: more than 1% of the holdout rows, and at least 10 of them, have a copy among the training rows (step 8a; D49, D53). The message gives the count and the share, and says when each answer fits, in the fixed words of 5.4: `duplicates="keep"` first, then `duplicates="group"`, then removing the repeated rows (D62, D66). When a column was excluded as `datetime` (the caller having passed `time_col=False`), the message also names that column and `time_col`. With `duplicates="group"` it is raised only when the leak screen excluded a column after the rows that agree were put together (step 8a), and the message then names the excluded column or columns. |
+| `HoldoutCopiesError` | `holdout_copies_in_training` | With no time column and `duplicates` other than `"keep"`: more than 1% of the holdout rows, and at least 10 of them, have a copy among the training rows (step 8a; D49, D53). The message gives the count and the share, and says when each answer fits, in the fixed words of 5.4: `duplicates="keep"` first, then `duplicates="group"`, then removing the repeated rows (D62, D66). When a column was excluded as `datetime` (the caller having passed `time_col=False`), the message also names that column and `time_col`. With `duplicates="group"` it is raised only when the leak screen excluded a column after the rows that agree were put together, and then whenever a holdout row agrees with a training row in every feature that is left, whatever their targets and however few such rows there are (step 8a; D69, D72): the message names the excluded column or columns and tells the caller to remove them and run again. |
 | `TimeOrderUndeclaredError` | `time_order_undeclared` | `time_col` is `None`: nothing was said about time order, whatever the table holds and whatever was said about entities (step 5; D63). The message names the two ways on: `time_col` (`--time-col`) with a column's name, or `time_col=False` (`--no-time-order`). It names every column that would be excluded with the reason `datetime`, when there is one. And when `group_col` is `None` too, the same message asks for that statement as well, in the words of the next row: one message tells the caller everything that is missing. |
 | `EntitiesUndeclaredError` | `entities_undeclared` | Time order was stated (`time_col` is a name or `False`) and `group_col` is `None`: nothing was said about entities, whatever the table holds (step 5; D63). The message names the two ways on: `group_col` (`--group-col`) with a column's name, or `group_col=False` (`--no-entities`). Under a time column whose timestamps repeat, it says so. |
 | `GroupColumnError` | `group_column_invalid` | The entity column cannot be used as it is (D57): it is empty in a row that has a target (and, under time order, a time value); it holds values that cannot be compared for equality (lists, dictionaries, sets); or, in a regression under time order, two rows of one entity have the same timestamp. |
@@ -295,10 +296,10 @@ module only; they are always in the output.
 | `suspected_leak` | the column | One per column excluded by the leak rule (D11). |
 | `strong_single_column` | the column | One per column that the leak screen keeps as a feature although its single-column skill is at least 0.90 (and below 0.98): step 8, rule 3 (D30, D33). |
 | `small_holdout` | `null` | Classification: fewer than 50 holdout rows of the rarer class. Regression: fewer than 50 holdout rows (D23). |
-| `date_column_undeclared` | the column | One per column excluded as `datetime` when the caller passed `time_col=False` (D7, D58, D63): a column of a date type, text in a date form, or dates written as whole numbers (step 5, rules 2, 2a and 4; D66). It is the tool's doubt about the statement, and changes nothing else. Never under a time column, where every other date column is excluded without a word; and a run with nothing said does not finish. |
+| `date_column_undeclared` | the column | One per column excluded as `datetime` when the caller passed `time_col=False` (D7, D58, D63): a column of a date type, text in a date form, or dates written as whole numbers, with or without a sentinel among them (step 5, rules 2, 2a and 4; D66, D69). It is the tool's doubt about the statement, and changes nothing else. Never under a time column, where every other date column is excluded without a word; and a run with nothing said does not finish. What its message holds is pinned (5.4; D69): the column's name, `time_col=False`, and the caveat of the scheme the run used, so that it never says "random" of a split of whole entities. |
 | `autocorrelated_panel_target` | the target | Regression under time order with repeated timestamps, the caller passed `group_col=False`, and the lag-1 autocorrelation of the per-timestamp mean of the target over the training rows is above 0.5 (D10, D23, D63; section 10). It is the tool's doubt about the statement, and changes nothing else: since D63 this condition never stops a run. With an entity column it does not arise. On a short panel it often does not fire (11, "Known limits"). |
 | `no_previous_value` | `null` | Regression under time order with an entity column: exactly one when at least one holdout row belongs to an entity that has no row at least `gap + 1` timestamps earlier (step 11; D57). For those rows the previous-value baseline predicts the training mean; the count is `validation.n_holdout_without_previous`. |
-| `same_features_grouped` | `null` | Exactly one, with `duplicates="group"` and no time column, when at least one row agrees with another in every feature column among the rows split (step 7; D57, D62). It says that the rows which agree were kept together; the count is `validation.n_rows_same_features`. Never when no two rows agree. Until D66 the code was `copies_grouped` and the count `n_rows_with_copies`; neither name is written any more, since a copy, at step 8a, agrees in the target too. |
+| `same_features_grouped` | `null` | Exactly one, with `duplicates="group"` and no time column, when at least one row agrees with another in every feature column among the rows split (step 7; D57, D62). It says that the rows which agree were kept together, and what the headline then measures, in the fixed passage of 5.4 (D69); the count is `validation.n_rows_same_features`. Never when no two rows agree. Until D66 the code was `copies_grouped` and the count `n_rows_with_copies`; neither name is written any more, since a copy, at step 8a, agrees in the target too. |
 | `large_group_kept_in_training` | `null` | Under the grouped scheme: one for each unit that holds a quarter or more of the rows it is drawn among and is among the training rows (step 7; D66). The rows it is drawn among are all the rows split for regression, and for classification the rows of the units of its class. Such a unit is never held out while smaller ones can fill a quarter, so the headline does not test it. The message gives the unit's rows and its share, and holds the fixed text of 5.4. |
 | `large_group_is_holdout` | `null` | Under the grouped scheme: one for each unit that holds a quarter or more of the rows it is drawn among and is the holdout: the units smaller than a quarter do not together hold a quarter, so that unit alone is held out (step 7; D66). At most one for regression and one for each class. The message gives the unit's rows and its share, and holds the fixed text of 5.4. |
 | `model_failed` | `null` | One per configuration with status `failed`, whether it failed during selection or after it was chosen (D38), and whether it raised, predicted a value that is not finite or scored a fold with a number that is not finite (D44). |
@@ -310,7 +311,7 @@ module only; they are always in the output.
 | `duplicate_rows` | `null` | The loaded table holds exact duplicate rows. They are kept. This warning is about the table as loaded, every column of it; whether the run may go ahead is decided by step 8a, on the split, and has the code below. |
 | `holdout_copies_kept` | `null` | Exactly one, with no time column and `duplicates="keep"`, when the rule of step 8a is met: more than 1% of the holdout rows, and at least 10 of them, have a copy among the training rows (D49, D53). It tells the caller that the headline may be inflated; the count and the share are in `validation`. Never otherwise: not below the rule, where the count is reported in `validation` and nothing more is said, not with `duplicates="error"` or `"group"`, and not under time order. |
 | `unsupported_type` | the column | One per column excluded with the reason `unsupported_type` (step 5, rule 7; D51), a column of whole numbers too large for 64 bits among them (D50). So that no column a caller meant as a feature is left out without a word: the code shows in the console summary like any other. |
-| `fold_not_scored` | `null` | Classification, and a fold's training or validation rows hold one class. |
+| `fold_not_scored` | `null` | Classification, and a fold's training or validation rows hold one class. **One record for each fold that is not scored (D72):** their number equals the number of `validation.folds[]` whose `scored` is false. |
 | `no_interval` | `null` | No interval could be computed on the score; `headline.interval_reason` says why. |
 | `skill_undefined` | `null` | Regression. Exactly one when `headline.skill` is null, because the headline baseline's squared error on the holdout is exactly zero (D36). Never otherwise: it is the code for a headline skill that has no value, and for nothing else (D42). The message states the reason. |
 | `no_skill_interval` | `null` | Regression. Exactly one when `headline.skill` is a number and `skill_low` and `skill_high` are null although the score has its interval (`interval_method` is not null): skill could be computed in fewer than half of the resamples (step 12; D42). Never otherwise: not when `headline.skill` is null, which `skill_undefined` covers, and not when there is no interval at all, which `no_interval` covers. The message states the reason. |
@@ -398,7 +399,7 @@ Section 3 defines what each step does; this table defines only the call.
 | `usable_rows(frame, target, time_col=None)` | Step 2 as a count: `{"usable", "dropped_missing_target", "dropped_missing_time"}`. `usable` is an array of the positions of the usable rows in increasing order; the two counts and its length add up to the rows of `frame`. A missing target is a missing cell, an infinite number, or a text cell that holds only white space (step 2; D48). A missing time value is a missing cell (or an infinite number); the time column's form is not checked here. | `ColumnNotFoundError` |
 | `column_roles(frame, target, time_col=None, group_col=None)` | A DataFrame with the eleven columns of `profile.json["columns"]` (5.2), one row per column of `frame` in order, as decided by step 5 alone: `leak_rule` is null and `n_imputed` is 0 throughout, since the leak screen and imputation come later. Usable rows are those with a target and, when `time_col` is given, a time value. `group_col`, when it names a column, gives that column the role `group` (D57). It returns no warnings and never stops for a statement that was not made: the warnings of step 5 (`values_coerced`, `infinite_values`, `numeric_with_separators`, `unsupported_type`) and the errors `time_order_undeclared` and `entities_undeclared` are raised by `profile()` and by the command line, and by no step function (D63). `time_col=None` here means only that no column has the role `time`. | `ColumnNotFoundError` |
 | `decide_task(values, task="auto")` | `{"type", "decided_by", "n_distinct", "classes", "positive_class", "warnings"}` for the target values given. They are read as step 4 reads them: a text value without the white space round it (D46); missing ones are ignored, a text value of only white space among them (D48). `warnings` is a list of warning codes: `["whole_number_regression_target"]` or `[]`. | `TargetConstantError`, `TaskAmbiguousError`, `TaskUnsupportedError`, `InputError` |
-| `read_time(values)` | `(keys, form)`. `keys` is a numpy array, one per value, that sorts in time order: `datetime64[ns]` with `NaT` for a missing value under the `datetime` and `iso8601` forms (in UTC if the values carried a zone), `float64` with NaN for a missing or infinite value under the `numeric` form. One exception under the `numeric` form (D50, D53): for whole numbers held exactly (step 3) of which at least one has a magnitude above 2⁵³, `keys` are exact 64-bit integers, of type `int64`, or `uint64` when the values came in an unsigned type, each equal to its value; as floats two of them could become one key. What `keys` holds for such a column that also has a missing value is open: a caller passes `split_time` the keys of usable rows only. Text of eight digits in which every value reads as a calendar date, `YYYYMMDD` (step 3; D66), gives the form `numeric` and `float64` keys equal to those numbers. `form` is as in `validation.time_form`. | `TimeColumnError` |
+| `read_time(values)` | `(keys, form)`. `keys` is a numpy array, one per value, that sorts in time order: `datetime64[ns]` with `NaT` for a missing value under the `datetime` and `iso8601` forms (in UTC if the values carried a zone), `float64` with NaN for a missing or infinite value under the `numeric` form. One exception under the `numeric` form (D50, D53): for whole numbers held exactly (step 3) of which at least one has a magnitude above 2⁵³, `keys` are exact 64-bit integers, of type `int64`, or `uint64` when the values came in an unsigned type, each equal to its value; as floats two of them could become one key. What `keys` holds for such a column that also has a missing value is open: a caller passes `split_time` the keys of usable rows only. Text of eight digits in which every value reads as a calendar date, `YYYYMMDD` (step 3; D66), gives the form `numeric` and `float64` keys equal to those numbers. A column of such dates, numbers or text, that also holds a value that is no date is not ordered: it raises (step 3; D69). `form` is as in `validation.time_form`. | `TimeColumnError` |
 | `split_random(n_rows, classes=None, seed=0, groups=None)` | `{"training", "holdout", "folds"}`: arrays of positions in 0..`n_rows`−1, each in increasing order; `folds` is a list of five `{"training", "validation"}`. `classes`, when given, is an array of `n_rows` labels with two distinct values and makes the split stratified (step 7); text labels are compared without the white space round them, so `yes` and `yes ` are one label and the split is the one their stripped forms give (D46). `seed` is in the range of 2.1. `groups`, when given, holds one value for each row, none of them empty, read as an entity column is (step 5): the rows of one value stay together, on one side of the holdout and in the validation part of one fold, by the rule of step 7 for whole entities (D57, D64). The split depends on which rows share a value and on nothing else about the values: renaming them changes nothing. With `groups=None` the result is what it was before `groups` existed. | `InputError` for a seed outside 0 to 4,294,967,295 (D45); with `groups`: `GroupColumnError` for an empty value or a number of values other than `n_rows`, `TooFewGroupsError` (step 7) |
 | `split_time(keys, gap=0)` | `{"training", "gap", "holdout", "folds"}`: arrays of positions into `keys`, each in increasing order; `folds` is a list of five `{"training", "gap", "validation"}`, fold *k* validating on block *k*+1. `keys` is as returned by `read_time`, in any order, with no missing value. | `TooFewRowsError`, `GapError` |
 | `roc_auc(y, score)` | ROC AUC of `score` for labels `y` of 0 and 1 (1 is positive); ties share their average rank. | `OneClassError` |
@@ -563,16 +564,34 @@ text column that mixes values with and without an offset, an impossible date
 day-first and month-first. Rows with equal timestamps keep their file order.
 
 **Dates written as whole numbers (D66).** A column of integer or float type is
-a numeric time column whatever it holds, so dates written `20240131` are
-ordered as numbers, which is their order in time. The same dates held as text
-of eight digits are accepted too, and read as those numbers: the form is
-`numeric`, the keys are 64-bit floats, and `train_end`, `holdout_start` and
-`holdout_end` are written as whole numbers. It is judged on every non-missing
-value of the column, without the white space round it: one value of eight
-digits that is no calendar date (`20231301`), or one of another length, and
-the column is text in no accepted form, `time_column_invalid` as before. The
-numbers are far below 2**53, so D50 changes nothing here: no two dates can
-become one key.
+a numeric time column, so dates written `20240131` are ordered as numbers,
+which is their order in time. The same dates held as text of eight digits are
+accepted too, and read as those numbers: the form is `numeric`, the keys are
+64-bit floats, and `train_end`, `holdout_start` and `holdout_end` are written
+as whole numbers. It is judged on every non-missing value of the column,
+without the white space round it. The numbers are far below 2**53, so D50
+changes nothing here: no two dates can become one key.
+
+**A value that is no date among such dates stops the run (D69, D72).** An
+open-ended date is often written `99991231`, or `0`. Ordered as a number, that
+row is the latest of the table, or the earliest, and the holdout is no longer
+the latest rows. So: when the declared time column, **judged over every
+non-missing value of the column, whichever rows step 2 will drop,** is a
+column of dates by rule 2a of step 5 (at least two distinct values read as
+dates, and enough of them beside those that do not: the same counts, on these
+values) and holds at least one value that is no date, the run stops with
+`time_column_invalid`. It holds for an integer column, a float column and
+text alike. The value is never ordered as a number, and its rows are never
+dropped without the caller's say: the caller empties those cells, and the
+rows are then dropped and counted as `dropped_missing_time`, or writes the
+date they stand for. **The message holds the value that most rows hold among
+those that are no dates, as it is written in the column** (a whole number in
+digits; text as it is), **and the number of rows that hold it, as a whole
+number in digits.** `stages.read_time` raises the same error on such a column
+(2.7). A numeric column that is no column of dates by that rule (too few of
+its values read as dates) is a numeric time column whatever it holds, as
+before; text that is neither ISO 8601 nor a column of dates by that rule is
+text in no accepted form, as before.
 
 **Fractions of a second (D52).** One to nine digits are accepted, each count
 on its own and in any mixture within a column: `09:15:00.5`, `09:15:00.123456`
@@ -705,7 +724,7 @@ first rule that applies decides:
 |---|---|---|
 | 1 | every value is missing | excluded, `all_missing` |
 | 2 | datetime type | excluded, `datetime` |
-| 2a | integer or float type (not boolean), or text: every non-missing value is a whole number that reads as a calendar date written `YYYYMMDD`, and at least two of them differ (D66; below) | excluded, `datetime` |
+| 2a | integer or float type (not boolean), or text: at least two distinct values are whole numbers that read as a calendar date written `YYYYMMDD`, and the distinct values that are no such dates are few beside them: at most one for every nine, or at most two beside five or more (D66, D69, D72; below) | excluded, `datetime` |
 | 3 | boolean, integer or float type (nullable or not) | numeric: go to rule 8 |
 | 4 | text, and at least 95% of the non-missing values match a date form of section 4.5 | excluded, `datetime` |
 | 4a | text with more than one distinct value, in which at least 90% of the non-missing values either parse as numbers or are numbers with thousands separators, and at least one is a number with thousands separators (D28, D34) | excluded, `numeric_with_separators` |
@@ -786,28 +805,73 @@ day as text stopped. So the form is recognised, by this rule and no other:
   (Python integers, `Decimal` values with no fractional part) is the integer
   column it stands for. An object column that mixes numbers and text is
   neither, and stays with rule 7;
-- **every non-missing value among the usable rows** is a whole number that
-  reads as a calendar date written `YYYYMMDD`: the year, the number without
-  its last four digits, is from 1900 to 2100, both included; the month, the
+- **a value reads as a calendar date written `YYYYMMDD`** when it is a whole
+  number whose year, the number without its last four digits, is from 1900 to
+  2100, both included; the month, the
   next two digits, from 01 to 12; and the day, the last two, a day that month
   has, with 29 February in a leap year only (2000 and 2024 are leap years;
   1900, 2023 and 2100 are not). So 19000101 and 21001231 are the first and the
   last such numbers;
 - in a float column a value is a whole number when it has no fractional part.
-  A missing cell is not looked at; an infinite cell is a value, and no date;
+  A missing cell is not looked at. A value with a fractional part, and an
+  infinite cell, are values, and no dates;
 - in a text column a value is its text without the white space round it, and
   it reads as a date when it is exactly eight of the digits `0` to `9` that
-  form such a number. `020240131`, `2024013`, `+20240131` and `2024-01-31` are
-  not this form (the last is a date by rule 4);
-- **at least two of the values differ.** A column that holds one date
-  throughout is left to the rules that follow, and is `constant`.
+  form such a number. `020240131`, `2024013`, `+20240131`, `0`, `unknown` and
+  `2024-01-31` are values that do not (a column of the last is a date column
+  by rule 4);
+- **the column is judged by its distinct values (D69, D72).** Among the
+  non-missing values of the usable rows, let *d* be the number of distinct
+  values that read as dates and *x* the number of distinct values that do
+  not. The rule applies when **at least two distinct values read as dates,**
+  *d* ≥ 2, **and the values that do not are few beside them:**
+  - *d* ≥ 9 × *x*: at least nine distinct dates for each distinct value that
+    is no date; or
+  - *x* ≤ 2 and *d* ≥ 5: at least five distinct dates beside at most two
+    values that are not.
 
-One value that is no date, and the rule does not apply: the column is what it
-was before D66, by the rules that follow. Like every rule of this step it
-looks at the usable rows, so such a value in a row with no target does not
-count. The measurement is in 10.8: over 30 data seeds the rule names no column
-of any dataset of the gate and none of the README's table, and on tables made
-for the purpose it names every column of dates so written and no other.
+  With no value that is no date, *x* = 0, that is the rule of D66: two dates
+  that differ. A column that holds one date throughout is left to the rules
+  that follow, and is `constant`.
+
+**A sentinel does not switch the rule off (D69; the sixth review, finding
+1).** Until D69 every value had to read as a date. A column of end dates
+holds `99991231` for whatever has not ended, and a column of dates of an
+event `0` where there was none: one such cell, and the column was a numeric
+feature again, with no warning. On the gate's `day_numbers` (the label is
+random per block of five days) one cell of `99991231`, of `0` or of
+`20240230` took the application from skill −0.18 to +0.09 to skill 0.82 to
+1.00 (10.9). **A value that is no date counts once, however many cells hold
+it:** a share of the cells cannot be the rule, since an open-ended date can
+sit in a third of the rows or in two thirds of them, and a rule that asked
+for 95% of the cells was wrong on every such column measured (D72). And the
+dates must be many beside the values that are not, so that a column of a few
+codes of which some happen to read as dates is no date column: of five
+distinct eight-digit codes at most four can be dates beside one that is not.
+
+| The column's distinct values | *d*, *x* | Rule 2a |
+|---|---|---|
+| 600 days and `99991231`, in one cell or in six cells of ten | 600, 1 | applies |
+| 600 days, `0` and `99991231` | 600, 2 | applies |
+| 600 days and three sentinels, one cell each | 600, 3 | applies: 600 ≥ 27 |
+| eight quarter ends and `99991231` | 8, 1 | applies: one value beside five dates or more |
+| five month ends, `0` and `99991231` | 5, 2 | applies |
+| four quarter ends and `99991231` | 4, 1 | does not: neither nine dates nor five |
+| 26 days and three values that are no dates | 26, 3 | does not: 27 are needed for three |
+| 600 days and 67 distinct values that are no dates | 600, 67 | does not: 603 are needed |
+| five codes of which four read as dates | 4, 1 | does not |
+| three codes of which two read as dates | 2, 1 | does not |
+| identifiers counting up from 20230101, 600 of them | 181, 419 | does not |
+
+Like every rule of this step it looks at the usable rows, so a value in a row
+with no target is not counted, on either side. The measurements are in 10.8
+and 10.9: over 30 data seeds the rule names no column of any other dataset of
+the gate and none of the README's table; on tables made for the purpose it
+names every column of dates so written, with and without sentinels, and no
+column of codes, counts, identifiers, years, `YYYYMM`, day counts or
+day-first numbers. What defeats it is stated in section 11: more than one
+distinct value in ten that is no date, or fewer than five distinct dates
+beside a sentinel.
 
 **How rule 2a ranks (D66).**
 
@@ -829,11 +893,14 @@ for the purpose it names every column of dates so written and no other.
 A column excluded by rule 2a is excluded like any `datetime` column: `kind` is
 informative, `n_coerced` and `n_infinite` are 0, and under a declared time
 column it is excluded with no warning. Declared as the time column itself it
-has the role `time` and is ordered as numbers (step 3).
+has the role `time` and is ordered as numbers, unless it holds a value that is
+no date, which stops the run (step 3; D69).
 
 **What rule 2a does not see** is stated in section 11: day counts (19,723 for
-1 January 2024), `YYYYMM`, day-first numbers, seconds since 1970. A whole
-number of those kinds cannot be told from a measure.
+1 January 2024), `YYYYMM`, day-first numbers, seconds since 1970, a date with
+its hour written `YYYYMMDDHH`, and period labels such as `2024-W05` or
+`2024Q1`. A whole number of those kinds cannot be told from a measure, and no
+rule is added for them in the hardening passes (D71).
 
 **How an entity column is read (D57).** Two rows are of one entity when their
 cells are equal. Text is compared without the white space round it; a
@@ -994,15 +1061,43 @@ Only under `profile="fast"` and only when there are more than 2,000 usable rows.
 
 - No time column: a simple random sample of 2,000 usable rows, without
   replacement, drawn from the seed.
-- No time column, and an entity column (D57): **whole entities.** The entities
-  are taken in an order drawn from the seed, and each is kept when all of its
-  rows still fit under the cap. So at most 2,000 rows are kept; every entity
-  is kept whole or left out whole; and no entity left out would have fitted
-  beside those kept. Which entities are kept changes with the seed, and is
-  otherwise open. An entity of more than 2,000 rows can never be kept. (With
-  `duplicates="group"` and no entity column the cap is the random sample of
-  rows above: the rows that agree are put together afterwards, among the rows
-  kept.)
+- No time column, and an entity column (D57, D70, D72): **whole entities, and
+  never without a large one.** An entity that holds **a quarter or more of the
+  usable rows** (4 × its rows ≥ the usable rows) is always kept. The other
+  entities are then taken in an order drawn from the seed, and each is kept
+  when all of its rows still fit under the cap. So:
+  1. at most 2,000 rows are kept;
+  2. every entity is kept whole or left out whole;
+  3. every entity of a quarter or more of the usable rows is kept, on every
+     seed;
+  4. no entity left out would have fitted beside those kept.
+
+  Which of the smaller entities are kept changes with the seed, and is
+  otherwise open.
+
+  **When the cap cannot do that, the fast profile stops (D70, D72).** An
+  entity of more than 2,000 rows can never be kept; and the entities of a
+  quarter or more cannot all be kept when together they hold more than 2,000
+  rows. In either case the run stops here with
+  `fast_profile_group_too_large`, before any row is left out: the message
+  names the cap of 2,000 and tells the caller to use `profile="full"`. As for
+  the other two errors of the fast profile, the advice must be true: when the
+  same call with `profile="full"` would stop too (fewer than 10 usable rows
+  of a class: `too_few_rows`; the split of whole entities of step 7 cannot be
+  formed from every usable row: `too_few_groups`), that error is raised.
+  Until D70 such an entity was left out and only `dropped_row_cap` said so:
+  on a table of taxi trips with one borough as an entity of 82% of the rows,
+  the fast profile reported skill 0.878 on the other 1,128 rows. And until
+  D72 an entity under the cap was left to the draw: one of 1,000 to 2,000
+  rows among 300 of five rows, 40% to 57% of the table, was left out on 12,
+  21, 28 and 30 of 30 seeds (10.9). Left out, the result describes another
+  table, so a warning was not enough (D70).
+
+  The rule is for an entity column only (D72). With `duplicates="group"` and
+  no entity column the cap is the random sample of rows above: the rows that
+  agree are put together afterwards, among the rows kept, so no set of them
+  is ever left out, however large it was in the table. With both, the cap is
+  of whole entities, as here.
 - Time column: the most recent whole timestamps whose rows together number at
   most 2,000. If the most recent timestamp alone holds more than 2,000 rows
   the cap can keep nothing, and the run stops as step 7 says for a cap that
@@ -1073,6 +1168,19 @@ features alone the same tables score about zero on noise (10.8). The price is
 that `"group"` is cautious where different cases share feature values: every
 holdout row then has a combination the model has not seen, which is a harder
 question than `"keep"` asks (Titanic: 0.645 against 0.745; D62).
+
+**What the headline measures under `"group"` is said in the output (D69; the
+sixth review, finding 3):** whether a combination of feature values that the
+model has not seen can be predicted. On noise that question has the same
+answer as any other: over 30 seeds and 8 to 120 combinations the mean skill
+is within 0.013 of zero and no run of 240 is below −0.2 (10.9). Where the
+label does depend on the combination, the answer can be far below what
+`"keep"` finds, and below zero: on a label that is the parity of two
+few-valued columns, `"keep"` gives +0.79 and `"group"` −0.66 on average with
+8 combinations and −0.07 with 120. That is no fault of the split: a model
+that has learned each combination's label knows nothing of a combination it
+has not met. The `same_features_grouped` warning says so, in the fixed
+passage of 5.4.
 
 `validation.n_rows_same_features` is the number of rows, among those split,
 that agree with another of them in every feature column, and when it is above
@@ -1211,8 +1319,8 @@ the holdout and the caller's gap leaves fewer than six, the error is
 
 For classification, a holdout or a set of training rows with one class raises
 `one_class`. A fold whose training or validation rows hold one class is not
-scored for any configuration (`fold_not_scored`); if no fold can be scored,
-`one_class`.
+scored for any configuration, and one `fold_not_scored` warning is raised for
+each such fold (D72); if no fold can be scored, `one_class`.
 
 **8. The leak screen (D11, D24, D30), on training rows only.** For each feature
 column, in file order, the first rule that applies decides:
@@ -1351,7 +1459,9 @@ different row by any tool.
   - Met, `duplicates="keep"`: the run goes ahead exactly as it would have
     before D49, and one `holdout_copies_kept` warning says the headline may be
     inflated.
-  - Met, `duplicates="group"`: see below; the run stops.
+  - Met, `duplicates="group"`: the run stops. It can be met there only after
+    the leak screen has excluded a column, and the wider rule below has then
+    already stopped the run.
   - Not met: the run goes ahead under any of the three values, the count and
     the share are reported, and no warning is added for them. The
     `duplicate_rows` warning of the loaded table stands as it was (2.5).
@@ -1362,17 +1472,37 @@ different row by any tool.
   here the count is normally zero, `n_holdout_copies` is 0 and
   `holdout_copy_share` 0.0, and that is how the output shows it. **The count
   itself is unchanged by D62:** a copy is still a row equal in every feature
-  and the target, under every value of `duplicates`. One case is left, the one
-  the spec pinned before. The units of step 7 are formed on the feature
-  columns of step 5, and this count is made on the feature columns that are
-  left after the leak screen. When the screen excludes a column, two rows that
-  differed only in it now agree in every feature that is left; where their
-  targets are equal too they are copies of one another, and they may be on
-  opposite sides. They are counted here like any other, and when the rule is
-  met the run stops with `holdout_copies_in_training`; the message says that
-  these rows became copies when the leak screen excluded a column, names every
-  column excluded as a suspected leak, and tells the caller to remove it and
-  run again. Below the rule the run goes ahead and the count is reported.
+  and the target, under every value of `duplicates`.
+- **`duplicates="group"` and a column the leak screen removes (D69, D72; the
+  sixth review, finding 2).** The units of step 7 are formed on the feature
+  columns of step 5, before the split; the leak screen comes after it. When
+  the screen excludes a column, two rows that differed only in it now agree
+  in every feature that is left, and they may be on opposite sides: what
+  `"group"` promises no longer holds. On the gate's `few_valued` with a
+  column that copies the label, the units were the rows of one branch and one
+  class; with the copy excluded, a held-out unit had only the other class of
+  its branch among the training rows, and noise scored −0.81 to −1.00, with
+  no holdout row counted as a copy, since the two classes differ in target.
+  So, whenever the screen has excluded at least one column: **if any holdout
+  row agrees with a training row in every feature column that is left,
+  compared as above and whatever their targets, the run stops with
+  `holdout_copies_in_training`.** There is no threshold: one such row is
+  enough, the share and the count of the copies rule play no part, and
+  nothing is written. The units cannot be formed again after the screen,
+  which was fitted on the training rows of the first split (D69). The message
+  holds the number of such holdout rows and the number of holdout rows, the
+  share, the words `keep` and `group`, the name of every column excluded as a
+  suspected leak, the first fixed passage of 5.4, and, like every message of
+  this error, the name of a column excluded as `datetime` under
+  `time_col=False` with the text `time_col`; it tells the caller to remove
+  the excluded column or columns and run again. When the screen
+  excludes nothing, the units were formed on the very features that reach the
+  models, and there is nothing to ask. **So in every finished run under
+  `"group"`, no combination of the values of the columns with the role
+  `feature` is on both sides of the split:** a count the judge makes for
+  itself from `predictions.csv`, `columns` and the source (5.3, rule 10).
+  Until D69 only rows that had become copies, target and all, were counted,
+  and only above the rule of 1% and ten rows.
 - **When it is judged.** After the leak screen and the `no_features` check,
   and **before any preprocessing or model is fitted** (step 9). A run that
   stops here has fitted nothing but the screen's own trees, and a table that
@@ -1733,7 +1863,16 @@ the order they apply:
    class value, for one) was written as `null` or ended in a raw error (the
    fourth review, finding 4). The check is made in the constructor of
    `ProfileResult` (2.3), on the document it is given: a float, Python's or
-   numpy's, that is infinite or not-a-number, anywhere in it.
+   numpy's, that is infinite or not-a-number, anywhere in it. **And no code
+   path of an implementation turns such a number into a null on its way to
+   the output (D69; the sixth review, finding 6):** where a step makes the
+   document ready to be written (numpy values into plain ones, a missing value
+   into `null`), a float that is infinite or not-a-number is raised as
+   `non_finite_score` there, never mapped to `null`, even though the check
+   above would have stopped it first. A branch that can only be reached if
+   that check is one day narrowed must fail loudly then, and not write a null.
+   No input reaches it, so it has no test of its own; the test of the
+   constructor's check stays the guard.
 7. **The p-value** is reported only when skill is a number (step 12).
 
 `y_pred` needs no rule of its own: by rules 3 and 4 a prediction that is not
@@ -1811,6 +1950,8 @@ exactly the grid arguments (`{}` for `tree-0`).
 | too few holdout entities for an interval (grouped scheme) | fewer than 30 units in the holdout (D57) |
 | a unit that is named (grouped scheme) | one that holds a quarter or more of the rows it is drawn among: 4 × its rows ≥ those rows (step 7; D66) |
 | years of a date written as a whole number | 1900 to 2100, both included: 19000101 to 21001231 (step 5, rule 2a; D66) |
+| a column of such dates | at least 2 distinct values that read as dates, and at least 9 for each distinct value that does not, or at least 5 beside at most 2 that do not (step 5, rule 2a; D69, D72) |
+| an entity the fast profile's cap always keeps | one that holds a quarter or more of the usable rows: 4 × its rows ≥ those rows (step 6; D72) |
 | one-hot levels kept per column | 30 |
 | seed | a whole number from 0 to 4,294,967,295 (D45) |
 | digits of a number in the console summary | at least four significant: within 0.0005 × \|value\| (D46) |
@@ -1829,7 +1970,7 @@ exactly the grid arguments (`{}` for `tree-0`).
 | free text | distinct values more than 50% of the non-missing values |
 | numeric coercion | at least 90% of the non-missing values parse as numbers |
 | numbers with separators | at least 90% of the non-missing values parse as numbers or are numbers with thousands separators, and at least one is such a number: excluded (step 5, rule 4a) |
-| date-like | datetime type, or at least 95% of the non-missing values match a form of 4.5; or whole numbers of which every one reads as a calendar date `YYYYMMDD` and two differ (step 5, rule 2a; D66) |
+| date-like | datetime type, or at least 95% of the non-missing values match a form of 4.5; or whole numbers or eight-digit text judged by their distinct values: at least two read as a calendar date `YYYYMMDD`, and at least nine do for each that does not, or at least five beside at most two (step 5, rule 2a; D66, D69, D72; measured in 10.9) |
 | small holdout warning | fewer than 50 holdout rows of the rarer class (classification) or in all (regression) |
 | no block-bootstrap interval | fewer than 30 distinct holdout timestamps |
 | a panel under `group_col=False`: the `autocorrelated_panel_target` warning (D23, D63). It decides no stop | lag-1 autocorrelation above 0.5 |
@@ -1863,10 +2004,11 @@ own, stricter rule (step 3).
 
 One form is not text in a date form and is a date all the same (D66): **a
 whole number, or text of eight digits, written `YYYYMMDD`.** It has a rule of
-its own, rule 2a of step 5, which asks that every value be a calendar date,
-not 95% of them: a number is a date only when nothing in the column says
-otherwise. Unlike the forms above it also orders rows, as the numbers they
-are (step 3).
+its own, rule 2a of step 5, which counts the column's distinct values and not
+a share of its cells: a sentinel such as `99991231` can fill a third of a
+column of dates and is still one value (D69, D72). Unlike the forms above it
+also orders rows, as the numbers they are, and then a value that is no date
+stops the run (step 3).
 
 ---
 
@@ -1927,7 +2069,7 @@ Top-level keys, all always present:
 | `gap` | integer | |
 | `n_rows` | integer | rows loaded |
 | `n_columns` | integer | columns loaded |
-| `duplicate_rows` | integer | rows that exactly repeat an earlier row; they are kept |
+| `duplicate_rows` | integer | rows that exactly repeat an earlier row; they are kept. A cell that cannot be hashed (a list, a dictionary, a set) is compared by its text, so rows that repeat are counted on such a table too (D72) |
 | `duplicates` | string | the `duplicates` argument as passed: `"error"`, `"keep"` or `"group"` (D49, D57) |
 | `group_col` | string or `false` | the `group_col` argument as passed: a column's name, or `false` for the caller's statement that no rows belong together. **Never null in a finished run** (D57, D63) |
 
@@ -2080,6 +2222,16 @@ as it was measured.
    source (D64).
 9. `input.time_col` and `input.group_col` are each a column's name or `false`
    (D63).
+10. In a finished run with `duplicates="group"` and no time column, no
+    combination of the values of the columns with the role `feature` is held
+    by a row of `predictions.csv` and also by a training row: counted from the
+    two files and the source, each value compared as step 8a compares it
+    (D69).
+11. Under the fast profile with an entity column and no time column, when the
+    cap left rows out: every entity that holds a quarter or more of the
+    usable rows is whole among the training and holdout rows (D72). A test
+    counts it through the seam; the gate from the row counts of a table built
+    so that they tell.
 
 ### 5.4 Fixed texts
 
@@ -2109,6 +2261,21 @@ In the message of each `large_group_is_holdout` warning, after the unit's rows
 and its share:
 
 > The units smaller than a quarter do not together hold a quarter, so this one unit is the holdout: the headline rests on it alone.
+
+Two more were added by the seventh pass (D69, D72), held in the same way.
+
+In the message of the `same_features_grouped` warning, what `"group"`
+measures:
+
+> With duplicates='group' the headline measures whether a combination of feature values that the model has not seen can be predicted. On a table of few-valued columns that can give negative skill where duplicates='keep' finds signal.
+
+The message of each `date_column_undeclared` warning holds three things: the
+column's name in quotes as Python's `repr` writes a text; the text
+`time_col=False`; and **the caveat of the scheme the run used, exactly as
+`validation.caveat` has it**: the first caveat above under the random scheme,
+the second under the grouped scheme, whether that scheme came from an entity
+column or from `duplicates="group"`. Until D69 the message said that the rows
+were split at random under either (the sixth review, finding 5).
 
 The two caveats and the nine sentences below were read against D63, and none
 of them is false under it: the caveat of the random scheme says what the
@@ -2258,7 +2425,7 @@ None is skipped silently: each raises a named error or is reported in the output
 | a line of a form feed, of a no-break space, of two quotes or of two quotes round a space, before a header of two columns or more | `input_error`: pandas reads that line as a header of one column, and the lines after it are longer |
 | too few rows to split (fewer than 100 usable, or fewer than 10 of a class) | `too_few_rows` |
 | a holdout, or the training rows, with one class | `one_class` |
-| a fold with one class | that fold is not scored; `fold_not_scored` warning; `validation.folds[].scored` false; `fold_scores` null there. No fold scored: `one_class` |
+| a fold with one class | that fold is not scored; one `fold_not_scored` warning for each such fold (D72); `validation.folds[].scored` false; `fold_scores` null there. No fold scored: `one_class` |
 | a time column not in an accepted form | `time_column_invalid` |
 | a gap that leaves no training rows | `gap_too_large` |
 | too few timestamps for the holdout and six blocks | `too_few_rows` |
@@ -2284,13 +2451,15 @@ None is skipped silently: each raises a named error or is reported in the output
 | a column of plain numbers with a few cells of other text (`abc`) | numeric; those cells read as missing and counted in `n_coerced`; `values_coerced` warning |
 | a feature whose single-column skill is at least 0.90 and below 0.98 | kept as a feature; `strong_single_column` warning |
 | exact duplicate rows | kept; `input.duplicate_rows`; `duplicate_rows` warning. Whether the run goes ahead is the next three rows |
+| rows that repeat in a table with a column of lists, dictionaries or sets | counted all the same: such a cell is compared by its text (D72) |
 | no time column: more than 1% of the holdout rows, and at least 10 of them, have a copy among the training rows | `holdout_copies_in_training`, before any model is fitted; with `duplicates="keep"` the run goes ahead with one `holdout_copies_kept` warning (D49, D53) |
 | no time column: fewer copies than that (nine of 100 holdout rows; ten of 1,000) | the run goes ahead; `validation.n_holdout_copies` and `holdout_copy_share` report them; no warning for them |
 | time order: rows that agree in every feature and the target | the rule does not apply; both fields null; `duplicates` has no effect |
 | `duplicates="group"`, rows that agree in every feature column | kept together, whatever their targets: no combination of feature values on both sides of the split or of a fold; scheme `grouped`; `n_rows_same_features`; one `same_features_grouped` warning; `n_holdout_copies` 0 (D57, D62, D66) |
 | `duplicates="group"`, rows that agree in every feature and differ in target (a table of few-valued columns) | one unit all the same: the target plays no part in forming the units (D62) |
 | `duplicates="group"`, no two rows that agree | the random scheme's split, row for row; `n_rows_same_features` 0; no warning |
-| `duplicates="group"`, and the leak screen excludes the one column in which two rows differed | where their targets are equal those rows are copies now and may be on both sides: counted at step 8a, and above the rule the run stops with `holdout_copies_in_training`, naming the excluded column |
+| `duplicates="group"`, and the leak screen excludes a column in which rows differed (a column that copies a two-valued target; a leak distinct in every row) | those rows agree in every feature that is left and may be on both sides. One holdout row that agrees with a training row is enough: `holdout_copies_in_training`, naming the excluded column and telling the caller to remove it and run again; no threshold (D69, D72) |
+| `duplicates="group"`, any finished run | no combination of the features that reached the models is on both sides of the split (5.3, rule 10) |
 | `duplicates="group"` on a table of fewer than six combinations of feature values | `too_few_groups`; of fewer than about 30 in the holdout, no interval (11, "Known limits") |
 | a copy of a row that differs in any feature column (an added column, a batch number, a value changed by 1e-9) | not a copy, and not detected in this version (D60); `group_col` is the control |
 | an entity column, no time column | the grouped scheme: no entity on both sides of the holdout or in two folds; `n_groups_training`, `n_groups_holdout`; interval `bootstrap_groups`; no p-value, with a reason (D57) |
@@ -2303,7 +2472,11 @@ None is skipped silently: each raises a named error or is reported in the output
 | an entity that holds one class | nothing special: it counts with that class when the classes are balanced across the split. A class held by one entity alone: `one_class` |
 | `group_col` equal to the target or to the time column, or not a name, `None` or `False` | `input_error`, before anything is loaded |
 | every row its own entity | allowed: the grouped scheme with units of one row each |
-| the fast profile's cap with an entity column and no time column | whole entities: each kept whole or left out whole, at most 2,000 rows, and no entity left out would have fitted |
+| the fast profile's cap with an entity column and no time column | whole entities, at most 2,000 rows: every entity of a quarter or more of the usable rows is kept; the others are kept whole or left out whole, and none left out would have fitted (D72) |
+| the same, with an entity of more rows than the cap, or entities of a quarter or more that do not fit under it together | `fast_profile_group_too_large`, naming the cap and the full profile; nothing is left out and nothing written (D70, D72) |
+| the same, where the full profile would stop too (fewer than six entities; a class under 10 rows) | the error the full profile would raise: `too_few_groups` or `too_few_rows` |
+| an entity of exactly 2,000 rows among others, under the fast profile | kept, alone: the cap then holds one entity, and the error is `fast_profile_too_few_rows` (steps 6 and 7) |
+| the fast profile with `duplicates="group"` and no entity column, however large a set of rows that agree | the cap is the sample of rows; the sets are formed among the rows kept (D72) |
 | an entity column under time order | the split is by time as ever; each entity has its own previous value; `n_holdout_without_previous` |
 | a holdout row whose entity has no earlier row (time order) | the previous-value baseline predicts the training mean for it; counted; one `no_previous_value` warning |
 | two rows of one entity at one timestamp, in a regression under time order | `group_column_invalid` |
@@ -2318,7 +2491,7 @@ None is skipped silently: each raises a named error or is reported in the output
 | a whole-number feature whose distinct values are distinct only as integers (above 2⁵³) | counted exactly: not `constant`, and `id_like` only by rule 8b on the integers (D50) |
 | a time value with one to nine digits in its fraction of a second | accepted; read to the nanosecond (D52) |
 | a time value with ten or more digits in its fraction | `time_column_invalid`; the message names the fraction |
-| a date outside what a nanosecond timestamp can hold, in a datetime or ISO 8601 time column | `time_column_invalid` |
+| a date outside what a nanosecond timestamp can hold, in a datetime or ISO 8601 time column, throughout or in one cell among ordinary dates | `time_column_invalid`; never left to the conversion, which on such a column can end the process (section 9) |
 | a complex-number time column | `time_column_invalid` |
 | a target of lists, dictionaries or sets | `task_unsupported` (D53) |
 | a two-valued target of bytes, durations, periods, intervals, complex numbers or tuples | classification; the classes are written as text (D53) |
@@ -2330,7 +2503,10 @@ None is skipped silently: each raises a named error or is reported in the output
 | the command line with neither `--time-col` nor `--no-time-order`, or neither `--group-col` nor `--no-entities` | exit 3 and the one line of the function's named error, never exit 2 (2.2; D66) |
 | a date column present and `time_col=False` | random scheme; `date_column_undeclared` warning per column; `input.time_col` is `false` |
 | a column of whole numbers, or of eight-digit text, in which every value reads as a calendar date `YYYYMMDD` and two differ | a date: excluded as `datetime`; named by `date_column_undeclared` under `time_col=False` and in the message of `time_order_undeclared`; accepted as the time column and ordered as numbers (step 5, rule 2a; D66) |
-| the same with one value that is no date (20231301, 18991231, a fraction, an infinite cell), or with one date throughout | not this form: a number as before, or `constant` |
+| the same with a value that is no date (99991231, 0, 20231301, a fraction, an infinite cell, text that is not eight digits), in one cell or in most | still a date column: a value that is no date counts once, and the rule asks nine distinct dates for each, or five beside at most two (D69, D72) |
+| a column of four dates and a sentinel; of 600 dates and 67 distinct values that are no dates; of a few codes of which some read as dates | not this form: a number, or text, as before (11, "Known limits") |
+| one date throughout | `constant` |
+| such a column, with a value that is no date, declared as the time column | `time_column_invalid`, naming the value and the rows that hold it: never ordered as a number, never dropped without the caller's say (D69) |
 | one row a day in date order, the day a whole number | `datetime`, not `id_like`: rule 2a is asked first (D66) |
 | a whole-number target read as regression by the rule | runs; `whole_number_regression_target` warning |
 | a row missing a time value | dropped and counted as `dropped_missing_time` |
@@ -2442,7 +2618,9 @@ Each keeps its id through the gate, the tests and the review.
 | F13 | The grouped holdout takes the units in seed order until they hold a quarter, so one large entity drawn early makes it far more than a quarter (D64). | Gate: `groups.holdout_bounded`, on one entity of three quarters of the rows: the gate counts the holdout from `predictions.csv` and holds it to property 3 of step 7. Tests: property 3 on tables of every shape, and the two warnings. |
 | F14 | A column of dates written as whole numbers, `YYYYMMDD`, is a numeric feature, and nothing says that the table holds dates (D66). | Gate: `time.date_numbers_seen`, on a label that is random per block of five days with the day as a whole number: the column is excluded as a date and the warning names it. Tests: the rule value by value, its rank against the id-like rule, the time column. |
 
-**The other forms of F6, F7 and F8 (D46, D57, D58).** One broken copy of the reference cannot
+| F15 | The fast profile's cap leaves out an entity it cannot do without: one of more rows than the cap, or one of a quarter or more of the rows that is drawn late; the run reports on the rest, and only a row count says so (D70, D72). | Gate: `fast.large_entity_stops` (one entity of 2,500 rows among 4,000: the run stops and names the full profile) and `fast.large_entity_kept` (one of 1,200 among 2,700: the cap keeps it, by the gate's own count). Tests: the stop, the full profile's own error, the four properties of the cap through the seam. |
+
+**The other forms of F6, F7, F8, F12 and F14 (D46, D57, D58, D69).** One broken copy of the reference cannot
 fail every check of its family: the copy that drops rows loses no column, and
 the copy that shuffles the split parses no date. The second review found four
 checks listed against F6 and F7 that had never been seen to fail. Each form
@@ -2458,6 +2636,8 @@ check names the form it was seen to catch.
 | F7c | Whole-number time keys are read as 64-bit floats, so distinct instants above 2⁵³ become one timestamp: the timestamps are no longer unique and the previous-value baseline is lost (D50). | `time.integer_keys_distinct` | integer keys through `read_time`, `split_time` and `profile()` |
 | F7d | A table with a date column and no word from the caller about time order is split at random, with a warning, where it should stop (D58). Since D63 every table stops there; this broken copy still lets through the one that holds dates. | `time.undeclared_stops` | the stop, its message, and the two statements that lift it |
 | F8b | With the entity column declared under time order, the headline is still scored against the training mean alone: a panel of random walks looks almost perfectly predictable (D57). | `time.panel_previous_value` | each entity's previous value by hand: the first holdout row, a gap, an entity with no earlier row |
+| F12b | With `duplicates="group"`, the leak screen excludes a column and combinations of the features that are left are on both sides of the split; only rows that are copies, target and all, are counted, so the run goes ahead and a held-out set has only its opposite class among the training rows (D69). F12's outcome with one column added. | `duplicates.group_leak_stops` | the stop, with one row on both sides as with all of them; the count of 5.3, rule 10 |
+| F14b | One value that is no date, and a column of dates written `YYYYMMDD` is a numeric feature again, with no warning: every value must read as a date, as built in the sixth pass (D69, D72). F14's outcome with one cell changed. | `time.date_sentinel_seen` | the rule by its distinct values, from both sides of each count; the time column |
 
 **The four gate checks added with the fifth pass (D57, D58).** Two assert a
 score, each in a band measured over 30 data seeds on the reference and on the
@@ -2556,13 +2736,65 @@ one used. One gate run changed with D49: the run of `time_blocks` with no time
 column passes `--duplicates keep`, because with the date column excluded every
 one of its holdout rows has a copy among the training rows (D53; 10.6).
 
+**The four gate checks added with the seventh pass (D69 to D72).** All four
+are structural: none asserts a score.
+
+- `time.date_sentinel_seen` runs `day_sentinel`, which is `day_numbers` with
+  the day of three rows in ten set to `99991231`, with `--no-time-order
+  --no-entities`: the column `day` has the role `excluded` and the reason
+  `datetime`, a `date_column_undeclared` warning names it, the scheme is
+  `random`. The sentinel fills 540 of 1,800 cells and is one value beside 580
+  days or so, so a rule that asks every value to be a date, or 95% of the
+  cells, fails here alike.
+- `duplicates.group_leak_stops` runs `few_valued_leak`, which is `few_valued`
+  with a column `status` that copies the label, with `--duplicates group`:
+  exit code 3, `holdout_copies_in_training` on standard error with `status`
+  named, no `profile.json`.
+- `fast.large_entity_stops` runs `large_entity`, one entity of 2,500 rows and
+  300 of five, with `--group-col customer` under the fast profile: exit code
+  3, `fast_profile_group_too_large`, the word `full` in the message, no
+  `profile.json`.
+- `fast.large_entity_kept` runs `quarter_entity`, one entity of 1,200 rows and
+  300 of five (2,700 rows), the same way: `rows.dropped_row_cap` is 700 and
+  the rows kept are 2,000, which is the large entity and 160 small ones, by
+  the gate's own count; the large entity is not in the holdout, and one
+  `large_group_kept_in_training` warning names it. Left to the draw, that
+  entity is left out and 1,500 rows are kept.
+
+**Every check now names a failure mode it was seen to fail on, or was seen to
+fail on another's (D64, D71).** Seven checks gave a written reason in place
+of a failure mode and had never failed on any broken copy, so nothing showed
+that they could. Each now has a broken copy of its own, the fault its own
+message tells a builder to look for, and names it:
+
+| Id | The fault | Gate check |
+|---|---|---|
+| F16 | The positive class is inverted: the probability handed on, scored and written is the other class's, and skill that is there is reported as far below zero. | `model.signal_clf` |
+| F17 | Squared error is read as higher-is-better: the configuration with the worst cross-validation score is chosen. | `model.signal_reg` |
+| F18 | A column of dates under `time_col=False` gets no `date_column_undeclared` warning. | `time.undeclared_warns` |
+| F19 | The result object is not the file: `ProfileResult.headline` holds rounded numbers. | `result.matches_json` |
+| F20 | A part of the output is missing: the limitations statement is empty. | `output.complete` |
+| F21 | A clock value is written outside `meta.timing`: two identical runs differ. | `output.deterministic` |
+| F22 | The resamples are drawn from a stream that depends on the number of cores. | `output.same_at_any_n_jobs` |
+
+Three checks still give a reason and name no mode: `leak.control_kept`,
+`time.flat_holdout_reported` and `uncertainty.reported`. Each fails on the
+broken copy of another mode in every self-test (F6; F3, F7 and F8; F1, F4
+and F16), and the self-test prints which. Its list of checks never seen to
+fail is empty.
+
+**The gate's launch settings (D72).** The gate starts its tool runs 0.25
+seconds apart, 16 side by side. Until D72 it was 0.5 seconds and 8, which was
+most of the gate's time (section 9; 10.9).
+
 **Every gate check that names a failure mode is seen to fail on that mode's own
 broken copy, in every run of the gate's self-test**, which prints the table
-that proves it and fails if one pair is missing. The checks that give a
-written reason in place of a failure mode are listed in the same output, with
-the copies they failed on, for information.
+that proves it and fails if one pair is missing: 45 pairs of a check and the
+mode it names, over 31 broken copies. The checks that give a written reason
+in place of a failure mode are listed in the same output, with the copies
+they failed on, for information.
 
-### 8.1 Small faults the gate cannot see (D39, D44, D46, D52, D57, D62 to D66)
+### 8.1 Small faults the gate cannot see (D39, D44, D46, D52, D57, D62 to D66, D69 to D72)
 
 The first review found five faults that a build could carry while passing
 every gate check and all 308 tests of the first suite. Three are small forms of
@@ -2605,11 +2837,46 @@ one fault (`verify/mutation_check.py`; the switch is in the reference's
 | M28 | Dates written as eight digits of text are refused as the time column, though the same column is excluded as a date (D66). | `test_date_numbers.py::test_eight_digit_text_is_accepted_as_the_time_column` |
 | M29 | The id-like rule is asked before the date-number rule: one row a day in date order is `id_like`, and nothing says that the table holds dates (D66). | `test_date_numbers.py::test_the_date_rule_comes_before_the_id_like_rule` |
 | M30 | The count of step 8a is made on the features alone, like the sets of `duplicates="group"`: a holdout row counts as having a copy when a training row agrees in every feature, whatever its target (D62). | `test_guard_review5.py::test_m30_a_copy_at_step_8a_still_needs_the_same_target` |
+| M31 | The date rule counts cells, not distinct values: 95% of the cells must read as dates, so a sentinel in a third of the rows makes the column a number again (D69, D72). | `test_date_sentinels.py::test_a_sentinel_counts_once_however_many_cells_hold_it` |
+| M32 | As the time column, a value that is no date among dates written `YYYYMMDD` is ordered as the number it is: no stop (D69). | `test_date_sentinels.py::test_as_the_time_column_a_value_that_is_no_date_stops_the_run` |
+| M33 | The stop under `duplicates="group"` after a removed leak keeps the threshold of the copies rule, more than 1% and at least ten rows: a few combinations on both sides pass (D72). | `test_group_after_leak.py::test_one_combination_on_both_sides_is_enough` |
+| M34 | The fast profile's stop for a large entity is raised where the full profile would stop too, in place of the full profile's own error. | `test_fast_cap_groups.py::test_when_the_full_profile_would_stop_too_its_error_is_raised` |
+| M35 | Only an entity of more rows than the cap stops the fast profile; one of a quarter or more of the rows that fits is left to the draw (D70 as first worded; D72). | `test_fast_cap_groups.py::test_an_entity_of_a_quarter_or_more_that_fits_is_always_kept` |
+| M36 | The `date_column_undeclared` warning carries the caveat of the random scheme under the grouped scheme too (the sixth review, finding 5). | `test_review6_small.py::test_the_date_warning_holds_the_caveat_of_its_scheme` |
+| M37 | The `same_features_grouped` warning does not say what `duplicates="group"` measures (D69). | `test_group_after_leak.py::test_the_grouped_warning_says_what_group_measures` |
+| M38 | One `fold_not_scored` record for the run, however many folds were not scored (D72). | `test_guard_review6.py::test_m38_one_fold_not_scored_record_for_each_fold_not_scored` |
+| M39 | A row with a cell that cannot be hashed is never counted as a repeat: `input.duplicate_rows` is 0 on such a table (D72). | `test_guard_review6.py::test_m39_rows_with_a_cell_that_cannot_be_hashed_are_counted_as_repeats` |
+
+M31 to M39 were added with the seventh pass (D69 to D72). M31 to M37 are the
+plausible half-built form of one new rule each: the right idea on the wrong
+count (M31), a date in one role and not in the other (M32), the old threshold
+left in place (M33), advice that is not true (M34), the decision as it was
+first worded (M35), and a text as built (M36, M37). M38 and M39 are guards:
+the application already writes one record for each fold and already counts
+such rows, the reference did neither, and no test held either reading until
+D72 pinned the application's. The three gate forms of this pass are caught by
+`test_group_after_leak.py::test_a_copy_of_the_target_under_group_stops_the_run`
+(F12b), `test_date_sentinels.py::test_a_column_of_dates_with_a_value_that_is_no_date_is_still_a_date_column`
+(F14b) and `test_fast_cap_groups.py::test_an_entity_larger_than_the_cap_stops_the_fast_profile`
+(F15); F16 to F22 by tests that existed already (13, 3, 13, 25, 4, 12 and 1
+of them).
+
+**A second test for the thin spots (D71; `docs/BACKLOG.md`).** Eleven
+variants were each held by one test: M1, M5, M6, M8, M10, M11, M12, M17, M21,
+M23 and M28. Each now has a second, by another route, in
+`test_guard_review6.py`, all green against the application as it stood. M13
+needs none: the perturbation battery fails 25 of its runs on it, the gate's
+`messy` as it is and 24 of its pairs (8.2; `docs/measurements/CP8/battery/`).
+`test_guard_review6.py` also holds one guard with no variant behind it: a
+date beyond the nanosecond range in one cell of an ordinary time column is
+`time_column_invalid`. The reference ended the process there until this pass
+(section 9), which no copy of it can be made to do on purpose, so the test
+guards the application alone.
 
 M6 and M7 were added with the third pass (D44, D46), for two guards that pass
 against the application as it stood and must go on passing. The forms F6b,
-F6c, F6d, F7b, F7c, F7d and F8b above, and F9 to F14, are run through the
-suite in the same way, and each must fail at least one test.
+F6c, F6d, F7b, F7c, F7d, F8b, F12b and F14b above, and F9 to F22, are run
+through the suite in the same way, and each must fail at least one test.
 
 M23 to M30 were added with the sixth pass (D62 to D66). M23 and M30 are
 guards: the application as it stood already has the cut-off at 0.5 and already
@@ -2659,6 +2926,85 @@ that passes today and fails on its variant:
 
 The gate goes on catching the large forms; the fake goes on catching, exactly,
 a model or a seam-supplied step that is handed a row it must not see.
+
+### 8.2 The judge's other tools (D56, D71, D72, D73)
+
+The last four reviews each found a fault by changing one cell or adding one
+column to a table on which the gate already proved the right conclusion, or
+by trying a table nobody had written a test for. Two tools make that method
+permanent. **Neither is part of the gate,** so neither runs on each edit and
+neither is multiplied by the self-test; each is a script of the judge with a
+command of its own, the gate's exit codes (0, 1, and 3 for a fault of the
+tool or the machine), and its files under `verify/artifacts/`. Neither is
+application code, and the application never mentions either.
+
+**The perturbation battery, `verify/battery.py <package folder>` (D71).** For
+every fast command-line run of the gate, whose right conclusion is known, it
+applies each of a fixed list of small changes to the table and asserts that
+the conclusion still holds, judged by the gate's own arithmetic:
+
+- the changes: one cell of a date, time, number or target column set to a
+  sentinel (`99991231`, `0`, `20240230`; `9999-12-31`, `1900-01-01`; −999,
+  999999, 1e308; the largest double); a column added that copies the target,
+  two-valued and distinct in every row; a constant, an identifier, a second
+  date and a noise column added; the rows shuffled; one row repeated; a blank
+  line added; one cell emptied in a feature, the entity column, the time
+  column and the target; a feature, the target and a role column renamed; the
+  target moved to the first column; the two classes respelt, in the same
+  order and flipped; white space round cells; whole numbers written as
+  floats; and each other value of `--duplicates` where the run is about
+  repeated rows;
+- what must hold, for each pair of a run and a change, is one of: the same
+  stop with the same code; headline, rows, chosen configuration and
+  predictions equal to the unperturbed run of the same build, where the
+  change cannot move a number (a column that reaches no model, a name); the
+  run's band; or a structural count made by the judge. A pair that makes no
+  sense is left out, and the tool lists it with the reason.
+
+**The generated-table test, `verify/generated_tables.py <package folder>`
+(D56).** A generator makes table number *i* from a seed alone: the kinds of
+column of step 5, missing values, sizes from under 100 rows to past the fast
+cap, both tasks, the four combinations of the two statements and a statement
+left unsaid, each value of `duplicates`, gaps, entities of every shape, both
+profiles, a DataFrame or a CSV file. Each table is run through the package
+and through the reference with the same arguments, and the two outcomes must
+agree: the same named error, or the same output apart from what section 11
+leaves open. Everything the table and the arguments alone decide is compared
+exactly; under time order, where the rows of every fit are determined, so are
+the folds, the baselines, the scores and the predictions, within 1e-9; what
+depends on which rows a random or grouped split took is held to the pinned
+properties on each side alone (5.3). **Agreement proves neither side right; a
+disagreement is a finding.** The default is 1,000 tables from seed 20261122.
+
+**Three classes, and a fixed list for two of them (D73).** Each tool reports
+every pair, or table, in one of three classes and prints the count of each:
+
+- **holds** (the battery) or **agrees** (the generated tables);
+- **stated limit:** a known failure that a decision has accepted, with that
+  decision's number;
+- **open:** a known failure that is not accepted and is owned: by D73, by
+  pass 8. Nothing on this list is a limit of the tool; each is fixed before
+  phase 1 closes (D56).
+
+The two lists are fixed in the judge, by run and change, or by finding. **A
+failure that is on neither list fails the tool.** A listed pair that holds is
+counted as holding and named, so that a build which mends one shows.
+
+| Tool | Stated limits | Open (D73, pass 8) |
+|---|---|---|
+| battery | `dup_noise:noise_added` (D60: a copy that differs in a feature); `int_stamps:missing_cell_date` (D55: a whole-number CSV column with an empty cell loads rounded) | one repeated row under time order with `--no-entities`: `row_repeated` on `random_walk`, `int_stamps`, `flat_tail`; an exact rescaled copy of a regression target that is not excluded: `copy_distinct` on `random_walk`, `int_stamps`, `panel`, `dominant_entity`; one extreme cell: `number_sentinel_-999` on `signal_reg`, `noise_reg`, `leak_reg`, `messy`, `random_walk`, `panel`, `signal_clf`, `number_sentinel_999999` on `signal_reg`, `noise_reg`, `leak_reg`, `random_walk`, `panel`, `signal_clf`, `binary_numeric`, `messy`, and `target_sentinel_-999` on `signal_reg`, `noise_reg`, `leak_reg`, `random_walk`, `panel`; one empty lag cell: `panel:missing_cell_feature`; the identifier that becomes a feature: `messy:rows_shuffled`, `messy:row_repeated` |
+| generated tables | none | `forests_under_time_order`: forests fitted on rows handed over in another order; `target_copy_kept`: an exact copy of the target that the leak screen leaves a feature |
+
+**Who runs them, and when (D72).** A builder runs either by its command when
+a task says so, and one pair or one table again with `--only`. The loop runs
+both once a pass's last task is reached: `tests/test_judge_tools.py` runs
+each script on the application and asserts exit code 0, so from then on both
+are part of the full suite. The mutation check leaves that one file out: its
+throwaway projects have no `verify/`, and the tools judge the application
+against the reference, not a variant of the reference. The lead runs both by
+hand before a review, with the mutation check, and the generated tables at
+ten times their default size. **No review is run while either lists
+something as open (D73).**
 
 ---
 
@@ -2771,6 +3117,22 @@ threads, 192 GB. Default pools: OpenMP 64 threads, OpenBLAS 24.
   nanoseconds raises `OverflowError`. pandas parses a fraction of ten digits
   by cutting it to nine. It writes a microsecond timestamp to CSV with six
   digits. Hence the fraction rule of step 3 (D52).
+- **A date beyond the nanosecond range among ordinary dates can end the
+  process** (measured 2026-11-22, pandas 3.1.1 on Windows; found by the
+  perturbation battery). An ISO 8601 text column of 1,500 rows with one cell
+  of `9999-12-31` parses to a column in microseconds, and
+  `Series.to_numpy("datetime64[ns]")` on it did not raise: the interpreter
+  ended with an access violation (exit code 3221225477, nothing on standard
+  error). The same column of 400 rows raised as it should. The reference did
+  exactly that until this pass; the application converted another way and
+  raised `time_column_invalid`. So the range is asked before the conversion,
+  by comparing the column with `pandas.Timestamp.min` and `.max`, and never
+  left to it. An `except` round the conversion cannot catch a process that is
+  gone.
+- **`DataFrame.duplicated()` raises `TypeError` on a column of lists** (same
+  date). The reference caught it and reported no repeated row; the
+  application compared such cells by their text and counted 188 on a
+  generated table. D72 pins the application's reading (5.2).
 
 **Run time (D16, D25).** Measured once; no check enforces the budget (D31). A
 full run on 100,000 rows × 100 columns with the grids of
@@ -2819,10 +3181,17 @@ a harness error and never a code fault.
   seconds, except in the very first round, where all eight took 10.9 seconds.
   That is taken to be the first load of the libraries from disk: it is far
   from 35 seconds, and it did not recur in the second set of 30.
-- The gate still starts its runs 0.5 seconds apart and gives a run that did
-  not finish one more go. Both are kept as they are. Starting Python processes
-  in parallel is no longer known to stall on this machine; running them one
-  after another remains the simpler habit for a test helper.
+- Until D72 the gate went on starting its runs 0.5 seconds apart, 8 side by
+  side, and that spacing had become most of its time: 17.3 seconds on each
+  edit and 22.6 in full, for 38 runs. **Since D72 it starts them 0.25 seconds
+  apart, 16 side by side.** Measured on 2026-11-22 on the reference, three
+  gate runs for each setting, every verdict the same (10.9): 10.5 seconds on
+  each edit and 13.1 in full as the gate stood, 12.9 and 17.6 with the four
+  runs of the seventh pass, which at the old settings would take 20.9 seconds
+  on each edit, over the budget of 20. It still gives a run that did not
+  finish one more go. Starting Python processes in parallel is not known to stall on this
+  machine; running them one after another remains the simpler habit for a
+  test helper.
 - `pyvenv.cfg` still names the share in its `executable` and `command` lines.
   They record how the environment was made; the measurement above was taken
   with them in place.
@@ -3343,6 +3712,205 @@ the API run, the key `validation.n_rows_with_copies` went and
 runs and six checks were added, last in their lists, so no seed moved. No
 band was changed; one was added.
 
+### 10.9 Measured for the seventh pass (D69 to D73)
+
+Measured on 2026-11-22, on the reference as changed for this pass and on the
+application as built by the sixth pass, fast profile, one core, tool seed 0
+unless stated. Every script, with its command, its seeds and its values seed
+by seed, is in `docs/measurements/CP8/` (D35).
+
+**The date rule (step 5, rule 2a; D69, D72).** Seven forms were measured over
+30 seeds on 21 columns that are dates, 26 that are not, and every column of
+the gate's other datasets and of the README's table. *d* is the number of
+distinct values that read as dates, *x* the number that do not.
+
+| Form | Wrong on the 21 columns of dates | Wrong on the 12 controls of the sixth pass | Wrong on 14 code columns | Distinct values that are no dates needed to defeat it on `day_numbers` |
+|---|---|---|---|---|
+| every value a date (D66, as built) | 18 | 0 | 0 | 1 |
+| 95% of the cells | 8 | 0 | 0 | 91 |
+| *x* ≤ 2 | 1 | 0 | 6 | 3 |
+| *x* ≤ 2 and *d* ≥ 5 | 1 | 0 | 0 | 3 |
+| *d* ≥ 9 × *x* | 2 | 0 | 0 | 67 |
+| *d* ≥ 9 × *x* and *x* ≤ 2 | 3 | 0 | 0 | 3 |
+| **adopted: *d* ≥ 9 × *x*, or *x* ≤ 2 and *d* ≥ 5** | **0** | **0** | **0** | **67** |
+
+The columns of dates: the gate's `day_numbers` (600 days, three rows a day),
+clean and with one cell of `99991231`, of `0` and of `20240230`; `99991231`
+in 5%, 30% and 60% of the rows; two sentinels and three; floats with gaps;
+eight-digit text, with `0`, `99991231` and `00000000`; 96 and 12 month ends,
+8 quarter ends and 5 month ends with one or two sentinels in 30% of the rows;
+and the control of the sixth pass with one cell of `20231301`, which D69
+reverses. A share of the cells is wrong on every column with its sentinel in
+30% or 60% of the rows. Nine dates for each other value, alone, is wrong on
+the two short columns (8 quarter ends and a sentinel; 5 month ends and two),
+and at most two other values, alone, on three sentinels; the adopted rule is
+the two together and is wrong on none. The controls: identifiers drawn at
+random and counting up from 20230101, whole numbers drawn in the range of the
+dates, years, `YYYYMM`, seconds and days since 1970, cents, counts, ages, post
+codes, day-first numbers. The code columns: two, three and five distinct
+eight-digit values of which one to four read as dates, as numbers and as
+text. No form names any column of the 28 other gate datasets over 30 data
+seeds, or of `examples/customers.csv`. Stated limits of the adopted rule,
+shown in the same output: four quarter ends and a sentinel, and 26 days
+beside three sentinels, are not named.
+
+What a sentinel cost, and what the rule gives back, on `day_numbers` with both
+statements `False` (the truth is skill about 0):
+
+| `day_numbers` with | Application as it stood: `day` a date column | skill | Reference: `day` a date column | skill |
+|---|---|---|---|---|
+| nothing changed | 30 of 30 | −0.182 to +0.089 | 30 of 30 | −0.052 to +0.081 |
+| one cell of `99991231` | 0 | +0.820 to +1.000 | 30 | the same as clean, run for run |
+| one cell of `0` | 0 | +0.844 to +0.995 | 30 | the same |
+| one cell of `20240230` | 0 | +0.820 to +1.000 | 30 | the same |
+| 5% of the rows `99991231` | 0 | +0.004 to +0.458 | 30 | the same |
+| 30% of the rows | 0 | −0.049 to +0.231 | 30 | the same |
+| 60% of the rows | 0 | −0.183 to +0.119 | 30 | the same |
+| `0` and `99991231`, one cell each | 0 | +0.832 to +1.000 | 30 | the same |
+| three sentinels, one cell each | 0 | +0.829 to +0.995 | 30 | the same |
+| 70 distinct values that are no dates (a stated limit) | 0 | +0.187 to +0.582 | 0 | +0.226 to +0.551 |
+
+With the sentinel in many rows the column is a weaker feature on this table
+(a third of its rows then say nothing of their block, and the trees read
+32-bit floats, in which days next to each other merge once a value near 10⁸
+has stretched the scale), which is why the harm falls from one cell to 60% of
+the rows. The lead's own table gave 0.92 to 0.95 at 5%
+(`docs/measurements/review-6/`).
+
+**`duplicates="group"`: what it measures (step 7; D69 point 3).** 2,000 rows,
+30 seeds, the reference.
+
+| Combinations of feature values | Noise: skill under `"group"`, range (mean, sd) | Runs below −0.2 | Parity label: `"keep"`, mean | Parity label: `"group"`, range (mean) | Holdout units | Runs with an interval |
+|---|---|---|---|---|---|---|
+| 8, two crossed columns | −0.116 to +0.091 (−0.002, 0.049); 4 runs stop | 0 | +0.80 | −0.828 to +0.041 (−0.661); 16 runs stop | 2 to 3 | 0 |
+| 16 | −0.082 to +0.070 (+0.007, 0.036) | 0 | +0.79 | −0.839 to +0.565 (−0.492) | 4 to 6 | 0 |
+| 24 | −0.113 to +0.107 (+0.002, 0.054) | 0 | +0.80 | −0.818 to +0.630 (−0.246) | 6 to 8 | 0 |
+| 48 | −0.138 to +0.127 (−0.008, 0.059) | 0 | +0.79 | −0.806 to +0.380 (−0.262) | 12 to 14 | 0 |
+| 120 | −0.093 to +0.095 (+0.005, 0.054) | 0 | +0.79 | −0.574 to +0.524 (−0.074) | 29 to 34 | 30 on noise, 29 on parity |
+| 8, 16, 24, a branch within a region | means −0.013, −0.005, −0.004; ranges within −0.105 to +0.090; with 8 branches 6 of the 30 runs stop | 0 | | | 3 to 8 | 0 |
+
+On noise there is no bias at any number of combinations: the mean is within
+0.013 of zero and none of 240 runs is below −0.2. "Stop" is `too_few_groups`,
+with fewer than six combinations among the rows. The parity label is the
+sixth review's worst case: the label is fixed by the combination, a model can
+learn it where it has met the combination (`"keep"`), and knows nothing of
+one it has not (`"group"`); with few combinations what it has learned of the
+others even points the wrong way.
+
+**The stop after a removed leak (step 8a; D69 point 2).** `few_valued` at
+2,000 rows with a column that copies the label, `duplicates="group"`: the
+application as it stood excluded the column and went ahead, at skill −0.943,
+with no holdout row counted as a copy; the reference stops, with 585 of 585
+holdout rows and 10 of the 16 combinations on both sides. With the copy made
+distinct in every row both stopped already, by the count of copies. Under
+`"keep"` and `"error"` neither changed.
+
+**The fast profile's cap (step 6; D70, D72).** One entity of the size shown
+and 300 of five rows, tool seeds 0 to 29:
+
+| Rows of the large entity (share of the usable rows) | Application as it stood: left out by the cap | Reference |
+|---|---|---|
+| 500 (25%) | 0 of 30 | 0 of 30 |
+| 1,000 (40%) | 12 | 0 |
+| 1,500 (50%) | 21 | 0 |
+| 1,900 (56%) | 28 | 0 |
+| 2,000 (57%) | 30 | kept alone: `fast_profile_too_few_rows` on all 30 |
+| 2,001 (57%) | 30 | `fast_profile_group_too_large` on all 30 |
+| 2,500 (62%) | 30 | `fast_profile_group_too_large` on all 30 |
+
+Left out, the run profiled the other 1,500 rows on every such seed. D70 as
+first worded stops only the last two rows of the table; D72 keeps every
+entity of a quarter or more. Two entities of 1,100 rows among 4,000 (each
+27.5%, 2,200 together) stop with the same error; an entity of 2,500 rows
+beside three small ones stops with `too_few_groups`, the full profile's own;
+and a few-valued table of 40,000 rows under `duplicates="group"` with no
+entity column runs on a sample of 2,000, as before.
+
+**Each new gate check was seen failing before the reference was changed.** On
+the reference as it stood: `time.date_sentinel_seen`, the column `day` a
+feature; `duplicates.group_leak_stops`, `fast.large_entity_stops`, the run
+exited 0; `fast.large_entity_kept`, 1,500 rows kept and 1,200 left out. The
+43 other checks passed there. The application as built by the sixth pass
+fails the same four and no other. All 47 pass on the changed reference, and
+each broken copy of this pass fails the check that names it: F12b, F14b, F19,
+F20 and F22 fail that check alone; F15 its two; F16 also `leak.excluded`,
+`data.columns_accounted` and `uncertainty.reported` (skill −0.40 on
+`signal_clf`); F17 also `leak.regression`, `model.noise_reg`,
+`time.persistence_baseline` and `time.panel_previous_value` (0.648 on
+`signal_reg`, against a band from 0.76); F18 also the two checks on dates
+written as numbers; F21 also `output.same_at_any_n_jobs`.
+
+**No other gate value moved.** Between the judge before CP8 and after it, at
+the gate's seed: the 26 datasets, the verdicts and messages of the 43 checks,
+and the 119 values the gate recorded are identical; seven checks gained the
+failure mode they name. Of the 15,818 values of the 34 runs that existed
+before, eight moved, each because a change requires it: the message of
+`date_column_undeclared` on `day_numbers`, `messy` and
+`time_blocks_undeclared`, the message of `same_features_grouped` on
+`few_valued`, and the console summaries of those four runs, which print
+them. Four datasets, four runs and four checks were added, last in their
+lists, so no seed moved. No band was changed and none was added.
+
+**The gate's launch settings (section 9; D72).** Seconds for one gate run on
+the reference, three runs for each setting, alone on the machine; every
+verdict the same in all of them:
+
+| Start spacing, side by side | As the gate stood, 38 runs: full | per edit | With this pass, 42 runs: full | per edit |
+|---|---|---|---|---|
+| 0.5 s, 8 (until D72) | 22.6 | 17.3 | 29.0 | 20.9 |
+| 0.25 s, 8 | 19.7 | 13.6 | 27.1 | 18.9 |
+| **0.25 s, 16 (D72)** | **13.1** | **10.5** | **17.6** | **12.9** |
+| 0.1 s, 16 | 12.4 | 8.4 | 16.8 | 12.4 |
+
+The budget for a run on each edit is 20 seconds. With the four runs of this
+pass the settings the gate had would be over it.
+
+**The judge's two other tools (8.2), on the reference and on the application
+as built by the sixth pass**, with nothing else on the machine. The battery
+makes 794 tool runs: the 32 fast runs of the gate as they are, and 762 pairs
+of a run and a change; 518 pairs make no sense and are left out, each with
+its reason. The generated tables are the 1,000 of seed 20261122.
+
+| Tool, run on | Holds, or agrees | Stated limit | Open (D73) | Fails, on neither list | Seconds |
+|---|---|---|---|---|---|
+| battery, the reference | 766 | 2 of 2 listed | 26 of 30 listed | 0 | 226 at 16 side by side |
+| battery, the application | 667 | 2 | 28 | 97 | 193 |
+| generated tables, the reference against itself | 987 | none is listed | 13 | 0 | 96 at 24 workers |
+| generated tables, the application against the reference | 940 | 0 | 21 | 39 | 97 |
+
+Every failure on the application is owned by a task of the seventh pass, and
+none by anything else. The battery: 33 by the date rule (T55: `day_sentinel`
+as it is and 29 of its pairs, and the three sentinels on `day_numbers`), 20
+by the stop after a removed leak (T56: `few_valued_leak` as it is and 18 of
+its pairs, and `few_valued` with a two-valued copy of the label), 44 by the
+fast cap (T57: `large_entity` and `quarter_entity`, 22 each). The generated
+tables: 27, 5 and 7 tables. A listed pair can hold on one side: four of the
+30 hold on the reference (`signal_clf` with either extreme number,
+`binary_numeric` and `messy` with 999999) and two on the application
+(`noise_reg` with −999 in a feature and in the target). Of the 21 open
+tables, 8 are forests under time order (none when the reference is run
+against itself) and 15 an exact copy of the target left a feature (13 on the
+reference alone); two are both.
+
+The battery also found two faults in the reference itself, both mended in
+this pass. On its first run: a date beyond the nanosecond range ended the
+process (section 9). On its first run against the changed reference, one
+pair on neither list: `few_valued_leak` with a column of ISO dates added,
+where the message of the new stop named the excluded copy and not the date
+column excluded beside it, which section 11 pins for every message of
+`holdout_copies_in_training`. The reference was changed, and the plan gained
+a test; the list was not touched.
+
+**The changed reference against the 1,828 counted cases of the first six
+passes** (the README's own tests apart): it fails eleven, all cases of one
+test, `test_date_numbers.py::test_values_that_are_no_dates_leave_the_column_what_it_was`,
+each a column of 200 days with one value that is no date, which D69 now calls
+a column of dates. D59 has the tests stage loosen that test for those eleven
+cases; with the prototype of the loosened test in place the reference fails
+none. Nothing else decided in D69 to D72 contradicts a locked test: not the
+stop after a removed leak, the fast cap, the two pinned readings or either
+fixed text.
+
 ---
 
 ## 11. What is open
@@ -3393,7 +3961,22 @@ The builder decides these, and no test may pin them:
   `large_group_is_holdout` warning, holds the unit's rows as a whole number
   in digits, its share of the rows it is drawn among as a percentage (some
   number in it is within 0.1 of 100 × the share), and its fixed passage of
-  5.4 (step 7);
+  5.4 (step 7). And, since the seventh pass, five more (D69, D72). The
+  message of `time_column_invalid` for a column of dates written `YYYYMMDD`
+  that holds a value that is no date holds that value as it is written in
+  the column, the one most rows hold when there are several, and the number
+  of rows that hold it as a whole number in digits (step 3). The message of
+  `holdout_copies_in_training` raised under `duplicates="group"` holds, as
+  its count, the number of holdout rows that agree with a training row in
+  every feature that is left, with the number of holdout rows, the share,
+  the words `keep` and `group`, the excluded columns, the first fixed passage
+  and the name of an excluded date column with `time_col`, as before (step
+  8a). The message of `fast_profile_group_too_large`
+  holds the cap as `2000` or `2,000` and the word `full` (step 6). The
+  message of `same_features_grouped` holds its fixed passage of 5.4. The
+  message of each `date_column_undeclared` warning holds the column's name in
+  quotes as `repr` writes it, the text `time_col=False`, and the run's
+  `validation.caveat` (5.4);
 - under the grouped scheme, which units are held out and which fold each is
   in, beyond the properties of step 7; which entities the fast profile's cap
   keeps, beyond the properties of step 6; and the wording of `p_value_reason`
@@ -3402,6 +3985,15 @@ The builder decides these, and no test may pin them:
   go back to the training rows: property 3 of step 7 is the contract;
 - which of the two usual estimators of the lag-1 autocorrelation the panel
   warning uses (step 11);
+- which of several values that are no dates the message of the time-column
+  stop names beyond the one most rows hold, and how a text value is quoted in
+  it (step 3);
+- the order in which the rows of a fit are handed to a model. It is open in
+  this version, and forests, which draw their rows by position, can differ by
+  it; D73 pins it in pass 8 (8.2);
+- which error is raised under the fast profile when both an entity is too
+  large for the cap and another rule of steps 6 and 7 is broken, beyond what
+  step 6 says of the full profile's own error;
 - how `--help` words that one of `--time-col` and `--no-time-order`, and one
   of `--group-col` and `--no-entities`, is needed (2.2);
 - what `stages.read_time` returns for a whole-number column that holds a
@@ -3463,9 +4055,21 @@ units of `duplicates="group"` are formed on the features alone and that the
 count of step 8a still reads the target (steps 7 and 8a), the rule for a
 date written as a whole number, value by value, and that it is asked before
 the id-like rules (step 5), which units are named as large and with which of
-the two warnings (step 7), and the three fixed passages of 5.4.
+the two warnings (step 7), and the three fixed passages of 5.4. And since the
+seventh pass (D69 to D72): that a column of dates written as whole numbers is
+judged by its distinct values, with both counts (nine for each value that is
+no date, or five beside at most two), and that as the time column a value
+that is no date stops the run (steps 3 and 5); that under `duplicates="group"`
+one holdout row that agrees with a training row after a removed leak stops
+the run, with no threshold (step 8a); which entities the fast profile's cap
+must keep, when it stops, and with which error when the full profile would
+stop too (step 6); one `fold_not_scored` record for each fold not scored
+(2.5); how a cell that cannot be hashed is compared when repeated rows are
+counted (5.2); and the two fixed texts of the seventh pass (5.4).
 
-**Known limits of this version, stated and not hidden (D56, D60, D66):**
+**Known limits of this version, stated and not hidden (D56, D60, D66, D72).**
+What is open and owned by pass 8 is a separate list, after this one: those
+are faults to be fixed, not limits (D73).
 
 - **A copy that differs.** A copy of a row that differs from it in any feature
   column is not detected (step 8a); the caller's control is `group_col`. A
@@ -3477,7 +4081,29 @@ the two warnings (step 7), and the three fixed passages of 5.4.
   **Day counts and `YYYYMM` are not seen as dates,** and nor are day-first
   numbers or seconds since 1970: 19,723 for 1 January 2024, or 202401, is a
   whole number that nothing tells from a measure. Such a column stays a
-  numeric feature, and under `time_col=False` no warning names it.
+  numeric feature, and under `time_col=False` no warning names it. **Nor is
+  a date with its hour, `YYYYMMDDHH`,** a whole number of ten digits (the
+  sixth review measured skill 0.928 on such a column, with no warning), **nor
+  a period label** held as text, such as a week `2024-W05`, a quarter
+  `2024Q1` or a label for a block of days (0.11 to 0.18 in the same review).
+  No rule is added for them in the hardening passes (D71): the caller's
+  control is `time_col`, or leaving the column out.
+- **What defeats the rule for dates written `YYYYMMDD` (step 5, rule 2a; D72).**
+  A column of such dates is no longer seen as one when more than one distinct
+  value in ten is no date, unless at most two values are not and five or more
+  are dates. So: 600 days with 67 distinct values that are no dates, one cell
+  each (a column with many mistyped dates), is a numeric feature, and the
+  reference then scores 0.23 to 0.55 on the gate's table where the truth is 0
+  (10.9); so is a column of four dates and a sentinel; and 26 dates beside
+  three sentinels. And a column of two or three codes that all read as dates
+  is still taken for dates, as before D69 (`docs/BACKLOG.md`). All of these
+  show in the column accounting, and none is named by a warning.
+- **The fast profile's cap keeps a large entity and samples the small ones
+  (step 6; D72).** An entity under a quarter of the usable rows is kept or
+  left out by the draw, like any row of a sample. With an entity column the
+  fast profile therefore describes the large entities and a sample of the
+  rest; and it refuses a table whose large entities do not fit under 2,000
+  rows, where the full profile is the answer.
 - **`group_col=False` is questioned only by the panel warning,**
   `autocorrelated_panel_target`, and that warning is no detector. It reads the
   lag-1 autocorrelation of the per-timestamp mean over the training
@@ -3511,6 +4137,61 @@ the two warnings (step 7), and the three fixed passages of 5.4.
   warning says so (step 7). A unit between a quarter and three quarters is
   kept among the training rows on every seed, so the headline never tests it;
   `large_group_kept_in_training` says that.
+
+**Open, and owned by pass 8 (D73). These are not limits.** The judge's two
+tools found them on their first run, on the gate's own tables with one row or
+one column changed and on generated tables. The application and the reference
+do the same in each, and each follows this spec as it stands: the spec is
+what pass 8 changes. Each tool lists them by name as open (8.2), so that
+nothing else can hide among them, and no review is run while one is listed.
+
+- **One repeated row under time order with `group_col=False`.** The
+  timestamps are then no longer unique, the previous-value baseline of step
+  11 is not scored, and the only baseline is the training mean: on the
+  gate's `random_walk` with one row written twice the headline is 0.999, on
+  `int_stamps` 0.995, where the truth is about 0; the
+  `autocorrelated_panel_target` warning does fire. D73 extends the previous
+  value to repeated timestamps: the mean target of the timestamp before.
+- **An exact rescaled copy of a regression target that the leak screen does
+  not exclude.** The screen's tree cannot follow a target beyond the range of
+  its fold's training rows, so under time order a copy of a trending target
+  measures below 0.98 against the previous value: `random_walk` 0.989,
+  `int_stamps` 0.996, `panel` 0.949 with the copy as a feature, and no
+  warning. In the generated tables an exact copy of the target stayed a
+  feature in 27 of 123 finished runs that carried one, with skill 0.985 to
+  1.0, five of them with no warning at all. D73 repairs the screen so that a
+  column which reproduces the target is always excluded.
+- **Folds beside a dominant entity.** On the gate's `dominant_entity` (one
+  entity of 1,490 rows, kept among the training rows, and 255 of two) the
+  five folds are dealt by size: one validates on the large entity and trains
+  on about ten rows, the other four validate on two to four rows. The choice
+  of model and the leak screen rest on that one fold: with a copy of the
+  target added the copy is not excluded and the headline is 1.0000; and with
+  nothing added the application chooses the tree and reports skill −1.13 on
+  noise, where the reference chooses the linear model and reports −0.006.
+  `large_group_kept_in_training` says that the headline does not test the
+  entity; nothing says that the selection rests on ten rows.
+- **One extreme cell.** One cell of −999 or 999999 in a numeric feature, or
+  of −999 in a regression target, can move skill far from its band in either
+  direction (`signal_reg` 0.66 for 0.84; `random_walk` −11.9; `noise_reg`
+  −519,959 on the reference), because one row carries most of the squared
+  error; and one such cell in the target of `leak_reg` leaves the rescaled
+  copy `amount_scaled` a feature, since the same row carries the screen's own
+  error. One empty cell in the lag column of `panel` gives −2.7 by the same
+  road. D73: the tool reports when one row carries most of the error.
+- **An identifier that becomes a feature.** `record_id` of the gate's `messy`
+  is excluded as `id_like` because its values are consecutive in file order
+  among the usable rows. With the rows shuffled (40 of them have no target,
+  so the usable ones are then neither consecutive nor ordered), or with one
+  row repeated (they are then not all distinct), it is a numeric feature.
+  Skill stays in its band. This is rule 8b of step 5 and the limit D31
+  accepted for a blank cell, in two more forms.
+- **Forests under time order differ between two correct builds.** The
+  application hands a fit its rows in file order and the reference in time
+  order; a forest draws its rows by position, so its fold scores differ, and
+  on 6 of 755 generated tables under time order the chosen configuration or
+  the headline with them. The linear model, the tree and boosting agree to
+  1e-9 on all 755. D73 pins the order.
 
 Not judged by any test or gate check, and left to a human: whether the
 limitations read well, whether the console summary is clear, whether a skill
@@ -3586,5 +4267,12 @@ figure on real data is believable.
 | D63 the caller always states time order and entities | 1, 2.1, 2.2, 2.4 (both errors, and where the stop ranks), 2.5, 2.7, 3 (steps 5, 8, 8a, 11), 4.3, 5.2 (`input.time_col`, `input.group_col`), 5.3, 5.4 (no fixed text is false), 7, 8 (F11, F7d; every gate run says both), 8.1 (M19, M24), 10.8, 11; `plan/test-plan.md` ("Sixth pass": the loosening under D59 and D65) |
 | D64 the grouped holdout; three hardening passes | (1) the holdout: 2.7 (`split_random`), 3 (step 7, property 3), 4.2, 5.3, 7, 8 (F13), 8.1 (M26), 10.8, 11. (2) findings 5 and 7: 8.1 (M23); finding 7 is pass 7. (3) and (4): not in this spec; `docs/BACKLOG.md`, `loop/loop.json` |
 | D65 D59 may be applied through a shared helper | 10.8; `plan/test-plan.md` ("Sixth pass", rule 3), tasks T48 to T53 in `plan/tasks.json` |
-| D66 rulings on the plan of pass 6 | (1) the rule of the grouped holdout: 3 (step 7). (2) the two warnings for a large unit: 2.5, 3 (step 7), 4.2, 5.4, 7, 8.1 (M27), 11. (3) dates written as whole numbers: 2.5, 2.7 (`read_time`), 3 (steps 3, 5, 8a), 4.2, 4.3, 4.5, 7, 8 (F14), 8.1 (M28, M29), 10.8, 11. (4) no check that levels are series: 11 ("Known limits"), 10.8. (5) the two names: 2.5, 3 (step 7), 5.2, 7. (6) the codes, the step and the exit code: 2.2, 2.4, 3 (step 5). (7) the copies message: 2.4, 3 (step 8a), 5.4 |
+| D66 rulings on the plan of pass 6 | (1) the rule of the grouped holdout: 3 (step 7). (2) the two warnings for a large unit: 2.5, 3 (step 7), 4.2, 5.4, 7, 8.1 (M27), 11. (3) dates written as whole numbers: 2.5, 2.7 (`read_time`), 3 (steps 3, 5, 8a), 4.2, 4.3, 4.5, 7, 8 (F14), 8.1 (M28, M29), 10.8, 11; that every value must be a date is replaced by D69 and D72. (4) no check that levels are series: 11 ("Known limits"), 10.8. (5) the two names: 2.5, 3 (step 7), 5.2, 7. (6) the codes, the step and the exit code: 2.2, 2.4, 3 (step 5). (7) the copies message: 2.4, 3 (step 8a), 5.4 |
+| D67 roadmap: feature engineering and deep learning | not in phase 1; `docs/BACKLOG.md` |
+| D68 a pip-installable package | not in this spec yet: the last changes of phase 1 |
+| D69 sixth review accepted (point 1 amended by D72) | (1) a column of dates with a sentinel: 2.4 (`time_column_invalid`), 2.5, 2.7 (`read_time`), 3 (steps 3 and 5, rule 2a), 4.2, 4.3, 4.5, 7, 8 (F14b), 8.1 (M31, M32), 10.9, 11. (2) `duplicates="group"` after a removed leak: 2.4, 3 (step 8a), 5.3 (rule 10), 7, 8 (F12b), 8.1 (M33), 10.9, 11. (3) what `"group"` measures: 2.5, 3 (step 7), 5.4, 8.1 (M37), 10.9. (4) `YYYYMMDDHH` and period labels: 3 (step 5), 11 ("Known limits"). (5) the text of `date_column_undeclared`: 2.5, 5.4, 8.1 (M36), 11. (6) the dormant branch: 3 ("Numbers that are not finite", rule 6) |
+| D70 the fast profile and an entity larger than its cap (corrected by D72) | 2.4 (`fast_profile_group_too_large`), 3 (step 6), 4.2, 5.3 (rule 11), 7, 8 (F15), 8.1 (M34, M35), 10.9, 11 |
+| D71 how the hardening passes are run | (1) the perturbation battery: 8.2, 10.9; `verify/battery.py`. (2) no new detection rule: 3 (step 5, "What rule 2a does not see"), 11. (3) the scope of pass 7: 8 (F16 to F22), 8.2; amended by D73 |
+| D72 rulings on the plan of pass 7 | (1) the date rule by distinct values, with its second clause: 3 (steps 3 and 5), 4.2, 4.3, 10.9, 11. (2) the stop after a removed leak, with no threshold: 2.4, 3 (step 8a). (3) the two fixed texts: 5.4. (4) the code `fast_profile_group_too_large` and the full profile's own error: 2.4, 3 (step 6). (5) an entity of a quarter or more is always kept; entity columns only: 3 (step 6), 4.2, 5.3, 7, 8 (F15), 10.9, 11. (6) the application's reading pinned: 2.5 (`fold_not_scored`), 5.2 (`duplicate_rows`), 7, 8.1 (M38, M39), 9. (7) the gate's launch settings: 8, 9, 10.9; `verify/smoke_test.py`. (8) who runs the two tools: 8.2; `plan/test-plan.md` ("Seventh pass"), task T60 |
+| D73 what the judge's new tools found, and the order of work | 8.2 (the three classes and the two lists), 11 ("Open, and owned by pass 8"); nothing of points 1 to 4 is built in this version |
 | D61 three rulings on the CP6 judge | (1) D49's rule whenever there is no time column: 3 (step 8a), 2.4 (`holdout_copies_in_training`), 5.2 (`n_holdout_copies`), 7. (2) `duplicates="group"` with any copy makes the scheme grouped: 3 (steps 7, 12), 5.2 (`scheme`), 7. (3) the scripts and the per-seed values of the fifth pass's bands: 10.7; `docs/measurements/CP6/bands/` |

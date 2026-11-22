@@ -1,0 +1,32 @@
+good: exit 0, 47 checks, 0 failing [25 s]: -
+F12b: exit 1, 47 checks, 1 failing [20 s]: duplicates.group_leak_stops
+    duplicates.group_leak_stops: the tool exited 0 on `few_valued_leak`; it must stop with the named error `holdout_copies_in_training` (`few_valued_leak` is `few_valued` with a column `status` that copies the label. With `--duplicates group` the rows that agree in region, branch and status a
+F14b: exit 1, 47 checks, 1 failing [20 s]: time.date_sentinel_seen
+    time.date_sentinel_seen: the column `day` of `day_sentinel` has role 'feature' and reason None. It holds 582 distinct days written YYYYMMDD and one value that is no date, 99991231, in 540 of its 1800 cells: an open-ended date. Such a column is still a column of dates, excluded with th
+F15: exit 1, 47 checks, 2 failing [21 s]: fast.large_entity_stops, fast.large_entity_kept
+    fast.large_entity_stops: the tool exited 0 on `large_entity`; it must stop with the named error `fast_profile_group_too_large` (one entity of `large_entity` holds 2500 of its 4,000 rows, more than the fast profile's cap of 2000. The cap keeps whole entities, so it could only leave tha
+    fast.large_entity_kept: rows on `quarter_entity`: dropped_row_cap 1200, training + holdout 1500. One entity holds 1200 of the 2700 rows (44%): a quarter or more, and fewer than the fast profile's cap of 2000. Such an entity is always kept by the cap, and the entities of 5 rows fill t
+F16: exit 1, 47 checks, 4 failing [20 s]: data.columns_accounted, leak.excluded, model.signal_clf, uncertainty.reported
+    data.columns_accounted: skill on messy is -0.364004, expected between 0.55 and 0.91: the signal is still there under the mess; a wrong column role or lost rows remove it
+    leak.excluded: skill on leak is -0.468376, expected between 0.54 and 0.91: with both leaks excluded this is the skill of `signal_clf`; near 1 means a leak is still a feature
+    model.signal_clf: skill on signal_clf is -0.404286, expected between 0.54 and 0.91: the outcome depends on f1, f2 and seg. Too low: the model is not fitted on them, or the positive class is inverted. Too high: something leaks
+    uncertainty.reported: headline.p_value on `signal_clf` is 1; with a clear signal no shuffle of the holdout targets matches the score, so it is (1 + 0) / (1 + 200)
+F17: exit 1, 47 checks, 5 failing [23 s]: leak.regression, model.signal_reg, model.noise_reg, time.persistence_baseline, time.panel_previous_value
+    leak.regression: skill on leak_reg is 0.602126, expected between 0.76 and 0.93: with the copy excluded this is the skill of `signal_reg`
+    model.signal_reg: skill on signal_reg is 0.647989, expected between 0.76 and 0.93: amount = 2.0*f1 - 1.2*f2 + noise. Too low: the model is not fitted on them, the worst configuration was chosen (squared error: lower is better), or the baseline is wrong
+    model.noise_reg: skill on noise_reg is -1.07033, expected between -0.65 and -0.05: the target is independent of all 300 columns, so honest skill is below zero (a linear model pays for 300 useless columns). Above the band: the chosen model was refitted on rows that include the 
+    time.persistence_baseline: skill on random_walk is -11.9137, expected between -0.3 and 0.05: tomorrow's level is today's plus noise, so nothing beats the previous value
+    time.panel_previous_value: skill on panel is -5.06899, expected between -0.04 and 0.03: each series is a random walk: tomorrow's level is today's plus noise, so nothing beats the series' own previous value
+F18: exit 1, 47 checks, 3 failing [26 s]: time.undeclared_warns, time.date_numbers_seen, time.date_sentinel_seen
+    time.undeclared_warns: no warning with code `date_column_undeclared` names the column `date`: a date column is present and the rows were split at random
+    time.date_numbers_seen: no warning with the code `date_column_undeclared` names the column `day`: the run says `--no-time-order` on a table that holds dates, and the tool's doubt about that statement is this warning (spec.md 2.5; D63, D66)
+    time.date_sentinel_seen: no warning with the code `date_column_undeclared` names the column `day` of `day_sentinel` (spec.md 2.5; D63, D69)
+F19: exit 1, 47 checks, 1 failing [28 s]: result.matches_json
+    result.matches_json: ProfileResult.headline differs from profile.json: headline.interval_high: 0.906 != 0.9056175377998613
+F20: exit 1, 47 checks, 1 failing [30 s]: output.complete
+    output.complete: the limitations statement in profile.json is not the fixed text of spec.md, 'Limitations' (9 sentences, in order); found 0 entries, and sentence(s) beyond the shorter list differ
+F21: exit 1, 47 checks, 2 failing [29 s]: output.deterministic, output.same_at_any_n_jobs
+    output.deterministic: two runs on `signal_clf` with seed 0 (one through the command line, one through mlprofessor.profile) wrote different profile.json files: profile.json.meta.finished: 1795373847.6546977 != 1795373861.9683945. Only meta.timing may differ: pin every seed, and keep
+    output.same_at_any_n_jobs: the full profile on `signal_clf_small` gives different results with --n-jobs 1 and --n-jobs 4: profile.json.meta.finished: 1795373855.2997687 != 1795373858.5027971. The same seed must give the same result at any n_jobs (D17): hold linear algebra to one thread 
+F22: exit 1, 47 checks, 1 failing [29 s]: output.same_at_any_n_jobs
+    output.same_at_any_n_jobs: the full profile on `signal_clf_small` gives different results with --n-jobs 1 and --n-jobs 4: profile.json.headline.interval_high: 0.8897528176229508 != 0.8889967532467532. The same seed must give the same result at any n_jobs (D17): hold linear algebra to on

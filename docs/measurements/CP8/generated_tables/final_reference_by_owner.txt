@@ -1,0 +1,22 @@
+E:\CODE\ml-professor\verify\reference\mlprofessor against E:\CODE\ml-professor\verify\reference\mlprofessor: 1000 tables from seed 20261122, 96.0 s at 24 workers
+tables by class: {'agrees': 987, 'stated limit': 0, 'open': 13, 'fails': 0, 'harness': 0}
+
+failing tables by owner
+  T55, the date rule (D69 point 1, D72 point 1): 0 table(s): 
+  T56, duplicates='group' after a removed leak (D69 point 2): 0 table(s): 
+  T57, the fast profile's cap with an entity column (D70, D72 point 5): 0 table(s): 
+  NONE OF THE THREE: 0 table(s): 
+
+open: {'forests_under_time_order': 0, 'target_copy_kept': 13} | stated limits: {} | not compared: {}
+
+what the 1000 tables of seed 20261122 reach
+    17  a YYYYMMDD column with one sentinel cell
+     9  a YYYYMMDD column with a sentinel in a third of the rows
+     4  a YYYYMMDD column with two sentinels
+    11  a YYYYMMDD time column with a value that is no date
+     9  a two-valued copy of the target beside few-valued columns
+     7  the same under duplicates='group'
+   117  an exact copy of the target (any table)
+    56  an entity of a quarter or more of the usable rows (grouped scheme)
+    15  the same, past the fast cap under the fast profile
+     4  an entity of more rows than the fast cap

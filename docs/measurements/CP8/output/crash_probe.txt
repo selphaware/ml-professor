@@ -1,0 +1,27 @@
+with one cell of 9999-12-31: parsed as datetime64[us], latest 9999-12-31 00:00:00; beyond the nanosecond range, asked without converting: True
+ordinary dates: parsed as datetime64[us], latest 2022-02-08 00:00:00; beyond the nanosecond range, asked without converting: False
+--- the reference as it stood before this pass
+package: C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\verify\reference\mlprofessor; 1500 rows
+Windows fatal exception: access violation
+
+Current thread 0x0000ff78 (most recent call first):
+  File "E:\CODE\ml-professor\mlprof_env\Lib\site-packages\pandas\core\base.py", line 739 in to_numpy
+  File "C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\verify\reference\mlprofessor\core.py", line 537 in _to_nanoseconds
+  File "C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\verify\reference\mlprofessor\core.py", line 618 in _time_keys
+  File "C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\verify\reference\mlprofessor\core.py", line 1788 in _run
+  File "C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\verify\reference\mlprofessor\core.py", line 255 in profile
+  File "E:\CODE\ml-professor\docs\measurements\CP8\crash_probe.py", line 43 in <module>
+C:/Users/uahma/AppData/Local/Temp/claude/0233f86d4baa4dd4/769d56fc-4162-4286-9c77-ea847bfed92a/scratchpad/work/record_measurements.sh: line 31:  2365 Segmentation fault      "$PY" -B -X faulthandler $M/crash_probe.py "$OLD"
+exit code 139
+--- the same, 400 rows
+package: C:\Users\uahma\AppData\Local\Temp\claude\0233f86d4baa4dd4\769d56fc-4162-4286-9c77-ea847bfed92a\scratchpad\before\verify\reference\mlprofessor; 400 rows
+time_column_invalid: time column 'date' holds a date outside the range a nanosecond timestamp can hold (1677-09-21 to 2262-04-11), so its order cannot be read
+exit code 0
+--- the reference
+package: E:\CODE\ml-professor\verify\reference\mlprofessor; 1500 rows
+time_column_invalid: time column 'date' holds a date outside the range a nanosecond timestamp can hold (1677-09-21 to 2262-04-11), so its order cannot be read
+exit code 0
+--- the application
+package: E:\CODE\ml-professor\mlprofessor; 1500 rows
+time_column_invalid: time column: a timestamp is out of range (Out of bounds nanosecond timestamp: 9999-12-31 00:00:00)
+exit code 0

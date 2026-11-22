@@ -1,0 +1,371 @@
+generated tables: 1000 table(s) from seed 20261122, 334 worker run(s), 24 at a time, under E:\CODE\ml-professor\verify\artifacts\generated\run-dgu59wra
+  package:   E:\CODE\ml-professor\mlprofessor
+  reference: E:\CODE\ml-professor\verify\reference\mlprofessor
+
+FAILS: on neither list
+
+table 8: csv, 173 rows x 6 columns ['count', 'seg', 'f2', 'f1', 'daynum', 'y']; task='auto', time_col=False, group_col=False, gap=0, profile='fast', seed=1, duplicates='error'; small; statement none; target reg; daynum: dates written YYYYMMDD (int), one sentinel cell
+  application: result: random, skill -15.756101428485206, model linear-0
+  reference:   result: random, skill 0.9522775332689455, model linear-0
+  [property] application: a column of dates written YYYYMMDD is excluded as a date, also when it holds a value that is no date (step 5, rule 2a; D66, D72): "`daynum` has role 'feature', reason None" | ''
+  [exact] columns[daynum] role, reason, leak rule: ('feature', None, None) | ('excluded', 'datetime', None)
+  [exact] warnings[date_column_undeclared, daynum] (count): 0 | 1
+  again: python verify/generated_tables.py E:\CODE\ml-professor\mlprofessor --seed 20261122 --only 8 --keep
+
+table 37: csv, 2402 rows x 9 columns ['f1', 'f2', 'count', 'when', 'level_prev', 'y', 'row_id', 'seg', 'who']; task='auto', time_col='when', group_col=False, gap=1, profile='fast', seed=0, duplicates='error'; over_cap; statement time; target reg; panel of 25 entities on 96 timestamps; the target is a random walk for each entity; level_prev: the level before, of the same series; row_id: an identifier (increasing); when: one cell of 99991231, which is no date; when: yyyymmdd_int; repeated rows: few (2)
+  application: result: time_ordered, skill 0.9659908730001482, model tree-0
+  reference:   error time_column_invalid
+  [property] application: a time column of dates written YYYYMMDD with a value that is no date stops the run (step 3; D69, D72): 'it returned a result' | ''
+  [outcome] a result on one side, a named error on the other: 'result: time_ordered, skill 0.9659908730001482, model tree-0' | 'error time_column_invalid'  (time column 'when' holds dates written as whole numbers (YYYYMMDD), and 1 row with a value that is no date: 99991231 in 1 row. Such a value has no place in time, so it is not ordered as a number, and its rows are not dropped without your say. Replace it with an empty cell, and those rows are dropped and counted; or with the date it stands for. Then run again)
+  again: python verify/generated_tables.py E:\CODE\ml-professor\mlprofessor --seed 20261122 --only 37 --keep
+
+table 72: csv, 361 rows x 7 columns ['f2', 'who', 'when', 'seg', 'f1', 'daynum', 'y']; task='classification', time_col='when', group_col='who', gap=0, profile='fast', seed=4294967295, duplicates='error'; small; statement time_entity; target clf_text; panel of 60 entities on 8 timestamps, irregular; daynum: dates written YYYYMMDD (int), one sentinel cell; when: iso_datetime, some cells empty
+  application: result: time_ordered, skill -0.1428571428571429, model tree-0
+  reference:   result: time_ordered, skill -0.0021645021645021467, model tree-0
+  [property] application: a column of dates written YYYYMMDD is excluded as a date, also when it holds a value that is no date (step 5, rule 2a; D66, D72): "`daynum` has role 'feature', reason None" | ''
+  [exact] columns[daynum] role, reason, leak rule: ('feature', None, None) | ('excluded', 'datetime', None)
+  [fit] headline.score: 0.42857142857142855 | 0.4989177489177489  (the same rows on both sides: only the fits can differ)
+  [fit] headline.skill: -0.1428571428571429 | -0.0021645021645021467  (the same rows on both sides: only the fits can differ)
+  [fit] cv.chosen_mean: 0.5082602813852815 | 0.5344994588744588  (the same rows on both sides: only the fits can differ)
+  [fit] cv.chosen_std: 0.08222441748338791 | 0.077024307584655  (the same rows on both sides: only the fits can differ)
+  [fit] models: 'models (linear, tree, boosting)[0].cv_mean: 0.420731906981907 != 0.4200851925851926' | ''  (the same rows on both sides)
+  [fit] predictions.csv (y_pred): '9 of 83 rows differ' | ''  (the same rows on both sides: only the fits can differ)
+  again: python verify/generated_tables.py E:\CODE\ml-professor\mlprofessor --seed 20261122 --only 72 --keep
+
+table 88: csv, 140 rows x 6 columns ['c2', 'who', 'c3', 'c1', 'y', 'y_copy']; task='auto', time_col=False, group_col='who', gap=0, profile='full', seed=123456, duplicates='group'; small; statement entity; target clf_text; few-valued columns only; entities: own, 135 of them; one label for each entity; y_copy: a two-valued copy of the target beside few-valued columns; repeated rows: few (5)
+  application: result: grouped, skill -0.6346153846153846, model linear-1
+  reference:   error holdout_copies_in_training
+  [property] application: with duplicates='group' no combination of the features that reached the models is on both sides of the split (steps 7 and 8a; D62, D69): "9 combination(s) are; excluded as suspected leaks: ['y_copy']" | ''
+  [not_compared rows] a result on one side, a named error on the other: 'result: grouped, skill -0.6346153846153846, model linear-1' | 'error holdout_copies_in_training'  (22 of the 36 holdout rows (61.1%) agree with a training row in every feature column that is left: 11 combination(s) of feature values are on both sides of the split. duplicates='group' kept together the rows that agreed in every feature column before the split, and the leak screen then excluded 'y_copy'. Remove the excluded column(s) and run again. Pass duplicates='keep' (--duplicates keep) if the | it depends on which rows a random or a grouped split took, or the fast cap kept (spec 11))
+  again: python verify/generated_tables.py E:\CODE\ml-professor\mlprofessor --seed 20261122 --only 88 --keep
+
+table 103: dataframe, 180 rows x 8 columns ['f1', 'f2', 'when', 'daynum', 'seg', 'y', 'who', 'y_near']; task='auto', time_col=False, group_col='who', gap=0, profile='full', seed=1, duplicates='keep'; small; statement entity; target clf_int; panel of 12 entities on 20 timestamps, irregular; daynum: dates written YYYYMMDD (int), one sentinel cell; y_near: a near-copy of the target; when: iso_date
+  application: result: grouped, skill 0.9654320987654321, model forest-0
+  reference:   result: grouped, skill 1.0, model forest-4
+  [property] application: a column of dates written YYYYMMDD is excluded as a date, also when it holds a value that is no date (step 5, rule 2a; D66, D72): "`daynum` has role 'feature', reason None" | ''
+  [exact] columns[daynum] role, reason, leak rule: ('feature', None, None) | ('excluded', 'datetime', None)
+  [exact] warnings[date_column_undeclared, daynum] (count): 0 | 1
+  [not_compared rows] warnings[strong_single_column, y_near] (count): 1 | 0  (it depends on which rows a random or a grouped split took, or the fast cap kept (spec 11))
+  again: python verify/generated_tables.py E:\CODE\ml-professor\mlprofessor --seed 20261122 --only 103 --keep
+
+table 152: dataframe, 355 rows x 4 columns ['c2', 'y', 'c1', 'y_copy']; task='auto', time_col=False, group_col=False, gap=0, profile='fast', seed=7, duplicates='group'; small; statement none; target clf_bool; few-valued columns only; y_copy: a copy of the target; repeated rows: heavy (101)
+  application: result: grouped, skill -0.3017241379310345, model linear-0
+  reference:   error holdout_copies_in_training
+  [property] application: with duplicates='group' no combination of the features that reached the models is on both sides of the split (steps 7 and 8a; D62, D69): "2 combination(s) are; excluded as suspected leaks: ['y_copy']" | ''
+  [not_compared rows] a result on one side, a named error on the other: 'result: grouped, skill -0.3017241379310345, model linear-0' | 'error holdout_copies_in_training'  (37 of the 91 holdout rows (40.7%) agree with a training row in every feature column that is left: 4 combination(s) of feature values are on both sides of the split. duplicates='group' kept together the rows that agreed in every feature column before the split, and the leak screen then excluded 'y_copy'. Remove the excluded column(s) and run again. Pass duplicates='keep' (--duplicates keep) if the  | it depends on which rows a random or a grouped split took, or the fast cap kept (spec 11))
+  again: python verify/generated_tables.py E:\CODE\ml-professor\mlprofessor --seed 20261122 --only 152 --keep
+
+table 185: dataframe, 624 rows x 9 columns ['daynum', 'seg', 'who', 'y', 'signup', 'f2', 'when', 'f1', 'count']; task='classification', time_col='when', group_col='who', gap=1, profile='fast', seed=0, duplicates='keep'; large; statement time_entity; target clf_text; panel of 5 entities on 167 timestamps, irregular; daynum: dates written YYYYMMDD (text), one sentinel cell; when: iso_date, some cells empty
+  application: result: time_ordered, skill 0.7466251298026998, model linear-0
+  reference:   result: time_ordered, skill 0.7856697819314642, model linear-0
+  [property] application: a column of dates written YYYYMMDD is excluded as a date, also when it holds a value that is no date (step 5, rule 2a; D66, D72): "`daynum` has role 'feature', reason None" | ''
+  [exact] columns[daynum] role, reason, leak rule: ('feature', None, None) | ('excluded', 'datetime', None)
+  [fit] headline.score: 0.8733125649013499 | 0.8928348909657321  (the same rows on both sides: only the fits can differ)
+  [fit] headline.skill: 0.7466251298026998 | 0.7856697819314642  (the same rows on both sides: only the fits can differ)
+  [fit] cv.chosen_mean: 0.9052166317115576 | 0.9056430996985281  (the same rows on both sides: only the fits can differ)
+  [fit] cv.chosen_std: 0.03750923556032177 | 0.03885766706944642  (the same rows on both sides: only the fits can differ)
+  [fit] models: 'models (linear, tree, boosting)[0].cv_mean: 0.9052166317115576 != 0.9056430996985281' | ''  (the same rows on both sides)
+  [fit] predictions.csv (y_pred): '152 of 152 rows differ' | ''  (the same rows on both sides: only the fits can differ)
+  again: python verify/generated_tables.py E:\CODE\ml-professor\mlprofessor --seed 20261122 --only 185 --keep
+
+table 229: dataframe, 388 rows x 4 columns ['y', 'c2', 'y_copy', 'c1']; task='auto', time_col=False, group_col=False, gap=0, profile='fast', seed=0, duplicates='group'; small; statement none; target clf_text; few-valued columns only; white space round some target values; y_copy: a two-valued copy of the target beside few-valued columns; repeated rows: heavy (194)
+  application: result: grouped, skill -0.8571428571428572, model tree-0
+  reference:   error holdout_copies_in_training
+  [property] application: with duplicates='group' no combination of the features that reached the models is on both sides of the split (steps 7 and 8a; D62, D69): "6 combination(s) are; excluded as suspected leaks: ['y_copy']" | ''
+  [not_compared rows] a result on one side, a named error on the other: 'result: grouped, skill -0.8571428571428572, model tree-0' | 'error holdout_copies_in_training'  (74 of the 100 holdout rows (74.0%) agree with a training row in every feature column that is left: 5 combination(s) of feature values are on both sides of the split. duplicates='group' kept together the rows that agreed in every feature column before the split, and the leak screen then excluded 'y_copy'. Remove the excluded column(s) and run again. Pass duplicates='keep' (--duplicates keep) if the | it depends on which rows a random or a grouped split took, or the fast cap kept (spec 11))
+  again: python verify/generated_tables.py E:\CODE\ml-professor\mlprofessor --seed 20261122 --only 229 --keep
+
+table 284: dataframe, 156 rows x 5 columns ['who', 'f1', 'y', 'f2', 'daynum']; task='auto', time_col=False, group_col='who', gap=0, profile='full', seed=123456, duplicates='group'; small; statement entity; target clf_text; entities: equal, 32 of them; f1 identifies the entity; one label for each entity; daynum: dates written YYYYMMDD (int), two sentinels, one cell each
+  application: result: grouped, skill -0.03157894736842104, model forest-4
+  reference:   result: grouped, skill -0.013227513227513255, model forest-0
+  [property] application: a column of dates written YYYYMMDD is excluded as a date, also when it holds a value that is no date (step 5, rule 2a; D66, D72): "`daynum` has role 'feature', reason None" | ''
+  [exact] columns[daynum] role, reason, leak rule: ('feature', None, None) | ('excluded', 'datetime', None)
+  [exact] warnings[date_column_undeclared, daynum] (count): 0 | 1
+  again: python verify/generated_tables.py E:\CODE\ml-professor\mlprofessor --seed 20261122 --only 284 --keep
+
+table 301: csv, 2447 rows x 6 columns ['f2', 'y', 'y_copy', 'who', 'count', 'f1']; task='auto', time_col=False, group_col='who', gap=0, profile='fast', seed=1, duplicates='group'; over_cap; statement entity; target reg; one entity of 2003 of the 2447 rows; entities: one_large, 223 of them; f1 identifies the entity; y_copy: a copy of the target
+  application: result: grouped, skill 0.8192134091125913, model linear-0
+  reference:   result: grouped, skill 0.9980455923910686, model linear-0
+  [property] application: an entity of a quarter or more of the usable rows is kept by the fast cap (step 6; D72): 'dropped_row_cap 1939 of 2368 usable rows; the entities of a quarter or more hold [1939] rows and the others 429; no row of a large one is in the holdout and no warning names a large unit' | ''
+  [open target_copy_kept] reference: an exact copy of the target is excluded by the leak screen (step 8): '' | '`y_copy` is a feature; skill 0.9980455923910686, warned: True'
+  [not_compared rows] columns[y_copy] role, reason, leak rule: ('excluded', 'suspected_leak', 'predicts_target') | ('feature', None, None)  (the leak screen ran on different folds | it depends on which rows a random or a grouped split took, or the fast cap kept (spec 11))
+  [not_compared rows] headline.interval_method: 'bootstrap_groups' | None  (the resamples, or the units in the holdout, differ | it depends on which rows a random or a grouped split took, or the fast cap kept (spec 11))
+  [not_compared rows] headline.interval_reason (null or not): None | 'the holdout has 1 entities; a bootstrap of whole entities needs at least 30'  (it depends on which rows a random or a grouped split took, or the fast cap kept (spec 11))
+  [not_compared rows] warnings[large_group_is_holdout, None] (count): 0 | 1  (it depends on which rows a random or a grouped split took, or the fast cap kept (spec 11))
+  [not_compared rows] warnings[no_interval, None] (count): 0 | 1  (it depends on which rows a random or a grouped split took, or the fast cap kept (spec 11))
+  [not_compared rows] warnings[strong_single_column, y_copy] (count): 0 | 1  (it depends on which rows a random or a grouped split took, or the fast cap kept (spec 11))
+  [not_compared rows] warnings[suspected_leak, y_copy] (count): 1 | 0  (it depends on which rows a random or a grouped split took, or the fast cap kept (spec 11))
+  again: python verify/generated_tables.py E:\CODE\ml-professor\mlprofessor --seed 20261122 --only 301 --keep
+
+table 312: dataframe, 2428 rows x 6 columns ['seg', 'who', 'f2', 'f1', 'y', 'big']; task='auto', time_col=False, group_col='who', gap=0, profile='fast', seed=0, duplicates='group'; over_cap; statement entity; target clf_text; one entity of 1942 of the 2428 rows; entities: one_large, 487 of them; f1 identifies the entity
+  application: result: grouped, skill 0.6941097724230254, model linear-0
+  reference:   result: grouped, skill 0.5821111672645629, model linear-0
+  [property] application: an entity of a quarter or more of the usable rows is kept by the fast cap (step 6; D72): 'dropped_row_cap 1885 of 2357 usable rows; the entities of a quarter or more hold [1885] rows and the others 472; no row of a large one is in the holdout and no warning names a large unit' | ''
+  [not_compared rows] headline.interval_method: 'bootstrap_groups' | None  (the resamples, or the units in the holdout, differ | it depends on which rows a random or a grouped split took, or the fast cap kept (spec 11))
+  [not_compared rows] headline.interval_reason (null or not): None | 'the holdout has 22 entities; a bootstrap of whole entities needs at least 30'  (it depends on which rows a random or a grouped split took, or the fast cap kept (spec 11))
+  [not_compared rows] warnings[large_group_is_holdout, None] (count): 0 | 1  (it depends on which rows a random or a grouped split took, or the fast cap kept (spec 11))
+  [not_compared rows] warnings[no_interval, None] (count): 0 | 1  (it depends on which rows a random or a grouped split took, or the fast cap kept (spec 11))
+  [not_compared rows] warnings[small_holdout, None] (count): 1 | 0  (it depends on which rows a random or a grouped split took, or the fast cap kept (spec 11))
+  again: python verify/generated_tables.py E:\CODE\ml-professor\mlprofessor --seed 20261122 --only 312 --keep
+
+table 330: dataframe, 2301 rows x 7 columns ['signup', 'optint', 'y', 'seg', 'who', 'f2', 'f1']; task='regression', time_col=False, group_col='who', gap=0, profile='fast', seed=7, duplicates='keep'; over_cap; statement entity; target reg; one entity of 1840 of the 2301 rows; entities: one_large, 462 of them
+  application: result: grouped, skill 0.007809165003778817, model linear-0
+  reference:   result: grouped, skill -0.02118206374480036, model linear-0
+  [property] application: an entity of a quarter or more of the usable rows is kept by the fast cap (step 6; D72): 'dropped_row_cap 1774 of 2224 usable rows; the entities of a quarter or more hold [1774] rows and the others 450; no row of a large one is in the holdout and no warning names a large unit' | ''
+  [not_compared rows] headline.interval_method: 'bootstrap_groups' | None  (the resamples, or the units in the holdout, differ | it depends on which rows a random or a grouped split took, or the fast cap kept (spec 11))
+  [not_compared rows] headline.interval_reason (null or not): None | 'the holdout has 1 entities; a bootstrap of whole entities needs at least 30'  (it depends on which rows a random or a grouped split took, or the fast cap kept (spec 11))
+  [not_compared rows] warnings[large_group_is_holdout, None] (count): 0 | 1  (it depends on which rows a random or a grouped split took, or the fast cap kept (spec 11))
+  [not_compared rows] warnings[no_interval, None] (count): 0 | 1  (it depends on which rows a random or a grouped split took, or the fast cap kept (spec 11))
+  again: python verify/generated_tables.py E:\CODE\ml-professor\mlprofessor --seed 20261122 --only 330 --keep
+
+table 338: dataframe, 2274 rows x 8 columns ['seg', 'f2', 'f1', 'who', 'y_copy', 'signup', 'y', 'y_near']; task='regression', time_col=False, group_col='who', gap=0, profile='fast', seed=123456, duplicates='error'; over_cap; statement entity; target reg; one entity of 2031 of the 2274 rows; entities: one_large, 244 of them; f1 identifies the entity; y_copy: a copy of the target; y_near: a near-copy of the target
+  application: result: grouped, skill 0.9807052358023516, model linear-0
+  reference:   error fast_profile_group_too_large
+  [property] application: the fast profile stops when an entity it must keep does not fit under its cap (step 6; D70, D72): 'it returned a result; the largest entity holds 2031 of the 2274 usable rows, and those of a quarter or more 2031 together' | ''
+  [outcome] a result on one side, a named error on the other: 'result: grouped, skill 0.9807052358023516, model linear-0' | 'error fast_profile_group_too_large'  (one entity of the column 'who' holds 2031 of the 2274 usable rows (89.3%), more than the fast profile's cap of 2000 rows. The cap keeps whole entities and never leaves out one that holds a quarter or more of the rows: the result would describe another table. The full profile can split these rows: use profile='full')
+  again: python verify/generated_tables.py E:\CODE\ml-professor\mlprofessor --seed 20261122 --only 338 --keep
+
+table 339: csv, 158 rows x 8 columns ['daynum', 'flag', 'y', 'when', 'seg', 'f1', 'f2', 'y_copy']; task='auto', time_col=False, group_col=False, gap=0, profile='full', seed=123456, duplicates='keep'; small; statement none; target reg; one row for each timestamp; daynum: dates written YYYYMMDD (float_gaps), one sentinel cell; y_copy: a copy of the target; when: iso_datetime
+  application: result: random, skill 0.998826031580589, model linear-1
+  reference:   result: random, skill 0.999999782091116, model linear-1
+  [property] application: a column of dates written YYYYMMDD is excluded as a date, also when it holds a value that is no date (step 5, rule 2a; D66, D72): "`daynum` has role 'feature', reason None" | ''
+  [open target_copy_kept] application: an exact copy of the target is excluded by the leak screen (step 8): '`y_copy` is a feature; skill 0.998826031580589, warned: True' | ''
+  [open target_copy_kept] reference: an exact copy of the target is excluded by the leak screen (step 8): '' | '`y_copy` is a feature; skill 0.999999782091116, warned: True'
+  [exact] columns[daynum] role, reason, leak rule: ('feature', None, None) | ('excluded', 'datetime', None)
+  [exact] warnings[date_column_undeclared, daynum] (count): 0 | 1
+  again: python verify/generated_tables.py E:\CODE\ml-professor\mlprofessor --seed 20261122 --only 339 --keep
+
+table 351: dataframe, 674 rows x 5 columns ['y', 'daynum', 'f1', 'seg', 'f2']; task='auto', time_col=False, group_col=False, gap=0, profile='fast', seed=123456, duplicates='error'; medium; statement none; target clf_int; daynum: dates written YYYYMMDD (int), a sentinel in a third of the rows
+  application: result: random, skill 0.13669467787114842, model linear-0
+  reference:   result: random, skill 0.04677871148459389, model linear-0
+  [property] application: a column of dates written YYYYMMDD is excluded as a date, also when it holds a value that is no date (step 5, rule 2a; D66, D72): "`daynum` has role 'feature', reason None" | ''
+  [exact] columns[daynum] role, reason, leak rule: ('feature', None, None) | ('excluded', 'datetime', None)
+  [exact] warnings[date_column_undeclared, daynum] (count): 0 | 1
+  again: python verify/generated_tables.py E:\CODE\ml-professor\mlprofessor --seed 20261122 --only 351 --keep
+
+table 400: dataframe, 152 rows x 4 columns ['c2', 'y_copy', 'y', 'c1']; task='auto', time_col=False, group_col=False, gap=0, profile='fast', seed=4294967295, duplicates='group'; small; statement none; target clf_int; few-valued columns only; y_copy: a two-valued copy of the target beside few-valued columns; repeated rows: few (4)
+  application: result: grouped, skill -0.9141274238227147, model linear-0
+  reference:   error holdout_copies_in_training
+  [property] application: with duplicates='group' no combination of the features that reached the models is on both sides of the split (steps 7 and 8a; D62, D69): "7 combination(s) are; excluded as suspected leaks: ['y_copy']" | ''
+  [not_compared rows] a result on one side, a named error on the other: 'result: grouped, skill -0.9141274238227147, model linear-0' | 'error holdout_copies_in_training'  (16 of the 38 holdout rows (42.1%) agree with a training row in every feature column that is left: 7 combination(s) of feature values are on both sides of the split. duplicates='group' kept together the rows that agreed in every feature column before the split, and the leak screen then excluded 'y_copy'. Remove the excluded column(s) and run again. Pass duplicates='keep' (--duplicates keep) if the  | it depends on which rows a random or a grouped split took, or the fast cap kept (spec 11))
+  again: python verify/generated_tables.py E:\CODE\ml-professor\mlprofessor --seed 20261122 --only 400 --keep
+
+table 429: dataframe, 664 rows x 6 columns ['when', 'f1', 'f2', 'y', 'daynum', 'level_prev']; task='auto', time_col='when', group_col=False, gap=0, profile='fast', seed=0, duplicates='error'; medium; statement time; target reg; one row for each timestamp; the target is a random walk; level_prev: the level before, of the same series; daynum: dates written YYYYMMDD (int), one sentinel cell; when: iso_date, some cells empty
+  application: result: time_ordered, skill -26.18380708555492, model tree-0
+  reference:   result: time_ordered, skill -0.030916148724251524, model linear-0
+  [property] application: a column of dates written YYYYMMDD is excluded as a date, also when it holds a value that is no date (step 5, rule 2a; D66, D72): "`daynum` has role 'feature', reason None" | ''
+  [exact] columns[daynum] role, reason, leak rule: ('feature', None, None) | ('excluded', 'datetime', None)
+  [fit] headline.score: 28.68670175987655 | 1.0879117853072207  (the same rows on both sides: only the fits can differ)
+  [fit] headline.skill: -26.18380708555492 | -0.030916148724251524  (the same rows on both sides: only the fits can differ)
+  [fit] headline.model: 'tree-0' | 'linear-0'  (the same rows on both sides: only the fits can differ)
+  [fit] cv.chosen: 'tree-0' | 'linear-0'  (the same rows on both sides: only the fits can differ)
+  [fit] cv.chosen_mean: 2.7755314702620373 | 0.8738712240901465  (the same rows on both sides: only the fits can differ)
+  [fit] cv.chosen_std: 0.788973256632965 | 0.14179440914325453  (the same rows on both sides: only the fits can differ)
+  [fit] models: 'models (linear, tree, boosting)[0].chosen: False != True' | ''  (the same rows on both sides)
+  [fit] predictions.csv (y_pred): '162 of 162 rows differ' | ''  (the same rows on both sides: only the fits can differ)
+  again: python verify/generated_tables.py E:\CODE\ml-professor\mlprofessor --seed 20261122 --only 429 --keep
+
+table 470: csv, 176 rows x 7 columns ['f2', 'flag', 'when', 'count', 'f1', 'y', 'row_id']; task='regression', time_col='when', group_col=False, gap=0, profile='full', seed=1, duplicates='group'; small; statement time; target reg; some timestamps hold several rows; row_id: an identifier (increasing); when: one cell of 0, which is no date; when: yyyymmdd_int
+  application: result: time_ordered, skill -0.018044698590491626, model forest-3
+  reference:   error time_column_invalid
+  [property] application: a time column of dates written YYYYMMDD with a value that is no date stops the run (step 3; D69, D72): 'it returned a result' | ''
+  [outcome] a result on one side, a named error on the other: 'result: time_ordered, skill -0.018044698590491626, model forest-3' | 'error time_column_invalid'  (time column 'when' holds dates written as whole numbers (YYYYMMDD), and 1 row with a value that is no date: 0 in 1 row. Such a value has no place in time, so it is not ordered as a number, and its rows are not dropped without your say. Replace it with an empty cell, and those rows are dropped and counted; or with the date it stands for. Then run again)
+  again: python verify/generated_tables.py E:\CODE\ml-professor\mlprofessor --seed 20261122 --only 470 --keep
+
+table 484: csv, 181 rows x 10 columns ['y_copy', 'seg', 'y', 'who', 'when', 'revenue', 'daynum', 'f2', 'empty', 'f1']; task='classification', time_col=False, group_col=False, gap=0, profile='fast', seed=7, duplicates='error'; small; statement none; target clf_int; panel of 8 entities on 31 timestamps, irregular; daynum: dates written YYYYMMDD (float_gaps), a sentinel in a third of the rows; y_copy: a copy of the target; when: big_int; repeated rows: few (3)
+  application: result: random, skill 0.6235827664399094, model linear-0
+  reference:   result: random, skill 0.4965986394557824, model linear-0
+  [property] application: a column of dates written YYYYMMDD is excluded as a date, also when it holds a value that is no date (step 5, rule 2a; D66, D72): "`daynum` has role 'feature', reason None" | ''
+  [exact] columns[daynum] role, reason, leak rule: ('feature', None, None) | ('excluded', 'datetime', None)
+  [exact] warnings[date_column_undeclared, daynum] (count): 0 | 1
+  again: python verify/generated_tables.py E:\CODE\ml-professor\mlprofessor --seed 20261122 --only 484 --keep
+
+table 538: dataframe, 2080 rows x 9 columns ['when', 'daynum', 'seg', 'f1', 'f2', 'count', 'row_id', 'y', 'flag']; task='auto', time_col='when', group_col=False, gap=2, profile='fast', seed=123456, duplicates='error'; over_cap; statement time; target reg; one row for each timestamp; infinite target cells; row_id: an identifier (text); daynum: dates written YYYYMMDD (text), one sentinel cell; when: number
+  application: result: time_ordered, skill 0.9280808689944633, model linear-0
+  reference:   result: time_ordered, skill 0.9280985710643801, model linear-0
+  [property] application: a column of dates written YYYYMMDD is excluded as a date, also when it holds a value that is no date (step 5, rule 2a; D66, D72): "`daynum` has role 'feature', reason None" | ''
+  [exact] columns[daynum] role, reason, leak rule: ('feature', None, None) | ('excluded', 'datetime', None)
+  [fit] headline.score: 1.2355416040951503 | 1.2352374896883864  (the same rows on both sides: only the fits can differ)
+  [fit] headline.skill: 0.9280808689944633 | 0.9280985710643801  (the same rows on both sides: only the fits can differ)
+  [fit] cv.chosen_mean: 2.2347791661419016 | 1.2551498460832136  (the same rows on both sides: only the fits can differ)
+  [fit] cv.chosen_std: 2.1627185820490897 | 0.09385950460612805  (the same rows on both sides: only the fits can differ)
+  [fit] models: 'models (linear, tree, boosting)[0].cv_mean: 2.2347791661419016 != 1.2551498460832136' | ''  (the same rows on both sides)
+  [fit] predictions.csv (y_pred): '458 of 458 rows differ' | ''  (the same rows on both sides: only the fits can differ)
+  again: python verify/generated_tables.py E:\CODE\ml-professor\mlprofessor --seed 20261122 --only 538 --keep
+
+table 653: dataframe, 1350 rows x 8 columns ['who', 'revenue', 'seg', 'f2', 'y', 'y_near', 'f1', 'when']; task='auto', time_col=False, group_col=False, gap=0, profile='fast', seed=4294967295, duplicates='error'; large; statement none; target clf_text; panel of 25 entities on 54 timestamps; white space round some target values; y_near: a near-copy of the target; when: one cell of 0, which is no date; when: yyyymmdd_int, some cells empty
+  application: result: random, skill 0.9950620978602425, model linear-0
+  reference:   result: random, skill 0.9848870267843783, model linear-0
+  [property] application: a column of dates written YYYYMMDD is excluded as a date, also when it holds a value that is no date (step 5, rule 2a; D66, D72): "`when` has role 'feature', reason None" | ''
+  [exact] columns[when] role, reason, leak rule: ('feature', None, None) | ('excluded', 'datetime', None)
+  [exact] warnings[date_column_undeclared, when] (count): 0 | 1
+  again: python verify/generated_tables.py E:\CODE\ml-professor\mlprofessor --seed 20261122 --only 653 --keep
+
+table 701: dataframe, 208 rows x 9 columns ['f2', 'revenue', 'who', 'daynum', 'when', 'y', 'row_id', 'spend', 'f1']; task='auto', time_col=False, group_col='who', gap=0, profile='fast', seed=0, duplicates='group'; small; statement entity; target clf_text; panel of 8 entities on 26 timestamps; row_id: an identifier (consecutive); daynum: dates written YYYYMMDD (int), one sentinel cell; when: datetime
+  application: result: grouped, skill 0.1875, model linear-0
+  reference:   result: grouped, skill 0.9166666666666667, model linear-0
+  [property] application: a column of dates written YYYYMMDD is excluded as a date, also when it holds a value that is no date (step 5, rule 2a; D66, D72): "`daynum` has role 'feature', reason None" | ''
+  [exact] columns[daynum] role, reason, leak rule: ('feature', None, None) | ('excluded', 'datetime', None)
+  [exact] warnings[date_column_undeclared, daynum] (count): 0 | 1
+  again: python verify/generated_tables.py E:\CODE\ml-professor\mlprofessor --seed 20261122 --only 701 --keep
+
+table 720: csv, 201 rows x 4 columns ['y', 'f2', 'f1', 'daynum']; task='classification', time_col=False, group_col=False, gap=0, profile='fast', seed=0, duplicates='error'; small; statement none; target clf_int; daynum: dates written YYYYMMDD (int), a sentinel in a third of the rows
+  application: result: random, skill 0.7444444444444445, model linear-0
+  reference:   result: random, skill 0.8222222222222222, model linear-0
+  [property] application: a column of dates written YYYYMMDD is excluded as a date, also when it holds a value that is no date (step 5, rule 2a; D66, D72): "`daynum` has role 'feature', reason None" | ''
+  [exact] columns[daynum] role, reason, leak rule: ('feature', None, None) | ('excluded', 'datetime', None)
+  [exact] warnings[date_column_undeclared, daynum] (count): 0 | 1
+  again: python verify/generated_tables.py E:\CODE\ml-professor\mlprofessor --seed 20261122 --only 720 --keep
+
+table 722: csv, 172 rows x 5 columns ['c2', 'c1', 'c3', 'y_copy', 'y']; task='auto', time_col=False, group_col=False, gap=0, profile='fast', seed=1, duplicates='group'; small; statement none; target clf_text; few-valued columns only; y_copy: a two-valued copy of the target beside few-valued columns
+  application: result: grouped, skill 0.04615384615384621, model tree-0
+  reference:   error holdout_copies_in_training
+  [property] application: with duplicates='group' no combination of the features that reached the models is on both sides of the split (steps 7 and 8a; D62, D69): "5 combination(s) are; excluded as suspected leaks: ['y_copy']" | ''
+  [not_compared rows] a result on one side, a named error on the other: 'result: grouped, skill 0.04615384615384621, model tree-0' | 'error holdout_copies_in_training'  (13 of the 44 holdout rows (29.5%) agree with a training row in every feature column that is left: 7 combination(s) of feature values are on both sides of the split. duplicates='group' kept together the rows that agreed in every feature column before the split, and the leak screen then excluded 'y_copy'. Remove the excluded column(s) and run again. Pass duplicates='keep' (--duplicates keep) if the  | it depends on which rows a random or a grouped split took, or the fast cap kept (spec 11))
+  again: python verify/generated_tables.py E:\CODE\ml-professor\mlprofessor --seed 20261122 --only 722 --keep
+
+table 728: csv, 2281 rows x 9 columns ['y', 'f2', 'count', 'row_id', 'flag', 'who', 'seg', 'f1', 'when']; task='auto', time_col='when', group_col=False, gap=0, profile='fast', seed=123456, duplicates='error'; over_cap; statement time; target reg; panel of 60 entities on 38 timestamps; row_id: an identifier (text); when: one cell of 99991231, which is no date; when: yyyymmdd_int; repeated rows: few (1)
+  application: result: time_ordered, skill 0.9500228773897529, model linear-0
+  reference:   error time_column_invalid
+  [property] application: a time column of dates written YYYYMMDD with a value that is no date stops the run (step 3; D69, D72): 'it returned a result' | ''
+  [outcome] a result on one side, a named error on the other: 'result: time_ordered, skill 0.9500228773897529, model linear-0' | 'error time_column_invalid'  (time column 'when' holds dates written as whole numbers (YYYYMMDD), and 1 row with a value that is no date: 99991231 in 1 row. Such a value has no place in time, so it is not ordered as a number, and its rows are not dropped without your say. Replace it with an empty cell, and those rows are dropped and counted; or with the date it stands for. Then run again)
+  again: python verify/generated_tables.py E:\CODE\ml-professor\mlprofessor --seed 20261122 --only 728 --keep
+
+table 732: csv, 196 rows x 6 columns ['f2', 'seg', 'who', 'daynum', 'y', 'f1']; task='auto', time_col=False, group_col='who', gap=0, profile='fast', seed=4294967295, duplicates='group'; small; statement entity; target clf_bool; one entity of 156 of the 196 rows; entities: one_large, 41 of them; f1 identifies the entity; one label for each entity; daynum: dates written YYYYMMDD (text), a sentinel in a third of the rows
+  application: result: grouped, skill 0.19551282051282048, model linear-0
+  reference:   result: grouped, skill 0.10576923076923084, model linear-0
+  [property] application: a column of dates written YYYYMMDD is excluded as a date, also when it holds a value that is no date (step 5, rule 2a; D66, D72): "`daynum` has role 'feature', reason None" | ''
+  [exact] columns[daynum] role, reason, leak rule: ('feature', None, None) | ('excluded', 'datetime', None)
+  [exact] warnings[date_column_undeclared, daynum] (count): 0 | 1
+  again: python verify/generated_tables.py E:\CODE\ml-professor\mlprofessor --seed 20261122 --only 732 --keep
+
+table 737: dataframe, 720 rows x 9 columns ['who', 'f2', 'daynum', 'row_id', 'f1', 'when', 'empty', 'seg', 'y']; task='auto', time_col=False, group_col=False, gap=0, profile='fast', seed=123456, duplicates='group'; small; statement none; target clf_text; panel of 60 entities on 12 timestamps; row_id: an identifier (increasing); daynum: dates written YYYYMMDD (int), one sentinel cell; when: datetime
+  application: result: random, skill 0.707897793263647, model linear-0
+  reference:   result: random, skill 0.6777471331107563, model linear-0
+  [property] application: a column of dates written YYYYMMDD is excluded as a date, also when it holds a value that is no date (step 5, rule 2a; D66, D72): "`daynum` has role 'feature', reason None" | ''
+  [exact] columns[daynum] role, reason, leak rule: ('feature', None, None) | ('excluded', 'datetime', None)
+  [exact] warnings[date_column_undeclared, daynum] (count): 0 | 1
+  again: python verify/generated_tables.py E:\CODE\ml-professor\mlprofessor --seed 20261122 --only 737 --keep
+
+table 740: csv, 2273 rows x 8 columns ['notes', 'f2', 'y', 'flag', 'seg', 'y_near', 'who', 'f1']; task='auto', time_col=False, group_col='who', gap=0, profile='fast', seed=0, duplicates='error'; over_cap; statement entity; target reg; one entity of 2091 of the 2273 rows; entities: one_large, 62 of them; y_near: a near-copy of the target
+  application: result: grouped, skill 0.9697411674765612, model linear-0
+  reference:   error fast_profile_group_too_large
+  [property] application: the fast profile stops when an entity it must keep does not fit under its cap (step 6; D70, D72): 'it returned a result; the largest entity holds 2091 of the 2273 usable rows, and those of a quarter or more 2091 together' | ''
+  [outcome] a result on one side, a named error on the other: 'result: grouped, skill 0.9697411674765612, model linear-0' | 'error fast_profile_group_too_large'  (one entity of the column 'who' holds 2091 of the 2273 usable rows (92.0%), more than the fast profile's cap of 2000 rows. The cap keeps whole entities and never leaves out one that holds a quarter or more of the rows: the result would describe another table. The full profile can split these rows: use profile='full')
+  again: python verify/generated_tables.py E:\CODE\ml-professor\mlprofessor --seed 20261122 --only 740 --keep
+
+table 741: dataframe, 2330 rows x 6 columns ['f1', 'row_id', 'big', 'who', 'f2', 'y']; task='auto', time_col=False, group_col='who', gap=0, profile='fast', seed=7, duplicates='keep'; over_cap; statement entity; target clf_text; one entity of 2050 of the 2330 rows; entities: one_large, 281 of them; one label for each entity; row_id: an identifier (consecutive)
+  application: result: grouped, skill 0.15476190476190466, model tree-0
+  reference:   error fast_profile_group_too_large
+  [property] application: the fast profile stops when an entity it must keep does not fit under its cap (step 6; D70, D72): 'it returned a result; the largest entity holds 2050 of the 2330 usable rows, and those of a quarter or more 2050 together' | ''
+  [outcome] a result on one side, a named error on the other: 'result: grouped, skill 0.15476190476190466, model tree-0' | 'error fast_profile_group_too_large'  (one entity of the column 'who' holds 2050 of the 2330 usable rows (88.0%), more than the fast profile's cap of 2000 rows. The cap keeps whole entities and never leaves out one that holds a quarter or more of the rows: the result would describe another table. The full profile can split these rows: use profile='full')
+  again: python verify/generated_tables.py E:\CODE\ml-professor\mlprofessor --seed 20261122 --only 741 --keep
+
+table 770: csv, 240 rows x 7 columns ['y_near', 'after', 'f1', 'who', 'f2', 'when', 'y']; task='auto', time_col='when', group_col='who', gap=0, profile='fast', seed=123456, duplicates='keep'; small; statement time_entity; target clf_bool; panel of 5 entities on 48 timestamps; y_near: a near-copy of the target; after: filled in for one class only; when: one cell of 99991231, which is no date; when: yyyymmdd_text, some cells empty
+  application: result: time_ordered, skill 1.0, model linear-0
+  reference:   error time_column_invalid
+  [property] application: a time column of dates written YYYYMMDD with a value that is no date stops the run (step 3; D69, D72): 'it returned a result' | ''
+  [outcome] a result on one side, a named error on the other: 'result: time_ordered, skill 1.0, model linear-0' | 'error time_column_invalid'  (time column 'when' holds dates written as whole numbers (YYYYMMDD), and 1 row with a value that is no date: 99991231 in 1 row. Such a value has no place in time, so it is not ordered as a number, and its rows are not dropped without your say. Replace it with an empty cell, and those rows are dropped and counted; or with the date it stands for. Then run again)
+  again: python verify/generated_tables.py E:\CODE\ml-professor\mlprofessor --seed 20261122 --only 770 --keep
+
+table 795: dataframe, 2303 rows x 5 columns ['f2', 'count', 'f1', 'y', 'who']; task='auto', time_col=False, group_col='who', gap=0, profile='fast', seed=123456, duplicates='error'; over_cap; statement entity; target clf_int; one entity of 1381 of the 2303 rows; entities: one_large, 309 of them
+  application: result: grouped, skill 0.7480769230769231, model linear-0
+  reference:   result: grouped, skill 0.6653124653124654, model linear-0
+  [property] application: an entity of a quarter or more of the usable rows is kept by the fast cap (step 6; D72): 'dropped_row_cap 1342 of 2237 usable rows; the entities of a quarter or more hold [1342] rows and the others 895; no row of a large one is in the holdout and no warning names a large unit' | ''
+  [not_compared rows] warnings[large_group_kept_in_training, None] (count): 0 | 1  (it depends on which rows a random or a grouped split took, or the fast cap kept (spec 11))
+  again: python verify/generated_tables.py E:\CODE\ml-professor\mlprofessor --seed 20261122 --only 795 --keep
+
+table 808: csv, 150 rows x 9 columns ['y', 'seg', 'who', 'daynum', 'when', 'revenue', 'f1', 'f2', 'big']; task='classification', time_col=False, group_col='who', gap=0, profile='fast', seed=4294967295, duplicates='group'; small; statement entity; target clf_text; panel of 25 entities on 6 timestamps; daynum: dates written YYYYMMDD (float_gaps), one sentinel cell; when: iso_date, some cells empty; 1 blank line(s) in the file
+  application: result: grouped, skill -0.07161803713527848, model tree-0
+  reference:   result: grouped, skill 0.2333333333333334, model tree-0
+  [property] application: a column of dates written YYYYMMDD is excluded as a date, also when it holds a value that is no date (step 5, rule 2a; D66, D72): "`daynum` has role 'feature', reason None" | ''
+  [exact] columns[daynum] role, reason, leak rule: ('feature', None, None) | ('excluded', 'datetime', None)
+  [exact] warnings[date_column_undeclared, daynum] (count): 0 | 1
+  again: python verify/generated_tables.py E:\CODE\ml-professor\mlprofessor --seed 20261122 --only 808 --keep
+
+table 819: csv, 129 rows x 6 columns ['daynum', 'when', 'f1', 'seg', 'y', 'f2']; task='auto', time_col='when', group_col=False, gap=0, profile='fast', seed=4294967295, duplicates='error'; small; statement time; target clf_text; one row for each timestamp; white space round some target values; daynum: dates written YYYYMMDD (text), a sentinel in a third of the rows; when: iso_date
+  application: result: time_ordered, skill 0.6536796536796536, model linear-0
+  reference:   result: time_ordered, skill 0.6536796536796536, model linear-0
+  [property] application: a column of dates written YYYYMMDD is excluded as a date, also when it holds a value that is no date (step 5, rule 2a; D66, D72): "`daynum` has role 'feature', reason None" | ''
+  [exact] columns[daynum] role, reason, leak rule: ('feature', None, None) | ('excluded', 'datetime', None)
+  [fit] cv.chosen_mean: 0.8031060606060606 | 0.8096969696969698  (the same rows on both sides: only the fits can differ)
+  [fit] cv.chosen_std: 0.11698488184525786 | 0.11294537389344554  (the same rows on both sides: only the fits can differ)
+  [fit] models: 'models (linear, tree, boosting)[0].cv_mean: 0.8031060606060606 != 0.8096969696969698' | ''  (the same rows on both sides)
+  [fit] predictions.csv (y_pred): '32 of 32 rows differ' | ''  (the same rows on both sides: only the fits can differ)
+  again: python verify/generated_tables.py E:\CODE\ml-professor\mlprofessor --seed 20261122 --only 819 --keep
+
+table 864: csv, 1170 rows x 9 columns ['flag', 'f1', 'const', 'strong', 'signup', 'y', 'when', 'seg', 'f2']; task='auto', time_col='when', group_col=False, gap=0, profile='fast', seed=0, duplicates='error'; large; statement time; target clf_text; one row for each timestamp; when: one cell of 99991231, which is no date; when: yyyymmdd_int
+  application: result: time_ordered, skill 0.7471079136690648, model linear-0
+  reference:   error time_column_invalid
+  [property] application: a time column of dates written YYYYMMDD with a value that is no date stops the run (step 3; D69, D72): 'it returned a result' | ''
+  [outcome] a result on one side, a named error on the other: 'result: time_ordered, skill 0.7471079136690648, model linear-0' | 'error time_column_invalid'  (time column 'when' holds dates written as whole numbers (YYYYMMDD), and 1 row with a value that is no date: 99991231 in 1 row. Such a value has no place in time, so it is not ordered as a number, and its rows are not dropped without your say. Replace it with an empty cell, and those rows are dropped and counted; or with the date it stands for. Then run again)
+  again: python verify/generated_tables.py E:\CODE\ml-professor\mlprofessor --seed 20261122 --only 864 --keep
+
+table 873: csv, 238 rows x 8 columns ['y', 'when', 'seg', 'const', 'daynum', 'f2', 'f1', 'who']; task='auto', time_col='when', group_col='who', gap=0, profile='fast', seed=123456, duplicates='group'; small; statement time_entity; target clf_text; panel of 5 entities on 34 timestamps; daynum: dates written YYYYMMDD (int), two sentinels, one cell each; when: iso_date; repeated rows: heavy (68)
+  application: result: time_ordered, skill 0.21621621621621623, model linear-0
+  reference:   result: time_ordered, skill 0.2286902286902286, model linear-0
+  [property] application: a column of dates written YYYYMMDD is excluded as a date, also when it holds a value that is no date (step 5, rule 2a; D66, D72): "`daynum` has role 'feature', reason None" | ''
+  [exact] columns[daynum] role, reason, leak rule: ('feature', None, None) | ('excluded', 'datetime', None)
+  [fit] headline.score: 0.6081081081081081 | 0.6143451143451143  (the same rows on both sides: only the fits can differ)
+  [fit] headline.skill: 0.21621621621621623 | 0.2286902286902286  (the same rows on both sides: only the fits can differ)
+  [fit] cv.chosen_mean: 0.6330431107354184 | 0.6593069079882268  (the same rows on both sides: only the fits can differ)
+  [fit] cv.chosen_std: 0.18172841512236085 | 0.17706559896482763  (the same rows on both sides: only the fits can differ)
+  [fit] models: 'models (linear, tree, boosting)[0].cv_mean: 0.6330431107354184 != 0.6593069079882268' | ''  (the same rows on both sides)
+  [fit] predictions.csv (y_pred): '63 of 63 rows differ' | ''  (the same rows on both sides: only the fits can differ)
+  again: python verify/generated_tables.py E:\CODE\ml-professor\mlprofessor --seed 20261122 --only 873 --keep
+
+table 918: csv, 132 rows x 8 columns ['f2', 'daynum', 'y', 'when', 'count', 'f1', 'who', 'seg']; task='regression', time_col='when', group_col='who', gap=0, profile='fast', seed=4294967295, duplicates='error'; small; statement time_entity; target clf_int; panel of 12 entities on 11 timestamps; daynum: dates written YYYYMMDD (float_gaps), a sentinel in a third of the rows; when: yyyymmdd_int, some cells empty
+  application: result: time_ordered, skill 0.10891726591400386, model linear-0
+  reference:   result: time_ordered, skill 0.05506160805841753, model linear-0
+  [property] application: a column of dates written YYYYMMDD is excluded as a date, also when it holds a value that is no date (step 5, rule 2a; D66, D72): "`daynum` has role 'feature', reason None" | ''
+  [exact] columns[daynum] role, reason, leak rule: ('feature', None, None) | ('excluded', 'datetime', None)
+  [fit] headline.score: 0.046884315246490664 | 0.04971793051488478  (the same rows on both sides: only the fits can differ)
+  [fit] headline.skill: 0.10891726591400386 | 0.05506160805841753  (the same rows on both sides: only the fits can differ)
+  [fit] cv.chosen_mean: 0.04159093995978718 | 0.04136036412249491  (the same rows on both sides: only the fits can differ)
+  [fit] cv.chosen_std: 0.03667995498069898 | 0.04230722363823421  (the same rows on both sides: only the fits can differ)
+  [fit] models: 'models (linear, tree, boosting)[0].cv_mean: 0.04159093995978718 != 0.04136036412249491' | ''  (the same rows on both sides)
+  [fit] predictions.csv (y_pred): '36 of 36 rows differ' | ''  (the same rows on both sides: only the fits can differ)
+  again: python verify/generated_tables.py E:\CODE\ml-professor\mlprofessor --seed 20261122 --only 918 --keep
+
+table 930: dataframe, 558 rows x 7 columns ['f2', 'y', 'row_id', 'who', 'f1', 'daynum', 'flag']; task='auto', time_col=False, group_col='who', gap=0, profile='fast', seed=0, duplicates='keep'; medium; statement entity; target clf_int; entities: equal, 200 of them; f1 identifies the entity; row_id: an identifier (increasing); daynum: dates written YYYYMMDD (float_gaps), one sentinel cell; repeated rows: heavy (159)
+  application: result: grouped, skill 0.6324675324675324, model linear-0
+  reference:   result: grouped, skill 0.7696969696969698, model linear-0
+  [property] application: a column of dates written YYYYMMDD is excluded as a date, also when it holds a value that is no date (step 5, rule 2a; D66, D72): "`daynum` has role 'feature', reason None" | ''
+  [exact] columns[daynum] role, reason, leak rule: ('feature', None, None) | ('excluded', 'datetime', None)
+  [exact] warnings[date_column_undeclared, daynum] (count): 0 | 1
+  again: python verify/generated_tables.py E:\CODE\ml-professor\mlprofessor --seed 20261122 --only 930 --keep
+
+table 950: csv, 143 rows x 5 columns ['f2', 'f1', 'daynum', 'revenue', 'y']; task='auto', time_col=False, group_col=False, gap=0, profile='fast', seed=0, duplicates='error'; small; statement none; target clf_text; daynum: dates written YYYYMMDD (int), one sentinel cell
+  application: result: random, skill 0.5238095238095237, model linear-0
+  reference:   result: random, skill 0.7333333333333334, model linear-0
+  [property] application: a column of dates written YYYYMMDD is excluded as a date, also when it holds a value that is no date (step 5, rule 2a; D66, D72): "`daynum` has role 'feature', reason None" | ''
+  [exact] columns[daynum] role, reason, leak rule: ('feature', None, None) | ('excluded', 'datetime', None)
+  [exact] warnings[date_column_undeclared, daynum] (count): 0 | 1
+  again: python verify/generated_tables.py E:\CODE\ml-professor\mlprofessor --seed 20261122 --only 950 --keep
+
+table 990: csv, 548 rows x 7 columns ['y', 'who', 'seg', 'f1', 'when', 'f2', 'big']; task='auto', time_col='when', group_col=False, gap=0, profile='fast', seed=123456, duplicates='error'; medium; statement time; target reg; panel of 60 entities on 12 timestamps, irregular; when: one cell of 0, which is no date; when: yyyymmdd_int, some cells empty; repeated rows: few (3)
+  application: result: time_ordered, skill -0.04742799121660912, model linear-0
+  reference:   error time_column_invalid
+  [property] application: a time column of dates written YYYYMMDD with a value that is no date stops the run (step 3; D69, D72): 'it returned a result' | ''
+  [outcome] a result on one side, a named error on the other: 'result: time_ordered, skill -0.04742799121660912, model linear-0' | 'error time_column_invalid'  (time column 'when' holds dates written as whole numbers (YYYYMMDD), and 1 row with a value that is no date: 0 in 1 row. Such a value has no place in time, so it is not ordered as a number, and its rows are not dropped without your say. Replace it with an empty cell, and those rows are dropped and counted; or with the date it stands for. Then run again)
+  again: python verify/generated_tables.py E:\CODE\ml-professor\mlprofessor --seed 20261122 --only 990 --keep
+
+STATED LIMITS
+  none is known
+
+OPEN: owned, not yet built
+  forests_under_time_order (D73 point 4, pass 8): 8 table(s): 296, 332, 605, 626, 644, 816, 836, 974
+      under time order the two sides hand a fit its rows in different orders, so a forest's fold scores differ, and with them whatever follows when a forest is chosen on either side: the chosen configuration, the score, the predictions
+  target_copy_kept (D73 point 2, pass 8): 15 table(s): 81, 159, 212, 247, 301, 339, 397, 444, 461, 463, 635, 742, 755, 812, 912
+      an exact copy of the target that the leak screen leaves a feature, on either side
+
+NOT COMPARED (no part of the verdict): differences by kind
+      1  the table earns two named errors of steps 1 to 4, and which is raised is open (spec 2.4)
+     44  it depends on which rows a random or a grouped split took, or the fast cap kept (spec 11)
+      0  both sides raise the warning; how many records it has is not pinned (spec 2.5)
+      0  which estimator of the lag-1 autocorrelation the panel warning uses is open (spec 11)
+
+application: 601 result(s) {'grouped': 166, 'random': 190, 'time_ordered': 245}, 399 named error(s) {'column_not_found': 8, 'duplicate_columns': 14, 'entities_undeclared': 34, 'fast_profile_too_few_rows': 2, 'fast_profile_too_few_timestamps': 5, 'feature_name_collision': 13, 'gap_too_large': 12, 'group_column_invalid': 31, 'holdout_copies_in_training': 40, 'input_error': 8, 'non_finite_score': 10, 'target_constant': 20, 'task_ambiguous': 35, 'task_unsupported': 38, 'time_column_invalid': 16, 'time_order_undeclared': 56, 'too_few_groups': 19, 'too_few_rows': 38}, 0 other
+reference: 585 result(s) {'grouped': 156, 'random': 190, 'time_ordered': 239}, 415 named error(s) {'column_not_found': 8, 'duplicate_columns': 14, 'entities_undeclared': 34, 'fast_profile_group_too_large': 3, 'fast_profile_too_few_rows': 2, 'fast_profile_too_few_timestamps': 5, 'feature_name_collision': 13, 'gap_too_large': 12, 'group_column_invalid': 31, 'holdout_copies_in_training': 47, 'input_error': 8, 'non_finite_score': 10, 'target_constant': 20, 'task_ambiguous': 35, 'task_unsupported': 38, 'time_column_invalid': 23, 'time_order_undeclared': 56, 'too_few_groups': 19, 'too_few_rows': 37}, 0 other
+time: 97 s wall-clock at 24 worker(s) (6 s making the tables); in the tool: application 785 s, reference 320 s
+GENERATED TABLES: FAIL (1000 tables from seed 20261122: 940 agree, 0 stated limit, 21 open, 39 fail)

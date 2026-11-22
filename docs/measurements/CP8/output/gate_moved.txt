@@ -1,0 +1,23 @@
+datasets: 78 values before under 26 names; 0 moved, 0 gone, 0 new under an existing name; only after: day_sentinel, few_valued_leak, large_entity, quarter_entity
+checks: 120 values before under 12 names; 0 moved, 0 gone, 13 new under an existing name; only after: fast
+    new   complete.catches[0]: 1 run(s)
+    new   date_sentinel_seen.catches[0]: 1 run(s)
+    new   date_sentinel_seen.message: 1 run(s)
+    new   date_sentinel_seen.ok: 1 run(s)
+    new   deterministic.catches[0]: 1 run(s)
+    new   group_leak_stops.catches[0]: 1 run(s)
+    new   group_leak_stops.message: 1 run(s)
+    new   group_leak_stops.ok: 1 run(s)
+    new   matches_json.catches[0]: 1 run(s)
+    new   same_at_any_n_jobs.catches[0]: 1 run(s)
+    new   signal_clf.catches[0]: 1 run(s)
+    new   signal_reg.catches[0]: 1 run(s)
+    new   undeclared_warns.catches[0]: 1 run(s)
+records: 119 values before under 118 names; 0 moved, 0 gone, 0 new under an existing name; only after: day_sentinel role of `day`, few_valued_leak exit code, large_entity exit code, quarter_entity rows left out by the cap
+runs: 15818 values before under 34 names; 8 moved, 0 gone, 0 new under an existing name; only after: day_sentinel, few_valued_leak, large_entity, quarter_entity
+    moved  profile.warnings[0].message: 1 run(s): day_numbers
+           "column 'day' holds dates but no time_co -> "column 'day' holds dates and time_col=F (1)
+    moved  profile.warnings[1].message: 3 run(s): few_valued, messy, time_blocks_undeclared
+           "column 'signup_date' holds dates but no -> "column 'signup_date' holds dates and ti (1); "column 'date' holds dates but no time_c -> "column 'date' holds dates and time_col= (1); "2000 of the 2000 rows agree with anothe -> "2000 of the 2000 rows agree with anothe (1)
+    moved  stdout: 4 run(s): day_numbers, few_valued, messy, time_blocks_undeclared
+           "task: classification (rule); scheme: ra -> "task: classification (rule); scheme: ra (3); "task: classification (rule); scheme: gr -> "task: classification (rule); scheme: gr (1)

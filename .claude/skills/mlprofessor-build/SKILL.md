@@ -156,6 +156,38 @@ them were loosened by the tests stage so that they pass before and after
     Excluded as `datetime`; eight-digit text accepted as the time column.
 35. **The README (T53).** Every command and every example says both things.
 
+### Seventh pass, after the sixth review (tasks T54 to T60)
+
+Change as little as each task needs. Every earlier test stays green; one was
+loosened by the tests stage so that it passes before and after (D59:
+`test_date_numbers.py`, eleven cases), and it is not yours to edit.
+
+36. **The guards first (T54).** A second test, by another route, for eleven
+    rules that one test each held; a date beyond the nanosecond range in one
+    cell of a time column; one `fold_not_scored` record for each fold; repeated
+    rows counted beside a column of lists. Expect to change nothing.
+37. **A column of dates with a sentinel (T55).** Rule 2a of step 5 is judged
+    by the column's distinct values: at least two read as dates, and at least
+    nine do for each one that does not, or at least five beside at most two.
+    Never by a share of the cells. As the time column, a value that is no date
+    stops the run and is named.
+38. **`duplicates="group"` after a removed leak (T56).** Once the leak screen
+    has excluded a column, one holdout row that agrees with a training row in
+    every feature that is left stops the run. No threshold. Then the passage
+    that says what `"group"` measures.
+39. **The fast profile's cap with entities (T57).** An entity of a quarter or
+    more of the usable rows is kept first, on every seed; the others in an
+    order drawn from the seed. When an entity is larger than the cap, or the
+    large ones do not fit together: `fast_profile_group_too_large`, or the
+    full profile's own error when it would stop too.
+40. **Two small things (T58).** The date warning ends with the caveat of the
+    scheme the run used, so finish its text after the split. One branch that
+    turned a number that is not finite into null becomes a raise.
+41. **The README (T59).**
+42. **The judge's two other tools (T60).** Run the battery and the
+    generated-table test on the build. Fix what fails on neither of their
+    lists; leave what they list as open or as a stated limit.
+
 ## Rules that keep the number honest
 
 - The holdout rows are chosen before anything is fitted, and nothing fitted
@@ -283,6 +315,26 @@ them were loosened by the tests stage so that they pass before and after
   `YYYYMMDD` are excluded like a date column, before the id-like rule can
   call them an identifier (D66). Only that form: a day count or `YYYYMM`
   cannot be told from a measure, and the spec says so.
+- A sentinel in a column of dates is one value, not a reason to call the
+  column a number (D69, D72). Count distinct values: dates, and values that
+  are no dates. A share of the cells is the wrong count, because `99991231`
+  can fill a third of a column of end dates. And never order such a value in
+  time: as the time column it stops the run.
+- What `"group"` promises is checked after the leak screen too (D69). The sets
+  are formed before the split; the screen then removes a column, and rows that
+  differed only there are on both sides. One such holdout row stops the run.
+  Counting only copies, target and all, misses a column that copies a
+  two-valued target: the two classes of a combination are different rows.
+- A cap that keeps whole entities must not leave out a large one (D70, D72).
+  Keep every entity of a quarter or more of the usable rows first; stop when
+  that cannot be done. Left to the draw, an entity of half the table is
+  dropped on most seeds and only a row count says so.
+- The reference is not the answer (D56). When the generated-table test shows
+  the application and the reference disagreeing, the spec says which is
+  wrong. If it says neither, stop and report the table: do not copy the
+  reference's behaviour.
+- What the judge's tools list as open is owned by another pass (D73). Do not
+  fix it on the way past: each needs a decision that changes a pinned rule.
 - Read a column once. What an object column is, is decided over all its loaded
   rows; a second reading over the usable rows only lets a cell that should
   stop the run slip out with its row.
@@ -369,6 +421,17 @@ them were loosened by the tests stage so that they pass before and after
 | A table with rows that have a copy runs under `duplicates="group"` and then stops with `holdout_copies_in_training` | The leak screen excluded a column, and rows that differed only there became copies on opposite sides. | Not a defect: the message names the column; the caller removes it. |
 | `test_type_matrix_group.py` fails with a raw exception | A kind of column, as the entity column, reached code not written for it. | Where the entity column's cells are compared: fix it there. No broad `except`. |
 | A result holds `null` where a number belongs in `task`, `columns` or `input`; or `test_review4_small.py` fails | The finite check looked at the five scoring parts only (finding 4). | The constructor of `ProfileResult`: every part of the document. |
+| `time.date_sentinel_seen` fails: the column `day` is a `feature` | Every value was asked to read as a date, or 95% of the cells: one sentinel, or a sentinel in a third of the rows, and the column is a number again (F14b, M31). | Step 5, rule 2a: count the distinct values that read as dates and those that do not; nine for each, or five beside at most two. |
+| A run with a date-number time column finishes with `train_end` of 99991231, or with its last rows first | A value that is no date was ordered as a number (M32). | Step 3: such a time column stops with `time_column_invalid`, naming the value and its rows. |
+| `duplicates.group_leak_stops` fails with exit 0, and skill near -1 | After the leak screen removed a column, combinations of the features that are left were on both sides, and only exact copies were counted (F12b); or the count kept the threshold of 1% and ten rows (M33). | Step 8a, under `"group"` and after a removed leak: one holdout row that agrees with a training row in every feature left stops the run. |
+| `fast.large_entity_stops` fails with exit 0 | An entity larger than the cap was left out and the rest profiled (F15). | Step 6: stop with `fast_profile_group_too_large` before any row is left out. |
+| `fast.large_entity_kept` fails: 1,500 rows kept and 1,200 left out | The large entity was taken in seed order like any other and did not fit when its turn came (F15, M35). | Step 6: keep every entity of a quarter or more of the usable rows first. |
+| `fast_profile_group_too_large` on a table the full profile cannot split either | The advice is not true (M34). | Try the full profile's own checks on every usable row first: a class under 10 rows, the split of whole entities. Raise what they raise. |
+| The `date_column_undeclared` warning says the rows were split at random under `--group-col` | Its text was written at step 5, before the scheme was known (M36). | Finish the message after the split, with `validation.caveat`. |
+| The interpreter ends with exit code 3221225477 and nothing on standard error, on a time column with one date such as `9999-12-31` | pandas was asked to turn a column that holds a date beyond the nanosecond range into nanoseconds, and did not raise. No `except` catches that. | Ask the range before converting: compare with `pandas.Timestamp.min` and `.max`, and raise `time_column_invalid`. |
+| `verify/battery.py` fails a pair of the kind `same` | A change that cannot move a number moved one: a constant, an identifier or a renamed column reached a model, or changed the split. | The message names the run, the change and the first number that moved; open the two output folders it names. |
+| `verify/generated_tables.py` reports a disagreement | The application and the reference differ on one generated table. Agreement proves neither right. | Make the table again with `--only i --describe`, read the spec for that case, and fix the application only where the spec says it is wrong. Otherwise stop and report. |
+| Either tool lists a failure as `open` or as a `stated limit` | It is known, and owned by another pass or accepted by a decision (D73; spec 8.2). | Leave it. It does not fail the tool. |
 
 ## How to debug a gate failure
 
@@ -380,3 +443,29 @@ them were loosened by the tests stage so that they pass before and after
 3. Re-run the one check: `python verify/smoke_test.py mlprofessor --only <id>`.
 4. Fix the code. Never the band, the dataset or the check: they are locked, and
    a band you could widen proves nothing.
+
+## The judge's two other tools
+
+Neither is part of the gate. Run them from the repo root when a task says so,
+and before you call the last task of a pass finished (D71, D72):
+
+```
+E:\CODE\ml-professor\mlprof_env\Scripts\python.exe verify/battery.py mlprofessor
+E:\CODE\ml-professor\mlprof_env\Scripts\python.exe verify/generated_tables.py mlprofessor
+```
+
+- **The battery** changes one small thing in each of the gate's tables and
+  asks whether the conclusion still holds. `--list` prints every pair of a run
+  and a change, and what must hold for it; `--only run:change` runs one again.
+  Its tables and outputs are under `verify/artifacts/battery/`.
+- **The generated-table test** runs 1,000 generated tables through your build
+  and through the reference and compares them. `--only i` runs table i again
+  and `--describe` prints what it holds; its files are under
+  `verify/artifacts/generated/`.
+- Both end with a line of three counts. Only a failure outside their two fixed
+  lists fails the tool; that failure is yours.
+- `tests/test_judge_tools.py` runs both, so the full suite takes about five
+  minutes longer once that file exists (the battery three to four minutes,
+  the generated tables a little over a minute and a half, measured with
+  nothing else on the machine). While working on one task, run that task's
+  own test files.

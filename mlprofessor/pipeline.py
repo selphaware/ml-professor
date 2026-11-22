@@ -21,8 +21,8 @@ from mlprofessor.load import load_table, read_number_columns, usable_rows
 from mlprofessor.preprocess import MISSING_LEVEL, Preprocessor, check_feature_names
 from mlprofessor.result import (GROUPED_CAVEAT, LIMITATIONS, RANDOM_CAVEAT, ROWS_ITEMS,
                                 ProfileResult)
-from mlprofessor.split import (MAX_SEED, N_FOLDS, read_time, split_random, split_time,
-                               units_of)
+from mlprofessor.split import (MAX_SEED, N_FOLDS, large_units, read_time, split_random,
+                               split_time, units_of)
 from mlprofessor.task import TASKS, class_value, decide_task, read_target_values
 
 PROFILES = ("full", "fast")
@@ -114,14 +114,40 @@ def _date_columns(roles):
     return [r["name"] for r in roles.to_dict(orient="records") if r["reason"] == "datetime"]
 
 
-def _time_order_message(dates):
-    return (
-        "The column(s) " + ", ".join(repr(name) for name in dates) + " hold dates, and "
-        "nothing was said about time order. A table that holds dates is often ordered in "
-        "time, and a random split of it can report as predictable what is not. Pass the "
-        "time column as time_col (--time-col COLUMN) for a time-ordered split, or pass "
-        "time_col=False (--no-time-order) to state that the order of the rows in time "
-        "does not matter.")
+ENTITIES_WAYS_ON = (
+    "Pass the column that names the entity each row belongs to (a customer, a patient, "
+    "a device, one series of a panel) as group_col (--group-col COLUMN), so that the "
+    "rows of one entity are kept together; or pass group_col=False (--no-entities) to "
+    "state that no rows belong together.")
+
+
+def _time_order_message(dates, entities_unsaid):
+    """Step 5: what the caller must still say, when time order was not said."""
+    message = (
+        "Nothing was said about time order. Pass the time column as time_col "
+        "(--time-col COLUMN) for a time-ordered split, or pass time_col=False "
+        "(--no-time-order) to state that the order of the rows in time does not matter.")
+    if dates:
+        message += (
+            " The column(s) " + ", ".join(repr(name) for name in dates) + " hold dates "
+            "and would be excluded; a table that holds dates is often ordered in time, "
+            "and a random split of it can report as predictable what is not.")
+    if entities_unsaid:
+        message += " Nothing was said about entities either. " + ENTITIES_WAYS_ON
+    return message
+
+
+def _entities_message(time_col, usable_keys):
+    """Step 5: the message of `entities_undeclared`, with time order stated."""
+    message = "Nothing was said about entities. " + ENTITIES_WAYS_ON
+    if usable_keys is not None:
+        n_stamps = len(np.unique(usable_keys))
+        if n_stamps < len(usable_keys):
+            message += (
+                f" The timestamps of {time_col!r} repeat: the {len(usable_keys)} usable "
+                f"rows hold {n_stamps} distinct timestamps, as several series in one "
+                "table do.")
+    return message
 
 
 def _excluded_text(roles):
@@ -138,6 +164,27 @@ def resolve_n_jobs(n_jobs):
 
 def _warning(code, column, message):
     return {"code": code, "column": column, "message": message}
+
+
+def _large_unit_warnings(units, n_rows, classes, holdout):
+    """Step 7 (D66): one warning for each unit of a quarter or more of the rows it is
+    drawn among, saying whether it is kept in training or is the holdout."""
+    found = []
+    for record in large_units(units, n_rows, classes, holdout):
+        share = 100.0 * record["rows"] / record["among"]
+        stated = (f"One unit holds {record['rows']} of the {record['among']} rows it is drawn "
+                  f"among ({share:.1f}%), a quarter or more of them.")
+        if record["held"]:
+            found.append(_warning(
+                "large_group_is_holdout", None,
+                stated + " The units smaller than a quarter do not together hold a quarter, "
+                "so this one unit is the holdout: the headline rests on it alone."))
+        else:
+            found.append(_warning(
+                "large_group_kept_in_training", None,
+                stated + " It is kept among the training rows and the holdout is made of "
+                "smaller units: the headline does not test it."))
+    return found
 
 
 def _column_warnings(roles, time_col):
@@ -221,12 +268,11 @@ def count_holdout_copies(features, y, training_rows, holdout_rows):
     return int(np.isin(holdout_keys, training_keys).sum())
 
 
-def copy_sets(features, rows, y_rows):
-    """Step 7 under `duplicates="group"`: each of `rows`' set of exact copies (step 8a's
-    comparison, on `features` and the target values `y_rows`), numbered 0..; and the
-    number of those rows that have a copy among them."""
+def same_feature_sets(features, rows):
+    """Step 7 under `duplicates="group"`: `rows` numbered 0.. by the set of rows that
+    agree with them in every feature column (step 8a's comparison; the target plays no
+    part); and the number of those rows that agree with another of them."""
     columns = [features[name].to_numpy()[rows] for name in features.columns]
-    columns.append(np.asarray(y_rows))
     codes = np.column_stack([_comparable_codes(values) for values in columns])
     _, key = np.unique(codes, axis=0, return_inverse=True)
     key = key.reshape(-1)
@@ -259,25 +305,28 @@ def joined_units(first, second):
     return units.reshape(-1).astype(np.int64)
 
 
+COPIES_ADVICE = (
+    "Pass duplicates='keep' (--duplicates keep) if the repeated rows are different cases "
+    "that look alike, as in a table of few-valued columns. Pass duplicates='group' "
+    "(--duplicates group) if they are one case recorded more than once: no combination of "
+    "feature values is then on both sides of the split. Or remove the repeated rows.")
+
+
 def _copies_message(n_copies, n_holdout, roles, duplicates="error"):
     share = 100.0 * n_copies / n_holdout
-    if duplicates == "group":
-        leaks = roles.loc[roles["reason"] == "suspected_leak", "name"].tolist()
-        return (
-            f"{n_copies} of the {n_holdout} holdout rows ({share:.1f}%) have a copy among "
-            "the training rows. duplicates='group' kept each set of copies on one side of "
-            "the split, but these rows became copies of one another only when the leak "
-            "screen excluded the column(s) "
-            + ", ".join(repr(str(name)) for name in leaks)
-            + " as suspected leaks: they differed in nothing else. Remove the column(s) "
-            "from the table and run again.")
     message = (
         f"{n_copies} of the {n_holdout} holdout rows ({share:.1f}%) have a copy among the "
         "training rows: the same value in every feature column and the same target. A model "
-        "that recalls a row scores on them, so the headline would be inflated. Remove the "
-        "repeated rows; or pass duplicates='group' (--duplicates group) to keep each set of "
-        "copies on one side of the split and of every fold; or pass duplicates='keep' "
-        "(--duplicates keep) to go ahead with a warning.")
+        "that recalls a row scores on them, so the headline would be inflated.")
+    if duplicates == "group":
+        leaks = roles.loc[roles["reason"] == "suspected_leak", "name"].tolist()
+        message += (
+            " duplicates='group' kept together the rows that agree in every feature "
+            "column, but these rows came to agree only when the leak screen excluded the "
+            "column(s) " + ", ".join(repr(str(name)) for name in leaks)
+            + " as suspected leaks: they differed in nothing else. Remove the column(s) "
+            "from the table and run again.")
+    message += " " + COPIES_ADVICE
     dates = _date_columns(roles)
     if dates:
         message += (
@@ -402,19 +451,6 @@ def _panel_autocorrelation(keys, y):
             "training timestamps cannot be computed: a number on the way is not finite. "
             "Likely cause: target values too large for squared error.")
     return r
-
-
-def _entities_message(target, r):
-    return (
-        f"The timestamps repeat, so the table is a panel of several series, and the "
-        f"per-timestamp mean of {target!r} has lag-1 autocorrelation {r:.2f} over the "
-        f"training timestamps (above {PANEL_AUTOCORRELATION}). Against the training mean, "
-        "skill on such a table shows only that one period resembles the last, and nothing "
-        "says which row belongs to which series. Pass the column that names each row's "
-        "series as group_col (--group-col COLUMN), so that each series is scored against "
-        "its own previous value; or pass group_col=False (--no-entities) to state that "
-        "the rows belong to no entities, and go ahead against the training mean with a "
-        "warning.")
 
 
 def _check_one_row_per_stamp(keys, codes, group_col):
@@ -597,7 +633,9 @@ def run(data, target, task="auto", time_col=None, gap=0, profile="full", seed=0,
 
 
 def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs, duplicates,
-                 time_order_stated=False, group_arg=None):
+                 time_order_stated, group_arg):
+    """The run. `time_col` is a name or None; `time_order_stated` says whether None
+    came from `time_col=False`. `group_arg` is `group_col` as passed."""
     # Step 1: load and count.
     loaded_frame, info = load_table(data)
     # Step 1a: object columns of numbers are read as numbers, once; every later
@@ -654,11 +692,16 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs, dupli
             f"Every value of {target!r} is a whole number and the rule chose regression; "
             "declare task='classification' only if it has two values."))
 
-    # Step 5: column roles.
+    # Step 5: column roles. Then both statements are asked for, whatever the table
+    # holds, before the name collisions, the cap, the split and any fit (D63).
     roles = roles_of_read_columns(frame, target, time_col, loaded_dtypes, group_col)
     dates = _date_columns(roles)
-    if time_col is None and not time_order_stated and dates:
-        raise errors.TimeOrderUndeclaredError(_time_order_message(dates))
+    if time_col is None and not time_order_stated:
+        raise errors.TimeOrderUndeclaredError(
+            _time_order_message(dates, entities_unsaid=group_arg is None))
+    if group_arg is None:
+        raise errors.EntitiesUndeclaredError(
+            _entities_message(time_col, usable_keys if time_ordered else None))
     warnings.extend(_column_warnings(roles, time_col))
     features, kinds, feature_missing = build_features(frame, roles)
     if not kinds:
@@ -682,17 +725,18 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs, dupli
     y_all = np.zeros(n_loaded, dtype=np.int64 if task_type == "classification" else float)
     y_all[kept] = encode_target(target_read.iloc[kept].to_numpy(), task_info)
 
-    def _units_among(rows, y_rows):
+    def _units_among(rows):
         """Step 7's units among `rows` (or None: split one by one), and with
-        `duplicates="group"` the number of those rows that have a copy among them."""
+        `duplicates="group"` the number of those rows that agree with another of them
+        in every feature column, whatever their targets."""
         if time_ordered:
             return None, None
         if duplicates != "group":
             return (None if entity is None else entity[rows]), None
-        sets, n_with_copies = copy_sets(features, rows, y_rows)
+        sets, n_same = same_feature_sets(features, rows)
         if entity is not None:
-            return joined_units(entity[rows], sets), n_with_copies
-        return (sets if n_with_copies else None), n_with_copies
+            return joined_units(entity[rows], sets), n_same
+        return (sets if n_same else None), n_same
 
     def _fast_rows_error(reason):
         """Under a cap that left rows out: the full profile's error, or the cap's own."""
@@ -705,8 +749,7 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs, dupli
                     f"at least {MIN_CLASS_ROWS} of each class are needed.")
         if time_ordered:
             split_time(usable_keys, gap=gap)
-        usable_units, _ = _units_among(
-            usable, encode_target(target_read.iloc[usable].to_numpy(), task_info))
+        usable_units, _ = _units_among(usable)
         if usable_units is not None:
             # Raises the full profile's own `too_few_groups` when it would stop too.
             usable_classes = (target_read.iloc[usable].to_numpy()
@@ -732,15 +775,16 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs, dupli
             raise errors.TooFewRowsError(message)
 
     # Step 7: the holdout and the folds, as positions of the kept rows. Under
-    # `duplicates="group"` the sets of copies are formed here, on step 5's features.
-    units, n_rows_with_copies = _units_among(kept, y_all[kept])
-    if n_rows_with_copies:
+    # `duplicates="group"` the rows that agree in every feature column of step 5 are
+    # put together here, whatever their targets.
+    units, n_rows_same_features = _units_among(kept)
+    if n_rows_same_features:
         warnings.append(_warning(
-            "copies_grouped", None,
-            f"{n_rows_with_copies} of the {len(kept)} rows split have a copy among them (the "
-            "same value in every feature column and the same target); with "
-            "duplicates='group' each set of copies was kept on one side of the holdout "
-            "split and in one fold."))
+            "same_features_grouped", None,
+            f"{n_rows_same_features} of the {len(kept)} rows split agree with another of "
+            "them in every feature column; with duplicates='group' the rows that agree "
+            "were kept together, whatever their targets, on one side of the holdout split "
+            "and in one fold, so no combination of feature values is on both sides."))
     if time_ordered:
         try:
             split = split_time(kept_keys, gap=gap)
@@ -764,6 +808,8 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs, dupli
                 raise
         else:
             split = split_random(len(kept), classes=classes, seed=seed)
+        if units is not None:
+            warnings.extend(_large_unit_warnings(units, len(kept), classes, split["holdout"]))
         split["gap"] = split["holdout"][:0]
         for fold in split["folds"]:
             fold["gap"] = fold["training"][:0]
@@ -786,8 +832,8 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs, dupli
     if not any(scored):
         raise errors.OneClassError("No fold holds both classes in training and validation.")
 
-    # Step 11 under time order in a regression: each entity one series, or a panel
-    # with nothing said about its entities stops here, before the leak screen and any fit.
+    # Step 11 under time order in a regression: each entity one series; a panel with
+    # no entities (`group_col=False`) whose per-timestamp mean persists is warned of.
     by_entity = task_type == "regression" and time_ordered and entity is not None
     if by_entity:
         _check_one_row_per_stamp(kept_keys, entity[kept], group_col)
@@ -795,8 +841,6 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs, dupli
     if task_type == "regression" and time_ordered and entity is None and not timestamps_unique:
         r = _panel_autocorrelation(kept_keys[split["training"]], y_all[training_rows])
         if r is not None and r > PANEL_AUTOCORRELATION:
-            if group_arg is None:
-                raise errors.EntitiesUndeclaredError(_entities_message(target, r))
             panel_warning = _warning(
                 "autocorrelated_panel_target", target,
                 f"The per-timestamp mean of {target!r} has lag-1 autocorrelation {r:.2f} "
@@ -1014,7 +1058,7 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs, dupli
             int(len(np.unique(units[split["holdout"]]))) if units is not None
             else None if entity is None else int(len(np.unique(entity[holdout_rows])))),
         "n_holdout_without_previous": n_without_previous,
-        "n_rows_with_copies": n_rows_with_copies,
+        "n_rows_same_features": n_rows_same_features,
     }
     if time_ordered:
         training_keys = kept_keys[split["training"]]
@@ -1099,5 +1143,5 @@ def _meta(profile, seed):
 
 
 __all__ = ["run", "check_arguments", "resolve_n_jobs", "select", "FitData",
-           "build_features", "encode_target", "count_holdout_copies", "copy_sets",
+           "build_features", "encode_target", "count_holdout_copies", "same_feature_sets",
            "joined_units"]

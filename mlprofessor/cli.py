@@ -1,6 +1,9 @@
 """Command line (spec 2.2): a thin wrapper over `profile()`.
 
 Exit codes: 0 finished, 2 unparsed command line (argparse), 3 a named error.
+Each call says whether the rows are ordered in time (--time-col or
+--no-time-order) and whether rows belong together (--group-col or
+--no-entities); a pair left out passes None, and the run stops as profile() does.
 """
 import argparse
 import sys
@@ -26,10 +29,12 @@ def _build_parser():
                      help="the task (default: auto)")
     time_order = run.add_mutually_exclusive_group()
     time_order.add_argument("--time-col", default=None, metavar="COLUMN",
-                            help="the time column; enables the time-ordered scheme")
+                            help="the time column; enables the time-ordered scheme. One "
+                                 "of --time-col and --no-time-order is needed")
     time_order.add_argument("--no-time-order", action="store_true",
                             help="state that the order of the rows in time does not "
-                                 "matter: split at random even when a column holds dates")
+                                 "matter: split at random even when a column holds dates. "
+                                 "One of --time-col and --no-time-order is needed")
     run.add_argument("--gap", type=int, default=0, metavar="N",
                      help="whole timestamps between training and holdout (default: 0)")
     run.add_argument("--profile", default="full", choices=["full", "fast"],
@@ -41,14 +46,18 @@ def _build_parser():
     run.add_argument("--duplicates", default="error", choices=["error", "keep", "group"],
                      help="rows that are copies of one another (no time column): stop when "
                           "holdout rows have copies among the training rows (error), go "
-                          "ahead with a warning (keep), or keep each set of copies on one "
-                          "side of the split and of every fold (group) (default: error)")
+                          "ahead with a warning (keep), or keep together the rows that agree "
+                          "in every feature column, whatever their targets, so that no "
+                          "combination of feature values is on both sides of the split or "
+                          "in two folds (group) (default: error)")
     entities = run.add_mutually_exclusive_group()
     entities.add_argument("--group-col", default=None, metavar="COLUMN",
                           help="the entity column: the rows of one entity (a customer, a "
-                               "patient, a device) are kept together")
+                               "patient, a device) are kept together. One of --group-col "
+                               "and --no-entities is needed")
     entities.add_argument("--no-entities", action="store_true",
-                          help="state that no rows belong to one entity")
+                          help="state that no rows belong to one entity. One of "
+                               "--group-col and --no-entities is needed")
     return parser
 
 

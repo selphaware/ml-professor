@@ -1,0 +1,155 @@
+
+##### A. Both statements on every call (D63)
+--------------------------------------------------------------------------------------------------------------
+breast cancer, nothing said  [0.0s]
+   expect: stops: time_order_undeclared, and the message asks for the entities too
+   named error: time_order_undeclared: Nothing was said about time order. Pass the time column as time_col (--time-col COLUMN) for a time-ordered split, or pass time_col=False (--no-time-order) to state that the order of the rows in time does not matter. Nothing was said about entities either. Pass the column that names the entity each row belongs to (a customer, a patient, a device, one series of a panel) as group_col (--group-col COLUMN), so that the rows of one entity are kept together; or pass group_col=False (--no-entities) to state that no rows belong together.
+--------------------------------------------------------------------------------------------------------------
+breast cancer, time_col=False only  [0.0s]
+   expect: stops: entities_undeclared
+   named error: entities_undeclared: Nothing was said about entities. Pass the column that names the entity each row belongs to (a customer, a patient, a device, one series of a panel) as group_col (--group-col COLUMN), so that the rows of one entity are kept together; or pass group_col=False (--no-entities) to state that no rows belong together.
+--------------------------------------------------------------------------------------------------------------
+breast cancer, group_col=False only  [0.0s]
+   expect: stops: time_order_undeclared
+   named error: time_order_undeclared: Nothing was said about time order. Pass the time column as time_col (--time-col COLUMN) for a time-ordered split, or pass time_col=False (--no-time-order) to state that the order of the rows in time does not matter.
+--------------------------------------------------------------------------------------------------------------
+breast cancer, both said  [0.3s]
+   expect: runs: 0.994549 as before
+   RAN  random, baseline chance, skill 0.995 [0.985, 1.000] via bootstrap_rows, p 0.005, units [None, None], same-feature rows None, {'training': 426, 'holdout': 143}
+   said {'time_col': False, 'group_col': False, 'duplicates': 'error'}; warnings []; excluded {}
+--------------------------------------------------------------------------------------------------------------
+VIX level, time_col=date, nothing said about entities  [0.0s]
+   expect: stops: entities_undeclared, although it is one series
+   named error: entities_undeclared: Nothing was said about entities. Pass the column that names the entity each row belongs to (a customer, a patient, a device, one series of a panel) as group_col (--group-col COLUMN), so that the rows of one entity are kept together; or pass group_col=False (--no-entities) to state that no rows belong together.
+--------------------------------------------------------------------------------------------------------------
+VIX level, time_col=date, group_col=False  [0.2s]
+   expect: 0.023 as before
+   RAN  time_ordered, baseline previous_value, skill 0.023 [-0.077, 0.105] via bootstrap_blocks, p None, units [None, None], same-feature rows None, {'training': 1500, 'holdout': 500}
+   said {'time_col': 'date', 'group_col': False, 'duplicates': 'error'}; warnings ['interval_approximate']; excluded {}
+--------------------------------------------------------------------------------------------------------------
+stocks price level, time_col=date, group_col=symbol  [0.0s]
+   expect: -0.139 as before
+   RAN  time_ordered, baseline previous_value, skill -0.139 [None, None] via None, p None, units [5, 5], same-feature rows None, {'training': 415, 'holdout': 140}
+   said {'time_col': 'date', 'group_col': 'symbol', 'duplicates': 'error'}; warnings ['no_interval']; excluded {}
+--------------------------------------------------------------------------------------------------------------
+stocks price level, time_col=date, group_col=False  [0.0s]
+   expect: 0.979 on the caller's word, with the panel warning
+   RAN  time_ordered, baseline training_mean, skill 0.979 [None, None] via None, p None, units [None, None], same-feature rows None, {'training': 415, 'holdout': 140}
+   said {'time_col': 'date', 'group_col': False, 'duplicates': 'error'}; warnings ['autocorrelated_panel_target', 'no_interval']; excluded {}
+--------------------------------------------------------------------------------------------------------------
+diabetes, both said  [0.1s]
+   expect: 0.490034 as before
+   RAN  random, baseline training_mean, skill 0.490 [0.343, 0.602] via bootstrap_rows, p 0.005, units [None, None], same-feature rows None, {'training': 331, 'holdout': 111}
+   said {'time_col': False, 'group_col': False, 'duplicates': 'error'}; warnings ['whole_number_regression_target']; excluded {}
+--------------------------------------------------------------------------------------------------------------
+penguins sex, both said  [0.1s]
+   expect: 0.937642 as before
+   RAN  random, baseline chance, skill 0.938 [0.855, 0.986] via bootstrap_rows, p 0.005, units [None, None], same-feature rows None, {'training': 249, 'holdout': 84}
+   said {'time_col': False, 'group_col': False, 'duplicates': 'error'}; warnings ['small_holdout']; excluded {}
+--------------------------------------------------------------------------------------------------------------
+diamonds, both said  [0.4s]
+   expect: 0.933327 as before
+   RAN  random, baseline training_mean, skill 0.933 [0.918, 0.951] via bootstrap_rows, p 0.005, units [None, None], same-feature rows None, {'training': 1500, 'holdout': 500}
+   said {'time_col': False, 'group_col': False, 'duplicates': 'error'}; warnings ['duplicate_rows', 'whole_number_regression_target']; excluded {}
+--------------------------------------------------------------------------------------------------------------
+titanic keep, both said  [0.2s]
+   expect: 0.744865 as before
+   RAN  random, baseline chance, skill 0.745 [0.656, 0.829] via bootstrap_rows, p 0.005, units [None, None], same-feature rows None, {'training': 668, 'holdout': 223}
+   said {'time_col': False, 'group_col': False, 'duplicates': 'keep'}; warnings ['duplicate_rows', 'holdout_copies_kept']; excluded {}
+
+##### B. duplicates='group' on the features alone (D62)
+--------------------------------------------------------------------------------------------------------------
+titanic, default, both said  [0.1s]
+   expect: stops; the message names keep first and says when each fits
+   named error: holdout_copies_in_training: 37 of the 223 holdout rows (16.6%) have a copy among the training rows: the same value in every feature column and the same target. A model that recalls a row scores on them, so the headline would be inflated. Pass duplicates='keep' (--duplicates keep) if the repeated rows are different cases that look alike, as in a table of few-valued columns. Pass duplicates='group' (--duplicates group) if they are one case recorded more than once: no combination of feature values is then on both sides of the split. Or remove the repeated rows.
+--------------------------------------------------------------------------------------------------------------
+titanic, duplicates=group  [0.2s]
+   expect: about 0.645 (the lead's patched run); was 0.741
+   RAN  grouped, baseline chance, skill 0.645 [0.514, 0.745] via bootstrap_groups, p None, units [585, 187], same-feature rows 179, {'training': 668, 'holdout': 223}
+   said {'time_col': False, 'group_col': False, 'duplicates': 'group'}; warnings ['duplicate_rows', 'same_features_grouped']; excluded {}
+--------------------------------------------------------------------------------------------------------------
+titanic shuffled, every row twice, group  [0.2s]
+   expect: about 0
+   RAN  grouped, baseline chance, skill -0.035 [-0.210, 0.080] via bootstrap_groups, p None, units [586, 186], same-feature rows 1782, {'training': 1336, 'holdout': 446}
+   said {'time_col': False, 'group_col': False, 'duplicates': 'group'}; warnings ['duplicate_rows', 'same_features_grouped']; excluded {}
+--------------------------------------------------------------------------------------------------------------
+noise, 24 feature combinations, seed 1, group  [0.1s]
+   expect: about 0; was -0.28, -0.27, -0.56; no interval (24 units)
+   RAN  grouped, baseline chance, skill -0.037 [None, None] via None, p None, units [17, 7], same-feature rows 2000, {'training': 1431, 'holdout': 569}
+   said {'time_col': False, 'group_col': False, 'duplicates': 'group'}; warnings ['duplicate_rows', 'no_interval', 'same_features_grouped']; excluded {}
+--------------------------------------------------------------------------------------------------------------
+noise, 24 feature combinations, seed 2, group  [0.1s]
+   expect: about 0; was -0.28, -0.27, -0.56; no interval (24 units)
+   RAN  grouped, baseline chance, skill -0.134 [None, None] via None, p None, units [16, 8], same-feature rows 2000, {'training': 1378, 'holdout': 622}
+   said {'time_col': False, 'group_col': False, 'duplicates': 'group'}; warnings ['duplicate_rows', 'no_interval', 'same_features_grouped']; excluded {}
+--------------------------------------------------------------------------------------------------------------
+noise, 24 feature combinations, seed 3, group  [0.1s]
+   expect: about 0; was -0.28, -0.27, -0.56; no interval (24 units)
+   RAN  grouped, baseline chance, skill -0.047 [None, None] via None, p None, units [17, 7], same-feature rows 2000, {'training': 1437, 'holdout': 563}
+   said {'time_col': False, 'group_col': False, 'duplicates': 'group'}; warnings ['duplicate_rows', 'no_interval', 'same_features_grouped']; excluded {}
+
+##### C. The grouped holdout (D64, D66)
+--------------------------------------------------------------------------------------------------------------
+mpg, group_col=name  [0.1s]
+   expect: 0.783 as before, holdout about a quarter
+   RAN  grouped, baseline training_mean, skill 0.780 [0.707, 0.845] via bootstrap_groups, p None, units [230, 75], same-feature rows None, {'training': 298, 'holdout': 100}
+   said {'time_col': False, 'group_col': 'name', 'duplicates': 'error'}; warnings []; excluded {}
+--------------------------------------------------------------------------------------------------------------
+mpg, one entity of 62% (every US car), the rest by name  [0.1s]
+   expect: holdout a quarter; large_group_kept_in_training names the 62%
+   RAN  grouped, baseline training_mean, skill 0.822 [0.748, 0.873] via bootstrap_groups, p None, units [40, 79], same-feature rows None, {'training': 298, 'holdout': 100}
+   said {'time_col': False, 'group_col': 'maker', 'duplicates': 'error'}; warnings ['large_group_kept_in_training']; excluded {}
+   >> One unit holds 249 of the 398 rows it is drawn among (62.6%), a quarter or more of them. It is kept among the training rows and the holdout is made of
+   (Manhattan share of the taxi rows: 82.3%)
+--------------------------------------------------------------------------------------------------------------
+taxis fare (regression), Manhattan as one entity, the rest by zone  [0.1s]
+   expect: FAST profile: what does the 2,000-row cap do with an entity of 5,236 rows?
+   RAN  grouped, baseline training_mean, skill 0.878 [0.629, 0.940] via bootstrap_groups, p None, units [95, 36], same-feature rows None, {'training': 846, 'holdout': 282}
+   said {'time_col': False, 'group_col': 'area', 'duplicates': 'error'}; warnings ['duplicate_rows']; excluded {}
+--------------------------------------------------------------------------------------------------------------
+the same, FULL profile  [13.0s]
+   expect: Manhattan is the holdout and large_group_is_holdout says so
+   RAN  grouped, baseline training_mean, skill 0.945 [None, None] via None, p None, units [131, 1], same-feature rows None, {'training': 1128, 'holdout': 5236}
+   said {'time_col': False, 'group_col': 'area', 'duplicates': 'error'}; warnings ['duplicate_rows', 'large_group_is_holdout', 'no_interval']; excluded {}
+   >> One unit holds 5236 of the 6364 rows it is drawn among (82.3%), a quarter or more of them. The units smaller than a quarter do not together hold a qua
+--------------------------------------------------------------------------------------------------------------
+taxis payment (classification), same entities  [0.2s]
+   expect: a share per class; whichever case applies is named
+   RAN  grouped, baseline chance, skill 0.716 [0.571, 0.831] via bootstrap_groups, p None, units [96, 35], same-feature rows None, {'training': 845, 'holdout': 283}
+   said {'time_col': False, 'group_col': 'area', 'duplicates': 'error'}; warnings ['duplicate_rows', 'large_group_kept_in_training']; excluded {}
+   >> One unit holds 65 of the 250 rows it is drawn among (26.0%), a quarter or more of them. It is kept among the training rows and the holdout is made of 
+
+##### D. Dates written as whole numbers (D66)
+--------------------------------------------------------------------------------------------------------------
+VIX level, day as 20240105, nothing said  [0.0s]
+   expect: stops, naming `day` as a column that holds dates
+   named error: time_order_undeclared: Nothing was said about time order. Pass the time column as time_col (--time-col COLUMN) for a time-ordered split, or pass time_col=False (--no-time-order) to state that the order of the rows in time does not matter. The column(s) 'day' hold dates and would be excluded; a table that holds dates is often ordered in time, and a random split of it can report as predictable what is not. Nothing was said about entities either. Pass the column that names the entity each row belongs to (a customer, a patient, a device, one series of a panel) as group_col (--group-col COLUMN), so that the rows of one entity are kept together; or pass group_col=False (--no-entities) to state that no rows belong togeth
+--------------------------------------------------------------------------------------------------------------
+VIX level, day as a number, both False  [0.1s]
+   expect: `day` excluded as a date, date_column_undeclared; 0.939 on the caller's word
+   RAN  random, baseline training_mean, skill 0.939 [0.907, 0.958] via bootstrap_rows, p 0.005, units [None, None], same-feature rows None, {'training': 1500, 'holdout': 500}
+   said {'time_col': False, 'group_col': False, 'duplicates': 'error'}; warnings ['date_column_undeclared', 'strong_single_column']; excluded {'day': 'datetime'}
+--------------------------------------------------------------------------------------------------------------
+VIX level, time_col=day  [0.1s]
+   expect: 0.023, as with a date-typed column
+   RAN  time_ordered, baseline previous_value, skill 0.023 [-0.077, 0.105] via bootstrap_blocks, p None, units [None, None], same-feature rows None, {'training': 1500, 'holdout': 500}
+   said {'time_col': 'day', 'group_col': False, 'duplicates': 'error'}; warnings ['interval_approximate']; excluded {}
+--------------------------------------------------------------------------------------------------------------
+breast cancer + a random 8-digit account number  [0.2s]
+   expect: `account` is not a date; skill near 0.99
+   RAN  random, baseline chance, skill 0.995 [0.985, 1.000] via bootstrap_rows, p 0.005, units [None, None], same-feature rows None, {'training': 426, 'holdout': 143}
+   said {'time_col': False, 'group_col': False, 'duplicates': 'error'}; warnings []; excluded {}
+--------------------------------------------------------------------------------------------------------------
+breast cancer + a YYYYMM column  [0.3s]
+   expect: not seen as a date (stated limit): stays a feature
+   RAN  random, baseline chance, skill 0.995 [0.985, 1.000] via bootstrap_rows, p 0.005, units [None, None], same-feature rows None, {'training': 426, 'holdout': 143}
+   said {'time_col': False, 'group_col': False, 'duplicates': 'error'}; warnings []; excluded {}
+
+##### E. The command line
+   []: exit 3; wrote []; error: time_order_undeclared: Nothing was said about time order. Pass the time column as time_col (--time-col COLUMN) for a time-ordered split, or pass time_col=False (--no-time-order) to state that t
+   ['--no-time-order']: exit 3; wrote []; error: entities_undeclared: Nothing was said about entities. Pass the column that names the entity each row belongs to (a customer, a patient, a device, one series of a panel) as group_col (--group-co
+   ['--no-entities']: exit 3; wrote []; error: time_order_undeclared: Nothing was said about time order. Pass the time column as time_col (--time-col COLUMN) for a time-ordered split, or pass time_col=False (--no-time-order) to state that t
+   ['--no-time-order', '--no-entities']: exit 0; wrote ['predictions.csv', 'profile.json']; task: classification (rule), scheme: random / rows: 400 loaded, 297 training, 100 holdout
+   ['--time-col', 'signup_date', '--no-entities']: exit 0; wrote ['predictions.csv', 'profile.json']; task: classification (rule), scheme: time_ordered / rows: 400 loaded, 297 training, 100 holdout
+
+SUMMARY: {'ran': 22, 'named error': 6} | python warnings in 0 runs

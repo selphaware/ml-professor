@@ -8,7 +8,7 @@ import pandas as pd
 
 from mlprofessor import errors
 from mlprofessor.load import beyond_64_bits, read_numbers
-from mlprofessor.columns import read_entities
+from mlprofessor.columns import read_entities, stripped_text, text_of_dates
 from mlprofessor.task import _sorted_classes, read_target_values
 
 MAX_SEED = 2**32 - 1
@@ -86,6 +86,63 @@ def _unit_classes(unit, n_units, classes, n_rows):
     return (2 * positive_rows >= sizes).astype(np.int64)
 
 
+def _holdout_units(ordered_units, sizes):
+    """The holdout of one pool of units, taken in `ordered_units` order (step 7, property 3).
+
+    A unit joins while the holdout, with it, still holds less than a quarter of the
+    pool's rows; the smallest unit passed over (the first among equals) completes it;
+    then every unit it can spare (one without which it still holds a quarter) goes back.
+    """
+    total = int(sizes[ordered_units].sum())
+    joined, passed_over, held_rows = [], [], 0
+    for u in ordered_units:
+        u = int(u)
+        if HOLDOUT_SHARE_DENOMINATOR * (held_rows + int(sizes[u])) < total:
+            joined.append(u)
+            held_rows += int(sizes[u])
+        else:
+            passed_over.append(u)
+    if not passed_over:
+        return joined
+    # `min` keeps the first in the order among units of equal size.
+    completing = min(passed_over, key=lambda u: int(sizes[u]))
+    holdout = joined + [completing]
+    held_rows += int(sizes[completing])
+    # Spare the largest first, then in the drawn order; one pass suffices, since giving
+    # a unit back never lets another be spared that could not be before.
+    kept = []
+    for position in sorted(range(len(holdout)), key=lambda p: (-int(sizes[holdout[p]]), p)):
+        u = holdout[position]
+        if HOLDOUT_SHARE_DENOMINATOR * (held_rows - int(sizes[u])) >= total:
+            held_rows -= int(sizes[u])
+        else:
+            kept.append(u)
+    return kept
+
+
+def large_units(groups, n_rows, classes, holdout):
+    """Each unit of a quarter or more of the rows it is drawn among (step 7, D66).
+
+    The rows it is drawn among are all the rows split, or for classification the rows
+    of the units of its class. One record per such unit, in the order units first
+    appear: its rows, those rows it is drawn among, and whether it is in `holdout`.
+    """
+    unit = units_of(groups, n_rows)
+    n_units = int(unit.max()) + 1 if n_rows else 0
+    sizes = np.bincount(unit, minlength=n_units)
+    unit_class = (np.zeros(n_units, dtype=np.int64) if classes is None
+                  else _unit_classes(unit, n_units, classes, n_rows))
+    pool_rows = np.bincount(unit_class, weights=sizes, minlength=2).astype(np.int64)
+    held = np.zeros(n_units, dtype=bool)
+    held[unit[np.asarray(holdout, dtype=np.intp)]] = True
+    found = []
+    for u in range(n_units):
+        among = int(pool_rows[unit_class[u]])
+        if HOLDOUT_SHARE_DENOMINATOR * int(sizes[u]) >= among:
+            found.append({"rows": int(sizes[u]), "among": among, "held": bool(held[u])})
+    return found
+
+
 def _split_whole_units(unit, n_rows, classes, rng):
     """The grouped scheme of step 7: the holdout and five folds of whole units."""
     n_units = int(unit.max()) + 1 if n_rows else 0
@@ -102,12 +159,8 @@ def _split_whole_units(unit, n_rows, classes, rng):
         pool = np.flatnonzero(unit_class == label)
         if len(pool) == 0:
             continue
-        total, held_rows = int(sizes[pool].sum()), 0
-        for u in rng.permutation(pool):
-            if HOLDOUT_SHARE_DENOMINATOR * held_rows >= total:
-                break
+        for u in _holdout_units(rng.permutation(pool), sizes):
             held[u] = True
-            held_rows += int(sizes[u])
     training_units = np.flatnonzero(~held)
     if len(training_units) < MIN_FOLD_UNITS:
         raise errors.TooFewGroupsError(
@@ -267,12 +320,31 @@ def _iso_keys(values):
     return keys
 
 
+def _dates_as_text(values):
+    """True when every non-missing value of the column is text of eight digits that
+    reads as a calendar date YYYYMMDD (step 3; D66)."""
+    present = values[values.notna()]
+    if len(present) == 0 or not all(isinstance(v, str) for v in present.to_numpy()):
+        return False
+    return text_of_dates(stripped_text(present))
+
+
+def _date_text_keys(values):
+    """Text of eight-digit dates as the float64 numbers they read as, NaN where missing."""
+    text = stripped_text(values)
+    keys = np.full(len(values), np.nan, dtype=np.float64)
+    present = text.notna().to_numpy(dtype=bool)
+    keys[present] = [float(int(value)) for value in text[present]]
+    return keys
+
+
 def read_time(values, rows=None):
     """Step 3: read a time column in one of its three accepted forms.
 
     Returns `(keys, form)`: keys sort in time order (datetime64[ns] with NaT,
     or float64 with NaN; exact int64 or uint64 for whole numbers of which one
     has a magnitude above 2**53); form is `datetime`, `numeric` or `iso8601`.
+    Text of eight digits that all read as dates YYYYMMDD is `numeric` (D66).
     With `rows`, the column is read (step 1a, and the 2**53 rule) over all its
     values, and the keys returned are those of the rows given, in their order.
     """
@@ -293,6 +365,8 @@ def read_time(values, rows=None):
         raise _time_error(
             "the column holds whole numbers too large for 64 bits, which are not read as "
             "a time")
+    if pd.api.types.is_string_dtype(dtype) and _dates_as_text(values):
+        return _date_text_keys(values.iloc[rows]), "numeric"
     values = values.iloc[rows].reset_index(drop=True)
     if pd.api.types.is_string_dtype(dtype):
         present = values[values.notna()]

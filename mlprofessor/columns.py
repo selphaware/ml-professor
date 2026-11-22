@@ -245,6 +245,68 @@ def _text_rule(text_all, usable, n_usable):
     return "feature", "categorical", None, False
 
 
+# ------------------------------------------------------------ rule 2a: dates as YYYYMMDD
+
+FIRST_DATE_NUMBER, LAST_DATE_NUMBER = 19000101, 21001231
+EIGHT_DIGITS = re.compile(r"[0-9]{8}")
+
+
+def is_date_number(number):
+    """True when the whole number reads as a calendar date YYYYMMDD, 1900 to 2100 (D66)."""
+    number = int(number)
+    if not FIRST_DATE_NUMBER <= number <= LAST_DATE_NUMBER:
+        return False
+    return _valid_date(number // 10000, number // 100 % 100, number % 100)
+
+
+def _all_date_numbers(numbers):
+    """True when every whole number given reads as a date and at least two differ."""
+    distinct = set(int(number) for number in numbers)
+    return len(distinct) >= 2 and all(is_date_number(number) for number in distinct)
+
+
+def _numbers_of_dates(series):
+    """The usable values of a numeric column as Python whole numbers, or None when one
+    of them is not a whole number in the range of the dates (rule 2a)."""
+    if pd.api.types.is_bool_dtype(series.dtype):
+        return None
+    present = series[series.notna()]
+    if pd.api.types.is_integer_dtype(series.dtype):
+        unsigned = pd.api.types.is_unsigned_integer_dtype(series.dtype)
+        values = present.to_numpy(dtype=np.uint64 if unsigned else np.int64)
+    else:
+        values = present.to_numpy(dtype=float, na_value=np.nan)
+        values = values[~np.isnan(values)]
+        # An infinite cell is a value, and no date.
+        if not _whole(values):
+            return None
+    if values.size and (values.min() < FIRST_DATE_NUMBER or values.max() > LAST_DATE_NUMBER):
+        return None
+    return np.unique(values).astype(np.int64).tolist()
+
+
+def text_of_dates(text):
+    """True when every non-missing stripped text is eight digits that read as a date
+    YYYYMMDD (rule 2a, and the time form of step 3)."""
+    distinct = pd.unique(text[text.notna()].to_numpy())
+    if not all(EIGHT_DIGITS.fullmatch(value) for value in distinct):
+        return False
+    return all(is_date_number(int(value)) for value in distinct)
+
+
+def _dates_as_numbers(series, usable):
+    """Rule 2a of step 5 on the usable rows: dates written as whole numbers YYYYMMDD."""
+    family = type_family(series)
+    if family == "numeric":
+        numbers = _numbers_of_dates(series.iloc[usable])
+        return numbers is not None and _all_date_numbers(numbers)
+    if family == "text":
+        text = stripped_text(series.iloc[usable])
+        present = text[text.notna()]
+        return pd.unique(present.to_numpy()).size >= 2 and text_of_dates(present)
+    return False
+
+
 def _judge_column(series, usable):
     """One column's (role, kind, reason, n_coerced, extra infinities)."""
     usable_missing = series.iloc[usable].isna().to_numpy(dtype=bool)
@@ -254,6 +316,9 @@ def _judge_column(series, usable):
     family = type_family(series)
     if family == "datetime":
         return "excluded", None, "datetime", 0, 0
+    if _dates_as_numbers(series, usable):
+        kind = "numeric" if family == "numeric" else "categorical"
+        return "excluded", kind, "datetime", 0, 0
     if family == "other":
         return "excluded", None, "unsupported_type", 0, 0
     if family == "numeric":
@@ -385,6 +450,9 @@ def roles_of_read_columns(frame, target, time_col, loaded_dtypes, group_col=None
         else:
             role, kind, reason, n_coerced, extra_infinite = _judge_column(series, usable)
             n_infinite += extra_infinite
+            if reason == "datetime":
+                # Rule 2a: a column of dates holds no number to count (4.3).
+                n_infinite = 0
         records.append({
             "name": str(name), "position": position, "dtype": loaded_dtypes[name],
             "role": role, "kind": kind, "reason": reason, "leak_rule": None,

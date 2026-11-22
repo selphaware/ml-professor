@@ -31,24 +31,55 @@ The examples use `examples/customers.csv`, a synthetic table kept in the repo:
 (ISO dates, year first, so it can serve as the time column), `plan`, `region`,
 `monthly_spend` (six blank cells, kept and handled inside each fold), `support_calls`,
 `age`, and the target `churned` (`yes` or `no`, with three blank cells, which
-are dropped and counted). To use your own table, replace the path with a CSV
-path; a relative path is read from the repo root.
+are dropped and counted). Each customer appears on one row, so no entity repeats
+and the examples say `--no-entities`. To use your own table, replace the path with
+a CSV path; a relative path is read from the repo root.
+
+## Two statements every call must make
+
+Every call says two things, and the tool assumes neither:
+
+- **Whether the rows are ordered in time.** `--time-col COLUMN` (`time_col="COLUMN"`)
+  says they are, and names the time column. `--no-time-order` (`time_col=False`)
+  says they are not.
+- **Whether rows belong together.** `--group-col COLUMN` (`group_col="COLUMN"`)
+  says one entity (a customer, a device, one series of a panel) can appear on
+  more than one row, and names its column. `--no-entities` (`group_col=False`)
+  says no row belongs to one entity.
+
+The default of each is "not said". A call that leaves the time order unsaid stops
+with `time_order_undeclared`; one that leaves the entities unsaid stops with
+`entities_undeclared`; when both are unsaid, the message asks for both. This
+happens whatever the table holds: with or without date columns, with or without
+repeated rows, with or without a series of repeated timestamps. On the command
+line both stops exit with code `3`, not `2`. A table that fails an earlier check
+(an invalid column, too few rows) reports that error first.
+
+A run never goes ahead or stops because of a date form or an autocorrelation.
+Those are warnings, read beside the statement the caller has made.
+
+The four combinations and what each gives:
+
+| Time order (`--time-col`) | Entities (`--group-col`) | What the run does |
+|---|---|---|
+| a column | a column | Time-ordered split. Each entity is scored for regression against its own previous value, in the headline and in the leak screen. |
+| a column | `--no-entities` | Time-ordered split, with rows sharing a timestamp never split. The previous value is the baseline only when timestamps are unique. A repeated-timestamp panel whose per-timestamp mean persists may get the `autocorrelated_panel_target` warning (see Limits). |
+| `--no-time-order` | a column | Grouped scheme: all of an entity's rows are on one side of the holdout and in one fold. No p-value. |
+| `--no-time-order` | `--no-entities` | Random scheme: rows are taken as independent. A p-value is reported, and `validation.caveat` says where the scheme is optimistic. |
 
 ## Command line
 
+Random scheme, with the time order and the entities both stated:
+
 ```
-E:\CODE\ml-professor\mlprof_env\Scripts\python.exe -m mlprofessor profile --data examples/customers.csv --target churned --no-time-order --out runs/customers
+E:\CODE\ml-professor\mlprof_env\Scripts\python.exe -m mlprofessor profile --data examples/customers.csv --target churned --no-time-order --no-entities --out runs/customers
 ```
 
-`signup_date` holds dates, and a table with a date column and nothing said about
-time order stops with `time_order_undeclared` (exit code `3`). The tool does not
-decide for you whether row order matters, so there are two ways on: name the time
-column with `--time-col`, or say the order does not matter with `--no-time-order`
-(the Python equivalent is `time_col=False`). Each row here is one customer, not a
-step of a series in time, so the random-scheme commands pass `--no-time-order`.
-The reason for the stop is a sentence long: a table with dates in it may have a
-headline inflated by time order, and the tool prints that headline only once the
-caller has said the reason does not apply.
+The date column `signup_date` is not a time order here: with `--no-time-order` it
+is excluded and named by a `date_column_undeclared` warning, and the split is
+random. The same call without `--no-time-order` and without `--time-col` stops
+with `time_order_undeclared`, and without `--no-entities` and without `--group-col`
+it stops with `entities_undeclared`, whichever columns the table has.
 
 Options (`python -m mlprofessor profile` takes these):
 
@@ -58,15 +89,15 @@ Options (`python -m mlprofessor profile` takes these):
 | `--target` | the target column | required |
 | `--out` | folder for `profile.json` and `predictions.csv` (created if missing) | required |
 | `--task` | `auto`, `classification` or `regression` | `auto` |
-| `--time-col` | the time column; enables the time-ordered scheme | none (random scheme) |
-| `--no-time-order` | states that the order of the rows in time does not matter, so the split is random even when a column holds dates; cannot be given with `--time-col` | not given |
+| `--time-col` | the time column, which orders the rows and enables the time-ordered scheme; cannot be given with `--no-time-order` | not said: the run stops |
+| `--no-time-order` | states that the rows are not ordered in time, so the split is random even when a column holds dates; cannot be given with `--time-col` | not said: the run stops |
 | `--gap` | whole timestamps left out between training and holdout (needs `--time-col`) | 0 |
 | `--profile` | `full` or `fast` (see below) | `full` |
 | `--seed` | the random seed, a whole number from 0 to 4,294,967,295; the same seed gives the same output | 0 |
 | `--n-jobs` | threads; `-1` uses every core | -1 |
-| `--duplicates` | `error` stops the run when too many holdout rows have a copy among the training rows; `keep` goes ahead with a warning; `group` keeps each set of exact copies on one side of the split and of every fold (see "Copies of holdout rows") | `error` |
-| `--group-col` | the entity column: the rows of one entity stay together (see "Entities") | none |
-| `--no-entities` | states that no row belongs to one entity; cannot be given with `--group-col` | not given |
+| `--duplicates` | `error` stops the run when too many holdout rows have a copy among the training rows; `keep` goes ahead with a warning; `group` keeps together the rows that agree in every feature column (see "Copies of holdout rows") | `error` |
+| `--group-col` | the entity column: the rows of one entity stay together (see "Entities"); cannot be given with `--no-entities` | not said: the run stops |
+| `--no-entities` | states that no row belongs to one entity; cannot be given with `--group-col` | not said: the run stops |
 
 The command prints a short plain-text summary to standard output, in this order:
 
@@ -86,14 +117,14 @@ Numbers in the summary are printed to at least four significant digits;
 Exit codes: `0` finished and both files written; `2` the command line could not
 be parsed; `3` a named error, with one line `error: <code>: <message>` on
 standard error and no files written. The copies error has the code
-`holdout_copies_in_training`; the two stops for a missing declaration have the
+`holdout_copies_in_training`; the two stops for a missing statement have the
 codes `time_order_undeclared` and `entities_undeclared`.
 
-Time-ordered example, with `signup_date` as the time column and a one-timestamp
-gap:
+Time-ordered example, with `signup_date` as the time column, a one-timestamp
+gap, and the entities stated as none:
 
 ```
-E:\CODE\ml-professor\mlprof_env\Scripts\python.exe -m mlprofessor profile --data examples/customers.csv --target churned --time-col signup_date --gap 1 --out runs/customers_time
+E:\CODE\ml-professor\mlprof_env\Scripts\python.exe -m mlprofessor profile --data examples/customers.csv --target churned --time-col signup_date --gap 1 --no-entities --out runs/customers_time
 ```
 
 Here the holdout is the latest sign-up days, and the summary gives no p-value,
@@ -103,20 +134,8 @@ order are not.
 Quick check, with the fast profile:
 
 ```
-E:\CODE\ml-professor\mlprof_env\Scripts\python.exe -m mlprofessor profile --data examples/customers.csv --target churned --no-time-order --profile fast --out runs/customers_fast
+E:\CODE\ml-professor\mlprof_env\Scripts\python.exe -m mlprofessor profile --data examples/customers.csv --target churned --no-time-order --no-entities --profile fast --out runs/customers_fast
 ```
-
-Without `--time-col` the tool never guesses a time column. With neither
-`--time-col` nor `--no-time-order`, a table with a date column stops with
-`time_order_undeclared`; with `--no-time-order` it excludes the date column, says
-so in a `date_column_undeclared` warning, and the split is random.
-
-A panel is a table with repeated timestamps whose target is autocorrelated, such
-as many series recorded over the same days. Such a table with neither
-`--group-col` nor `--no-entities` stops with `entities_undeclared`. Pass
-`--group-col` to name the entity column, or `--no-entities` to say no row belongs
-to one entity. The reason is the same: without an entity column, rows of one
-series can land on both sides of the split and inflate the headline.
 
 ## Python
 
@@ -127,13 +146,13 @@ result = profile(
     "examples/customers.csv",   # a path, or a pandas DataFrame
     "churned",
     task="auto",          # "auto", "classification" or "regression"
-    time_col=False,       # a time column's name; False: time order does not matter
+    time_col=False,       # required: a time column's name, or False (rows are not ordered in time)
     gap=0,                # whole distinct timestamps between training and holdout
     profile="full",       # "full" or "fast"
     seed=0,               # a whole number from 0 to 4,294,967,295
     out_dir="runs/customers",   # optional: writes profile.json and predictions.csv
     n_jobs=-1,
-    group_col=False,      # an entity column's name; False: no row belongs to one entity
+    group_col=False,      # required: an entity column's name, or False (no row belongs to one entity)
     duplicates="error",   # "error", "keep" or "group": see "Copies of holdout rows"
 )
 
@@ -148,7 +167,9 @@ doc = result.to_dict()     # the whole of profile.json as a dict
 
 A DataFrame passed as `data` is never modified. Run the snippet from the repo
 root so that the relative path resolves. Errors are subclasses of
-`mlprofessor.errors.ProfileError`; each has a `code` attribute.
+`mlprofessor.errors.ProfileError`; each has a `code` attribute. A call that
+leaves `time_col` or `group_col` out stops with the same codes as on the command
+line.
 
 ## What the output contains
 
@@ -160,11 +181,11 @@ is raised.
 | Part | Holds |
 |---|---|
 | `meta` | tool, schema version, profile, seed, `n_jobs`, library versions, `timing` |
-| `input` | source, kind, target, time column, task requested, gap, row and column counts, duplicate rows, the `duplicates` argument, the entity column |
+| `input` | source, kind, target, the time column and the entity column as passed (a name or `false`), task requested, gap, row and column counts, duplicate rows, the `duplicates` argument |
 | `rows` | seven counts: loaded, four reasons for dropping a row, training, holdout |
 | `columns` | one record per input column: role, kind, reason, leak rule, and counts |
 | `task` | type, whether it was decided by rule or declared, distinct values, classes, positive class |
-| `validation` | scheme, holdout share, folds, gap, time form, last training and first holdout timestamp, caveat, holdout rows with a copy among the training rows and their share (random scheme); with an entity column, the entity column and the entities on each side |
+| `validation` | scheme, holdout share, folds, gap, time form, last training and first holdout timestamp, caveat, holdout rows with a copy among the training rows and their share (random scheme); with an entity column, the entity column and the entities on each side; under `duplicates="group"`, `n_rows_same_features` |
 | `headline` | metric, score, chosen model, baseline and its score, skill (null when it has no value), interval on the score and on the skill, p-value, reasons |
 | `baselines` | each baseline scored on the holdout, and which one was used |
 | `cv` | metric, folds scored, configurations, the chosen one, its mean and spread |
@@ -209,17 +230,18 @@ and each has its own warning.
 
 ## Validation schemes
 
-Pass `--time-col` (or `time_col=`) whenever row order carries meaning: rows
+Say `--time-col` (or `time_col="COLUMN"`) whenever row order carries meaning: rows
 are recorded over time, or the target can drift, trend or be autocorrelated.
-The tool never guesses a time column.
+The tool never guesses a time column, and it never assumes that the rows are
+ordered in time.
 
-- **Random scheme** (no `time_col`). A quarter of the rows are drawn at random
+- **Random scheme** (`--no-time-order`, or `time_col=False`). A quarter of the rows are drawn at random
   as the holdout, stratified by class for classification. Five folds are shuffled
   from the seed. Use it for independent rows. Its result is optimistic if rows
   are ordered in time or one entity appears on many rows; `validation.caveat`
   says so. When one entity appears on many rows, name its column (see
   "Entities"); the scheme then becomes `grouped`.
-- **Time-ordered scheme** (`time_col` given). The holdout is the latest whole
+- **Time-ordered scheme** (`--time-col` given). The holdout is the latest whole
   timestamps that together hold at least a quarter of the rows; rows sharing a
   timestamp are never split. `--gap N` removes the N timestamps just before the
   holdout from training, to keep near-term information out. Training is cut into
@@ -237,26 +259,56 @@ Under the time-ordered scheme the regression baseline also includes
 `previous_value` when timestamps are unique, so a trending target is not scored
 only against the training mean.
 
+### Dates written as whole numbers
+
+A column in which every value is a whole number that reads as a calendar date
+written `YYYYMMDD`, with years from 1900 to 2100 and at least two distinct values,
+is treated as a date column. It is excluded with the reason `datetime`. Under
+`--no-time-order` (`time_col=False`) that exclusion is named by a
+`date_column_undeclared` warning, and the split is random. The same column can be
+the time column: name it with `--time-col`, and the rows are ordered by its
+numbers. The rule covers a whole-number column, a float column whose only gaps
+are empty cells, and text of eight digits.
+
+Dates written this way are read only in the `YYYYMMDD` form. A day count and a
+`YYYYMM` month are not seen as dates; see Limits.
+
 ### Entities
 
 An entity is the unit that a group of rows belongs to: a customer, a patient, a
 device, or one series of a panel. Name its column with `--group-col` (or
-`group_col=`) when one entity appears on more than one row. What happens next
-depends on whether there is a time column.
+`group_col="COLUMN"`) when one entity appears on more than one row. What happens
+next depends on whether there is a time column.
 
-- **With no time column**, the rows of one entity stay together: all of an
-  entity's rows are on one side of the holdout, and all are in one fold. The
-  scheme is `grouped`. The interval on the score is drawn by resampling whole
-  entities, and there is no p-value, because shuffling rows assumes they are
-  independent. With fewer than 30 entities in the holdout there is no interval,
-  and the reason is printed. Under the fast profile the cap keeps whole entities.
+- **With no time column** (`--no-time-order`), the rows of one entity stay
+  together: all of an entity's rows are on one side of the holdout, and all are in
+  one fold. The scheme is `grouped`. The interval on the score is drawn by
+  resampling whole entities, and there is no p-value, because shuffling rows
+  assumes they are independent. With fewer than 30 entities in the holdout there
+  is no interval, and the reason is printed. Under the fast profile the cap keeps
+  whole entities.
 - **With a time column**, the split is by time as before, and each entity has its
   own previous value as a baseline for regression, in the headline and in the
   leak screen. So a series is scored against its own past, not against the
   training mean of every series.
 
 Pass `--no-entities` (or `group_col=False`) to say that no row belongs to one
-entity. The stop for an undeclared panel is described under "Command line".
+entity. Leaving the entities unsaid stops the run with `entities_undeclared`.
+
+**The grouped holdout holds a quarter of the rows, and no more than it must.**
+Entities join the holdout while it stays under a quarter of the rows. The smallest
+entity that would complete the quarter is taken as well, and every entity the
+holdout can spare goes back to training. So the holdout holds at least a quarter,
+and less than a quarter plus one entity. For classification this is done for the
+entities of each class.
+
+**Large entities.** An entity that holds a quarter or more of the rows it is drawn
+among is named by a warning:
+
+- `large_group_kept_in_training` means the smaller entities fill the quarter, so
+  the entity is kept in training and is never held out. The headline does not test it.
+- `large_group_is_holdout` means the smaller entities cannot fill a quarter, so this
+  one entity is the holdout, and the headline rests on it alone.
 
 ### Copies of holdout rows
 
@@ -278,15 +330,30 @@ The rule, which applies only under the random scheme:
   may be inflated;
 - below the rule, the run goes ahead with no warning.
 
-The default is `--duplicates error`. The easy remedy for a table whose copies are
-genuine repeats is to remove the repeated rows. A table of a few categorical
-columns, such as a survey with a handful of answers, will usually have many
-copies, and so will need `keep`: the warning is then the honest record that the
-headline may be inflated.
+The default is `--duplicates error`. Which answer to the stop fits depends on
+what the repeated rows are:
 
-`--duplicates group` (`duplicates="group"`) keeps each set of exact copies on one
-side of the split and in one fold, so a copy is never in training while its twin
-is held out. It applies with no time column.
+- **`keep`** when the repeated rows are different cases that happen to look
+  alike, as in a table of a few categorical columns, such as a survey with a
+  handful of answers, where many people give the same answers. The warning is
+  then the honest record that the headline may be inflated.
+- **`group`** when the repeated rows are one case recorded more than once.
+- **Remove the rows** when the repeats are errors, such as a record loaded twice
+  by a bad export and carrying no information of its own.
+
+`--duplicates group` (`duplicates="group"`) keeps together the rows that agree in
+every feature column, whatever their target, so that no combination of feature
+values is on both sides of the split or in two folds of the training rows. The
+target plays no part in forming those sets: two rows that agree in every feature
+but differ in their target are kept together too. The sets then follow the
+grouped holdout rules above, including the large-entity warnings. The count
+`validation.n_rows_same_features` reports the rows that agree with another in
+every feature column, and the warning `same_features_grouped` says how many there
+are. It applies with no time column. Under the time-ordered scheme the rule does
+not apply.
+
+Under the time-ordered scheme the copies rule does not apply. Both fields are
+`null`, and `duplicates` has no effect.
 
 **What is detected, and what is not.** A copy is detected only when a row agrees
 with another in every feature column and in the target. A copy that differs in
@@ -294,9 +361,6 @@ any feature column (an added column, a batch number, a small change to a value)
 is not detected in this version, and the run treats those rows as different rows.
 When you know which rows belong together, name their column with `group_col`
 (`--group-col`); that is the control.
-
-Under the time-ordered scheme the rule does not apply. Both fields are `null`,
-and `duplicates` has no effect.
 
 ## Profiles
 
@@ -360,6 +424,37 @@ These sentences are written to `limitations` on every run, in this order:
 7. A CSV file is read with pandas' types, so text identifiers can lose leading zeros; pass a DataFrame to control the types.
 8. Intervals are approximate: they tend to be too narrow when the holdout is short and, under time order, when errors are serially correlated.
 9. Negative skill means the models did worse than the baseline on the holdout; read it as no evidence of predictability.
+
+## Limits
+
+These limits are stated plainly. Each one is something the tool does not check.
+
+- **Day counts and `YYYYMM` are not seen as dates.** A column of days counted from
+  an origin, or of months written `YYYYMM`, is read as a number. It is not excluded
+  as a date and is not warned about as one. To order rows by such a column, name it
+  with `--time-col`, where it is compared as the numbers it holds.
+- **Entities are questioned only by one warning.** With `group_col=False`, the only
+  check on whether rows belong together is `autocorrelated_panel_target`. It is
+  raised only for regression under time order, with repeated timestamps, when the
+  per-timestamp mean persists from one timestamp to the next. On a short panel it
+  often does not fire: about half of panels of 8 timestamps raise no warning. A
+  panel that is not warned of may still have one entity's rows on both sides of the
+  split. Name the entity column with `group_col` whenever one entity has more than
+  one row.
+- **No check looks for a column whose levels are series of their own.** A feature
+  that identifies a series under another name (a column holding one value per
+  series, for instance) is not recognised as an entity column. A model can learn
+  each series from it, and a series can be on both sides of the split without
+  any warning. Name the entity column with `group_col` instead.
+- **Small tables under `duplicates="group"` give no interval.** The interval needs
+  at least 30 units in the holdout, and under `duplicates="group"` each unit is a
+  set of rows that agree in every feature. A table with about 30 distinct
+  combinations of feature values, or fewer, gives no interval, and so may a larger
+  one whose holdout holds fewer than 30 such sets. The reason is printed.
+- **A copy that differs in any column is not detected.** Rows that differ in an
+  added column, a batch number or a value changed by any amount are treated as
+  different rows, and no copies warning is raised for them. Name the column that
+  groups rows that belong together with `group_col`.
 
 ## Rows and columns
 

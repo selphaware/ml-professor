@@ -166,6 +166,17 @@ weakness here). Only the features stay on the roadmap.
   they go through the helper of D65. The five opt-out tests and
   `test_statements.py` carry it.
 
+## Found by the lead's real-data run of the sixth pass (2026-11-22)
+
+- **The fast profile leaves out an entity larger than its cap, without a
+  warning.** With an entity column the 2,000-row cap keeps whole entities,
+  so an entity of more than 2,000 rows never fits: taxis with Manhattan as
+  one entity (82% of the rows) was profiled on the other 1,128 rows, with
+  only `dropped_row_cap` to say so. The spec asks for exactly this.
+  Candidates: a warning that gives the share left out, or the named error
+  that sends the caller to the full profile, as D20 does for wide panels.
+  See `docs/measurements/CP7/build-on-real-tables/README.md`.
+
 ## Notes for the framework (ailoop-engineering), not for this repo
 
 - The tests stage does not lock `tests/`, so on a second pass the existing

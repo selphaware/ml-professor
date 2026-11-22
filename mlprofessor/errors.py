@@ -80,13 +80,13 @@ class HoldoutCopiesError(ProfileError):
 
 
 class TimeOrderUndeclaredError(ProfileError):
-    """A column holds dates and nothing was said about time order (step 5)."""
+    """`time_col` is None: nothing was said about time order, whatever the table holds (step 5)."""
 
     code = "time_order_undeclared"
 
 
 class EntitiesUndeclaredError(ProfileError):
-    """A persistent panel under time order, and nothing said about entities (step 11)."""
+    """Time order was stated and `group_col` is None: nothing said about entities (step 5)."""
 
     code = "entities_undeclared"
 

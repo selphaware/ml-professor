@@ -15,7 +15,7 @@ def _run(frame, target="y", families="rec", **kw):
     args = dict(h.FAST)
     args.update(kw)
     with extensions.use(families=families):
-        return mlprofessor.profile(frame, target, **args)
+        return h.stated_profile(frame, target, **args)
 
 
 # --------------------------------------------------------------- named errors

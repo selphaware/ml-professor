@@ -129,7 +129,7 @@ def test_profile_runs_on_a_file_with_leading_blank_lines(tmp_path):
     table = h.clf_frame(n=160, seed=5)
     path = tmp_path / "lead.csv"
     path.write_bytes(b" \t\n\n  \n" + table.to_csv(index=False).encode("utf-8"))
-    result = mlprofessor.profile(str(path), "y", **h.FAST)
+    result = h.stated_profile(str(path), "y", **h.FAST)
     assert list(h.columns_of(result)) == list(table.columns)
     assert h.rows_of(result)["loaded"] == len(table)
     assert "blank_header" not in [code for code, _ in h.warnings_of(result)]

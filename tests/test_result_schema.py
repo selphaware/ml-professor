@@ -41,7 +41,7 @@ def _profile(data, out_dir, **kw):
 
     args = dict(h.FAST, seed=3)
     args.update(kw)
-    return mlprofessor.profile(data, "y", out_dir=out_dir, **args)
+    return h.stated_profile(data, "y", out_dir=out_dir, **args)
 
 
 def _mixed_frame(n=200, seed=30, task="classification"):
@@ -85,7 +85,8 @@ def test_profile_json_has_every_key_with_its_type(runs, task):
     inp = doc["input"]
     assert INPUT <= set(inp)
     assert inp["source"] == "<DataFrame>" and inp["kind"] == "dataframe"
-    assert inp["target"] == "y" and inp["time_col"] is None and inp["task"] == "auto"
+    assert inp["target"] == "y" and inp["task"] == "auto"
+    assert inp["time_col"] is None or inp["time_col"] is False
     assert inp["gap"] == 0
     assert inp["n_rows"] == len(frame) and inp["n_columns"] == frame.shape[1]
     assert is_int(inp["duplicate_rows"]) and inp["duplicate_rows"] == 0

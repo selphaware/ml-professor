@@ -44,8 +44,8 @@ def full_runs(tmp_path_factory):
         "clf_dir": base / "clf_out",
         "reg_dir": base / "reg_out",
     }
-    out["clf"] = mlprofessor.profile(clf, "y", profile="full", n_jobs=1, seed=0,
+    out["clf"] = h.stated_profile(clf, "y", profile="full", n_jobs=1, seed=0,
                                      out_dir=out["clf_dir"])
-    out["reg"] = mlprofessor.profile(str(reg_csv), "y", profile="full", n_jobs=1, seed=0,
+    out["reg"] = h.stated_profile(str(reg_csv), "y", profile="full", n_jobs=1, seed=0,
                                      out_dir=out["reg_dir"])
     return out

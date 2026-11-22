@@ -383,14 +383,99 @@ def step_factory(log):
 
 # ------------------------------------------------------------- command line
 
-def run_cli(args, timeout=900):
-    """Run `python -m mlprofessor` in a new process from the repo root."""
+def run_cli(args, timeout=900, as_given=False):
+    """Run `python -m mlprofessor` in a new process from the repo root.
+
+    D59, D63: when the run stops only because nothing was said about time order or
+    about entities, it is run once more with `--no-time-order` and `--no-entities`
+    added for whichever was not said, and that run is returned. `as_given=True`
+    returns the first run whatever it is.
+    """
     env = dict(os.environ)
     env["PYTHONDONTWRITEBYTECODE"] = "1"
-    return subprocess.run(
-        [PYTHON, "-m", "mlprofessor", *[str(a) for a in args]],
-        cwd=str(REPO_ROOT), capture_output=True, text=True, timeout=timeout, env=env,
-    )
+
+    def once(arguments):
+        return subprocess.run(
+            [PYTHON, "-m", "mlprofessor", *[str(a) for a in arguments]],
+            cwd=str(REPO_ROOT), capture_output=True, text=True, timeout=timeout, env=env,
+        )
+
+    proc = once(args)
+    more = [] if as_given else missing_flags(proc, args)
+    return once([*args, *more]) if more else proc
+
+
+# ------------------------------------------------- the two statements (D63)
+
+def missing_statements(code, said):
+    """The statements a call left unsaid when it stopped with `code`, as arguments.
+
+    `said` maps an argument's name to what the call passed. Empty unless the run
+    stopped because nothing was said about time order or about entities (D63).
+    """
+    if code == "time_order_undeclared" and said.get("time_col") is None:
+        more = {"time_col": False}
+        if said.get("group_col") is None:
+            more["group_col"] = False
+        return more
+    if code == "entities_undeclared" and said.get("group_col") is None:
+        return {"group_col": False}
+    return {}
+
+
+def missing_flags(proc, args):
+    """The same for a run of the command line: the flags to add, or []."""
+    if proc.returncode != 3:
+        return []
+    words = [str(a) for a in args]
+
+    def said(*flags):
+        return any(w in flags or w.startswith(flags[0] + "=") for w in words) or None
+
+    code = proc.stderr.strip().partition("error: ")[2].partition(":")[0]
+    more = missing_statements(code, {"time_col": said("--time-col", "--no-time-order"),
+                                     "group_col": said("--group-col", "--no-entities")})
+    return [flag for name, flag in (("time_col", "--no-time-order"),
+                                    ("group_col", "--no-entities")) if name in more]
+
+
+def stated_profile(*args, **kw):
+    """`mlprofessor.profile(*args, **kw)`, for a test written before every call had to
+    say whether the rows are ordered in time and whether rows belong together (D59, D63).
+
+    The call is made as the test wrote it. Only when it stops because a statement
+    was not made is it made again, with each missing statement made as "no":
+    `time_col=False`, `group_col=False`. Nothing else is changed, and any other
+    error is raised as it is.
+    """
+    import mlprofessor
+    from mlprofessor import errors
+
+    try:
+        return mlprofessor.profile(*args, **kw)
+    except errors.ProfileError as exc:
+        more = missing_statements(exc.code, kw)
+        if not more:
+            raise
+    return mlprofessor.profile(*args, **{**kw, **more})
+
+
+# D66: `validation.n_rows_with_copies` became `n_rows_same_features`, and the warning
+# `copies_grouped` became `same_features_grouped`. A test written before that reads
+# whichever of the two the application gives (D59).
+SAME_FEATURES_CODES = ("same_features_grouped", "copies_grouped")
+
+
+def same_features_rows(validation):
+    """`validation.n_rows_same_features`, or `n_rows_with_copies` where it is still named so."""
+    if "n_rows_same_features" in validation:
+        return validation["n_rows_same_features"]
+    return validation["n_rows_with_copies"]
+
+
+def count_same_features_warnings(result):
+    """How many warnings say that rows with the same features were kept together."""
+    return sum(code in SAME_FEATURES_CODES for code, _ in warnings_of(result))
 
 
 def files_in(folder):

@@ -120,16 +120,17 @@ def test_without_an_entity_column_the_keys_are_null():
     doc = g.run(h.clf_frame(200, seed=805), families=_rec()).to_dict()
     v = doc["validation"]
     assert v["scheme"] == "random"
-    assert doc["input"]["group_col"] is None
-    for key in ("group_col", "n_groups_training", "n_groups_holdout", "n_rows_with_copies"):
+    assert doc["input"]["group_col"] is None or doc["input"]["group_col"] is False
+    for key in ("group_col", "n_groups_training", "n_groups_holdout"):
         assert v[key] is None, key
+    assert h.same_features_rows(v) is None
 
 
 def test_group_col_false_is_recorded_and_changes_nothing_else():
     frame = h.clf_frame(200, seed=806)
     plain = g.run(frame, families=_rec()).to_dict()
     stated = g.run(frame, families=_rec(), group_col=False).to_dict()
-    assert plain["input"]["group_col"] is None
+    assert plain["input"]["group_col"] is None or plain["input"]["group_col"] is False
     assert stated["input"]["group_col"] is False
     assert h.without(plain, "meta.timing", "input.group_col") == \
         h.without(stated, "meta.timing", "input.group_col")

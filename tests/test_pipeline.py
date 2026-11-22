@@ -19,7 +19,7 @@ def _run(frame, target="y", families=None, steps=None, seed=0, **kw):
     args = dict(h.FAST)
     args.update(kw)
     with extensions.use(families=families, steps=steps):
-        return mlprofessor.profile(frame, target, seed=seed, **args)
+        return h.stated_profile(frame, target, seed=seed, **args)
 
 
 def _with_missing_targets(frame, rows):

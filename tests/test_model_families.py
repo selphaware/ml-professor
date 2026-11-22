@@ -36,7 +36,7 @@ def _profile(frame, **kw):
 
     args = {"n_jobs": 1, "seed": 0, "profile": "full"}
     args.update(kw)
-    return mlprofessor.profile(frame, "y", **args)
+    return h.stated_profile(frame, "y", **args)
 
 
 @pytest.mark.parametrize("task", ["classification", "regression"])

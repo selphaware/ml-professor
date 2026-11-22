@@ -17,7 +17,7 @@ def _run(frame, target="y", families="rec", seed=0, **kw):
     args = dict(h.FAST)
     args.update(kw)
     with extensions.use(families=families):
-        return mlprofessor.profile(frame, target, seed=seed, **args)
+        return h.stated_profile(frame, target, seed=seed, **args)
 
 
 def _codes(res):

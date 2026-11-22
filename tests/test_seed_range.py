@@ -45,8 +45,8 @@ def test_the_largest_seed_runs_and_the_next_one_is_refused():
     from mlprofessor.errors import InputError
 
     frame = h.reg_frame(n=160, seed=32)
-    first = mlprofessor.profile(frame, "y", seed=LARGEST_SEED, **h.FAST)
-    second = mlprofessor.profile(frame, "y", seed=LARGEST_SEED, **h.FAST)
+    first = h.stated_profile(frame, "y", seed=LARGEST_SEED, **h.FAST)
+    second = h.stated_profile(frame, "y", seed=LARGEST_SEED, **h.FAST)
     doc_a, doc_b = first.to_dict(), second.to_dict()
     assert doc_a["meta"]["seed"] == LARGEST_SEED
     doc_a["meta"].pop("timing")

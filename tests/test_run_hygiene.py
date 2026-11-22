@@ -67,7 +67,7 @@ def _duplicate_csv(tmp_path):
 
 def _call_profile(path):
     import mlprofessor
-    return mlprofessor.profile(str(path), "y", **h.FAST)
+    return h.stated_profile(str(path), "y", **h.FAST)
 
 
 def _call_load(path):

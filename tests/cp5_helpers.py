@@ -43,10 +43,17 @@ def training_rows(log):
     return list(_largest_step_fit(log)["rows"])
 
 
-def raised(frame, target="y", families=None, steps=None, **kw):
+def raised(frame, target="y", families=None, steps=None, as_called=False, **kw):
     """The `ProfileError` that `profile()` raises (fast, one core by default).
 
     Fails if it returns a result; any other exception passes through.
+
+    D59, D63: when the call stops because nothing was said about time order or
+    about entities, it is made again with each missing statement made as "no".
+    If that run ends in a named error, that error is returned: it is the one a
+    test written before D63 is after. If it returns a result, the first error
+    is. `as_called=True` returns the error of the call as written, and makes no
+    second call.
     """
     import mlprofessor
     from mlprofessor import errors, extensions
@@ -57,9 +64,19 @@ def raised(frame, target="y", families=None, steps=None, **kw):
         with extensions.use(families=families, steps=steps):
             result = mlprofessor.profile(frame, target, **args)
     except errors.ProfileError as exc:
+        more = {} if as_called else h.missing_statements(exc.code, args)
+        if not more:
+            return exc
+        asked = exc
+    else:
+        pytest.fail(f"profile() returned a result; a named error was expected "
+                    f"(rows {h.rows_of(result)})")
+    try:
+        with extensions.use(families=families, steps=steps):
+            mlprofessor.profile(frame, target, **{**args, **more})
+    except errors.ProfileError as exc:
         return exc
-    pytest.fail(f"profile() returned a result; a named error was expected "
-                f"(rows {h.rows_of(result)})")
+    return asked
 
 
 # ------------------------------------------------------ copies, by hand

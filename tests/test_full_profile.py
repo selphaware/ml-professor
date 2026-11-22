@@ -80,7 +80,7 @@ def test_f3_headline_is_chosen_configuration_on_the_holdout(full_runs, task):
 def test_same_result_at_one_and_two_jobs(full_runs, tmp_path):
     import mlprofessor
 
-    mlprofessor.profile(full_runs["reg_csv"], "y", profile="full", n_jobs=2, seed=0,
+    h.stated_profile(full_runs["reg_csv"], "y", profile="full", n_jobs=2, seed=0,
                         out_dir=tmp_path / "two")
     two = h.load_json_strict(tmp_path / "two" / "profile.json")
     one = h.load_json_strict(full_runs["reg_dir"] / "profile.json")
@@ -96,7 +96,7 @@ def test_n_jobs_minus_one_records_cpu_count():
     from mlprofessor import extensions
 
     with extensions.use(families=[h.family("rec", h.Log())]):
-        res = mlprofessor.profile(h.clf_frame(150, seed=3), "y", profile="fast", n_jobs=-1)
+        res = h.stated_profile(h.clf_frame(150, seed=3), "y", profile="fast", n_jobs=-1)
     assert res.to_dict()["meta"]["n_jobs"] == os.cpu_count()
 
 

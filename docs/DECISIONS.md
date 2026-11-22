@@ -990,3 +990,51 @@ timestamps.
 Consequence: day counts and `YYYYMM` are not seen as dates, and a statement
 of `group_col=False` is questioned only by the panel warning, which fires
 in about half of panels of 8 timestamps. Both are stated as limits.
+
+## D67 — 2026-11-22 — Roadmap: feature engineering and deep learning (replaces the order of D1; lifts part of D8)
+Decision: The phases are now: (1) the library core, closing under D56 and
+D64; then, as the last changes of phase 1, a pip-installable package (D68)
+and a small neural network family from scikit-learn beside the three
+families of D8. (2) Feature engineering on one table. (3) Several datasets
+and joins, with features aggregated across tables. (4) Deep learning with
+Keras or PyTorch, including sequence models for time series. (5)
+Unsupervised methods. (6) The self-contained HTML report. (7) The Dash app.
+For phase 2 the owner has agreed, as starting points for its brief: the
+output gives the headline on the columns as given and the headline with the
+engineered features, the gain with its own interval, the table of features
+with their definitions and which were kept, and the engineered columns for
+the caller's rows as a DataFrame; the first families are date parts,
+numeric transforms with capped pairwise ratios and differences, category
+frequency and target encodings, missing-value flags and, under a time
+column, lags, differences and rolling statistics for each entity; it is an
+argument of `profile()`, off by default. Text features and a reusable
+transformer for new data wait.
+Alternatives considered: joins before feature engineering, as D1 had it
+(rejected: single-table engineering needs nothing from joins, and joins
+then add the cross-table aggregates on top); only one of the two neural
+options (the owner chose both).
+Consequence: each phase gets its own brief and its own failure modes.
+Phase 2's rules are fixed before its brief: features are generated and
+chosen inside the training folds only, an encoding that uses the target is
+fitted on training rows only, time features use the past only and respect
+the gap, and the holdout chooses nothing.
+
+## D68 — 2026-11-22 — A pip-installable package
+Decision: ML Professor is published as a Python package that `pip install`
+can fetch: the distribution is named `mlprofessor`, like the import;
+public, on PyPI, under the MIT licence. It is made installable from the
+repo first, and the owner makes the PyPI release when he chooses; agents
+hold no publishing credentials and upload nothing. The installed package
+declares tested version ranges for its dependencies; the exact pins stay in
+`requirements.txt` for the gate. Optional extras, `mlprofessor[dl]` and
+`mlprofessor[ui]`, carry the deep-learning and Dash dependencies when those
+phases exist. Python 3.12 only at first. A console command `mlprofessor`
+is added beside `python -m mlprofessor`. The gate gains a check that builds
+the package, installs it into a clean environment with no network, and gets
+the same result as the repo copy.
+Alternatives considered: exact pins in the published package (rejected: it
+could then hardly be installed beside anything else).
+Consequence: identical results are promised only on the pinned set, so the
+output goes on recording the library versions used. Whether the name is
+free on PyPI is checked first when this change is written: two web searches
+found no package of that name, which does not settle it.

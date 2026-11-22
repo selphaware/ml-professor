@@ -23,7 +23,7 @@ def test_a_persistent_panel_with_no_entity_column_stops(tmp_path):
     log = h.Log()
     out = tmp_path / "out"
     err = g.raised(_persistent(), families=[h.family("rec", log)], steps=[h.step_factory(log)],
-                   time_col="date", out_dir=str(out))
+                   time_col="date", out_dir=str(out), as_called=True)
     assert err.code == CODE, f"{type(err).__name__}: {err}"
     assert isinstance(err, errors.EntitiesUndeclaredError)
     for needle in ("group_col", "--group-col", "group_col=False", "--no-entities"):
@@ -47,7 +47,8 @@ def test_a_panel_that_does_not_persist_runs_without_a_word():
     frame = h.panel_frame(60, 5, seed=13, persistent=False)
     result = g.run(frame, families=[h.family("rec", h.Log())], time_col="date")
     assert g.count_code(result, "autocorrelated_panel_target") == 0
-    assert result.to_dict()["input"]["group_col"] is None
+    said = result.to_dict()["input"]["group_col"]
+    assert said is None or said is False
 
 
 def test_a_classification_panel_is_not_asked():
@@ -64,7 +65,7 @@ def test_the_command_line_says_there_are_no_entities(tmp_path):
               "--time-col", "date"]
 
     out = tmp_path / "asked"
-    proc = h.run_cli([*common, "--out", out])
+    proc = h.run_cli([*common, "--out", out], as_given=True)
     assert proc.returncode == 3, proc.stderr
     assert CODE in proc.stderr, proc.stderr
     assert h.files_in(out) == []

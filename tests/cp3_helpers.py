@@ -100,7 +100,7 @@ def run(data, target="y", families=None, steps=None, seed=0, **kw):
     args = dict(h.FAST)
     args.update(kw)
     with extensions.use(families=families, steps=steps):
-        return mlprofessor.profile(data, target, seed=seed, **args)
+        return h.stated_profile(data, target, seed=seed, **args)
 
 
 def assert_strict_json(result):

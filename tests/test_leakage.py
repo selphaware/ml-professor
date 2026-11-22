@@ -15,7 +15,7 @@ def _run(frame, target="y", **kw):
     args = dict(h.FAST)
     args.update(kw)
     with extensions.use(families=[h.family("rec", log)], steps=[h.step_factory(log)]):
-        res = mlprofessor.profile(frame, target, seed=0, **args)
+        res = h.stated_profile(frame, target, seed=0, **args)
     return res, log
 
 

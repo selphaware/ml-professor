@@ -31,13 +31,17 @@ weakness here). Only the features stay on the roadmap.
   no count can tell copies from look-alikes; and whether the made-up tables
   in the gate can reproduce the dependence between real columns.
 
-## Roadmap items awaiting a decision
+## Roadmap (D67, D68)
 
-- **Deep learning.** Not in any phase yet (D8 limits the tool to
-  scikit-learn). Two options discussed: a small neural network family from
-  scikit-learn after phase 1; and a full phase with Keras or PyTorch,
-  including sequence models for time series, after joins. The owner has
-  asked for this to be added to the plan; which option is not yet decided.
+1. Library core: closing. Then, as phase 1's last changes, the
+   pip-installable package (D68) and a small scikit-learn neural network
+   family.
+2. Feature engineering on one table.
+3. Several datasets and joins, with cross-table aggregate features.
+4. Deep learning with Keras or PyTorch, including sequence models.
+5. Unsupervised methods.
+6. Self-contained HTML report.
+7. Dash app.
 
 ## Deferred features
 

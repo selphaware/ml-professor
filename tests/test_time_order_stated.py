@@ -27,7 +27,7 @@ def test_a_date_column_and_no_word_about_time_stops_the_run(as_text, tmp_path):
     log = h.Log()
     out = tmp_path / "out"
     err = g.raised(_table(as_text), families=[h.family("rec", log)],
-                   steps=[h.step_factory(log)], out_dir=str(out))
+                   steps=[h.step_factory(log)], out_dir=str(out), as_called=True)
     assert err.code == CODE, f"{type(err).__name__}: {err}"
     assert isinstance(err, errors.TimeOrderUndeclaredError)
     text = str(err)
@@ -62,7 +62,7 @@ def test_the_statement_on_a_table_with_no_dates_changes_only_its_record():
     frame = h.clf_frame(200, seed=702)
     plain = g.run(frame, families=[h.family("rec", h.Log())]).to_dict()
     stated = g.run(frame, families=[h.family("rec", h.Log())], time_col=False).to_dict()
-    assert plain["input"]["time_col"] is None
+    assert plain["input"]["time_col"] is None or plain["input"]["time_col"] is False
     assert stated["input"]["time_col"] is False
     assert h.without(plain, "meta.timing", "input.time_col") == \
         h.without(stated, "meta.timing", "input.time_col")
@@ -97,7 +97,7 @@ def test_the_date_error_comes_before_the_copies_error():
 
     frame = _seen_twice()
     n = len(frame)
-    err = g.raised(frame, families=p.flat_family(h.Log(), n))
+    err = g.raised(frame, families=p.flat_family(h.Log(), n), as_called=True)
     assert err.code == CODE, f"{type(err).__name__}: {err}"
 
     err = g.raised(frame, families=p.flat_family(h.Log(), n), time_col=False)
@@ -111,7 +111,7 @@ def test_the_command_line_states_it(tmp_path):
     common = ["profile", "--data", path, "--target", "y", "--profile", "fast", "--n-jobs", "1"]
 
     out = tmp_path / "plain"
-    proc = h.run_cli([*common, "--out", out])
+    proc = h.run_cli([*common, "--out", out], as_given=True)
     assert proc.returncode == 3, proc.stderr
     assert CODE in proc.stderr, proc.stderr
     assert h.files_in(out) == []

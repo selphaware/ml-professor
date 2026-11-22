@@ -44,12 +44,12 @@ def test_each_set_of_copies_stays_on_one_side_and_in_one_fold():
     v = doc["validation"]
     assert v["scheme"] == "grouped"
     assert v["caveat"] == g.GROUPED_CAVEAT
-    assert v["n_rows_with_copies"] == 600
+    assert h.same_features_rows(v) == 600
     assert v["n_holdout_copies"] == 0 and v["holdout_copy_share"] == 0.0
     assert (v["n_groups_training"], v["n_groups_holdout"]) == (len(rest_keys), len(held_keys))
     assert v["group_col"] is None
     assert doc["input"]["duplicates"] == "group"
-    assert g.count_code(result, "copies_grouped") == 1
+    assert h.count_same_features_warnings(result) == 1
     assert g.count_code(result, "holdout_copies_kept") == 0
     assert g.count_code(result, "duplicate_rows") == 1
     assert result.headline["interval_method"] == "bootstrap_groups"
@@ -63,9 +63,9 @@ def test_a_table_with_no_copies_is_split_as_by_default():
     assert h.holdout_rows(grouped) == h.holdout_rows(plain)
     v = grouped.to_dict()["validation"]
     assert v["scheme"] == "random"
-    assert v["n_rows_with_copies"] == 0
-    assert g.count_code(grouped, "copies_grouped") == 0
-    assert plain.to_dict()["validation"]["n_rows_with_copies"] is None
+    assert h.same_features_rows(v) == 0
+    assert h.count_same_features_warnings(grouped) == 0
+    assert h.same_features_rows(plain.to_dict()["validation"]) is None
 
 
 def test_a_few_copies_are_grouped_and_counted():
@@ -78,7 +78,7 @@ def test_a_few_copies_are_grouped_and_counted():
     rest_keys = {keys[r] for r in range(len(frame)) if r not in holdout}
     assert not held_keys & rest_keys
     v = result.to_dict()["validation"]
-    assert v["n_rows_with_copies"] == 14
+    assert h.same_features_rows(v) == 14
     assert v["scheme"] == "grouped"
     assert v["n_groups_training"] + v["n_groups_holdout"] == 300
 
@@ -101,7 +101,7 @@ def test_copies_and_declared_entities_are_kept_together_both():
     rest_keys = {keys[r] for r in range(len(frame)) if r not in holdout}
     assert not held_keys & rest_keys
     v = result.to_dict()["validation"]
-    assert v["n_rows_with_copies"] == 100
+    assert h.same_features_rows(v) == 100
     assert v["n_groups_training"] + v["n_groups_holdout"] == 60
     assert v["n_holdout_copies"] == 0
 
@@ -112,7 +112,7 @@ def test_under_time_order_it_changes_nothing():
     grouped = g.run(frame, families=[h.family("rec", h.Log())], time_col="t",
                     duplicates="group").to_dict()
     plain = g.run(frame, families=[h.family("rec", h.Log())], time_col="t").to_dict()
-    assert grouped["validation"]["n_rows_with_copies"] is None
+    assert h.same_features_rows(grouped["validation"]) is None
     assert grouped["validation"]["scheme"] == "time_ordered"
     assert grouped["input"]["duplicates"] == "group"
     assert h.without(grouped, "meta.timing", "input.duplicates") == \
@@ -159,4 +159,4 @@ def test_the_command_line_takes_group(tmp_path):
     doc = h.load_json_strict(out / "profile.json")
     assert doc["validation"]["scheme"] == "grouped"
     assert doc["validation"]["n_holdout_copies"] == 0
-    assert "copies_grouped" in proc.stdout, proc.stdout
+    assert any(code in proc.stdout for code in h.SAME_FEATURES_CODES), proc.stdout

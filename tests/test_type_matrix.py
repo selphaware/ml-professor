@@ -644,8 +644,8 @@ def test_a_result_or_a_named_error(case, tmp_path):
     try:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            result = mlprofessor.profile(data, profile="fast", seed=0, n_jobs=1,
-                                         out_dir=str(out), **args)
+            result = h.stated_profile(data, profile="fast", seed=0, n_jobs=1,
+                                      out_dir=str(out), **args)
     except errors.ProfileError as exc:
         code = getattr(type(exc), "code", None)
         assert isinstance(code, str) and code, type(exc).__name__

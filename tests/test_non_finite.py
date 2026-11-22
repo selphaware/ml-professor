@@ -350,7 +350,7 @@ def test_a_target_on_a_very_large_scale_gives_finite_numbers_or_the_named_error(
     frame["y"] = frame["y"] * 1e80
     result = None
     try:
-        result = mlprofessor.profile(frame, "y", **h.FAST)
+        result = h.stated_profile(frame, "y", **h.FAST)
     except NonFiniteScoreError:
         pass
     if result is not None:

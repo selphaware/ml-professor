@@ -77,7 +77,7 @@ def check_finite(document):
 
 
 def plain(value):
-    """A JSON-ready copy: numpy scalars as Python values, NaN and NA as None."""
+    """A JSON-ready copy: numpy scalars as Python values, NA and NaT as None."""
     if isinstance(value, dict):
         return {str(key): plain(item) for key, item in value.items()}
     if isinstance(value, (list, tuple)):
@@ -91,7 +91,9 @@ def plain(value):
     if isinstance(value, np.generic):
         value = value.item()
     if isinstance(value, float) and not math.isfinite(value):
-        return None
+        raise NonFiniteScoreError(
+            f"A number that is not finite ({value!r}) reached the output; it is never "
+            "written as null.")
     return value
 
 

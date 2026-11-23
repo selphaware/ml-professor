@@ -182,6 +182,16 @@ remaining weakness here. No new detection rule during hardening (D71).
   that sends the caller to the full profile, as D20 does for wide panels.
   See `docs/measurements/CP7/build-on-real-tables/README.md`.
 
+## After the seventh pass (2026-11-23)
+
+- **Broken copies held by one test each:** F22, M13, M33, M34, M37, M39.
+  CP9 gives each a second.
+- **The loop's limits were raised** for the slower suite: the suite's time
+  limit to 1,800 seconds and a task's to 120 minutes. The test author of the
+  seventh pass was stopped at 60 minutes after writing every file; the
+  mutation check with 70 variants no longer fits in a test author's run.
+- **Pass 7's build on real tables:** `docs/measurements/CP8/build-on-real-tables/README.md`.
+
 ## Notes for the framework (ailoop-engineering), not for this repo
 
 - The tests stage does not lock `tests/`, so on a second pass the existing

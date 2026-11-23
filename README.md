@@ -270,8 +270,22 @@ the time column: name it with `--time-col`, and the rows are ordered by its
 numbers. The rule covers a whole-number column, a float column whose only gaps
 are empty cells, and text of eight digits.
 
-Dates written this way are read only in the `YYYYMMDD` form. A day count and a
-`YYYYMM` month are not seen as dates; see Limits.
+Dates written this way are read only in the `YYYYMMDD` form. A day count, a `YYYYMM`
+month, and a date with its hour written `YYYYMMDDHH` are not seen as dates; see Limits.
+
+**A value that is no date.** A date column often holds a value that is not a date,
+such as `99991231` for an open end or `0` for none. Such a value does not switch the
+rule off. The tool judges the column by its distinct values, not by its cells, so a
+value that is no date counts once, however many rows hold it. The column is still a
+date column when at least two distinct values read as dates and the values that are
+no date are few beside them. A column in which more than about one distinct value in
+ten is no date is read as a number again, and is then no longer treated as a date.
+
+As the time column, a value that is no date stops the run with `time_column_invalid`.
+The message names the value and the rows that hold it. The tool never reads such a
+value as a number and never drops it on its own. To go ahead, either empty those
+cells, in which case those rows are dropped as having no time value and counted in
+`rows`, or write the date.
 
 ### Entities
 
@@ -352,6 +366,22 @@ every feature column, and the warning `same_features_grouped` says how many ther
 are. It applies with no time column. Under the time-ordered scheme the rule does
 not apply.
 
+**What the headline measures under `group`.** Under `group` no combination of
+feature values is on both sides of the split, so the held-out rows are combinations
+the training rows do not contain. The headline then measures whether a combination
+of feature values the model has not seen can be predicted. It does not measure how
+well the model predicts a row like one it has already seen. On a table of a few
+categorical columns, where many rows share one combination, this can give negative
+skill where `keep` finds signal. Negative skill there is not evidence that the
+target is unpredictable; run the table with `keep` as well and read the two together.
+
+**A column the leak screen removes can leave copies.** Under `group`, when the leak
+screen excludes a column, the rows are then grouped on the features that are left.
+If one held-out row then agrees with a training row in every feature that is left,
+the run stops with `holdout_copies_in_training` and names the column. There is no
+threshold for this stop: one such row is enough. Remove that column from the table
+and run again.
+
 Under the time-ordered scheme the copies rule does not apply. Both fields are
 `null`, and `duplicates` has no effect.
 
@@ -381,6 +411,14 @@ When you know which rows belong together, name their column with `group_col`
   10 of a class, the error is `fast_profile_too_few_rows`, but only when `full`
   would run past that point; otherwise the error `full` would raise is raised.
   Use `full` then.
+
+  With an entity column and no time column (see "Entities"), the fast profile's cap
+  keeps whole entities, and it always keeps an entity that holds a quarter or more
+  of the usable rows. The smaller entities are taken in an order drawn from the seed.
+  When an entity is larger than the cap of 2,000 rows, or the entities that must be
+  kept do not fit under the cap together, the run stops with
+  `fast_profile_group_too_large` and names the full profile. Use `full` then. If
+  `full` would stop too, its own error is raised.
 
 ## What it measures, and what it does not
 
@@ -429,10 +467,21 @@ These sentences are written to `limitations` on every run, in this order:
 
 These limits are stated plainly. Each one is something the tool does not check.
 
-- **Day counts and `YYYYMM` are not seen as dates.** A column of days counted from
-  an origin, or of months written `YYYYMM`, is read as a number. It is not excluded
-  as a date and is not warned about as one. To order rows by such a column, name it
-  with `--time-col`, where it is compared as the numbers it holds.
+- **Day counts, `YYYYMM` and `YYYYMMDDHH` are not seen as dates.** A column of days
+  counted from an origin, of months written `YYYYMM`, or of dates with the hour
+  written `YYYYMMDDHH`, is read as a number. It is not excluded as a date and is not
+  warned about as one. To order rows by such a column, name it with `--time-col`,
+  where it is compared as the numbers it holds.
+- **Period labels are not seen as dates.** A label such as a week or a quarter
+  (`2024-Q1`, `2024W05`) is text the tool does not parse. It is not excluded as a
+  date and is not warned about as one. As the time column it stops the run with
+  `time_column_invalid`, because only ISO 8601 with the year first is read as a date.
+  Convert such a column to dates first, for example the first day of each period.
+- **A column of dates with more than about one distinct value in ten that is no date
+  is read as a number again.** The rule for a date column counts distinct values, so
+  a value that is no date, such as `99991231`, counts once however many rows hold
+  it. When more than about one distinct value in ten is no date, the column is not
+  treated as a date column, and its values are compared as the numbers they are.
 - **Entities are questioned only by one warning.** With `group_col=False`, the only
   check on whether rows belong together is `autocorrelated_panel_target`. It is
   raised only for regression under time order, with repeated timestamps, when the

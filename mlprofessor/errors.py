@@ -101,3 +101,10 @@ class TooFewGroupsError(ProfileError):
     """Too few entities to split as whole entities (step 7; D57)."""
 
     code = "too_few_groups"
+
+
+class FastProfileGroupError(ProfileError):
+    """Under the fast profile an entity of more rows than the cap, or entities of a
+    quarter or more of the rows that do not fit under it together (step 6; D70, D72)."""
+
+    code = "fast_profile_group_too_large"

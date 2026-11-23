@@ -8,7 +8,7 @@ import pandas as pd
 
 from mlprofessor import errors
 from mlprofessor.load import beyond_64_bits, read_numbers
-from mlprofessor.columns import read_entities, stripped_text, text_of_dates
+from mlprofessor.columns import read_entities, stripped_text, values_that_are_no_dates
 from mlprofessor.task import _sorted_classes, read_target_values
 
 MAX_SEED = 2**32 - 1
@@ -320,13 +320,30 @@ def _iso_keys(values):
     return keys
 
 
-def _dates_as_text(values):
-    """True when every non-missing value of the column is text of eight digits that
-    reads as a calendar date YYYYMMDD (step 3; D66)."""
+def _date_values_of(values):
+    """For a column of dates written YYYYMMDD by the counts of rule 2a, judged on every
+    non-missing value: its values that are no dates ([] when there is none); None for
+    any other column. Text counts only when every value is text (step 3; D66, D69)."""
+    if pd.api.types.is_numeric_dtype(values.dtype):
+        return values_that_are_no_dates(values)
     present = values[values.notna()]
     if len(present) == 0 or not all(isinstance(v, str) for v in present.to_numpy()):
-        return False
-    return text_of_dates(stripped_text(present))
+        return None
+    return values_that_are_no_dates(values)
+
+
+def _refuse_values_that_are_no_dates(others):
+    """Stop on a column of dates YYYYMMDD that holds a value that is no date (D69, D72)."""
+    written, n_rows = others[0]
+    more = ""
+    if len(others) > 1:
+        more = (f", and {len(others) - 1} other distinct value(s) that are no dates, "
+                f"among them {others[1][0]}")
+    raise _time_error(
+        f"it is a column of dates written YYYYMMDD, and {n_rows} row(s) hold {written}, "
+        f"which is no date{more}. Such a value is never ordered as a number, and its rows "
+        "are not dropped unasked: empty those cells (the rows are then dropped as having "
+        "no time value) or write the date they stand for")
 
 
 def _date_text_keys(values):
@@ -344,7 +361,9 @@ def read_time(values, rows=None):
     Returns `(keys, form)`: keys sort in time order (datetime64[ns] with NaT,
     or float64 with NaN; exact int64 or uint64 for whole numbers of which one
     has a magnitude above 2**53); form is `datetime`, `numeric` or `iso8601`.
-    Text of eight digits that all read as dates YYYYMMDD is `numeric` (D66).
+    Text of eight digits that all read as dates YYYYMMDD is `numeric` (D66); a column
+    of dates YYYYMMDD by rule 2a's counts that holds a value that is no date stops
+    with `TimeColumnError` (D69).
     With `rows`, the column is read (step 1a, and the 2**53 rule) over all its
     values, and the keys returned are those of the rows given, in their order.
     """
@@ -357,6 +376,9 @@ def read_time(values, rows=None):
     if pd.api.types.is_datetime64_any_dtype(dtype):
         return _datetime_keys(values.iloc[rows]), "datetime"
     if pd.api.types.is_numeric_dtype(dtype) and not pd.api.types.is_complex_dtype(dtype):
+        others = _date_values_of(values)
+        if others:
+            _refuse_values_that_are_no_dates(others)
         exact = _integer_keys(values, rows)
         if exact is not None:
             return exact, "numeric"
@@ -365,8 +387,12 @@ def read_time(values, rows=None):
         raise _time_error(
             "the column holds whole numbers too large for 64 bits, which are not read as "
             "a time")
-    if pd.api.types.is_string_dtype(dtype) and _dates_as_text(values):
-        return _date_text_keys(values.iloc[rows]), "numeric"
+    if pd.api.types.is_string_dtype(dtype):
+        others = _date_values_of(values)
+        if others:
+            _refuse_values_that_are_no_dates(others)
+        if others == []:
+            return _date_text_keys(values.iloc[rows]), "numeric"
     values = values.iloc[rows].reset_index(drop=True)
     if pd.api.types.is_string_dtype(dtype):
         present = values[values.notna()]

@@ -256,10 +256,12 @@ def _comparable_codes(values):
 
 
 def count_holdout_copies(features, y, training_rows, holdout_rows):
-    """Step 8a: the holdout rows with a training row equal in every feature and the target."""
+    """Step 8a: the holdout rows with a training row equal in every feature and, unless
+    `y` is None, the target."""
     rows = np.concatenate([training_rows, holdout_rows])
     columns = [features[name].to_numpy()[rows] for name in features.columns]
-    columns.append(np.asarray(y)[rows])
+    if y is not None:
+        columns.append(np.asarray(y)[rows])
     codes = np.column_stack([_comparable_codes(values) for values in columns])
     _, row_key = np.unique(codes, axis=0, return_inverse=True)
     row_key = row_key.reshape(-1)
@@ -312,29 +314,40 @@ COPIES_ADVICE = (
     "feature values is then on both sides of the split. Or remove the repeated rows.")
 
 
-def _copies_message(n_copies, n_holdout, roles, duplicates="error"):
+def _dates_text(roles):
+    dates = _date_columns(roles)
+    if not dates:
+        return ""
+    return (
+        " The column(s) " + ", ".join(repr(name) for name in dates) + " were excluded "
+        "as dates because time_col=False was passed, so rows that differ only in "
+        "their date count as copies; if the rows are ordered in time, pass the column "
+        "as time_col for a time-ordered split, under which this rule does not apply.")
+
+
+def _copies_message(n_copies, n_holdout, roles):
     share = 100.0 * n_copies / n_holdout
     message = (
         f"{n_copies} of the {n_holdout} holdout rows ({share:.1f}%) have a copy among the "
         "training rows: the same value in every feature column and the same target. A model "
         "that recalls a row scores on them, so the headline would be inflated.")
-    if duplicates == "group":
-        leaks = roles.loc[roles["reason"] == "suspected_leak", "name"].tolist()
-        message += (
-            " duplicates='group' kept together the rows that agree in every feature "
-            "column, but these rows came to agree only when the leak screen excluded the "
-            "column(s) " + ", ".join(repr(str(name)) for name in leaks)
-            + " as suspected leaks: they differed in nothing else. Remove the column(s) "
-            "from the table and run again.")
-    message += " " + COPIES_ADVICE
-    dates = _date_columns(roles)
-    if dates:
-        message += (
-            " The column(s) " + ", ".join(repr(name) for name in dates) + " were excluded "
-            "as dates because time_col=False was passed, so rows that differ only in "
-            "their date count as copies; if the rows are ordered in time, pass the column "
-            "as time_col for a time-ordered split, under which this rule does not apply.")
-    return message
+    return message + " " + COPIES_ADVICE + _dates_text(roles)
+
+
+def _alike_after_leak_message(n_alike, n_holdout, roles):
+    """Step 8a under `duplicates="group"` once the leak screen has excluded a column."""
+    share = 100.0 * n_alike / n_holdout
+    leaks = roles.loc[roles["reason"] == "suspected_leak", "name"].tolist()
+    names = ", ".join(repr(str(name)) for name in leaks)
+    message = (
+        f"{n_alike} of the {n_holdout} holdout rows ({share:.1f}%) agree with a training row "
+        "in every feature column that is left, whatever their targets. duplicates='group' "
+        "kept together the rows that agree in every feature column, but the leak screen "
+        f"then excluded the column(s) {names} as suspected leaks, and rows that differed "
+        "only in them are now on both sides of the split, so the headline would not "
+        "measure what duplicates='group' promises. Remove the column(s) " + names
+        + " from the table and run again.")
+    return message + " " + COPIES_ADVICE + _dates_text(roles)
 
 
 def build_features(frame, roles):
@@ -359,15 +372,36 @@ def encode_target(values, task_info):
 
 
 def _entity_row_cap(usable, units, profile, seed):
-    """Step 6 with an entity column: whole entities, in an order drawn from the seed,
-    each kept when all of its rows still fit under the cap; file order kept."""
+    """Step 6 with an entity column: whole entities, file order kept.
+
+    Every entity of a quarter or more of the usable rows is kept; the others are
+    taken in an order drawn from the seed, each kept when all of its rows still
+    fit under the cap. When an entity holds more than the cap, or the large ones
+    do not fit under it together, `FastProfileGroupError` is raised before any
+    row is left out (the caller first asks whether the full profile would stop).
+    """
     if profile != "fast" or len(usable) <= ROW_CAP:
         return usable
     sizes = np.bincount(units)
-    keep_unit = np.zeros(len(sizes), dtype=bool)
-    total = 0
+    largest = int(sizes.max())
+    large = 4 * sizes >= len(usable)
+    held_by_large = int(sizes[large].sum())
+    if largest > ROW_CAP:
+        raise errors.FastProfileGroupError(
+            f"One entity holds {largest} of the {len(usable)} usable rows, more than the "
+            f"fast profile's cap of {ROW_CAP}; the cap keeps whole entities, so it cannot "
+            "keep this one, and leaving it out would describe another table. "
+            "Use profile='full'.")
+    if held_by_large > ROW_CAP:
+        raise errors.FastProfileGroupError(
+            f"{int(large.sum())} entities each hold a quarter or more of the {len(usable)} "
+            f"usable rows, {held_by_large} rows together, more than the fast profile's cap "
+            f"of {ROW_CAP}; the cap never leaves out an entity of a quarter or more of the "
+            "rows, so it cannot be applied. Use profile='full'.")
+    keep_unit = large.copy()
+    total = held_by_large
     for u in _stream(seed, _ROW_CAP_STREAM).permutation(len(sizes)):
-        if total + sizes[u] <= ROW_CAP:
+        if not keep_unit[u] and total + sizes[u] <= ROW_CAP:
             keep_unit[u] = True
             total += int(sizes[u])
     return usable[keep_unit[units]]
@@ -712,18 +746,7 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs, dupli
         name: sorted(set(usable_features[name]))
         for name, kind in kinds.items() if kind == "categorical"})
 
-    # Step 6: the fast profile's row cap.
-    if time_ordered:
-        keep = _time_row_cap(usable_keys, profile, gap)
-        kept, kept_keys = usable[keep], usable_keys[keep]
-    elif grouped:
-        kept = _entity_row_cap(usable, units_of(entity[usable], len(usable)), profile, seed)
-    else:
-        kept = _row_cap(usable, profile, seed)
-    dropped_row_cap = len(usable) - len(kept)
     task_type = task_info["type"]
-    y_all = np.zeros(n_loaded, dtype=np.int64 if task_type == "classification" else float)
-    y_all[kept] = encode_target(target_read.iloc[kept].to_numpy(), task_info)
 
     def _units_among(rows):
         """Step 7's units among `rows` (or None: split one by one), and with
@@ -738,13 +761,15 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs, dupli
             return joined_units(entity[rows], sets), n_same
         return (sets if n_same else None), n_same
 
-    def _fast_rows_error(reason):
-        """Under a cap that left rows out: the full profile's error, or the cap's own."""
+    def _full_profile_stop():
+        """Raise the full profile's own error when, on every usable row, it would
+        stop before its split is formed (`too_few_rows`, `gap_too_large`,
+        `too_few_groups`)."""
         if task_type == "classification":
             y_usable = encode_target(target_read.iloc[usable].to_numpy(), task_info)
             n_pos = int(y_usable.sum())
             if min(n_pos, len(usable) - n_pos) < MIN_CLASS_ROWS:
-                return errors.TooFewRowsError(
+                raise errors.TooFewRowsError(
                     f"The rarer class has {min(n_pos, len(usable) - n_pos)} rows; "
                     f"at least {MIN_CLASS_ROWS} of each class are needed.")
         if time_ordered:
@@ -756,9 +781,30 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs, dupli
                               if task_type == "classification" else None)
             split_random(len(usable), classes=usable_classes, seed=seed,
                          groups=usable_units)
+
+    def _fast_rows_error(reason):
+        """Under a cap that left rows out: the full profile's error, or the cap's own."""
+        _full_profile_stop()
         return errors.FastProfileRowsError(
             f"Under the fast profile's cap of {ROW_CAP} rows: {reason}; the full "
             "profile would run: use profile='full'.")
+
+    # Step 6: the fast profile's row cap.
+    if time_ordered:
+        keep = _time_row_cap(usable_keys, profile, gap)
+        kept, kept_keys = usable[keep], usable_keys[keep]
+    elif grouped:
+        try:
+            kept = _entity_row_cap(usable, units_of(entity[usable], len(usable)),
+                                   profile, seed)
+        except errors.FastProfileGroupError:
+            _full_profile_stop()
+            raise
+    else:
+        kept = _row_cap(usable, profile, seed)
+    dropped_row_cap = len(usable) - len(kept)
+    y_all = np.zeros(n_loaded, dtype=np.int64 if task_type == "classification" else float)
+    y_all[kept] = encode_target(target_read.iloc[kept].to_numpy(), task_info)
 
     if len(kept) < MIN_USABLE_ROWS:
         message = f"{len(kept)} rows are left; at least {MIN_USABLE_ROWS} are needed."
@@ -784,7 +830,10 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs, dupli
             f"{n_rows_same_features} of the {len(kept)} rows split agree with another of "
             "them in every feature column; with duplicates='group' the rows that agree "
             "were kept together, whatever their targets, on one side of the holdout split "
-            "and in one fold, so no combination of feature values is on both sides."))
+            "and in one fold, so no combination of feature values is on both sides. "
+            "With duplicates='group' the headline measures whether a combination of feature "
+            "values that the model has not seen can be predicted. On a table of few-valued "
+            "columns that can give negative skill where duplicates='keep' finds signal."))
     if time_ordered:
         try:
             split = split_time(kept_keys, gap=gap)
@@ -908,14 +957,22 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs, dupli
     features = features[list(kinds)]
 
     # Step 8a: holdout rows with a copy among the training rows, before anything is fitted.
+    # Under `duplicates="group"` the units were formed on the features of step 5; once
+    # the screen has excluded a column, one holdout row that agrees with a training row
+    # in every feature that is left is enough to stop.
     n_copies = copy_share = None
     if not time_ordered:
+        if duplicates == "group" and (roles["reason"] == "suspected_leak").any():
+            n_alike = count_holdout_copies(features, None, training_rows, holdout_rows)
+            if n_alike:
+                raise errors.HoldoutCopiesError(
+                    _alike_after_leak_message(n_alike, len(holdout_rows), roles))
         n_copies = count_holdout_copies(features, y_all, training_rows, holdout_rows)
         copy_share = n_copies / len(holdout_rows)
         if n_copies >= COPIES_MIN_ROWS and copy_share > COPIES_MAX_SHARE:
             if duplicates != "keep":
                 raise errors.HoldoutCopiesError(
-                    _copies_message(n_copies, len(holdout_rows), roles, duplicates))
+                    _copies_message(n_copies, len(holdout_rows), roles))
             warnings.append(_warning(
                 "holdout_copies_kept", None,
                 f"{n_copies} of the {len(holdout_rows)} holdout rows "
@@ -1060,6 +1117,11 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs, dupli
         "n_holdout_without_previous": n_without_previous,
         "n_rows_same_features": n_rows_same_features,
     }
+    for record in warnings:
+        if record["code"] == "date_column_undeclared" and validation["caveat"]:
+            record["message"] = (
+                f"{record['column']!r} looks like a date and is excluded (time_col=False). "
+                f"Pass it as time_col for a time-ordered split. {validation['caveat']}")
     if time_ordered:
         training_keys = kept_keys[split["training"]]
         holdout_keys = kept_keys[split["holdout"]]

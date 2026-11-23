@@ -38,7 +38,11 @@ def _build_parser():
     run.add_argument("--gap", type=int, default=0, metavar="N",
                      help="whole timestamps between training and holdout (default: 0)")
     run.add_argument("--profile", default="full", choices=["full", "fast"],
-                     help="full or fast (default: full)")
+                     help="full or fast (default: full). fast keeps at most 2,000 "
+                          "usable rows: the latest whole timestamps under --time-col; "
+                          "whole entities under --group-col, always every entity of a "
+                          "quarter or more of the rows, and it stops with "
+                          "fast_profile_group_too_large when it cannot")
     run.add_argument("--seed", type=int, default=0, metavar="N",
                      help="the random seed (default: 0)")
     run.add_argument("--n-jobs", type=int, default=-1, metavar="N",

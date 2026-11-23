@@ -1,0 +1,142 @@
+
+##### A. A date column with a sentinel (D69, D72)
+--------------------------------------------------------------------------------------------------------------
+weather, day as YYYYMMDD, clean, both False  [1.1s]
+   expect: `day` excluded as a date, with the warning
+   RAN  random, baseline chance, skill 0.506 [0.396, 0.595] via bootstrap_rows, units [None, None], {'dropped_row_cap': 0, 'training': 1095, 'holdout': 365}
+   warnings ['date_column_undeclared']; excluded {'day': 'datetime'}
+   >> date_column_undeclared: 'day' looks like a date and is excluded (time_col=False). Pass it as time_col for a time-ordered split. Random split: this number is optimistic if the rows are ordered in time or one entity appears on many rows.
+--------------------------------------------------------------------------------------------------------------
+weather, day with one cell 99991231, both False  [0.2s]
+   expect: still excluded as a date; skill as the clean table's
+   RAN  random, baseline chance, skill 0.506 [0.396, 0.595] via bootstrap_rows, units [None, None], {'dropped_row_cap': 0, 'training': 1095, 'holdout': 365}
+   warnings ['date_column_undeclared']; excluded {'day': 'datetime'}
+   >> date_column_undeclared: 'day' looks like a date and is excluded (time_col=False). Pass it as time_col for a time-ordered split. Random split: this number is optimistic if the rows are ordered in time or one entity appears on many rows.
+--------------------------------------------------------------------------------------------------------------
+weather, day with one cell 0, both False  [0.1s]
+   expect: still excluded as a date; skill as the clean table's
+   RAN  random, baseline chance, skill 0.506 [0.396, 0.595] via bootstrap_rows, units [None, None], {'dropped_row_cap': 0, 'training': 1095, 'holdout': 365}
+   warnings ['date_column_undeclared']; excluded {'day': 'datetime'}
+   >> date_column_undeclared: 'day' looks like a date and is excluded (time_col=False). Pass it as time_col for a time-ordered split. Random split: this number is optimistic if the rows are ordered in time or one entity appears on many rows.
+--------------------------------------------------------------------------------------------------------------
+weather, day with 30% of rows 99991231, both False  [0.2s]
+   expect: still excluded as a date; skill as the clean table's
+   RAN  random, baseline chance, skill 0.506 [0.396, 0.595] via bootstrap_rows, units [None, None], {'dropped_row_cap': 0, 'training': 1095, 'holdout': 365}
+   warnings ['date_column_undeclared']; excluded {'day': 'datetime'}
+   >> date_column_undeclared: 'day' looks like a date and is excluded (time_col=False). Pass it as time_col for a time-ordered split. Random split: this number is optimistic if the rows are ordered in time or one entity appears on many rows.
+--------------------------------------------------------------------------------------------------------------
+weather, day with one cell 99991231, time_col=day  [0.0s]
+   expect: stops: time_column_invalid, naming 99991231 and its one row
+   named error: time_column_invalid: time column: it is a column of dates written YYYYMMDD, and 1 row(s) hold 99991231, which is no date. Such a value is never ordered as a number, and its rows are not dropped unasked: empty those cells (the rows are then dropped as having no time value) or write the date they stand for
+--------------------------------------------------------------------------------------------------------------
+weather, clean day, time_col=day  [0.1s]
+   expect: runs under time order
+   RAN  time_ordered, baseline chance, skill 0.551 [0.417, 0.659] via bootstrap_blocks, units [None, None], {'dropped_row_cap': 0, 'training': 1095, 'holdout': 365}
+   warnings ['interval_approximate']; excluded {}
+--------------------------------------------------------------------------------------------------------------
+eight quarter-ends with one sentinel (the case my second clause was for)  [0.1s]
+   expect: `period` excluded as a date
+   RAN  random, baseline chance, skill -0.083 [-0.310, 0.125] via bootstrap_rows, units [None, None], {'dropped_row_cap': 0, 'training': 360, 'holdout': 120}
+   warnings ['date_column_undeclared']; excluded {'period': 'datetime'}
+   >> date_column_undeclared: 'period' looks like a date and is excluded (time_col=False). Pass it as time_col for a time-ordered split. Random split: this number is optimistic if the rows are ordered in time or one entity appears on many rows.
+
+##### B. duplicates='group' and a column the leak screen removes (D69, D72)
+--------------------------------------------------------------------------------------------------------------
+titanic WITH `alive` (a copy of the target), duplicates=group  [0.1s]
+   expect: stops, naming `alive`, and says to remove it and run again
+   named error: holdout_copies_in_training: 4 of the 224 holdout rows (1.8%) agree with a training row in every feature column that is left, whatever their targets. duplicates='group' kept together the rows that agree in every feature column, but the leak screen then excluded the column(s) 'alive' as suspected leaks, and rows that differed only in them are now on both sides of the split, so the headline would not measure what duplicates='group' promises. Remove the column(s) 'alive' from the table and run again. Pass duplicates='keep' (--duplicates keep) if 
+--------------------------------------------------------------------------------------------------------------
+titanic with `alive`, duplicates=keep  [0.3s]
+   expect: `alive` excluded as a suspected leak; runs
+   RAN  random, baseline chance, skill 0.745 [0.656, 0.829] via bootstrap_rows, units [None, None], {'dropped_row_cap': 0, 'training': 668, 'holdout': 223}
+   warnings ['duplicate_rows', 'holdout_copies_kept', 'suspected_leak']; excluded {'alive': 'suspected_leak'}
+--------------------------------------------------------------------------------------------------------------
+titanic without `alive`, duplicates=group  [0.2s]
+   expect: 0.645 as before; the warning says what group measures
+   RAN  grouped, baseline chance, skill 0.645 [0.514, 0.745] via bootstrap_groups, units [585, 187], {'dropped_row_cap': 0, 'training': 668, 'holdout': 223}
+   warnings ['duplicate_rows', 'same_features_grouped']; excluded {}
+   >> same_features_grouped: 179 of the 891 rows split agree with another of them in every feature column; with duplicates='group' the rows that agree were kept together, whatever their targets, on one side of the holdout split and in one fold, so no combinat
+
+##### C. The fast profile and a large entity (D70, D72)
+--------------------------------------------------------------------------------------------------------------
+taxis, Manhattan one entity of 5,236 rows, FAST  [0.1s]
+   expect: stops: fast_profile_group_too_large, pointing to the full profile (was: skill 0.878 on the other rows)
+   named error: fast_profile_group_too_large: One entity holds 5236 of the 6364 usable rows, more than the fast profile's cap of 2000; the cap keeps whole entities, so it cannot keep this one, and leaving it out would describe another table. Use profile='full'.
+--------------------------------------------------------------------------------------------------------------
+the same, FULL  [15.5s]
+   expect: as before: Manhattan is the holdout, warned
+   RAN  grouped, baseline training_mean, skill 0.945 [None, None] via None, units [131, 1], {'dropped_row_cap': 0, 'training': 1128, 'holdout': 5236}
+   warnings ['duplicate_rows', 'large_group_is_holdout', 'no_interval']; excluded {}
+   >> large_group_is_holdout: One unit holds 5236 of the 6364 rows it is drawn among (82.3%), a quarter or more of them. The units smaller than a quarter do not together hold a quarter, so this one unit is the holdout: the headline rests on it alone.
+--------------------------------------------------------------------------------------------------------------
+mpg, every US car one entity (62.6%), fast  [0.1s]
+   expect: 0.822 as before; the large entity kept and named
+   RAN  grouped, baseline training_mean, skill 0.822 [0.748, 0.873] via bootstrap_groups, units [40, 79], {'dropped_row_cap': 0, 'training': 298, 'holdout': 100}
+   warnings ['large_group_kept_in_training']; excluded {}
+   >> large_group_kept_in_training: One unit holds 249 of the 398 rows it is drawn among (62.6%), a quarter or more of them. It is kept among the training rows and the holdout is made of smaller units: the headline does not test it.
+--------------------------------------------------------------------------------------------------------------
+taxis by pickup zone (largest zone well under a quarter), fast  [0.2s]
+   expect: runs on a sample of whole zones
+   RAN  grouped, baseline training_mean, skill 0.923 [None, None] via None, units [59, 27], {'dropped_row_cap': 4364, 'training': 1500, 'holdout': 500}
+   warnings ['duplicate_rows', 'no_interval']; excluded {}
+
+##### D. Unchanged tables: must be identical to the previous build
+--------------------------------------------------------------------------------------------------------------
+breast cancer, both said  [0.3s]
+   expect: 0.994549
+   RAN  random, baseline chance, skill 0.995 [0.985, 1.000] via bootstrap_rows, units [None, None], {'dropped_row_cap': 0, 'training': 426, 'holdout': 143}
+   warnings []; excluded {}
+--------------------------------------------------------------------------------------------------------------
+diabetes, both said  [0.1s]
+   expect: 0.490034
+   RAN  random, baseline training_mean, skill 0.490 [0.343, 0.602] via bootstrap_rows, units [None, None], {'dropped_row_cap': 0, 'training': 331, 'holdout': 111}
+   warnings ['whole_number_regression_target']; excluded {}
+--------------------------------------------------------------------------------------------------------------
+penguins sex, both said  [0.1s]
+   expect: 0.937642
+   RAN  random, baseline chance, skill 0.938 [0.855, 0.986] via bootstrap_rows, units [None, None], {'dropped_row_cap': 0, 'training': 249, 'holdout': 84}
+   warnings ['small_holdout']; excluded {}
+--------------------------------------------------------------------------------------------------------------
+diamonds, both said  [0.6s]
+   expect: 0.933327
+   RAN  random, baseline training_mean, skill 0.933 [0.918, 0.951] via bootstrap_rows, units [None, None], {'dropped_row_cap': 51940, 'training': 1500, 'holdout': 500}
+   warnings ['duplicate_rows', 'whole_number_regression_target']; excluded {}
+--------------------------------------------------------------------------------------------------------------
+titanic keep, both said  [0.2s]
+   expect: 0.744865
+   RAN  random, baseline chance, skill 0.745 [0.656, 0.829] via bootstrap_rows, units [None, None], {'dropped_row_cap': 0, 'training': 668, 'holdout': 223}
+   warnings ['duplicate_rows', 'holdout_copies_kept']; excluded {}
+--------------------------------------------------------------------------------------------------------------
+VIX level, time_col=date, group_col=False  [0.3s]
+   expect: 0.023366
+   RAN  time_ordered, baseline previous_value, skill 0.023 [-0.077, 0.105] via bootstrap_blocks, units [None, None], {'dropped_row_cap': 7273, 'training': 1500, 'holdout': 500}
+   warnings ['interval_approximate']; excluded {}
+--------------------------------------------------------------------------------------------------------------
+stocks price level, time_col=date, group_col=symbol  [0.0s]
+   expect: -0.138855
+   RAN  time_ordered, baseline previous_value, skill -0.139 [None, None] via None, units [5, 5], {'dropped_row_cap': 0, 'training': 415, 'holdout': 140}
+   warnings ['no_interval']; excluded {}
+--------------------------------------------------------------------------------------------------------------
+stocks price level, time_col=date, group_col=False  [0.0s]
+   expect: 0.978920
+   RAN  time_ordered, baseline training_mean, skill 0.979 [None, None] via None, units [None, None], {'dropped_row_cap': 0, 'training': 415, 'holdout': 140}
+   warnings ['autocorrelated_panel_target', 'no_interval']; excluded {}
+
+##### E. Open for pass 8 (D73): what today's build still does on real data
+--------------------------------------------------------------------------------------------------------------
+OPEN: VIX level with ONE row repeated, time_col=date, group_col=False  [0.2s]
+   expect: today: the previous-value baseline is lost and skill jumps (0.023 on the clean table)
+   RAN  time_ordered, baseline training_mean, skill 0.843 [0.802, 0.894] via bootstrap_blocks, units [None, None], {'dropped_row_cap': 7274, 'training': 1500, 'holdout': 500}
+   warnings ['autocorrelated_panel_target', 'duplicate_rows', 'interval_approximate']; excluded {}
+--------------------------------------------------------------------------------------------------------------
+OPEN: VIX level plus an exact rescaled copy of the target, time order  [0.2s]
+   expect: today: is the copy excluded as a leak?
+   RAN  time_ordered, baseline previous_value, skill 1.000 [1.000, 1.000] via bootstrap_blocks, units [None, None], {'dropped_row_cap': 7273, 'training': 1500, 'holdout': 500}
+   warnings ['interval_approximate']; excluded {}
+--------------------------------------------------------------------------------------------------------------
+OPEN: diabetes with one cell of 999999 in a feature  [0.1s]
+   expect: today: does one cell move the skill (0.490 clean)?
+   RAN  random, baseline training_mean, skill -0.111 [-0.447, 0.170] via bootstrap_rows, units [None, None], {'dropped_row_cap': 0, 'training': 331, 'holdout': 111}
+   warnings ['whole_number_regression_target']; excluded {}
+
+SUMMARY: {'ran': 22, 'named error': 3} | python warnings in 0 runs

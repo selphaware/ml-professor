@@ -249,6 +249,7 @@ def _text_rule(text_all, usable, n_usable):
 
 FIRST_DATE_NUMBER, LAST_DATE_NUMBER = 19000101, 21001231
 EIGHT_DIGITS = re.compile(r"[0-9]{8}")
+_DAYS_IN_MONTH = np.array([0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31], dtype=np.int64)
 
 
 def is_date_number(number):
@@ -259,52 +260,96 @@ def is_date_number(number):
     return _valid_date(number // 10000, number // 100 % 100, number % 100)
 
 
-def _all_date_numbers(numbers):
-    """True when every whole number given reads as a date and at least two differ."""
-    distinct = set(int(number) for number in numbers)
-    return len(distinct) >= 2 and all(is_date_number(number) for number in distinct)
+def _date_number_mask(numbers):
+    """For int64 whole numbers: True where one reads as a date YYYYMMDD, 1900 to 2100."""
+    numbers = np.asarray(numbers, dtype=np.int64)
+    inside = (numbers >= FIRST_DATE_NUMBER) & (numbers <= LAST_DATE_NUMBER)
+    year, month, day = numbers // 10000, numbers // 100 % 100, numbers % 100
+    month_ok = (month >= 1) & (month <= 12)
+    length = _DAYS_IN_MONTH[np.where(month_ok, month, 0)]
+    leap = ((year % 4 == 0) & (year % 100 != 0)) | (year % 400 == 0)
+    length = length + ((month == 2) & leap).astype(np.int64)
+    return inside & month_ok & (day >= 1) & (day <= length)
 
 
-def _numbers_of_dates(series):
-    """The usable values of a numeric column as Python whole numbers, or None when one
-    of them is not a whole number in the range of the dates (rule 2a)."""
-    if pd.api.types.is_bool_dtype(series.dtype):
-        return None
-    present = series[series.notna()]
-    if pd.api.types.is_integer_dtype(series.dtype):
-        unsigned = pd.api.types.is_unsigned_integer_dtype(series.dtype)
-        values = present.to_numpy(dtype=np.uint64 if unsigned else np.int64)
-    else:
-        values = present.to_numpy(dtype=float, na_value=np.nan)
-        values = values[~np.isnan(values)]
-        # An infinite cell is a value, and no date.
-        if not _whole(values):
+def _written_number(value):
+    """A number as it is written: a whole number in digits, anything else as Python writes it."""
+    if isinstance(value, (int, np.integer)):
+        return str(int(value))
+    value = float(value)
+    if np.isfinite(value) and value == np.floor(value):
+        return str(int(value))
+    return repr(value)
+
+
+def _distinct_values_as_dates(series):
+    """Rule 2a's reading of the non-missing values of `series`.
+
+    Returns `(written, is_date, n_cells)`, one entry for each distinct value: how
+    it is written, whether it reads as a date YYYYMMDD, and how many cells hold
+    it. None for a column that is neither numeric (never boolean) nor text.
+    """
+    family = type_family(series)
+    if family == "numeric":
+        if pd.api.types.is_bool_dtype(series.dtype):
             return None
-    if values.size and (values.min() < FIRST_DATE_NUMBER or values.max() > LAST_DATE_NUMBER):
+        present = series[series.notna()]
+        if pd.api.types.is_integer_dtype(series.dtype):
+            unsigned = pd.api.types.is_unsigned_integer_dtype(series.dtype)
+            values = present.to_numpy(dtype=np.uint64 if unsigned else np.int64)
+            distinct, n_cells = np.unique(values, return_counts=True)
+            candidates = (distinct >= FIRST_DATE_NUMBER) & (distinct <= LAST_DATE_NUMBER)
+        else:
+            values = present.to_numpy(dtype=float, na_value=np.nan)
+            values = values[~np.isnan(values)] + 0.0
+            distinct, n_cells = np.unique(values, return_counts=True)
+            # A fraction and an infinite cell are values, and no dates.
+            with np.errstate(invalid="ignore"):
+                candidates = (np.isfinite(distinct) & (np.floor(distinct) == distinct)
+                              & (distinct >= FIRST_DATE_NUMBER)
+                              & (distinct <= LAST_DATE_NUMBER))
+        is_date = np.zeros(len(distinct), dtype=bool)
+        is_date[candidates] = _date_number_mask(distinct[candidates].astype(np.int64))
+        return [_written_number(v) for v in distinct.tolist()], is_date, n_cells
+    if family == "text":
+        text = stripped_text(series)
+        counted = text[text.notna()].value_counts(sort=False)
+        distinct = pd.Series(counted.index.astype(str), dtype=object)
+        eight = distinct.str.fullmatch(EIGHT_DIGITS.pattern).to_numpy(dtype=bool)
+        is_date = np.zeros(len(distinct), dtype=bool)
+        if eight.any():
+            numbers = np.array([int(v) for v in distinct[eight]], dtype=np.int64)
+            is_date[eight] = _date_number_mask(numbers)
+        return ([repr(v) for v in distinct.tolist()], is_date,
+                counted.to_numpy(dtype=np.int64))
+    return None
+
+
+def _many_dates(n_dates, n_others):
+    """Rule 2a's counts (D69, D72): at least two distinct dates, and at least nine for
+    each distinct value that is no date, or at least five beside at most two."""
+    return n_dates >= 2 and (n_dates >= 9 * n_others or (n_others <= 2 and n_dates >= 5))
+
+
+def values_that_are_no_dates(series):
+    """For a column of dates written YYYYMMDD by the counts of rule 2a, judged on every
+    non-missing value of `series`: its values that are no dates, as `(written,
+    n_cells)`, most cells first ([] for a clean column of dates). None when the
+    column is no column of dates (step 3; D69)."""
+    found = _distinct_values_as_dates(series)
+    if found is None:
         return None
-    return np.unique(values).astype(np.int64).tolist()
-
-
-def text_of_dates(text):
-    """True when every non-missing stripped text is eight digits that read as a date
-    YYYYMMDD (rule 2a, and the time form of step 3)."""
-    distinct = pd.unique(text[text.notna()].to_numpy())
-    if not all(EIGHT_DIGITS.fullmatch(value) for value in distinct):
-        return False
-    return all(is_date_number(int(value)) for value in distinct)
+    written, is_date, n_cells = found
+    n_dates = int(is_date.sum())
+    if not _many_dates(n_dates, len(is_date) - n_dates):
+        return None
+    others = [(written[k], int(n_cells[k])) for k in np.flatnonzero(~is_date)]
+    return sorted(others, key=lambda pair: -pair[1])
 
 
 def _dates_as_numbers(series, usable):
     """Rule 2a of step 5 on the usable rows: dates written as whole numbers YYYYMMDD."""
-    family = type_family(series)
-    if family == "numeric":
-        numbers = _numbers_of_dates(series.iloc[usable])
-        return numbers is not None and _all_date_numbers(numbers)
-    if family == "text":
-        text = stripped_text(series.iloc[usable])
-        present = text[text.notna()]
-        return pd.unique(present.to_numpy()).size >= 2 and text_of_dates(present)
-    return False
+    return values_that_are_no_dates(series.iloc[usable]) is not None
 
 
 def _judge_column(series, usable):

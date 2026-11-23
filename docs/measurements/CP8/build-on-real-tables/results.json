@@ -1,0 +1,968 @@
+[
+ {
+  "case": "weather, day as YYYYMMDD, clean, both False",
+  "expect": "`day` excluded as a date, with the warning",
+  "args": {
+   "time_col": "False",
+   "group_col": "False",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "random",
+  "baseline": "chance",
+  "skill": 0.5055821371610845,
+  "ci": [
+   0.39588770174632637,
+   0.5950017900115144
+  ],
+  "interval": "bootstrap_rows",
+  "p": 0.004975124378109453,
+  "groups": [
+   null,
+   null
+  ],
+  "rows": {
+   "loaded": 1460,
+   "dropped_missing_target": 0,
+   "dropped_missing_time": 0,
+   "dropped_gap": 0,
+   "dropped_row_cap": 0,
+   "training": 1095,
+   "holdout": 365
+  },
+  "warnings": [
+   "date_column_undeclared"
+  ],
+  "texts": {
+   "date_column_undeclared": "'day' looks like a date and is excluded (time_col=False). Pass it as time_col for a time-ordered split. Random split: this number is optimistic if the rows are ordered in time or one entity appears on many rows."
+  },
+  "excluded": {
+   "day": "datetime"
+  },
+  "seconds": 1.1,
+  "py_warnings": []
+ },
+ {
+  "case": "weather, day with one cell 99991231, both False",
+  "expect": "still excluded as a date; skill as the clean table's",
+  "args": {
+   "time_col": "False",
+   "group_col": "False",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "random",
+  "baseline": "chance",
+  "skill": 0.5055821371610845,
+  "ci": [
+   0.39588770174632637,
+   0.5950017900115144
+  ],
+  "interval": "bootstrap_rows",
+  "p": 0.004975124378109453,
+  "groups": [
+   null,
+   null
+  ],
+  "rows": {
+   "loaded": 1460,
+   "dropped_missing_target": 0,
+   "dropped_missing_time": 0,
+   "dropped_gap": 0,
+   "dropped_row_cap": 0,
+   "training": 1095,
+   "holdout": 365
+  },
+  "warnings": [
+   "date_column_undeclared"
+  ],
+  "texts": {
+   "date_column_undeclared": "'day' looks like a date and is excluded (time_col=False). Pass it as time_col for a time-ordered split. Random split: this number is optimistic if the rows are ordered in time or one entity appears on many rows."
+  },
+  "excluded": {
+   "day": "datetime"
+  },
+  "seconds": 0.2,
+  "py_warnings": []
+ },
+ {
+  "case": "weather, day with one cell 0, both False",
+  "expect": "still excluded as a date; skill as the clean table's",
+  "args": {
+   "time_col": "False",
+   "group_col": "False",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "random",
+  "baseline": "chance",
+  "skill": 0.5055821371610845,
+  "ci": [
+   0.39588770174632637,
+   0.5950017900115144
+  ],
+  "interval": "bootstrap_rows",
+  "p": 0.004975124378109453,
+  "groups": [
+   null,
+   null
+  ],
+  "rows": {
+   "loaded": 1460,
+   "dropped_missing_target": 0,
+   "dropped_missing_time": 0,
+   "dropped_gap": 0,
+   "dropped_row_cap": 0,
+   "training": 1095,
+   "holdout": 365
+  },
+  "warnings": [
+   "date_column_undeclared"
+  ],
+  "texts": {
+   "date_column_undeclared": "'day' looks like a date and is excluded (time_col=False). Pass it as time_col for a time-ordered split. Random split: this number is optimistic if the rows are ordered in time or one entity appears on many rows."
+  },
+  "excluded": {
+   "day": "datetime"
+  },
+  "seconds": 0.1,
+  "py_warnings": []
+ },
+ {
+  "case": "weather, day with 30% of rows 99991231, both False",
+  "expect": "still excluded as a date; skill as the clean table's",
+  "args": {
+   "time_col": "False",
+   "group_col": "False",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "random",
+  "baseline": "chance",
+  "skill": 0.5055821371610845,
+  "ci": [
+   0.39588770174632637,
+   0.5950017900115144
+  ],
+  "interval": "bootstrap_rows",
+  "p": 0.004975124378109453,
+  "groups": [
+   null,
+   null
+  ],
+  "rows": {
+   "loaded": 1460,
+   "dropped_missing_target": 0,
+   "dropped_missing_time": 0,
+   "dropped_gap": 0,
+   "dropped_row_cap": 0,
+   "training": 1095,
+   "holdout": 365
+  },
+  "warnings": [
+   "date_column_undeclared"
+  ],
+  "texts": {
+   "date_column_undeclared": "'day' looks like a date and is excluded (time_col=False). Pass it as time_col for a time-ordered split. Random split: this number is optimistic if the rows are ordered in time or one entity appears on many rows."
+  },
+  "excluded": {
+   "day": "datetime"
+  },
+  "seconds": 0.2,
+  "py_warnings": []
+ },
+ {
+  "case": "weather, day with one cell 99991231, time_col=day",
+  "expect": "stops: time_column_invalid, naming 99991231 and its one row",
+  "args": {
+   "time_col": "day",
+   "group_col": "False",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "named error",
+  "code": "time_column_invalid",
+  "message": "time column: it is a column of dates written YYYYMMDD, and 1 row(s) hold 99991231, which is no date. Such a value is never ordered as a number, and its rows are not dropped unasked: empty those cells (the rows are then dropped as having no time value) or write the date they stand for",
+  "seconds": 0.0,
+  "py_warnings": []
+ },
+ {
+  "case": "weather, clean day, time_col=day",
+  "expect": "runs under time order",
+  "args": {
+   "time_col": "day",
+   "group_col": "False",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "time_ordered",
+  "baseline": "chance",
+  "skill": 0.5512192056309704,
+  "ci": [
+   0.4170804815890861,
+   0.6594616567152473
+  ],
+  "interval": "bootstrap_blocks",
+  "p": null,
+  "groups": [
+   null,
+   null
+  ],
+  "rows": {
+   "loaded": 1460,
+   "dropped_missing_target": 0,
+   "dropped_missing_time": 0,
+   "dropped_gap": 0,
+   "dropped_row_cap": 0,
+   "training": 1095,
+   "holdout": 365
+  },
+  "warnings": [
+   "interval_approximate"
+  ],
+  "texts": {},
+  "excluded": {},
+  "seconds": 0.1,
+  "py_warnings": []
+ },
+ {
+  "case": "eight quarter-ends with one sentinel (the case my second clause was for)",
+  "expect": "`period` excluded as a date",
+  "args": {
+   "time_col": "False",
+   "group_col": "False",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "random",
+  "baseline": "chance",
+  "skill": -0.08342602892102335,
+  "ci": [
+   -0.310064253647587,
+   0.1251461988304093
+  ],
+  "interval": "bootstrap_rows",
+  "p": 0.7960199004975125,
+  "groups": [
+   null,
+   null
+  ],
+  "rows": {
+   "loaded": 480,
+   "dropped_missing_target": 0,
+   "dropped_missing_time": 0,
+   "dropped_gap": 0,
+   "dropped_row_cap": 0,
+   "training": 360,
+   "holdout": 120
+  },
+  "warnings": [
+   "date_column_undeclared"
+  ],
+  "texts": {
+   "date_column_undeclared": "'period' looks like a date and is excluded (time_col=False). Pass it as time_col for a time-ordered split. Random split: this number is optimistic if the rows are ordered in time or one entity appears on many rows."
+  },
+  "excluded": {
+   "period": "datetime"
+  },
+  "seconds": 0.1,
+  "py_warnings": []
+ },
+ {
+  "case": "titanic WITH `alive` (a copy of the target), duplicates=group",
+  "expect": "stops, naming `alive`, and says to remove it and run again",
+  "args": {
+   "duplicates": "group",
+   "time_col": "False",
+   "group_col": "False",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "named error",
+  "code": "holdout_copies_in_training",
+  "message": "4 of the 224 holdout rows (1.8%) agree with a training row in every feature column that is left, whatever their targets. duplicates='group' kept together the rows that agree in every feature column, but the leak screen then excluded the column(s) 'alive' as suspected leaks, and rows that differed only in them are now on both sides of the split, so the headline would not measure what duplicates='group' promises. Remove the column(s) 'alive' from the table and run again. Pass duplicates='keep' (--duplicates keep) if the repeated rows are different cases that look alike, as in a table of few-valued columns. Pass duplicates='group' (--duplicates group) if they are one case recorded more than once: no combination of feature values is then on both sides of the split. Or remove the repeated rows.",
+  "seconds": 0.1,
+  "py_warnings": []
+ },
+ {
+  "case": "titanic with `alive`, duplicates=keep",
+  "expect": "`alive` excluded as a suspected leak; runs",
+  "args": {
+   "duplicates": "keep",
+   "time_col": "False",
+   "group_col": "False",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "random",
+  "baseline": "chance",
+  "skill": 0.744865048378883,
+  "ci": [
+   0.6558292825410376,
+   0.8290082009677876
+  ],
+  "interval": "bootstrap_rows",
+  "p": 0.004975124378109453,
+  "groups": [
+   null,
+   null
+  ],
+  "rows": {
+   "loaded": 891,
+   "dropped_missing_target": 0,
+   "dropped_missing_time": 0,
+   "dropped_gap": 0,
+   "dropped_row_cap": 0,
+   "training": 668,
+   "holdout": 223
+  },
+  "warnings": [
+   "duplicate_rows",
+   "holdout_copies_kept",
+   "suspected_leak"
+  ],
+  "texts": {},
+  "excluded": {
+   "alive": "suspected_leak"
+  },
+  "seconds": 0.3,
+  "py_warnings": []
+ },
+ {
+  "case": "titanic without `alive`, duplicates=group",
+  "expect": "0.645 as before; the warning says what group measures",
+  "args": {
+   "duplicates": "group",
+   "time_col": "False",
+   "group_col": "False",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "grouped",
+  "baseline": "chance",
+  "skill": 0.6450304259634889,
+  "ci": [
+   0.5142494308572615,
+   0.745425773656977
+  ],
+  "interval": "bootstrap_groups",
+  "p": null,
+  "groups": [
+   585,
+   187
+  ],
+  "rows": {
+   "loaded": 891,
+   "dropped_missing_target": 0,
+   "dropped_missing_time": 0,
+   "dropped_gap": 0,
+   "dropped_row_cap": 0,
+   "training": 668,
+   "holdout": 223
+  },
+  "warnings": [
+   "duplicate_rows",
+   "same_features_grouped"
+  ],
+  "texts": {
+   "same_features_grouped": "179 of the 891 rows split agree with another of them in every feature column; with duplicates='group' the rows that agree were kept together, whatever their targets, on one side of the holdout split and in one fold, so no combinat"
+  },
+  "excluded": {},
+  "seconds": 0.2,
+  "py_warnings": []
+ },
+ {
+  "case": "taxis, Manhattan one entity of 5,236 rows, FAST",
+  "expect": "stops: fast_profile_group_too_large, pointing to the full profile (was: skill 0.878 on the other rows)",
+  "args": {
+   "time_col": "False",
+   "group_col": "area",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "named error",
+  "code": "fast_profile_group_too_large",
+  "message": "One entity holds 5236 of the 6364 usable rows, more than the fast profile's cap of 2000; the cap keeps whole entities, so it cannot keep this one, and leaving it out would describe another table. Use profile='full'.",
+  "seconds": 0.1,
+  "py_warnings": []
+ },
+ {
+  "case": "the same, FULL",
+  "expect": "as before: Manhattan is the holdout, warned",
+  "args": {
+   "time_col": "False",
+   "group_col": "area",
+   "profile": "full",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "grouped",
+  "baseline": "training_mean",
+  "skill": 0.9446149283615596,
+  "ci": [
+   null,
+   null
+  ],
+  "interval": null,
+  "p": null,
+  "groups": [
+   131,
+   1
+  ],
+  "rows": {
+   "loaded": 6364,
+   "dropped_missing_target": 0,
+   "dropped_missing_time": 0,
+   "dropped_gap": 0,
+   "dropped_row_cap": 0,
+   "training": 1128,
+   "holdout": 5236
+  },
+  "warnings": [
+   "duplicate_rows",
+   "large_group_is_holdout",
+   "no_interval"
+  ],
+  "texts": {
+   "large_group_is_holdout": "One unit holds 5236 of the 6364 rows it is drawn among (82.3%), a quarter or more of them. The units smaller than a quarter do not together hold a quarter, so this one unit is the holdout: the headline rests on it alone."
+  },
+  "excluded": {},
+  "seconds": 15.5,
+  "py_warnings": []
+ },
+ {
+  "case": "mpg, every US car one entity (62.6%), fast",
+  "expect": "0.822 as before; the large entity kept and named",
+  "args": {
+   "time_col": "False",
+   "group_col": "maker",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "grouped",
+  "baseline": "training_mean",
+  "skill": 0.8223182842089954,
+  "ci": [
+   0.7479076158331512,
+   0.8730543704240392
+  ],
+  "interval": "bootstrap_groups",
+  "p": null,
+  "groups": [
+   40,
+   79
+  ],
+  "rows": {
+   "loaded": 398,
+   "dropped_missing_target": 0,
+   "dropped_missing_time": 0,
+   "dropped_gap": 0,
+   "dropped_row_cap": 0,
+   "training": 298,
+   "holdout": 100
+  },
+  "warnings": [
+   "large_group_kept_in_training"
+  ],
+  "texts": {
+   "large_group_kept_in_training": "One unit holds 249 of the 398 rows it is drawn among (62.6%), a quarter or more of them. It is kept among the training rows and the holdout is made of smaller units: the headline does not test it."
+  },
+  "excluded": {},
+  "seconds": 0.1,
+  "py_warnings": []
+ },
+ {
+  "case": "taxis by pickup zone (largest zone well under a quarter), fast",
+  "expect": "runs on a sample of whole zones",
+  "args": {
+   "time_col": "False",
+   "group_col": "pickup_zone",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "grouped",
+  "baseline": "training_mean",
+  "skill": 0.9228154467731096,
+  "ci": [
+   null,
+   null
+  ],
+  "interval": null,
+  "p": null,
+  "groups": [
+   59,
+   27
+  ],
+  "rows": {
+   "loaded": 6364,
+   "dropped_missing_target": 0,
+   "dropped_missing_time": 0,
+   "dropped_gap": 0,
+   "dropped_row_cap": 4364,
+   "training": 1500,
+   "holdout": 500
+  },
+  "warnings": [
+   "duplicate_rows",
+   "no_interval"
+  ],
+  "texts": {},
+  "excluded": {},
+  "seconds": 0.2,
+  "py_warnings": []
+ },
+ {
+  "case": "breast cancer, both said",
+  "expect": "0.994549",
+  "args": {
+   "time_col": "False",
+   "group_col": "False",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "random",
+  "baseline": "chance",
+  "skill": 0.9945492662473794,
+  "ci": [
+   0.9846483795917167,
+   1.0
+  ],
+  "interval": "bootstrap_rows",
+  "p": 0.004975124378109453,
+  "groups": [
+   null,
+   null
+  ],
+  "rows": {
+   "loaded": 569,
+   "dropped_missing_target": 0,
+   "dropped_missing_time": 0,
+   "dropped_gap": 0,
+   "dropped_row_cap": 0,
+   "training": 426,
+   "holdout": 143
+  },
+  "warnings": [],
+  "texts": {},
+  "excluded": {},
+  "seconds": 0.3,
+  "py_warnings": []
+ },
+ {
+  "case": "diabetes, both said",
+  "expect": "0.490034",
+  "args": {
+   "time_col": "False",
+   "group_col": "False",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "random",
+  "baseline": "training_mean",
+  "skill": 0.4900337428923588,
+  "ci": [
+   0.3429073414453271,
+   0.6022836720838429
+  ],
+  "interval": "bootstrap_rows",
+  "p": 0.004975124378109453,
+  "groups": [
+   null,
+   null
+  ],
+  "rows": {
+   "loaded": 442,
+   "dropped_missing_target": 0,
+   "dropped_missing_time": 0,
+   "dropped_gap": 0,
+   "dropped_row_cap": 0,
+   "training": 331,
+   "holdout": 111
+  },
+  "warnings": [
+   "whole_number_regression_target"
+  ],
+  "texts": {},
+  "excluded": {},
+  "seconds": 0.1,
+  "py_warnings": []
+ },
+ {
+  "case": "penguins sex, both said",
+  "expect": "0.937642",
+  "args": {
+   "time_col": "False",
+   "group_col": "False",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "random",
+  "baseline": "chance",
+  "skill": 0.937641723356009,
+  "ci": [
+   0.8554348974438261,
+   0.9864422693123771
+  ],
+  "interval": "bootstrap_rows",
+  "p": 0.004975124378109453,
+  "groups": [
+   null,
+   null
+  ],
+  "rows": {
+   "loaded": 344,
+   "dropped_missing_target": 11,
+   "dropped_missing_time": 0,
+   "dropped_gap": 0,
+   "dropped_row_cap": 0,
+   "training": 249,
+   "holdout": 84
+  },
+  "warnings": [
+   "small_holdout"
+  ],
+  "texts": {},
+  "excluded": {},
+  "seconds": 0.1,
+  "py_warnings": []
+ },
+ {
+  "case": "diamonds, both said",
+  "expect": "0.933327",
+  "args": {
+   "time_col": "False",
+   "group_col": "False",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "random",
+  "baseline": "training_mean",
+  "skill": 0.9333271016396157,
+  "ci": [
+   0.9178300342913184,
+   0.951217262163137
+  ],
+  "interval": "bootstrap_rows",
+  "p": 0.004975124378109453,
+  "groups": [
+   null,
+   null
+  ],
+  "rows": {
+   "loaded": 53940,
+   "dropped_missing_target": 0,
+   "dropped_missing_time": 0,
+   "dropped_gap": 0,
+   "dropped_row_cap": 51940,
+   "training": 1500,
+   "holdout": 500
+  },
+  "warnings": [
+   "duplicate_rows",
+   "whole_number_regression_target"
+  ],
+  "texts": {},
+  "excluded": {},
+  "seconds": 0.6,
+  "py_warnings": []
+ },
+ {
+  "case": "titanic keep, both said",
+  "expect": "0.744865",
+  "args": {
+   "duplicates": "keep",
+   "time_col": "False",
+   "group_col": "False",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "random",
+  "baseline": "chance",
+  "skill": 0.744865048378883,
+  "ci": [
+   0.6558292825410376,
+   0.8290082009677876
+  ],
+  "interval": "bootstrap_rows",
+  "p": 0.004975124378109453,
+  "groups": [
+   null,
+   null
+  ],
+  "rows": {
+   "loaded": 891,
+   "dropped_missing_target": 0,
+   "dropped_missing_time": 0,
+   "dropped_gap": 0,
+   "dropped_row_cap": 0,
+   "training": 668,
+   "holdout": 223
+  },
+  "warnings": [
+   "duplicate_rows",
+   "holdout_copies_kept"
+  ],
+  "texts": {},
+  "excluded": {},
+  "seconds": 0.2,
+  "py_warnings": []
+ },
+ {
+  "case": "VIX level, time_col=date, group_col=False",
+  "expect": "0.023366",
+  "args": {
+   "time_col": "date",
+   "group_col": "False",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "time_ordered",
+  "baseline": "previous_value",
+  "skill": 0.023365871559325457,
+  "ci": [
+   -0.0772565468355973,
+   0.10533902952923947
+  ],
+  "interval": "bootstrap_blocks",
+  "p": null,
+  "groups": [
+   null,
+   null
+  ],
+  "rows": {
+   "loaded": 9273,
+   "dropped_missing_target": 0,
+   "dropped_missing_time": 0,
+   "dropped_gap": 0,
+   "dropped_row_cap": 7273,
+   "training": 1500,
+   "holdout": 500
+  },
+  "warnings": [
+   "interval_approximate"
+  ],
+  "texts": {},
+  "excluded": {},
+  "seconds": 0.3,
+  "py_warnings": []
+ },
+ {
+  "case": "stocks price level, time_col=date, group_col=symbol",
+  "expect": "-0.138855",
+  "args": {
+   "time_col": "date",
+   "group_col": "symbol",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "time_ordered",
+  "baseline": "previous_value",
+  "skill": -0.1388548810989172,
+  "ci": [
+   null,
+   null
+  ],
+  "interval": null,
+  "p": null,
+  "groups": [
+   5,
+   5
+  ],
+  "rows": {
+   "loaded": 555,
+   "dropped_missing_target": 0,
+   "dropped_missing_time": 0,
+   "dropped_gap": 0,
+   "dropped_row_cap": 0,
+   "training": 415,
+   "holdout": 140
+  },
+  "warnings": [
+   "no_interval"
+  ],
+  "texts": {},
+  "excluded": {},
+  "seconds": 0.0,
+  "py_warnings": []
+ },
+ {
+  "case": "stocks price level, time_col=date, group_col=False",
+  "expect": "0.978920",
+  "args": {
+   "time_col": "date",
+   "group_col": "False",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "time_ordered",
+  "baseline": "training_mean",
+  "skill": 0.9789203067770266,
+  "ci": [
+   null,
+   null
+  ],
+  "interval": null,
+  "p": null,
+  "groups": [
+   null,
+   null
+  ],
+  "rows": {
+   "loaded": 555,
+   "dropped_missing_target": 0,
+   "dropped_missing_time": 0,
+   "dropped_gap": 0,
+   "dropped_row_cap": 0,
+   "training": 415,
+   "holdout": 140
+  },
+  "warnings": [
+   "autocorrelated_panel_target",
+   "no_interval"
+  ],
+  "texts": {},
+  "excluded": {},
+  "seconds": 0.0,
+  "py_warnings": []
+ },
+ {
+  "case": "OPEN: VIX level with ONE row repeated, time_col=date, group_col=False",
+  "expect": "today: the previous-value baseline is lost and skill jumps (0.023 on the clean table)",
+  "args": {
+   "time_col": "date",
+   "group_col": "False",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "time_ordered",
+  "baseline": "training_mean",
+  "skill": 0.842785442974524,
+  "ci": [
+   0.8024322080836681,
+   0.8943345362306034
+  ],
+  "interval": "bootstrap_blocks",
+  "p": null,
+  "groups": [
+   null,
+   null
+  ],
+  "rows": {
+   "loaded": 9274,
+   "dropped_missing_target": 0,
+   "dropped_missing_time": 0,
+   "dropped_gap": 0,
+   "dropped_row_cap": 7274,
+   "training": 1500,
+   "holdout": 500
+  },
+  "warnings": [
+   "autocorrelated_panel_target",
+   "duplicate_rows",
+   "interval_approximate"
+  ],
+  "texts": {},
+  "excluded": {},
+  "seconds": 0.2,
+  "py_warnings": []
+ },
+ {
+  "case": "OPEN: VIX level plus an exact rescaled copy of the target, time order",
+  "expect": "today: is the copy excluded as a leak?",
+  "args": {
+   "time_col": "date",
+   "group_col": "False",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "time_ordered",
+  "baseline": "previous_value",
+  "skill": 0.9998960571963061,
+  "ci": [
+   0.9998853479900867,
+   0.9999047815687387
+  ],
+  "interval": "bootstrap_blocks",
+  "p": null,
+  "groups": [
+   null,
+   null
+  ],
+  "rows": {
+   "loaded": 9273,
+   "dropped_missing_target": 0,
+   "dropped_missing_time": 0,
+   "dropped_gap": 0,
+   "dropped_row_cap": 7273,
+   "training": 1500,
+   "holdout": 500
+  },
+  "warnings": [
+   "interval_approximate"
+  ],
+  "texts": {},
+  "excluded": {},
+  "seconds": 0.2,
+  "py_warnings": []
+ },
+ {
+  "case": "OPEN: diabetes with one cell of 999999 in a feature",
+  "expect": "today: does one cell move the skill (0.490 clean)?",
+  "args": {
+   "time_col": "False",
+   "group_col": "False",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "random",
+  "baseline": "training_mean",
+  "skill": -0.11061569102708946,
+  "ci": [
+   -0.44703003972614985,
+   0.16969504831714308
+  ],
+  "interval": "bootstrap_rows",
+  "p": 0.004975124378109453,
+  "groups": [
+   null,
+   null
+  ],
+  "rows": {
+   "loaded": 442,
+   "dropped_missing_target": 0,
+   "dropped_missing_time": 0,
+   "dropped_gap": 0,
+   "dropped_row_cap": 0,
+   "training": 331,
+   "holdout": 111
+  },
+  "warnings": [
+   "whole_number_regression_target"
+  ],
+  "texts": {},
+  "excluded": {},
+  "seconds": 0.1,
+  "py_warnings": []
+ }
+]

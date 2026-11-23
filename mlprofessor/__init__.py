@@ -10,6 +10,11 @@ def profile(data, target, task="auto", time_col=None, gap=0,
     Every call says two things: `time_col` (a column's name or False) and
     `group_col` (a column's name or False). None, the default of each, is "not
     said", and the run stops with a named error (spec 2.1, step 5).
+
+    `profile="fast"` keeps at most 2,000 usable rows (step 6). With an entity
+    column and no time column it keeps whole entities, always every entity of
+    a quarter or more of the usable rows; when it cannot, the run stops with
+    `fast_profile_group_too_large` and the full profile is the answer.
     """
     from mlprofessor.pipeline import run
 

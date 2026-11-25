@@ -1,4 +1,6 @@
 """Holdout metrics, skill over a baseline, and the previous-value baseline."""
+import math
+
 import numpy as np
 import pandas as pd
 
@@ -53,6 +55,32 @@ def mse(y, pred):
         return float(np.mean((y - pred) ** 2))
 
 
+def squared_errors(y, pred):
+    """The squared error of each row; infinite where one overflows (the caller decides)."""
+    y = np.asarray(y, dtype=float)
+    pred = np.asarray(pred, dtype=float)
+    with np.errstate(over="ignore", invalid="ignore"):
+        return (y - pred) ** 2
+
+
+def largest_row_share(errors):
+    """`(share, position)` of the largest of finite squared `errors` (step 11).
+
+    The share is the largest error over the sum of them, each divided by the
+    largest first so that no sum overflows; the position is that of the first
+    of several largest. `(None, None)` when every error is zero.
+    """
+    errors = np.asarray(errors, dtype=float)
+    if errors.size == 0:
+        return None, None
+    position = int(np.argmax(errors))
+    top = float(errors[position])
+    if top == 0:
+        return None, None
+    share = 1.0 / math.fsum((errors / top).tolist())
+    return min(share, 1.0), position
+
+
 def skill(metric, score, baseline_score):
     """Skill over the baseline: 0 at the baseline, 1 at perfect, may be negative.
 
@@ -69,7 +97,10 @@ def skill(metric, score, baseline_score):
 
 
 def previous_value(y, keys, gap=0, groups=None):
-    """For each row, the target of the row `gap + 1` timestamps earlier; NaN if none.
+    """For each row, the mean target of the rows `gap + 1` distinct timestamps earlier.
+
+    NaN for a row at one of the first `gap + 1` timestamps. With one row a
+    timestamp that is the target of the row `gap + 1` timestamps earlier.
 
     With `groups`, the target of the latest row of the same group at least
     `gap + 1` distinct timestamps earlier, the timestamps being those of all
@@ -86,13 +117,21 @@ def previous_value(y, keys, gap=0, groups=None):
         raise ValueError("keys must not hold missing values")
     if groups is not None:
         return _previous_in_groups(y, keys, lag, groups)
-    order = np.argsort(keys, kind="mergesort")
-    sorted_keys = keys[order]
-    if np.any(sorted_keys[1:] == sorted_keys[:-1]):
-        raise ValueError("previous_value needs unique timestamps; keys repeat")
     out = np.full(len(y), np.nan)
-    if len(y) > lag:
-        out[order[lag:]] = y[order[:-lag]]
+    if not len(y):
+        return out
+    # The mean target of each distinct timestamp, then each row is given the mean of
+    # the timestamp `lag` places before its own. With one row a timestamp that mean is
+    # the row's own target, exactly.
+    _, stamp_rank = np.unique(keys, return_inverse=True)
+    stamp_rank = stamp_rank.reshape(-1).astype(np.int64)
+    n_stamps = int(stamp_rank.max()) + 1
+    counts = np.bincount(stamp_rank, minlength=n_stamps)
+    with np.errstate(over="ignore", invalid="ignore"):
+        sums = np.bincount(stamp_rank, weights=y, minlength=n_stamps)
+        means = sums / counts
+    has_before = stamp_rank >= lag
+    out[has_before] = means[stamp_rank[has_before] - lag]
     return out
 
 
@@ -165,3 +204,40 @@ def lag1_autocorrelation(values):
         if spread == 0.0 or not np.isfinite(spread):
             return float("nan")
         return float((centred[:-1] * centred[1:]).sum() / spread)
+
+
+EXTREME_GAP = 30
+EXTREME_SPREAD = 10
+EXTREME_OUTERMOST = 3
+
+
+def far_outside(values):
+    """The values far outside all the others (step 11): `[(value, rows, nearest), ...]`.
+
+    Over the distinct finite values, sorted: from each end, of the three
+    outermost, a value is far outside when its gap to the next value inward
+    is more than 30 times the range of the ten distinct values after that one
+    (as many as there are, at least one); the values beyond it are too.
+    `rows` counts the cells that hold the value, `nearest` is the nearest
+    value that is not far outside. The low end first.
+    """
+    values = np.asarray(values, dtype=float)
+    values = values[np.isfinite(values)] + 0.0
+    distinct, counts = np.unique(values, return_counts=True)
+    n = len(distinct)
+    named = []
+    if n < 3:
+        return named
+    for order in (np.arange(n), np.arange(n)[::-1]):
+        ordered = distinct[order]
+        last = 0
+        with np.errstate(over="ignore", invalid="ignore"):
+            for j in range(1, min(EXTREME_OUTERMOST, n - 2) + 1):
+                gap = abs(float(ordered[j]) - float(ordered[j - 1]))
+                m = min(EXTREME_SPREAD, n - j - 1)
+                spread = abs(float(ordered[j + m]) - float(ordered[j]))
+                if gap > EXTREME_GAP * spread:
+                    last = j
+        for j in range(last):
+            named.append((float(ordered[j]), int(counts[order[j]]), float(ordered[last])))
+    return named

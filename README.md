@@ -63,7 +63,7 @@ The four combinations and what each gives:
 | Time order (`--time-col`) | Entities (`--group-col`) | What the run does |
 |---|---|---|
 | a column | a column | Time-ordered split. Each entity is scored for regression against its own previous value, in the headline and in the leak screen. |
-| a column | `--no-entities` | Time-ordered split, with rows sharing a timestamp never split. The previous value is the baseline only when timestamps are unique. A repeated-timestamp panel whose per-timestamp mean persists may get the `autocorrelated_panel_target` warning (see Limits). |
+| a column | `--no-entities` | Time-ordered split, with rows sharing a timestamp never split. For regression the baselines are the training mean and the previous value, where the previous value is the mean target of the timestamp before (see "Baselines under time order"). A repeated-timestamp panel whose per-timestamp mean persists may get the `autocorrelated_panel_target` warning (see Limits). |
 | `--no-time-order` | a column | Grouped scheme: all of an entity's rows are on one side of the holdout and in one fold. No p-value. |
 | `--no-time-order` | `--no-entities` | Random scheme: rows are taken as independent. A p-value is reported, and `validation.caveat` says where the scheme is optimistic. |
 
@@ -186,10 +186,10 @@ is raised.
 | `columns` | one record per input column: role, kind, reason, leak rule, and counts |
 | `task` | type, whether it was decided by rule or declared, distinct values, classes, positive class |
 | `validation` | scheme, holdout share, folds, gap, time form, last training and first holdout timestamp, caveat, holdout rows with a copy among the training rows and their share (random scheme); with an entity column, the entity column and the entities on each side; under `duplicates="group"`, `n_rows_same_features` |
-| `headline` | metric, score, chosen model, baseline and its score, skill (null when it has no value), interval on the score and on the skill, p-value, reasons |
-| `baselines` | each baseline scored on the holdout, and which one was used |
-| `cv` | metric, folds scored, configurations, the chosen one, its mean and spread |
-| `models` | one record per configuration: parameters, status, error, fold scores, mean, spread, chosen |
+| `headline` | metric, score, chosen model, baseline and its score, skill (null when it has no value), interval on the score and on the skill, p-value, reasons; for a regression, `largest_row_share` and `largest_row` for the model and the baseline |
+| `baselines` | each baseline scored on the holdout, and which one was used; a regression under time order has both `training_mean` and `previous_value` |
+| `cv` | metric, folds scored, configurations, the chosen one, its mean and spread; for a regression, the largest-row keys over the selection folds |
+| `models` | one record per configuration: parameters, status, error, fold scores, mean, spread, chosen; for a regression, `largest_row_share` and `largest_row` over the selection folds |
 | `warnings` | records of code, column and message |
 | `limitations` | the nine fixed sentences described below |
 
@@ -255,9 +255,82 @@ ordered in time.
   `25/01/2024`, raises `time_column_invalid`: the tool never guesses between
   day-first and month-first, so convert the column first.
 
-Under the time-ordered scheme the regression baseline also includes
-`previous_value` when timestamps are unique, so a trending target is not scored
-only against the training mean.
+### Baselines under time order
+
+Under the time-ordered scheme a regression is always scored against two baselines,
+the training mean and the previous value, so a trending target is not scored only
+against the training mean. Both are reported in `baselines`. The one with the lower
+error on the holdout is the headline baseline, and a tie goes to the training mean.
+
+The previous value of a row is the mean target of the timestamp before it, that is,
+the timestamp `gap + 1` distinct timestamps earlier. With one row for each timestamp
+that is simply the row before. When a timestamp repeats, all of its rows share that
+one previous value, so a repeated row does not change the baseline. This holds with
+or without repeated timestamps.
+
+With an entity column the previous value is each entity's own (see "Entities").
+With `--no-entities` and repeated timestamps, a panel whose rows share timestamps
+may still get the `autocorrelated_panel_target` warning. That warning names the
+baseline the run used. If the rows are several series, such as one per customer or
+per device, declare the column that names each series with `--group-col` (or
+`group_col="COLUMN"`), so that each series is scored against its own previous value
+and no series is split across the holdout.
+
+### Statements a caller should read
+
+Three parts of the output say when one row or one value decides the result.
+
+- **`largest_row_share` and `largest_row`.** For a regression, these report the
+  share of the squared error that the single largest row carries, and that row, for
+  the model and for the baseline. They appear in `headline` (on the holdout), in
+  `cv` (over the selection folds, for the chosen configuration and for the headline
+  baseline), and for every configuration in `models`. The share is taken of the
+  squared errors, not of the absolute errors. When one row carries more than half of
+  the squared error, the warning `largest_row_dominates` is raised, once for each
+  of the statements above one half. The score, the skill and the choice of model keep
+  that row. The statement tells the caller that the result rests on one row.
+- **`extreme_value`.** This warning names a value that is far outside all the other
+  values of its column: a numeric feature, or a regression target, whose gap to the next
+  value inward is more than 30 times the spread of the ten distinct values after it.
+  Typical cases are `-999` or `999999` standing for a missing value in a column that
+  otherwise runs from about 1,000 to 100,000. The value is used as it is, and the
+  score, the skill and the choice keep it. The remedy is to write an empty cell where
+  the value means "missing": empty cells are handled inside each fold, and the rows
+  are then counted in the usual way.
+
+### When the folds cannot choose: `selection_not_made`
+
+The choice between configurations is made on the five folds inside the training rows.
+With an entity column, the folds are whole entities, and one entity can hold nearly
+all the training rows. When some fold then has fewer than 50 training rows and fewer
+training rows than validation rows, the folds cannot make a choice. The run still
+scores and reports every fold, but makes no choice: the configurations are taken in
+their own order, the first one is the chosen one, and the warning `selection_not_made`
+says so. The fallback for a configuration that fails after the choice follows the same
+order. The headline is then the score of a configuration chosen by order rather than
+by the folds, so it rests on that choice and not on the evidence.
+
+### What the leak screen does
+
+Before the models are fitted, each feature is read on its own against the target, on
+the training rows only. A column that predicts the target almost perfectly is excluded
+as a suspected leak. The reading does not depend on the column's scale: a copy of the
+target multiplied by a large or small factor is excluded in the same way as an exact
+copy. Under time order a copy of a trending target is excluded too, while the lag of
+that target, which is a legitimate feature, stays.
+
+The `strong_single_column` warning is the weaker tier. It names a column that predicts
+the target strongly but is kept as a feature, so that the caller can check it is known
+before the outcome. A column gets it in either of two ways:
+
+- its single-column skill, with every row scored, is at least 0.90 (the exclusion line
+  is 0.98: a column at or above it is excluded instead); or
+- for a numeric column of a regression whose skill is below 0.90, the column follows
+  the target's order: between at most 10% of neighbouring training rows, the target
+  moves the other way, and the target does not follow its own previous value as
+  closely. A steadily rising target, or a running total, does not raise it this way.
+
+The warning excludes nothing. It asks the caller to read that column first.
 
 ### Dates written as whole numbers
 
@@ -485,11 +558,27 @@ These limits are stated plainly. Each one is something the tool does not check.
 - **Entities are questioned only by one warning.** With `group_col=False`, the only
   check on whether rows belong together is `autocorrelated_panel_target`. It is
   raised only for regression under time order, with repeated timestamps, when the
-  per-timestamp mean persists from one timestamp to the next. On a short panel it
-  often does not fire: about half of panels of 8 timestamps raise no warning. A
-  panel that is not warned of may still have one entity's rows on both sides of the
-  split. Name the entity column with `group_col` whenever one entity has more than
-  one row.
+  per-timestamp mean persists from one timestamp to the next. It names the baseline
+  the run used, and it tells the caller to declare `group_col` if the rows are
+  several series. On a short panel it often does not fire: about half of panels of
+  8 timestamps raise no warning. A panel that is not warned of may still have one
+  entity's rows on both sides of the split. Name the entity column with `group_col`
+  whenever one entity has more than one row.
+- **A noisy copy of the target is not always excluded under time order.** Under time
+  order a copy of the target with noise of more than about 1% of the target's spread
+  is not detected as a leak, so the column can be kept as a feature. A copy with more
+  than about 1% of its cells altered is named by a warning but not excluded. Read a
+  `strong_single_column` warning on such a column before trusting the score.
+- **A whole-number measure in a table sorted by it is taken for an identifier.** A
+  column of distinct whole numbers in a table that is sorted by that column looks
+  like an identifier, so it is excluded as one. This version has no way to override a
+  column's role. Check the column's record in `columns`, and if it is a measure, do not
+  read the result as having used it.
+- **A sentinel that is not far outside its column is not named.** `extreme_value`
+  names a value only when it is far outside all the other values of its column. A
+  sentinel such as `-999` in a column that runs from 1,000 to 100,000 is not far
+  enough out, and no warning names it. It is used as it is. Where a value means
+  "missing", write an empty cell instead.
 - **No check looks for a column whose levels are series of their own.** A feature
   that identifies a series under another name (a column holding one value per
   series, for instance) is not recognised as an entity column. A model can learn
@@ -533,6 +622,15 @@ whole-number column above 2**53 stay distinct. A column of whole numbers too
 large for 64 bits is excluded as a feature, with a warning; as the target it
 stops the run with `task_unsupported`, and as the time column with
 `time_column_invalid`. The full list of error codes is in `spec.md` section 2.4.
+
+An identifier is excluded as a feature whatever order its rows are in. A
+whole-number column is taken as an identifier when every value is distinct and
+the values run one after another in the file, or when more than 95% of its values
+are distinct and they fill at least half their range. So shuffling the rows, leaving
+gaps, or repeating a few rows does not make an identifier a feature. Under time order
+the result does not depend on the order of the rows in the file: the rows are put in
+time order before anything is fitted, and the rows of one timestamp are taken in file
+order.
 
 A text target is read without the white space round its values, so `yes ` and
 `yes` are the same class; `classes`, `positive_class` and `y_true` show the value

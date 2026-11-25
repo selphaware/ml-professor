@@ -33,6 +33,7 @@ MIN_USABLE_ROWS = 100
 MIN_CLASS_ROWS = 10
 ROW_CAP = 2000
 SMALL_HOLDOUT = 50
+SELECTION_FLOOR = 50
 PANEL_AUTOCORRELATION = 0.5
 
 # Independent generator streams drawn from the one seed. The split itself is
@@ -219,6 +220,26 @@ def _column_warnings(roles, time_col):
                 f"{record['n_infinite']} value(s) of {name!r} are infinite or too large for the "
                 "tree models (magnitude above 3.4028234663852886e+38) and were read as "
                 "missing."))
+    return found
+
+
+def _extreme_value_warnings(features, kinds, y_all, target, task_type, split_rows):
+    """Step 11: one `extreme_value` for each value far outside all the others of a
+    numeric feature that reaches the models, or of a regression target, over the rows
+    that are split. No number changes for it."""
+    columns = [(name, feature_numbers(features[name].to_numpy())[split_rows])
+               for name, kind in kinds.items() if kind == "numeric"]
+    if task_type == "regression":
+        columns.append((target, np.asarray(y_all, dtype=float)[split_rows]))
+    found = []
+    for name, values in columns:
+        for value, n_rows, nearest in metrics.far_outside(values):
+            found.append(_warning(
+                "extreme_value", name,
+                f"{name!r} holds the value {value!r} in {n_rows} row(s), far outside all its "
+                f"other values (the nearest is {nearest!r}). It is used as it is in every fit "
+                "and every score; if it stands for a missing value, replace it with an empty "
+                "cell and run again."))
     return found
 
 
@@ -498,6 +519,9 @@ def _check_one_row_per_stamp(keys, codes, group_col):
             "repeated rows.")
 
 
+LARGEST_ROW_KEYS = ("largest_row_share", "largest_row",
+                    "baseline_largest_row_share", "baseline_largest_row")
+
 TARGET_TOO_LARGE = ("a target value is likely too large for squared error (its square is "
                     "beyond the largest double, about 1.8e308).")
 
@@ -535,9 +559,17 @@ def holdout_baselines(task_type, y_all, training_rows, holdout_rows, previous_ho
 # ------------------------------------------------------------ fitting
 
 class FitData:
-    """The preprocessed matrices of one fit: its training rows and the rows it predicts."""
+    """The preprocessed matrices of one fit: its training rows and the rows it predicts.
 
-    def __init__(self, features, kinds, y, train_rows, predict_rows):
+    Under time order (`fit_rank` given) the training rows are handed over in the order
+    of the rows of a fit (step 9): by timestamp, the rows of one timestamp in file order.
+    The rows it predicts keep the order they are given in.
+    """
+
+    def __init__(self, features, kinds, y, train_rows, predict_rows, fit_rank=None):
+        if fit_rank is not None:
+            train_rows = np.asarray(train_rows)
+            train_rows = train_rows[fit_order(train_rows, fit_rank)]
         step_factories = extensions.current_overrides()["steps"] or []
         train_x = features.iloc[train_rows].copy()
         predict_x = features.iloc[predict_rows].copy()
@@ -600,18 +632,47 @@ def _fold_is_scored(task_type, y, fold):
             and len(np.unique(y[fold["validation"]])) == 2)
 
 
-def select(configs, features, kinds, y, folds, scored, task_type, metric, seed, n_jobs):
-    """Step 9: every configuration on every scored fold. Returns the models records."""
+def fit_order(rows, fit_rank=None):
+    """The positions that put `rows` in the order of the rows of a fit (step 9): by
+    `fit_rank` (under time order the rank of a row's timestamp), then in file order."""
+    rows = np.asarray(rows)
+    if fit_rank is None:
+        return np.argsort(rows, kind="stable")
+    return np.lexsort((rows, fit_rank[rows]))
+
+
+def largest_row(errors, rows):
+    """Step 11: `(share, row)` of squared `errors` held by `rows`, both in the order in
+    which the first of several largest counts; `(None, None)` when every error is 0."""
+    share, position = metrics.largest_row_share(errors)
+    if share is None:
+        return None, None
+    return float(share), int(rows[position])
+
+
+def select(configs, features, kinds, y, folds, scored, task_type, metric, seed, n_jobs,
+           fit_rank=None):
+    """Step 9: every configuration on every scored fold. Returns the models records.
+
+    In a regression each record that stays fitted also holds the share of its
+    squared error over the pooled validation rows that its largest row carries.
+    """
     records = [{
         "config": c["config"], "family": c["family"], "params": dict(c["params"]),
         "status": "fitted", "error": None, "fold_scores": [None] * N_FOLDS,
         "cv_mean": None, "cv_std": None, "chosen": False,
+        "largest_row_share": None, "largest_row": None,
     } for c in configs]
+    # Over the scored folds in order, each fold's validation rows in the order of a fit.
+    pooled_rows, pooled_errors = [], [[] for _ in configs]
     for k, fold in enumerate(folds):
         if not scored[k]:
             continue
-        data = FitData(features, kinds, y, fold["training"], fold["validation"])
-        for config, record in zip(configs, records):
+        data = FitData(features, kinds, y, fold["training"], fold["validation"],
+                       fit_rank)
+        order = fit_order(fold["validation"], fit_rank)
+        pooled_rows.append(np.asarray(fold["validation"])[order])
+        for index, (config, record) in enumerate(zip(configs, records)):
             if record["status"] == "failed":
                 continue
             # Only what the model does can fail it: making it, its fit, its
@@ -632,12 +693,82 @@ def select(configs, features, kinds, y, folds, scored, task_type, metric, seed, 
                       "for squared error")
                 continue
             record["fold_scores"][k] = fold_score
-    for record in records:
+            if task_type == "regression":
+                # Finite: the fold score, their mean, is.
+                pooled_errors[index].append(
+                    metrics.squared_errors(data.predict_y, values)[order])
+    for index, record in enumerate(records):
         if record["status"] != "fitted":
             continue
         fold_scores = [s for s in record["fold_scores"] if s is not None]
         record["cv_mean"], record["cv_std"] = _mean_and_std(fold_scores)
+        if task_type == "regression":
+            record["largest_row_share"], record["largest_row"] = largest_row(
+                np.concatenate(pooled_errors[index]), np.concatenate(pooled_rows))
     return records
+
+
+def _fold_baseline_errors(name, y, folds, scored, previous, fit_rank):
+    """The headline baseline over the scored folds, predicted as the leak screen predicts
+    it: `(squared errors, rows)`, pooled fold by fold, each fold in the order of a fit."""
+    pooled_errors, pooled_rows = [], []
+    for k, fold in enumerate(folds):
+        if not scored[k]:
+            continue
+        rows = np.asarray(fold["validation"])
+        rows = rows[fit_order(rows, fit_rank)]
+        with np.errstate(over="ignore", invalid="ignore"):
+            mean = float(np.mean(y[fold["training"]]))
+        pred = np.full(len(rows), mean)
+        if name == "previous_value":
+            # A row with no previous value (an entity's first) is predicted by the mean.
+            pred = np.where(np.isnan(previous[rows]), mean, previous[rows])
+        pooled_errors.append(metrics.squared_errors(y[rows], pred))
+        pooled_rows.append(rows)
+    errors_all = np.concatenate(pooled_errors)
+    if not np.all(np.isfinite(errors_all)):
+        raise errors.NonFiniteScoreError(
+            f"The {name} baseline's squared error over the selection folds is not finite: "
+            + TARGET_TOO_LARGE)
+    return errors_all, np.concatenate(pooled_rows)
+
+
+def _percent(share):
+    return f"{100.0 * share:.2f}%"
+
+
+def _largest_row_warnings(headline, cv, model_records):
+    """Step 11: one `largest_row_dominates` for each of the four statements above 0.5."""
+    found = []
+    tail = (" The score, the skill and the choice of model keep that row; if it is an "
+            "error, remove it and run again.")
+    for prefix, who in (("", f"the chosen configuration {headline['model']}"),
+                        ("baseline_", f"the baseline {headline['baseline']}")):
+        share = headline[f"{prefix}largest_row_share"]
+        if share is not None and share > 0.5:
+            found.append(_warning(
+                "largest_row_dominates", None,
+                f"On the holdout, row {headline[prefix + 'largest_row']} carries "
+                f"{_percent(share)} of the squared error of {who}." + tail))
+    ruled = [r for r in model_records
+             if r["largest_row_share"] is not None and r["largest_row_share"] > 0.5]
+    if ruled:
+        found.append(_warning(
+            "largest_row_dominates", None,
+            "Over the selection folds, one row carries more than half of the squared error "
+            f"of {len(ruled)} configuration(s): "
+            + "; ".join(f"{r['config']}, row {r['largest_row']} "
+                        f"({_percent(r['largest_row_share'])})" for r in ruled)
+            + ". The choice of model, and the model fitted on the training rows, may rest "
+            "on that row." + tail))
+    share = cv["baseline_largest_row_share"]
+    if share is not None and share > 0.5:
+        found.append(_warning(
+            "largest_row_dominates", None,
+            f"Over the selection folds, row {cv['baseline_largest_row']} carries "
+            f"{_percent(share)} of the squared error of the baseline {headline['baseline']}."
+            + tail))
+    return found
 
 
 # ------------------------------------------------------------ the run
@@ -880,22 +1011,33 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs, dupli
                 "not scored."))
     if not any(scored):
         raise errors.OneClassError("No fold holds both classes in training and validation.")
+    # Step 9 under the grouped scheme: where a fold trains on fewer than 50 rows and on
+    # fewer rows than it validates on, the folds cannot choose (D74 point 6).
+    starved = ([len(f["training"]) for f in folds
+                if len(f["training"]) < SELECTION_FLOOR
+                and len(f["training"]) < len(f["validation"])]
+               if units is not None else [])
+    selection_made = not starved
+    if starved:
+        fewest = min(starved)
+        warnings.append(_warning(
+            "selection_not_made", None,
+            f"No choice between configurations was made: under the grouped scheme a "
+            f"selection fold trains on {fewest} rows, fewer than {SELECTION_FLOOR} and "
+            "fewer than it validates on, so the fold scores cannot choose. Every fold was "
+            "scored and is reported; the configurations were ranked in configuration "
+            "order, and the first that has a cv_mean and fits is used."))
 
     # Step 11 under time order in a regression: each entity one series; a panel with
     # no entities (`group_col=False`) whose per-timestamp mean persists is warned of.
     by_entity = task_type == "regression" and time_ordered and entity is not None
     if by_entity:
         _check_one_row_per_stamp(kept_keys, entity[kept], group_col)
-    panel_warning = None
+    panel_r = None
     if task_type == "regression" and time_ordered and entity is None and not timestamps_unique:
         r = _panel_autocorrelation(kept_keys[split["training"]], y_all[training_rows])
         if r is not None and r > PANEL_AUTOCORRELATION:
-            panel_warning = _warning(
-                "autocorrelated_panel_target", target,
-                f"The per-timestamp mean of {target!r} has lag-1 autocorrelation {r:.2f} "
-                f"over the training timestamps (above {PANEL_AUTOCORRELATION}). With "
-                "repeated timestamps the baseline is the training mean, which a "
-                "persistent target beats easily; profile its changes instead.")
+            panel_r = r
 
     # Step 11's baselines need no fit: scored on the holdout now, before any (D44).
     previous = previous_holdout = None
@@ -917,13 +1059,25 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs, dupli
                 f"{n_without_previous} holdout row(s) belong to an entity of {group_col!r} "
                 f"with no row at least {gap + 1} timestamp(s) earlier; for them the "
                 "previous-value baseline predicts the training mean."))
-    elif task_type == "regression" and time_ordered and timestamps_unique:
-        # The target `gap + 1` timestamps earlier among the kept rows in time order.
+    elif task_type == "regression" and time_ordered:
+        # The mean target of the timestamp `gap + 1` distinct timestamps earlier, over
+        # the kept rows: at unique timestamps the target of the row `gap + 1` before.
         previous = np.full(n_loaded, np.nan)
         previous[kept] = metrics.previous_value(y_all[kept], kept_keys, gap=gap)
         previous_holdout = previous[holdout_rows]
     baselines, baseline_preds = holdout_baselines(
         task_type, y_all, training_rows, holdout_rows, previous_holdout=previous_holdout)
+    panel_warning = None
+    if panel_r is not None:
+        used_name = next(b["name"] for b in baselines if b["used"])
+        panel_warning = _warning(
+            "autocorrelated_panel_target", target,
+            f"The per-timestamp mean of {target!r} has lag-1 autocorrelation {panel_r:.2f} "
+            f"over the training timestamps (above {PANEL_AUTOCORRELATION}). "
+            f"Skill is measured against the baseline {used_name}. With no entity column "
+            "the previous value of a row is the mean target of the timestamp before, over "
+            "every series at once: if the rows are several series, declare group_col, and "
+            "each series is measured against its own previous value.")
 
     # Step 8: the leak screen, on training rows only, over the selection folds.
     roles = roles.copy()
@@ -950,6 +1104,14 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs, dupli
                 f"{name!r} on its own predicts the target with skill {record['skill']:.3f} "
                 "on the training rows. It is kept as a feature; check that it is known "
                 "before the outcome."))
+        elif record["order_share"] is not None:
+            warnings.append(_warning(
+                "strong_single_column", name,
+                f"{name!r} follows the target's order: with the training rows sorted by "
+                f"it, the target moves against that order between "
+                f"{100.0 * record['order_share']:.2f}% of neighbouring rows, and does not "
+                "follow its own previous value as closely. It is kept as a feature; check "
+                "that it is known before the outcome."))
     if not kinds:
         raise errors.NoFeaturesError(
             "No feature is left after the leak screen. Excluded: "
@@ -984,13 +1146,23 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs, dupli
     metric = "roc_auc" if task_type == "classification" else "mse"
     greater_is_better = metric == "roc_auc"
     configs = models.configurations(models.active_families(task_type, profile))
+    fit_rank = None
+    if time_ordered:
+        # The rank of each kept row's timestamp: the order of the rows of a fit.
+        fit_rank = np.zeros(n_loaded, dtype=np.int64)
+        fit_rank[kept] = np.unique(kept_keys, return_inverse=True)[1].reshape(-1)
     model_records = select(configs, features, kinds, y_all, folds, scored, task_type,
-                           metric, seed, n_jobs)
+                           metric, seed, n_jobs, fit_rank=fit_rank)
 
     # Steps 10 and 11: refit the chosen one on all training rows; score the holdout once.
-    final = FitData(features, kinds, y_all, training_rows, holdout_rows)
+    final = FitData(features, kinds, y_all, training_rows, holdout_rows, fit_rank)
     chosen_index, holdout_pred = None, None
-    for index in models.ranked_configurations(model_records, greater_is_better):
+    if selection_made:
+        ranking = models.ranked_configurations(model_records, greater_is_better)
+    else:
+        ranking = [i for i, record in enumerate(model_records)
+                   if record["status"] == "fitted" and record["cv_mean"] is not None]
+    for index in ranking:
         try:
             holdout_pred = fit_and_predict(configs[index], task_type, final, seed, n_jobs)
         except errors.ProfileError:
@@ -1045,6 +1217,9 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs, dupli
             "exactly (squared error 0), so 1 - score / baseline score is undefined. The score "
             "and every baseline are reported as measured; there is no interval on skill and "
             "no p-value."))
+    warnings.extend(_extreme_value_warnings(
+        features, kinds, y_all, target, task_type,
+        np.concatenate([training_rows, holdout_rows, gap_rows])))
 
     # Step 12: the interval and the p-value, from the holdout predictions alone.
     spread, spread_warnings = uncertainty.headline_uncertainty(
@@ -1055,6 +1230,29 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs, dupli
     headline.update(spread)
     for code, message in spread_warnings:
         warnings.append(_warning(code, None, message))
+
+    # Step 11: the share of each squared error that its largest row carries. A
+    # statement about the result: no number above changes for it.
+    largest = {key: None for key in LARGEST_ROW_KEYS}
+    cv_largest = {key: None for key in LARGEST_ROW_KEYS}
+    if task_type == "regression":
+        holdout_order = fit_order(holdout_rows, fit_rank)
+        ordered_holdout = holdout_rows[holdout_order]
+        y_ordered = y_holdout[holdout_order]
+        for prefix, pred in (("", holdout_pred),
+                             ("baseline_", baseline_preds[baseline["name"]])):
+            errors_h = metrics.squared_errors(
+                y_ordered, np.asarray(pred, dtype=float)[holdout_order])
+            (largest[f"{prefix}largest_row_share"],
+             largest[f"{prefix}largest_row"]) = largest_row(errors_h, ordered_holdout)
+        cv_largest["largest_row_share"] = chosen["largest_row_share"]
+        cv_largest["largest_row"] = chosen["largest_row"]
+        fold_errors, fold_rows = _fold_baseline_errors(
+            baseline["name"], y_all, folds, scored, previous, fit_rank)
+        (cv_largest["baseline_largest_row_share"],
+         cv_largest["baseline_largest_row"]) = largest_row(fold_errors, fold_rows)
+    headline.update(largest)
+    warnings.extend(_largest_row_warnings(headline, cv_largest, model_records))
     if task_type == "classification":
         rarer = int(min(y_holdout.sum(), len(y_holdout) - y_holdout.sum()))
         small = rarer < SMALL_HOLDOUT
@@ -1161,7 +1359,7 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs, dupli
             "metric": metric, "greater_is_better": greater_is_better, "n_folds": N_FOLDS,
             "n_scored_folds": n_scored, "n_configurations": len(model_records),
             "chosen": chosen["config"], "chosen_mean": chosen["cv_mean"],
-            "chosen_std": chosen["cv_std"],
+            "chosen_std": chosen["cv_std"], **cv_largest,
         },
         "models": model_records,
         "warnings": warnings,

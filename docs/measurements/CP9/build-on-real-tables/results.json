@@ -1,0 +1,1027 @@
+[
+ {
+  "case": "VIX level, clean",
+  "expect": "0.023 as before",
+  "args": {
+   "time_col": "date",
+   "group_col": "False",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "time_ordered",
+  "baseline": "previous_value",
+  "skill": 0.023365871559325457,
+  "model": "linear-0",
+  "ci": [
+   -0.0772565468355973,
+   0.10533902952923947
+  ],
+  "baselines": [
+   "training_mean",
+   "previous_value"
+  ],
+  "share": 0.1545721109295432,
+  "share_base": 0.17739346749087162,
+  "warnings": [
+   "interval_approximate"
+  ],
+  "texts": [],
+  "excluded": {},
+  "headline_keys": [
+   "baseline_largest_row",
+   "baseline_largest_row_share",
+   "largest_row",
+   "largest_row_share"
+  ],
+  "seconds": 0.8,
+  "py_warnings": []
+ },
+ {
+  "case": "VIX level, ONE row repeated",
+  "expect": "was 0.843; now about the clean figure, previous value still the baseline",
+  "args": {
+   "time_col": "date",
+   "group_col": "False",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "time_ordered",
+  "baseline": "previous_value",
+  "skill": 0.023573203228329564,
+  "model": "linear-0",
+  "ci": [
+   -0.07710999648620141,
+   0.10548509786329197
+  ],
+  "baselines": [
+   "training_mean",
+   "previous_value"
+  ],
+  "share": 0.1545188663953498,
+  "share_base": 0.17739346749087162,
+  "warnings": [
+   "autocorrelated_panel_target",
+   "duplicate_rows",
+   "interval_approximate"
+  ],
+  "texts": [
+   [
+    "autocorrelated_panel_target",
+    "close",
+    "The per-timestamp mean of 'close' has lag-1 autocorrelation 0.97 over the training timestamps (above 0.5). Skill is measured against the baseline previous_value. With no entity column the previous val"
+   ]
+  ],
+  "excluded": {},
+  "headline_keys": [
+   "baseline_largest_row",
+   "baseline_largest_row_share",
+   "largest_row",
+   "largest_row_share"
+  ],
+  "seconds": 0.3,
+  "py_warnings": []
+ },
+ {
+  "case": "VIX level, 10% of the kept rows repeated",
+  "expect": "about the clean figure",
+  "args": {
+   "time_col": "date",
+   "group_col": "False",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "time_ordered",
+  "baseline": "previous_value",
+  "skill": 0.01762231984439122,
+  "model": "linear-0",
+  "ci": [
+   -0.05070961526425411,
+   0.08084646332699306
+  ],
+  "baselines": [
+   "training_mean",
+   "previous_value"
+  ],
+  "share": 0.15332852070151423,
+  "share_base": 0.1874835446367995,
+  "warnings": [
+   "autocorrelated_panel_target",
+   "duplicate_rows",
+   "interval_approximate"
+  ],
+  "texts": [
+   [
+    "autocorrelated_panel_target",
+    "close",
+    "The per-timestamp mean of 'close' has lag-1 autocorrelation 0.97 over the training timestamps (above 0.5). Skill is measured against the baseline previous_value. With no entity column the previous val"
+   ]
+  ],
+  "excluded": {},
+  "headline_keys": [
+   "baseline_largest_row",
+   "baseline_largest_row_share",
+   "largest_row",
+   "largest_row_share"
+  ],
+  "seconds": 0.2,
+  "py_warnings": []
+ },
+ {
+  "case": "VIX level + exact rescaled copy of the target",
+  "expect": "was 1.000; now the copy is excluded as a suspected leak",
+  "args": {
+   "time_col": "date",
+   "group_col": "False",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "time_ordered",
+  "baseline": "previous_value",
+  "skill": 0.023365871559325457,
+  "model": "linear-0",
+  "ci": [
+   -0.0772565468355973,
+   0.10533902952923947
+  ],
+  "baselines": [
+   "training_mean",
+   "previous_value"
+  ],
+  "share": 0.1545721109295432,
+  "share_base": 0.17739346749087162,
+  "warnings": [
+   "interval_approximate",
+   "suspected_leak"
+  ],
+  "texts": [
+   [
+    "suspected_leak",
+    "close_in_other_units",
+    "'close_in_other_units' is excluded as a suspected leak: on its own it predicts the target with skill 1.000 on the training rows. Check whether it is known before the outcome."
+   ]
+  ],
+  "excluded": {
+   "close_in_other_units": "suspected_leak"
+  },
+  "headline_keys": [
+   "baseline_largest_row",
+   "baseline_largest_row_share",
+   "largest_row",
+   "largest_row_share"
+  ],
+  "seconds": 0.2,
+  "py_warnings": []
+ },
+ {
+  "case": "VIX level + copy with 5 cells changed",
+  "expect": "excluded",
+  "args": {
+   "time_col": "date",
+   "group_col": "False",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "time_ordered",
+  "baseline": "previous_value",
+  "skill": 0.9753563783428403,
+  "model": "linear-0",
+  "ci": [
+   0.9402626218300566,
+   0.9980785737390222
+  ],
+  "baselines": [
+   "training_mean",
+   "previous_value"
+  ],
+  "share": 0.9167928174706387,
+  "share_base": 0.17739346749087162,
+  "warnings": [
+   "interval_approximate",
+   "largest_row_dominates",
+   "strong_single_column"
+  ],
+  "texts": [
+   [
+    "strong_single_column",
+    "copy_few_changed",
+    "'copy_few_changed' on its own predicts the target with skill 0.967 on the training rows. It is kept as a feature; check that it is known before the outcome."
+   ],
+   [
+    "largest_row_dominates",
+    null,
+    "On the holdout, row 8892 carries 91.68% of the squared error of the chosen configuration linear-0. The score, the skill and the choice of model keep that row; if it is an error, remove it and run agai"
+   ]
+  ],
+  "excluded": {},
+  "headline_keys": [
+   "baseline_largest_row",
+   "baseline_largest_row_share",
+   "largest_row",
+   "largest_row_share"
+  ],
+  "seconds": 0.2,
+  "py_warnings": []
+ },
+ {
+  "case": "VIX level + the square of the target",
+  "expect": "at least warned (order reading)",
+  "args": {
+   "time_col": "date",
+   "group_col": "False",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "time_ordered",
+  "baseline": "previous_value",
+  "skill": 0.9985627172513709,
+  "model": "tree-0",
+  "ci": [
+   0.9973033163139013,
+   0.9998515626866087
+  ],
+  "baselines": [
+   "training_mean",
+   "previous_value"
+  ],
+  "share": 0.8690547544335945,
+  "share_base": 0.17739346749087162,
+  "warnings": [
+   "interval_approximate",
+   "largest_row_dominates",
+   "strong_single_column"
+  ],
+  "texts": [
+   [
+    "strong_single_column",
+    "close_squared",
+    "'close_squared' follows the target's order: with the training rows sorted by it, the target moves against that order between 0.00% of neighbouring rows, and does not follow its own previous value as c"
+   ],
+   [
+    "largest_row_dominates",
+    null,
+    "On the holdout, row 8896 carries 86.91% of the squared error of the chosen configuration tree-0. The score, the skill and the choice of model keep that row; if it is an error, remove it and run again."
+   ]
+  ],
+  "excluded": {},
+  "headline_keys": [
+   "baseline_largest_row",
+   "baseline_largest_row_share",
+   "largest_row",
+   "largest_row_share"
+  ],
+  "seconds": 0.2,
+  "py_warnings": []
+ },
+ {
+  "case": "VIX level + copy with 5% noise",
+  "expect": "STATED LIMIT (D76): may pass in silence",
+  "args": {
+   "time_col": "date",
+   "group_col": "False",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "time_ordered",
+  "baseline": "previous_value",
+  "skill": 0.9669693917890886,
+  "model": "linear-0",
+  "ci": [
+   0.9330121935917963,
+   0.9809247796517216
+  ],
+  "baselines": [
+   "training_mean",
+   "previous_value"
+  ],
+  "share": 0.019795935192001433,
+  "share_base": 0.17739346749087162,
+  "warnings": [
+   "interval_approximate",
+   "strong_single_column"
+  ],
+  "texts": [
+   [
+    "strong_single_column",
+    "noisy_copy",
+    "'noisy_copy' on its own predicts the target with skill 0.970 on the training rows. It is kept as a feature; check that it is known before the outcome."
+   ]
+  ],
+  "excluded": {},
+  "headline_keys": [
+   "baseline_largest_row",
+   "baseline_largest_row_share",
+   "largest_row",
+   "largest_row_share"
+  ],
+  "seconds": 0.3,
+  "py_warnings": []
+ },
+ {
+  "case": "diabetes, one cell 999999 in a feature",
+  "expect": "was -0.111 with no word; now the value is named",
+  "args": {
+   "time_col": "False",
+   "group_col": "False",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "random",
+  "baseline": "training_mean",
+  "skill": -0.11061569102708946,
+  "model": "tree-0",
+  "ci": [
+   -0.44703003972614985,
+   0.16969504831714308
+  ],
+  "baselines": [
+   "training_mean"
+  ],
+  "share": 0.07934852603445426,
+  "share_base": 0.038893202773132914,
+  "warnings": [
+   "extreme_value",
+   "largest_row_dominates",
+   "strong_single_column",
+   "whole_number_regression_target"
+  ],
+  "texts": [
+   [
+    "strong_single_column",
+    "age",
+    "'age' follows the target's order: with the training rows sorted by it, the target moves against that order between 3.64% of neighbouring rows, and does not follow its own previous value as closely. It"
+   ],
+   [
+    "strong_single_column",
+    "s6",
+    "'s6' follows the target's order: with the training rows sorted by it, the target moves against that order between 7.41% of neighbouring rows, and does not follow its own previous value as closely. It "
+   ],
+   [
+    "extreme_value",
+    "bmi",
+    "'bmi' holds the value 999999.0 in 1 row(s), far outside all its other values (the nearest is 0.17055522598064407). It is used as it is in every fit and every score; if it stands for a missing value, r"
+   ],
+   [
+    "largest_row_dominates",
+    null,
+    "Over the selection folds, one row carries more than half of the squared error of 1 configuration(s): linear-0, row 10 (100.00%). The choice of model, and the model fitted on the training rows, may res"
+   ]
+  ],
+  "excluded": {},
+  "headline_keys": [
+   "baseline_largest_row",
+   "baseline_largest_row_share",
+   "largest_row",
+   "largest_row_share"
+  ],
+  "seconds": 0.1,
+  "py_warnings": []
+ },
+ {
+  "case": "diabetes, one cell 999999 in the target",
+  "expect": "the value is named; the largest row's share says the rest",
+  "args": {
+   "time_col": "False",
+   "group_col": "False",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "random",
+  "baseline": "training_mean",
+  "skill": 0.9992049166307754,
+  "model": "tree-0",
+  "ci": [
+   0.9990256219899951,
+   0.9994127682923537
+  ],
+  "baselines": [
+   "training_mean"
+  ],
+  "share": 0.0718676608518547,
+  "share_base": 0.009718891173882837,
+  "warnings": [
+   "extreme_value",
+   "largest_row_dominates",
+   "strong_single_column",
+   "whole_number_regression_target"
+  ],
+  "texts": [
+   [
+    "strong_single_column",
+    "age",
+    "'age' follows the target's order: with the training rows sorted by it, the target moves against that order between 5.45% of neighbouring rows, and does not follow its own previous value as closely. It"
+   ],
+   [
+    "strong_single_column",
+    "s6",
+    "'s6' follows the target's order: with the training rows sorted by it, the target moves against that order between 7.41% of neighbouring rows, and does not follow its own previous value as closely. It "
+   ],
+   [
+    "extreme_value",
+    "target",
+    "'target' holds the value 999999.0 in 1 row(s), far outside all its other values (the nearest is 346.0). It is used as it is in every fit and every score; if it stands for a missing value, replace it w"
+   ],
+   [
+    "largest_row_dominates",
+    null,
+    "Over the selection folds, one row carries more than half of the squared error of 2 configuration(s): linear-0, row 10 (93.87%); tree-0, row 10 (100.00%). The choice of model, and the model fitted on t"
+   ],
+   [
+    "largest_row_dominates",
+    null,
+    "Over the selection folds, row 10 carries 99.62% of the squared error of the baseline training_mean. The score, the skill and the choice of model keep that row; if it is an error, remove it and run aga"
+   ]
+  ],
+  "excluded": {},
+  "headline_keys": [
+   "baseline_largest_row",
+   "baseline_largest_row_share",
+   "largest_row",
+   "largest_row_share"
+  ],
+  "seconds": 0.1,
+  "py_warnings": []
+ },
+ {
+  "case": "diabetes, clean",
+  "expect": "0.490034; shares small; no new warning",
+  "args": {
+   "time_col": "False",
+   "group_col": "False",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "random",
+  "baseline": "training_mean",
+  "skill": 0.4900337428923588,
+  "model": "linear-0",
+  "ci": [
+   0.3429073414453271,
+   0.6022836720838429
+  ],
+  "baselines": [
+   "training_mean"
+  ],
+  "share": 0.05220323055465548,
+  "share_base": 0.038893202773132914,
+  "warnings": [
+   "strong_single_column",
+   "whole_number_regression_target"
+  ],
+  "texts": [
+   [
+    "strong_single_column",
+    "age",
+    "'age' follows the target's order: with the training rows sorted by it, the target moves against that order between 3.64% of neighbouring rows, and does not follow its own previous value as closely. It"
+   ],
+   [
+    "strong_single_column",
+    "s6",
+    "'s6' follows the target's order: with the training rows sorted by it, the target moves against that order between 7.41% of neighbouring rows, and does not follow its own previous value as closely. It "
+   ]
+  ],
+  "excluded": {},
+  "headline_keys": [
+   "baseline_largest_row",
+   "baseline_largest_row_share",
+   "largest_row",
+   "largest_row_share"
+  ],
+  "seconds": 0.1,
+  "py_warnings": []
+ },
+ {
+  "case": "VIX close from the same day's open, high, low (time order)",
+  "expect": "legitimate-looking strong features; what does the tool say?",
+  "args": {
+   "time_col": "date",
+   "group_col": "False",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "time_ordered",
+  "baseline": "previous_value",
+  "skill": 0.7854616909621135,
+  "model": "linear-0",
+  "ci": [
+   0.7502868308329624,
+   0.8357556497382952
+  ],
+  "baselines": [
+   "training_mean",
+   "previous_value"
+  ],
+  "share": 0.19224178714245735,
+  "share_base": 0.17739346749087162,
+  "warnings": [
+   "interval_approximate"
+  ],
+  "texts": [],
+  "excluded": {},
+  "headline_keys": [
+   "baseline_largest_row",
+   "baseline_largest_row_share",
+   "largest_row",
+   "largest_row_share"
+  ],
+  "seconds": 0.1,
+  "py_warnings": []
+ },
+ {
+  "case": "diamonds price (carat, x, y, z are strong)",
+  "expect": "0.933 as before; any strong_single_column is a question, not an exclusion",
+  "args": {
+   "time_col": "False",
+   "group_col": "False",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "random",
+  "baseline": "training_mean",
+  "skill": 0.9333271016396157,
+  "model": "tree-0",
+  "ci": [
+   0.9178300342913184,
+   0.951217262163137
+  ],
+  "baselines": [
+   "training_mean"
+  ],
+  "share": 0.07725183213208689,
+  "share_base": 0.026892943044018,
+  "warnings": [
+   "duplicate_rows",
+   "whole_number_regression_target"
+  ],
+  "texts": [],
+  "excluded": {},
+  "headline_keys": [
+   "baseline_largest_row",
+   "baseline_largest_row_share",
+   "largest_row",
+   "largest_row_share"
+  ],
+  "seconds": 0.8,
+  "py_warnings": []
+ },
+ {
+  "case": "breast cancer",
+  "expect": "0.994549; nothing new",
+  "args": {
+   "time_col": "False",
+   "group_col": "False",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "random",
+  "baseline": "chance",
+  "skill": 0.9945492662473794,
+  "model": "linear-0",
+  "ci": [
+   0.9846483795917167,
+   1.0
+  ],
+  "baselines": [
+   "chance"
+  ],
+  "share": null,
+  "share_base": null,
+  "warnings": [],
+  "texts": [],
+  "excluded": {},
+  "headline_keys": [
+   "baseline_largest_row",
+   "baseline_largest_row_share",
+   "largest_row",
+   "largest_row_share"
+  ],
+  "seconds": 0.5,
+  "py_warnings": []
+ },
+ {
+  "case": "taxis fare (total and distance are near-copies of fare)",
+  "expect": "`total` strong; excluded or warned, never silent",
+  "args": {
+   "time_col": "False",
+   "group_col": "False",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "random",
+  "baseline": "training_mean",
+  "skill": 0.9960033494837349,
+  "model": "linear-0",
+  "ci": [
+   0.9935609787087083,
+   0.9971952292357612
+  ],
+  "baselines": [
+   "training_mean"
+  ],
+  "share": 0.10879059199232452,
+  "share_base": 0.16499837710739054,
+  "warnings": [
+   "duplicate_rows",
+   "largest_row_dominates",
+   "strong_single_column"
+  ],
+  "texts": [
+   [
+    "strong_single_column",
+    "total",
+    "'total' on its own predicts the target with skill 0.945 on the training rows. It is kept as a feature; check that it is known before the outcome."
+   ],
+   [
+    "largest_row_dominates",
+    null,
+    "Over the selection folds, one row carries more than half of the squared error of 1 configuration(s): tree-0, row 5325 (62.09%). The choice of model, and the model fitted on the training rows, may rest"
+   ]
+  ],
+  "excluded": {},
+  "headline_keys": [
+   "baseline_largest_row",
+   "baseline_largest_row_share",
+   "largest_row",
+   "largest_row_share"
+  ],
+  "seconds": 0.4,
+  "py_warnings": []
+ },
+ {
+  "case": "taxis tip (heavy-tailed, many zeros)",
+  "expect": "runs; extreme_value quiet unless a value truly stands apart",
+  "args": {
+   "time_col": "False",
+   "group_col": "False",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "random",
+  "baseline": "training_mean",
+  "skill": 0.6731175014754296,
+  "model": "tree-0",
+  "ci": [
+   0.5420546106622943,
+   0.7797837492679254
+  ],
+  "baselines": [
+   "training_mean"
+  ],
+  "share": 0.08139849215445039,
+  "share_base": 0.08272263846505992,
+  "warnings": [
+   "duplicate_rows"
+  ],
+  "texts": [],
+  "excluded": {},
+  "headline_keys": [
+   "baseline_largest_row",
+   "baseline_largest_row_share",
+   "largest_row",
+   "largest_row_share"
+  ],
+  "seconds": 0.4,
+  "py_warnings": []
+ },
+ {
+  "case": "mpg",
+  "expect": "0.822 as before",
+  "args": {
+   "time_col": "False",
+   "group_col": "False",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "random",
+  "baseline": "training_mean",
+  "skill": 0.8216442703470115,
+  "model": "linear-0",
+  "ci": [
+   0.7786588097350451,
+   0.8734200145893151
+  ],
+  "baselines": [
+   "training_mean"
+  ],
+  "share": 0.0894563136156812,
+  "share_base": 0.05699404511519309,
+  "warnings": [],
+  "texts": [],
+  "excluded": {
+   "name": "free_text"
+  },
+  "headline_keys": [
+   "baseline_largest_row",
+   "baseline_largest_row_share",
+   "largest_row",
+   "largest_row_share"
+  ],
+  "seconds": 0.1,
+  "py_warnings": []
+ },
+ {
+  "case": "titanic + a consecutive id, rows SHUFFLED, keep",
+  "expect": "passenger_id excluded as id_like (was a feature when shuffled); 0.745",
+  "args": {
+   "duplicates": "keep",
+   "time_col": "False",
+   "group_col": "False",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "random",
+  "baseline": "chance",
+  "skill": 0.7803428959429639,
+  "model": "linear-0",
+  "ci": [
+   0.684850083238548,
+   0.8736111974836641
+  ],
+  "baselines": [
+   "chance"
+  ],
+  "share": null,
+  "share_base": null,
+  "warnings": [
+   "holdout_copies_kept"
+  ],
+  "texts": [],
+  "excluded": {
+   "passenger_id": "id_like"
+  },
+  "headline_keys": [
+   "baseline_largest_row",
+   "baseline_largest_row_share",
+   "largest_row",
+   "largest_row_share"
+  ],
+  "seconds": 0.3,
+  "py_warnings": []
+ },
+ {
+  "case": "mpg, every US car one entity (62.6%)",
+  "expect": "as before (0.822) unless the folds cannot choose, then selection_not_made",
+  "args": {
+   "time_col": "False",
+   "group_col": "maker",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "grouped",
+  "baseline": "training_mean",
+  "skill": 0.7761798803292095,
+  "model": "linear-0",
+  "ci": [
+   0.7148940649657436,
+   0.8271249187057053
+  ],
+  "baselines": [
+   "training_mean"
+  ],
+  "share": 0.10886253302765005,
+  "share_base": 0.061770646966791756,
+  "warnings": [
+   "large_group_kept_in_training",
+   "selection_not_made"
+  ],
+  "texts": [
+   [
+    "selection_not_made",
+    null,
+    "No choice between configurations was made: under the grouped scheme a selection fold trains on 42 rows, fewer than 50 and fewer than it validates on, so the fold scores cannot choose. Every fold was s"
+   ]
+  ],
+  "excluded": {},
+  "headline_keys": [
+   "baseline_largest_row",
+   "baseline_largest_row_share",
+   "largest_row",
+   "largest_row_share"
+  ],
+  "seconds": 0.1,
+  "py_warnings": []
+ },
+ {
+  "case": "penguins sex",
+  "expect": "0.937642",
+  "args": {
+   "time_col": "False",
+   "group_col": "False",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "random",
+  "baseline": "chance",
+  "skill": 0.937641723356009,
+  "model": "linear-0",
+  "ci": [
+   0.8554348974438261,
+   0.9864422693123771
+  ],
+  "baselines": [
+   "chance"
+  ],
+  "share": null,
+  "share_base": null,
+  "warnings": [
+   "small_holdout"
+  ],
+  "texts": [],
+  "excluded": {},
+  "headline_keys": [
+   "baseline_largest_row",
+   "baseline_largest_row_share",
+   "largest_row",
+   "largest_row_share"
+  ],
+  "seconds": 0.1,
+  "py_warnings": []
+ },
+ {
+  "case": "titanic keep",
+  "expect": "0.744865",
+  "args": {
+   "duplicates": "keep",
+   "time_col": "False",
+   "group_col": "False",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "random",
+  "baseline": "chance",
+  "skill": 0.744865048378883,
+  "model": "linear-0",
+  "ci": [
+   0.6558292825410376,
+   0.8290082009677876
+  ],
+  "baselines": [
+   "chance"
+  ],
+  "share": null,
+  "share_base": null,
+  "warnings": [
+   "duplicate_rows",
+   "holdout_copies_kept"
+  ],
+  "texts": [],
+  "excluded": {},
+  "headline_keys": [
+   "baseline_largest_row",
+   "baseline_largest_row_share",
+   "largest_row",
+   "largest_row_share"
+  ],
+  "seconds": 0.3,
+  "py_warnings": []
+ },
+ {
+  "case": "titanic group",
+  "expect": "0.645030",
+  "args": {
+   "duplicates": "group",
+   "time_col": "False",
+   "group_col": "False",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "grouped",
+  "baseline": "chance",
+  "skill": 0.6450304259634889,
+  "model": "linear-0",
+  "ci": [
+   0.5142494308572615,
+   0.745425773656977
+  ],
+  "baselines": [
+   "chance"
+  ],
+  "share": null,
+  "share_base": null,
+  "warnings": [
+   "duplicate_rows",
+   "same_features_grouped"
+  ],
+  "texts": [],
+  "excluded": {},
+  "headline_keys": [
+   "baseline_largest_row",
+   "baseline_largest_row_share",
+   "largest_row",
+   "largest_row_share"
+  ],
+  "seconds": 0.3,
+  "py_warnings": []
+ },
+ {
+  "case": "stocks level, group_col=symbol",
+  "expect": "-0.138855",
+  "args": {
+   "time_col": "date",
+   "group_col": "symbol",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "time_ordered",
+  "baseline": "previous_value",
+  "skill": -0.1388548810989172,
+  "model": "linear-0",
+  "ci": [
+   null,
+   null
+  ],
+  "baselines": [
+   "training_mean",
+   "previous_value"
+  ],
+  "share": 0.19564659418051122,
+  "share_base": 0.18321659205529153,
+  "warnings": [
+   "no_interval"
+  ],
+  "texts": [],
+  "excluded": {},
+  "headline_keys": [
+   "baseline_largest_row",
+   "baseline_largest_row_share",
+   "largest_row",
+   "largest_row_share"
+  ],
+  "seconds": 0.0,
+  "py_warnings": []
+ },
+ {
+  "case": "stocks level, group_col=False (a panel, on the caller's word)",
+  "expect": "was 0.979 against the training mean; now both baselines are scored",
+  "args": {
+   "time_col": "date",
+   "group_col": "False",
+   "profile": "fast",
+   "n_jobs": "2"
+  },
+  "outcome": "ran",
+  "scheme": "time_ordered",
+  "baseline": "previous_value",
+  "skill": 0.7263141098730861,
+  "model": "tree-0",
+  "ci": [
+   null,
+   null
+  ],
+  "baselines": [
+   "training_mean",
+   "previous_value"
+  ],
+  "share": 0.09424995171902102,
+  "share_base": 0.06105209786675037,
+  "warnings": [
+   "autocorrelated_panel_target",
+   "no_interval",
+   "suspected_leak"
+  ],
+  "texts": [
+   [
+    "suspected_leak",
+    "price_lag1",
+    "'price_lag1' is excluded as a suspected leak: on its own it predicts the target with skill 0.981 on the training rows. Check whether it is known before the outcome."
+   ],
+   [
+    "autocorrelated_panel_target",
+    "price",
+    "The per-timestamp mean of 'price' has lag-1 autocorrelation 0.94 over the training timestamps (above 0.5). Skill is measured against the baseline previous_value. With no entity column the previous val"
+   ]
+  ],
+  "excluded": {
+   "price_lag1": "suspected_leak"
+  },
+  "headline_keys": [
+   "baseline_largest_row",
+   "baseline_largest_row_share",
+   "largest_row",
+   "largest_row_share"
+  ],
+  "seconds": 0.1,
+  "py_warnings": []
+ }
+]

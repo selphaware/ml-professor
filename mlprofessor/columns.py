@@ -176,6 +176,13 @@ def _whole(values):
 
 # ------------------------------------------------------------ the rules
 
+def _dense(n_values, n_distinct, smallest, largest):
+    """The clause of D74: more than 95% of the values distinct, and the distinct
+    values filling at least half of their range, counted in Python integers."""
+    span = int(largest) - int(smallest) + 1
+    return 100 * n_distinct > 95 * n_values and 2 * n_distinct >= span
+
+
 def _numeric_rule(values):
     """Rules 8 to 8c on the usable rows' values; returns (role, kind, reason)."""
     values = values[np.isfinite(values) & ~beyond_limit(values)]
@@ -184,11 +191,15 @@ def _numeric_rule(values):
     distinct = np.unique(values)
     if distinct.size == 1:
         return "excluded", "numeric", "constant"
-    if distinct.size == values.size and _whole(values):
-        steps = np.diff(values)
-        consecutive = int(values.max()) - int(values.min()) + 1 == values.size
-        ordered = bool(np.all(steps > 0) or np.all(steps < 0))
-        if consecutive or ordered:
+    if _whole(values):
+        smallest, largest = int(distinct[0]), int(distinct[-1])
+        if distinct.size == values.size:
+            steps = np.diff(values)
+            consecutive = largest - smallest + 1 == values.size
+            ordered = bool(np.all(steps > 0) or np.all(steps < 0))
+            if consecutive or ordered:
+                return "excluded", "numeric", "id_like"
+        if _dense(values.size, distinct.size, smallest, largest):
             return "excluded", "numeric", "id_like"
     return "feature", "numeric", None
 
@@ -197,7 +208,8 @@ def _integer_rule(series):
     """Rules 8 to 8c for an integer-typed column, judged on the integers themselves.
 
     As floats, distinct whole numbers above 2**53 can become one; the steps
-    between neighbours are compared, never subtracted, so that nothing overflows.
+    between neighbours are compared, never subtracted, and the range is taken
+    in Python integers, so that nothing merges or overflows.
     """
     present = series[series.notna()]
     if len(present) == 0:
@@ -207,12 +219,15 @@ def _integer_rule(series):
     distinct = np.unique(values)
     if distinct.size == 1:
         return "excluded", "numeric", "constant"
+    smallest, largest = int(distinct[0]), int(distinct[-1])
     if distinct.size == values.size:
         rising = bool(np.all(values[1:] > values[:-1]))
         falling = bool(np.all(values[1:] < values[:-1]))
-        consecutive = int(distinct[-1]) - int(distinct[0]) + 1 == values.size
+        consecutive = largest - smallest + 1 == values.size
         if consecutive or rising or falling:
             return "excluded", "numeric", "id_like"
+    if _dense(values.size, distinct.size, smallest, largest):
+        return "excluded", "numeric", "id_like"
     return "feature", "numeric", None
 
 

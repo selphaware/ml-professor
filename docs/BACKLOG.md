@@ -206,6 +206,23 @@ during hardening (D71), with the one exception D74 records.
   excluded up to noise of 12% of the target's spread, warned about from 15%
   to 30%, and silent from 35% (spec 10.2, re-measured).
 
+## Found by the lead's real-data run of the eighth pass (2026-11-25)
+
+Both are defects in the contract, not in the build; the application and the
+reference agree. See `docs/measurements/CP9/build-on-real-tables/README.md`.
+
+- **The order reading warns about noise columns that hold repeated values**
+  (clean diabetes: `age` and `s6`; pure noise rounded to one decimal place,
+  or a score from 1 to 40). Step 8 sorts rows of equal column value by the
+  target, which makes the target fall across nearly every pair.
+- **A copy of the target with five cells changed by a large amount** is
+  warned about and kept under time order (headline 0.89 to 1.00), where a
+  small change is excluded.
+- **Why the judge missed both:** every numeric column of the gate and the
+  battery is continuous, and the altered-cell pairs use one size of change.
+  The battery needs columns with repeated values and changes of several
+  sizes.
+
 ## Notes for the framework (ailoop-engineering), not for this repo
 
 - The tests stage does not lock `tests/`, so on a second pass the existing

@@ -1,0 +1,89 @@
+{
+ "diabetes clean": {
+  "skill": 0.49,
+  "excluded": [],
+  "strong": [
+   "age",
+   "s6"
+  ]
+ },
+ "pure noise, tied columns, seed 1": {
+  "skill": -0.005,
+  "excluded": [],
+  "strong": [
+   "rounded_1dp",
+   "score_1_to_40"
+  ]
+ },
+ "pure noise, tied columns, seed 2": {
+  "skill": -0.008,
+  "excluded": [],
+  "strong": [
+   "rounded_1dp",
+   "score_1_to_40"
+  ]
+ },
+ "pure noise, tied columns, seed 3": {
+  "skill": -0.008,
+  "excluded": [],
+  "strong": [
+   "rounded_1dp",
+   "score_1_to_40"
+  ]
+ },
+ "diamonds": {
+  "skill": 0.933,
+  "excluded": [],
+  "strong": []
+ },
+ "mpg": {
+  "skill": 0.822,
+  "excluded": [],
+  "strong": []
+ },
+ "taxis tip": {
+  "skill": 0.673,
+  "excluded": [],
+  "strong": []
+ },
+ "VIX + copy, 5 training cells changed (+7.0)": [
+  "warned 1.00",
+  "warned 1.00",
+  "warned 1.00",
+  "warned 1.00",
+  "warned 1.00",
+  "warned 1.00",
+  "warned 1.00",
+  "warned 1.00"
+ ],
+ "VIX + copy, 5 training cells changed (x1.5)": [
+  "warned 0.99",
+  "warned 0.99",
+  "warned 0.98",
+  "warned 0.95",
+  "warned 0.99",
+  "warned 0.99",
+  "warned 0.99",
+  "warned 0.99"
+ ],
+ "VIX + copy, 5 training cells changed (another row's value)": [
+  "warned 1.00",
+  "excluded",
+  "warned 0.98",
+  "warned 0.89",
+  "warned 0.99",
+  "excluded",
+  "warned 0.99",
+  "warned 0.99"
+ ],
+ "VIX + copy, 5 training cells changed (+0.5)": [
+  "excluded",
+  "excluded",
+  "excluded",
+  "excluded",
+  "excluded",
+  "excluded",
+  "excluded",
+  "excluded"
+ ]
+}

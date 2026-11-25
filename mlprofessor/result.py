@@ -19,7 +19,7 @@ COLUMN_KEYS = [
 ]
 MODEL_KEYS = [
     "config", "family", "params", "status", "error", "fold_scores",
-    "cv_mean", "cv_std", "chosen",
+    "cv_mean", "cv_std", "chosen", "largest_row_share", "largest_row",
 ]
 WARNING_KEYS = ["code", "column", "message"]
 PREDICTION_KEYS = ["row", "y_true", "y_pred"]

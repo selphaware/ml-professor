@@ -1,0 +1,33 @@
+pytest exit 1; 475 s for the session
+PASSES test_judge_tools.py::test_the_perturbation_battery_holds (359 s)
+PASSES test_judge_tools.py::test_the_generated_tables_agree_with_the_reference (113 s)
+FAILS  test_judge_tools_pass8.py::test_the_perturbation_battery_exits_0 (0 s)
+      E       AssertionError: verify/battery.py exited 1; its last lines:
+      E              the change: a column `target_copy` is added: the target rescaled, with noise of 5% of the target's spread
+      E              must hold: the added column `target_copy` is excluded as a suspected leak, or at least named by a `strong_single_column` warning: a rescaled copy of the target with noise of 5% of the target's spread added. A stated limit (D76 point 2): above 1% such a column cannot be told from a str
+      E              u_largest_row: `headline` has no ['largest_row_share', 'largest_row', 'baseline_largest_row_share', 'baseline_largest_row']
+      E              copy_told:target_copy: the added column `target_copy` is a feature (role 'feature', reason None) and no `strong_single_column` warning names it; skill 0.4896780229461545 against 'previous_value', model linear-0
+      E              seen: rc=0, error=None, skill=0.4897, scheme=time_ordered, baseline=previous_value, model=linear-0, holdout=375, copies=None, cap=0, share=None, base_share=None, folds=None, roles={'target_copy': 'feature/None'}
+      E              table: <scratch>\tp\proj\tools\verify\artifacts\battery\data\random_walk__copy_noise_5pct.csv
+      E              output: <scratch>\tp\proj\tools\verify\artifacts\battery\runs\build\random_walk__copy_noise_5pct
+      E              again: python verify/battery.py mlprofessor --only random_walk:copy_noise_5pct
+      E         STATED LIMIT (D55): int_stamps:missing_cell_date [structure]
+      E              the change: one cell of the time column, or of a date column, is emptied
+      E              must hold: the run's own conclusion (its band, its roles, its counts): a row with no time value is dropped and counted in `dropped_missing_time` (step 2)
+      E              u_largest_row: `headline` has no ['largest_row_share', 'largest_row', 'baseline_largest_row_share', 'baseline_largest_row']
+      E              time_split: the holdout is 377 rows; the judge expects the 375 latest (2 unexpected, 0 missing)
+FAILS  test_judge_tools_pass8.py::test_the_generated_tables_exit_0 (0 s)
+          [property] application: headline holds the largest row's share, for the model and for the baseline (5.2; D74 point 3): "absent: ['largest_row_share', 'largest_row', 'baseline_largest_row_share', 'baseline_largest_row']" | ''
+      E       AssertionError: verify/generated_tables.py exited 1; its last lines:
+      E           [property] application: headline holds the largest row's share, for the model and for the baseline (5.2; D74 point 3): "absent: ['largest_row_share', 'largest_row', 'baseline_largest_row_share', 'baseline_largest_row']" | ''
+      E           again: python verify/generated_tables.py <scratch>\tp\proj\tools\mlprofessor --seed 20261122 --only 996 --keep
+      E         
+      E         table 997: csv, 225 rows x 7 columns ['f2', 'count', 'const', 'f1', 'when', 'y', 'odd']; task='auto', time_col=False, group_col=False, gap=0, profile='fast', seed=7, duplicates='group'; small; statement none; target clf_bool; some timestamps hold several rows; odd: a column of list; when: 
+      E           application: result: random, skill -0.19969040247678016, model tree-0
+      E           reference:   result: random, skill -0.29721362229102166, model linear-0
+      E           [property] application: headline holds the largest row's share, for the model and for the baseline (5.2; D74 point 3): "absent: ['largest_row_share', 'largest_row', 'baseline_largest_row_share', 'baseline_largest_row']" | ''
+      E           again: python verify/generated_tables.py <scratch>\tp\proj\tools\mlprofessor --seed 20261122 --only 997 --keep
+      E         
+      E         table 998: dataframe, 705 rows x 6 columns ['signup', 'when', 'y', 'f2', 'who', 'f1']; task='regression', time_col='when', group_col='who', gap=0, profile='fast', seed=1, duplicates='error'; large; statement time_entity; target reg; panel of 25 entities on 38 timestamps, irregular; when: i
+      E           application: result: time_ordered, skill 0.8424286203875389, model linear-0
+      E           reference:   result: time_ordered, skill 0.8424286203875389, model linear-0

@@ -1,0 +1,14 @@
+| run | noise, share of the target's spread | excluded / warned / silent | the column's skill against the previous value | headline skill |
+|---|---|---|---|---|
+| random_walk | 0.5% | 30 / 0 / 0 | +0.986 to +0.999 | -0.100 to +0.012 |
+| random_walk | 1% | 20 / 10 / 0 | +0.948 to +0.997 | -0.100 to +0.969 |
+| random_walk | 2% | 1 / 20 / 9 | +0.775 to +0.989 | +0.012 to +0.981 |
+| random_walk | 5% | 0 / 1 / 29 | -0.651 to +0.928 | +0.387 to +0.938 |
+| int_stamps | 0.5% | 30 / 0 / 0 | +0.987 to +0.998 | -0.182 to +0.005 |
+| int_stamps | 1% | 19 / 11 / 0 | +0.948 to +0.994 | -0.176 to +0.971 |
+| int_stamps | 2% | 0 / 23 / 7 | +0.773 to +0.976 | +0.824 to +0.977 |
+| int_stamps | 5% | 0 / 0 / 30 | -0.480 to +0.841 | +0.441 to +0.863 |
+| panel | 0.5% | 30 / 0 / 0 | +0.980 to +0.997 | -0.023 to +0.006 |
+| panel | 1% | 3 / 27 / 0 | +0.919 to +0.985 | -0.002 to +0.953 |
+| panel | 2% | 0 / 5 / 25 | +0.706 to +0.944 | +0.729 to +0.939 |
+| panel | 5% | 0 / 0 / 30 | -0.967 to +0.657 | +0.210 to +0.734 |

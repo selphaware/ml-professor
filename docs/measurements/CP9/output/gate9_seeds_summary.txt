@@ -1,0 +1,239 @@
+
+## time.previous_value_at_repeats (run `walk_repeated`, names F23)
+ good:
+  passes on 30 of 30 seeds; the run finishes on 30
+  skill: -0.0368 to +0.0084 (mean -0.0032, sd 0.0104, n 30)
+  model: {'linear-0': 30}; baseline: {'previous_value': 30}; baselines listed: {'previous_value,training_mean': 30}
+  level_prev: {'feature/None/None': 30}
+  autocorrelated_panel_target, columns named -> seeds: ['level']: 30
+ F23:
+  passes on 0 of 30 seeds; the run finishes on 1
+  runs that stopped: {'no_features': 29}
+  skill: +0.9776 to +0.9776 (mean +0.9776, sd 0.0000, n 1)
+  model: {'linear-0': 1}; baseline: {'training_mean': 1}; baselines listed: {'training_mean': 1}
+  level_prev: {'feature/None/None': 1}
+  strong_single_column, columns named -> seeds: ['level_prev']: 1
+  autocorrelated_panel_target, columns named -> seeds: ['level']: 1
+  fails (29): the tool exited 3 on dataset `walk_repeated` where it should have succeeded.
+  command: python -m mlprofessor profile --data <scratch>...
+  fails (1): baselines on `walk_repeated` lists ['training_mean']. One row of this random walk is written twice, so the date 2019-03-19 holds two rows and the time
+ before:
+  passes on 0 of 30 seeds; the run finishes on 29
+  runs that stopped: {'no_features': 1}
+  skill: +0.9606 to +0.9996 (mean +0.9904, sd 0.0103, n 29)
+  model: {'linear-0': 29}; baseline: {'training_mean': 29}; baselines listed: {'training_mean': 29}
+  level_prev: {'feature/None/None': 29}
+  strong_single_column, columns named -> seeds: none: 12; ['level_prev']: 17
+  autocorrelated_panel_target, columns named -> seeds: ['level']: 29
+  fails (1): baselines on `walk_repeated` lists ['training_mean']. One row of this random walk is written twice, so the date 2021-01-21 holds two rows and the time
+  fails (1): baselines on `walk_repeated` lists ['training_mean']. One row of this random walk is written twice, so the date 2020-10-08 holds two rows and the time
+  fails (1): baselines on `walk_repeated` lists ['training_mean']. One row of this random walk is written twice, so the date 2022-09-30 holds two rows and the time
+  fails (1): baselines on `walk_repeated` lists ['training_mean']. One row of this random walk is written twice, so the date 2021-09-21 holds two rows and the time
+ app:
+  passes on 0 of 30 seeds; the run finishes on 29
+  runs that stopped: {'no_features': 1}
+  skill: +0.9606 to +0.9996 (mean +0.9904, sd 0.0103, n 29)
+  model: {'linear-0': 29}; baseline: {'training_mean': 29}; baselines listed: {'training_mean': 29}
+  level_prev: {'feature/None/None': 29}
+  strong_single_column, columns named -> seeds: none: 12; ['level_prev']: 17
+  autocorrelated_panel_target, columns named -> seeds: ['level']: 29
+  fails (1): baselines on `walk_repeated` lists ['training_mean']. One row of this random walk is written twice, so the date 2021-01-21 holds two rows and the time
+  fails (1): baselines on `walk_repeated` lists ['training_mean']. One row of this random walk is written twice, so the date 2020-10-08 holds two rows and the time
+  fails (1): baselines on `walk_repeated` lists ['training_mean']. One row of this random walk is written twice, so the date 2022-09-30 holds two rows and the time
+  fails (1): baselines on `walk_repeated` lists ['training_mean']. One row of this random walk is written twice, so the date 2021-09-21 holds two rows and the time
+
+## leak.copy_excluded_under_time (run `walk_copy`, names F24)
+ good:
+  passes on 30 of 30 seeds; the run finishes on 30
+  skill: -0.1939 to +0.0072 (mean -0.0138, sd 0.0388, n 30)
+  model: {'linear-0': 30}; baseline: {'previous_value': 30}; baselines listed: {'previous_value,training_mean': 30}
+  level_scaled: {'excluded/suspected_leak/predicts_target': 30}
+  level_prev: {'feature/None/None': 30}
+  suspected_leak, columns named -> seeds: ['level_scaled']: 30
+ F24:
+  passes on 0 of 30 seeds; the run finishes on 30
+  skill: +0.8896 to +0.9987 (mean +0.9848, sd 0.0225, n 30)
+  model: {'linear-0': 30}; baseline: {'previous_value': 30}; baselines listed: {'previous_value,training_mean': 30}
+  level_scaled: {'feature/None/None': 30}
+  level_prev: {'feature/None/None': 30}
+  strong_single_column, columns named -> seeds: ['level_scaled']: 30
+  fails (1): `level_scaled` on `walk_copy` has role 'feature', reason None, leak_rule None; skill is 0.9875713998211745 against the baseline 'previous_value'. The 
+  fails (1): `level_scaled` on `walk_copy` has role 'feature', reason None, leak_rule None; skill is 0.9957381940292633 against the baseline 'previous_value'. The 
+  fails (1): `level_scaled` on `walk_copy` has role 'feature', reason None, leak_rule None; skill is 0.9907225550886155 against the baseline 'previous_value'. The 
+  fails (1): `level_scaled` on `walk_copy` has role 'feature', reason None, leak_rule None; skill is 0.994836594850423 against the baseline 'previous_value'. The c
+ before:
+  passes on 0 of 30 seeds; the run finishes on 30
+  skill: +0.8896 to +0.9987 (mean +0.9848, sd 0.0225, n 30)
+  model: {'linear-0': 30}; baseline: {'previous_value': 30}; baselines listed: {'previous_value,training_mean': 30}
+  level_scaled: {'feature/None/None': 30}
+  level_prev: {'feature/None/None': 30}
+  fails (1): `level_scaled` on `walk_copy` has role 'feature', reason None, leak_rule None; skill is 0.9875713998211745 against the baseline 'previous_value'. The 
+  fails (1): `level_scaled` on `walk_copy` has role 'feature', reason None, leak_rule None; skill is 0.9957381940292633 against the baseline 'previous_value'. The 
+  fails (1): `level_scaled` on `walk_copy` has role 'feature', reason None, leak_rule None; skill is 0.9907225550886155 against the baseline 'previous_value'. The 
+  fails (1): `level_scaled` on `walk_copy` has role 'feature', reason None, leak_rule None; skill is 0.994836594850423 against the baseline 'previous_value'. The c
+ app:
+  passes on 0 of 30 seeds; the run finishes on 30
+  skill: +0.8896 to +0.9987 (mean +0.9848, sd 0.0225, n 30)
+  model: {'linear-0': 30}; baseline: {'previous_value': 30}; baselines listed: {'previous_value,training_mean': 30}
+  level_scaled: {'feature/None/None': 30}
+  level_prev: {'feature/None/None': 30}
+  fails (1): `level_scaled` on `walk_copy` has role 'feature', reason None, leak_rule None; skill is 0.9875713998211809 against the baseline 'previous_value'. The 
+  fails (1): `level_scaled` on `walk_copy` has role 'feature', reason None, leak_rule None; skill is 0.99573819402928 against the baseline 'previous_value'. The co
+  fails (1): `level_scaled` on `walk_copy` has role 'feature', reason None, leak_rule None; skill is 0.9907225550886116 against the baseline 'previous_value'. The 
+  fails (1): `level_scaled` on `walk_copy` has role 'feature', reason None, leak_rule None; skill is 0.9948365948503914 against the baseline 'previous_value'. The 
+
+## leak.excluded_despite_extreme_target (run `walk_copy_cell`, names F25)
+ good:
+  passes on 30 of 30 seeds; the run finishes on 30
+  skill: -39.5289 to -0.1516 (mean -2.7560, sd 7.1602, n 30)
+  model: {'linear-0': 27, 'tree-0': 3}; baseline: {'previous_value': 30}; baselines listed: {'previous_value,training_mean': 30}
+  level_scaled: {'excluded/suspected_leak/predicts_target': 30}
+  level_prev: {'feature/None/None': 30}
+  extreme_value, columns named -> seeds: ['level']: 30
+  largest_row_dominates, columns named -> seeds: ['None']: 9; ['None', 'None']: 21
+  suspected_leak, columns named -> seeds: ['level_scaled']: 30
+ F25:
+  passes on 0 of 30 seeds; the run finishes on 30
+  skill: -37.8850 to +0.9994 (mean -1.9966, sd 7.0345, n 30)
+  model: {'linear-0': 26, 'tree-0': 4}; baseline: {'previous_value': 30}; baselines listed: {'previous_value,training_mean': 30}
+  level_scaled: {'feature/None/None': 30}
+  level_prev: {'feature/None/None': 30}
+  extreme_value, columns named -> seeds: ['level']: 30
+  largest_row_dominates, columns named -> seeds: ['None']: 9; ['None', 'None']: 21
+  strong_single_column, columns named -> seeds: ['level_scaled']: 30
+  fails (1): `level_scaled` on `walk_copy_cell` has role 'feature', reason None, leak_rule None; skill is 0.35824851373882205 against the baseline 'previous_value'
+  fails (1): `level_scaled` on `walk_copy_cell` has role 'feature', reason None, leak_rule None; skill is -0.0437479005228012 against the baseline 'previous_value'
+  fails (1): `level_scaled` on `walk_copy_cell` has role 'feature', reason None, leak_rule None; skill is -3.64876277056136 against the baseline 'previous_value'. 
+  fails (1): `level_scaled` on `walk_copy_cell` has role 'feature', reason None, leak_rule None; skill is 0.3625597824249591 against the baseline 'previous_value'.
+ before:
+  passes on 0 of 30 seeds; the run finishes on 30
+  skill: -37.8850 to +0.9994 (mean -1.9966, sd 7.0345, n 30)
+  model: {'linear-0': 26, 'tree-0': 4}; baseline: {'previous_value': 30}; baselines listed: {'previous_value,training_mean': 30}
+  level_scaled: {'feature/None/None': 30}
+  level_prev: {'feature/None/None': 30}
+  fails (1): `level_scaled` on `walk_copy_cell` has role 'feature', reason None, leak_rule None; skill is 0.35824851373882205 against the baseline 'previous_value'
+  fails (1): `level_scaled` on `walk_copy_cell` has role 'feature', reason None, leak_rule None; skill is -0.0437479005228012 against the baseline 'previous_value'
+  fails (1): `level_scaled` on `walk_copy_cell` has role 'feature', reason None, leak_rule None; skill is -3.64876277056136 against the baseline 'previous_value'. 
+  fails (1): `level_scaled` on `walk_copy_cell` has role 'feature', reason None, leak_rule None; skill is 0.3625597824249591 against the baseline 'previous_value'.
+ app:
+  passes on 0 of 30 seeds; the run finishes on 30
+  skill: -37.8850 to +0.9994 (mean -1.9966, sd 7.0345, n 30)
+  model: {'linear-0': 26, 'tree-0': 4}; baseline: {'previous_value': 30}; baselines listed: {'previous_value,training_mean': 30}
+  level_scaled: {'feature/None/None': 30}
+  level_prev: {'feature/None/None': 30}
+  fails (1): `level_scaled` on `walk_copy_cell` has role 'feature', reason None, leak_rule None; skill is 0.35824851373880295 against the baseline 'previous_value'
+  fails (1): `level_scaled` on `walk_copy_cell` has role 'feature', reason None, leak_rule None; skill is -0.043747900522785654 against the baseline 'previous_valu
+  fails (1): `level_scaled` on `walk_copy_cell` has role 'feature', reason None, leak_rule None; skill is -3.6487627705612633 against the baseline 'previous_value'
+  fails (1): `level_scaled` on `walk_copy_cell` has role 'feature', reason None, leak_rule None; skill is 0.36255978242499476 against the baseline 'previous_value'
+
+## result.largest_row_reported (run `walk_late_cell`, names F26)
+ good:
+  passes on 30 of 30 seeds; the run finishes on 30
+  skill: -3369746542.4728 to -2401347582.1617 (mean -2751809220.4122, sd 230571778.2449, n 30)
+  model: {'linear-0': 30}; baseline: {'previous_value': 30}; baselines listed: {'previous_value,training_mean': 30}
+  level_prev: {'feature/None/None': 30}
+  extreme_value, columns named -> seeds: ['level_prev']: 30
+  largest_row_dominates, columns named -> seeds: ['None']: 30
+  headline.largest_row_share: +1.0000 to +1.0000 (mean +1.0000, sd 0.0000, n 30)
+  cv.largest_row_share: +0.0085 to +0.0162 (mean +0.0118, sd 0.0021, n 30)
+  headline.baseline_largest_row_share: +0.0197 to +0.0377 (mean +0.0269, sd 0.0047, n 30)
+  cv.baseline_largest_row_share: +0.0087 to +0.0178 (mean +0.0116, sd 0.0022, n 30)
+ F26:
+  passes on 0 of 30 seeds; the run finishes on 30
+  skill: -3369746542.4728 to -2401347582.1617 (mean -2751809220.4122, sd 230571778.2449, n 30)
+  model: {'linear-0': 30}; baseline: {'previous_value': 30}; baselines listed: {'previous_value,training_mean': 30}
+  level_prev: {'feature/None/None': 30}
+  extreme_value, columns named -> seeds: ['level_prev']: 30
+  largest_row_dominates, columns named -> seeds: ['None']: 30
+  headline.largest_row_share: +0.9997 to +0.9997 (mean +0.9997, sd 0.0000, n 30)
+  cv.largest_row_share: +0.0085 to +0.0162 (mean +0.0118, sd 0.0021, n 30)
+  headline.baseline_largest_row_share: +0.0089 to +0.0123 (mean +0.0106, sd 0.0010, n 30)
+  cv.baseline_largest_row_share: +0.0087 to +0.0178 (mean +0.0116, sd 0.0022, n 30)
+  fails (1): headline.largest_row_share on `walk_late_cell` is 0.999709711934073. The largest squared error of the chosen model on a holdout row, over the sum of t
+  fails (1): headline.largest_row_share on `walk_late_cell` is 0.9997008473378556. The largest squared error of the chosen model on a holdout row, over the sum of 
+  fails (1): headline.largest_row_share on `walk_late_cell` is 0.9997330584095413. The largest squared error of the chosen model on a holdout row, over the sum of 
+  fails (1): headline.largest_row_share on `walk_late_cell` is 0.9996967613610889. The largest squared error of the chosen model on a holdout row, over the sum of 
+ before:
+  passes on 0 of 30 seeds; the run finishes on 30
+  skill: -3369746542.4728 to -2401347582.1617 (mean -2751809220.4122, sd 230571778.2449, n 30)
+  model: {'linear-0': 30}; baseline: {'previous_value': 30}; baselines listed: {'previous_value,training_mean': 30}
+  level_prev: {'feature/None/None': 30}
+  headline.largest_row_share: no value
+  cv.largest_row_share: no value
+  headline.baseline_largest_row_share: no value
+  cv.baseline_largest_row_share: no value
+  fails (30): profile.json on `walk_late_cell` has no key headline.largest_row_share, headline.largest_row, headline.baseline_largest_row_share, headline.baseline_l
+ app:
+  passes on 0 of 30 seeds; the run finishes on 30
+  skill: -3369746542.4728 to -2401347582.1617 (mean -2751809220.4122, sd 230571778.2449, n 30)
+  model: {'linear-0': 30}; baseline: {'previous_value': 30}; baselines listed: {'previous_value,training_mean': 30}
+  level_prev: {'feature/None/None': 30}
+  headline.largest_row_share: no value
+  cv.largest_row_share: no value
+  headline.baseline_largest_row_share: no value
+  cv.baseline_largest_row_share: no value
+  fails (30): profile.json on `walk_late_cell` has no key headline.largest_row_share, headline.largest_row, headline.baseline_largest_row_share, headline.baseline_l
+
+## data.identifier_survives_shuffle (run `messy_shuffled`, names F27)
+ good:
+  passes on 30 of 30 seeds; the run finishes on 30
+  skill: +0.6595 to +0.8204 (mean +0.7388, sd 0.0404, n 30)
+  model: {'linear-0': 30}; baseline: {'chance': 30}; baselines listed: {'chance': 30}
+  record_id: {'excluded/id_like/None': 30}
+  visits: {'feature/None/None': 30}
+ F27:
+  passes on 0 of 30 seeds; the run finishes on 30
+  skill: +0.6602 to +0.8199 (mean +0.7385, sd 0.0407, n 30)
+  model: {'linear-0': 30}; baseline: {'chance': 30}; baselines listed: {'chance': 30}
+  record_id: {'feature/None/None': 30}
+  visits: {'feature/None/None': 30}
+  fails (30): `record_id` on `messy_shuffled` has role 'feature' and reason None. In the 1500 rows with a target it holds 1500 distinct whole numbers that fill 97% 
+ before:
+  passes on 0 of 30 seeds; the run finishes on 30
+  skill: +0.6602 to +0.8199 (mean +0.7385, sd 0.0407, n 30)
+  model: {'linear-0': 30}; baseline: {'chance': 30}; baselines listed: {'chance': 30}
+  record_id: {'feature/None/None': 30}
+  visits: {'feature/None/None': 30}
+  fails (30): `record_id` on `messy_shuffled` has role 'feature' and reason None. In the 1500 rows with a target it holds 1500 distinct whole numbers that fill 97% 
+ app:
+  passes on 0 of 30 seeds; the run finishes on 30
+  skill: +0.6457 to +0.7988 (mean +0.7310, sd 0.0356, n 30)
+  model: {'linear-0': 30}; baseline: {'chance': 30}; baselines listed: {'chance': 30}
+  record_id: {'feature/None/None': 30}
+  visits: {'feature/None/None': 30}
+  fails (30): `record_id` on `messy_shuffled` has role 'feature' and reason None. In the 1500 rows with a target it holds 1500 distinct whole numbers that fill 97% 
+
+## groups.choice_not_made (run `dominant_entity`, names F28)
+ good:
+  passes on 30 of 30 seeds; the run finishes on 30
+  skill: -0.0117 to +0.0030 (mean -0.0037, sd 0.0040, n 30)
+  model: {'linear-0': 30}; baseline: {'training_mean': 30}; baselines listed: {'training_mean': 30}
+  selection_not_made, columns named -> seeds: ['None']: 30
+  the smallest fold, and the folds scored: {'10 training rows, scored 5': 30}
+ F28:
+  passes on 0 of 30 seeds; the run finishes on 30
+  skill: -0.8718 to +0.0030 (mean -0.0590, sd 0.2122, n 30)
+  model: {'linear-0': 28, 'tree-0': 2}; baseline: {'training_mean': 30}; baselines listed: {'training_mean': 30}
+  the smallest fold, and the folds scored: {'10 training rows, scored 5': 30}
+  fails (2): 0 warning(s) with the code `selection_not_made` on `dominant_entity`; cv.chosen is 'linear-0' and skill 0.0030. The training rows are the entity C0000
+  fails (2): 0 warning(s) with the code `selection_not_made` on `dominant_entity`; cv.chosen is 'linear-0' and skill -0.0037. The training rows are the entity C000
+  fails (1): 0 warning(s) with the code `selection_not_made` on `dominant_entity`; cv.chosen is 'linear-0' and skill -0.0062. The training rows are the entity C000
+  fails (1): 0 warning(s) with the code `selection_not_made` on `dominant_entity`; cv.chosen is 'linear-0' and skill -0.0045. The training rows are the entity C000
+ before:
+  passes on 0 of 30 seeds; the run finishes on 30
+  skill: -0.8718 to +0.0030 (mean -0.0590, sd 0.2122, n 30)
+  model: {'linear-0': 28, 'tree-0': 2}; baseline: {'training_mean': 30}; baselines listed: {'training_mean': 30}
+  the smallest fold, and the folds scored: {'10 training rows, scored 5': 30}
+  fails (2): 0 warning(s) with the code `selection_not_made` on `dominant_entity`; cv.chosen is 'linear-0' and skill 0.0030. The training rows are the entity C0000
+  fails (2): 0 warning(s) with the code `selection_not_made` on `dominant_entity`; cv.chosen is 'linear-0' and skill -0.0037. The training rows are the entity C000
+  fails (1): 0 warning(s) with the code `selection_not_made` on `dominant_entity`; cv.chosen is 'linear-0' and skill -0.0062. The training rows are the entity C000
+  fails (1): 0 warning(s) with the code `selection_not_made` on `dominant_entity`; cv.chosen is 'linear-0' and skill -0.0045. The training rows are the entity C000
+ app:
+  passes on 0 of 30 seeds; the run finishes on 30
+  skill: -1.1278 to +0.0028 (mean -0.0726, sd 0.2650, n 30)
+  model: {'tree-0': 2, 'linear-0': 28}; baseline: {'training_mean': 30}; baselines listed: {'training_mean': 30}
+  the smallest fold, and the folds scored: {'10 training rows, scored 5': 30}
+  fails (2): 0 warning(s) with the code `selection_not_made` on `dominant_entity`; cv.chosen is 'linear-0' and skill -0.0044. The training rows are the entity C000
+  fails (2): 0 warning(s) with the code `selection_not_made` on `dominant_entity`; cv.chosen is 'linear-0' and skill -0.0034. The training rows are the entity C000
+  fails (2): 0 warning(s) with the code `selection_not_made` on `dominant_entity`; cv.chosen is 'linear-0' and skill -0.0017. The training rows are the entity C000
+  fails (2): 0 warning(s) with the code `selection_not_made` on `dominant_entity`; cv.chosen is 'linear-0' and skill -0.0076. The training rows are the entity C000

@@ -1,0 +1,6 @@
+| the fold that trains on ten rows | copy added | largest skill of a noise column, over the seeds | seeds with a noise column warned | excluded | the copy excluded | errors |
+|---|---|---|---|---|---|---|
+| scored | no | +0.001 to +0.204 | 0 of 30 | 0 of 30 |  |  |
+| scored | yes | +0.001 to +0.204 | 0 of 30 | 0 of 30 | 30 |  |
+| not scored | no | +0.208 to +0.563 | 0 of 30 | 0 of 30 |  |  |
+| not scored | yes | +0.208 to +0.563 | 0 of 30 | 0 of 30 | 30 |  |

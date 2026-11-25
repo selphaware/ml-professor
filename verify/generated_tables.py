@@ -1,4 +1,5 @@
-"""Generated tables: the application against the reference implementation (D56, D71).
+"""Generated tables: the application against the reference implementation (D56, D71,
+D73, D74).
 
 The gate judges the tool on a few tables whose right conclusion is known, and the
 suite on tables made for one rule each. Neither looks at a table nobody thought
@@ -13,8 +14,13 @@ side departs from the spec, or the spec does not say.
 
 `<package folder>` is the folder `mlprofessor` to judge. The reference defaults to
 verify/reference/mlprofessor. Without options: tables 0 to 999 of seed 20261122,
-about 100 seconds at 24 workers on this machine. Before a review the lead runs
+about 190 seconds at 24 workers on this machine (2026-11-25, with some other
+work running; about 100 until the eighth pass). Before a review the lead runs
 more, by hand: `--tables 10000`, or other seeds.
+
+`--json FILE` writes the counts, the class of every table by its number
+(`classes`) and, for every table that has a finding, the table and its findings
+in full (`tables_with_findings`): a test reads there which tables fail, and why.
 
 Exit codes
     0  nothing fails: every table agrees, or is on one of the two lists below
@@ -47,7 +53,11 @@ What is compared, and how (spec 2.4, 3, 5.2, 5.3, 11)
             decides, `input.duplicate_rows` and one `fold_not_scored` record for
             each fold not scored (D72). Under time order the rows of the split are
             determined too, so the folds, the baselines, the scores, the chosen
-            configuration and every prediction are compared as well.
+            configuration and every prediction are compared as well, for every
+            family: the rows of a fit are in time order, ties in file order (D74
+            point 4), so a forest is compared like the rest. So is the largest
+            row's share of the squared error, on the holdout and over the
+            selection folds (D74 point 3).
   property  what depends on a choice the spec leaves open is not compared across the
             sides: each side alone is held to what the spec pins. The
             reconciliation rules of 5.3 recomputed here; a quarter rounded up;
@@ -57,7 +67,20 @@ What is compared, and how (spec 2.4, 3, 5.2, 5.3, 11)
             or more of the usable rows is kept (D72); under `duplicates="group"`,
             that no combination of the features that reached the models is on
             both sides (D69); that a column of dates written YYYYMMDD with a
-            value that is no date is still excluded as a date (D72).
+            value that is no date is still excluded as a date (D72). Since the
+            eighth pass (D73, D74): that an exact copy of the target is
+            excluded by the leak screen, under every scheme; the largest row's
+            share on the holdout recomputed from predictions.csv, its null
+            pattern, the same keys in `cv` and in every record of `models`, and
+            one `largest_row_dominates` record for each statement above one
+            half; one `selection_not_made` record exactly when, under the
+            grouped scheme, a fold has fewer than 50 training rows and fewer
+            training rows than validation rows, and then the first fitted
+            configuration chosen; under time order with no entity column both
+            baselines recomputed from the source, the previous value being the
+            mean target of the timestamp `gap + 1` distinct timestamps before;
+            and the generator's identifier of whole numbers id-like by rule 8b
+            of step 5 or by the clause D74 adds, and by nothing else.
 
 Not compared, and printed by kind and count, no part of the verdict
   - which of two named errors is raised when a table earns both in steps 1 to 4
@@ -80,9 +103,16 @@ Three classes are counted, and printed with the count of each
   stated limit  a finding the spec states as a limit, with its decision number.
                 None is known today; the list is `STATED_LIMITS`
   open          a finding that is owned and not yet built: `OPEN`, by name, each
-                with its decision and the pass that builds it
+                with its decision and the pass that builds it. None since the
+                eighth pass: the list is empty, and its count is printed all
+                the same, 0
 A finding on neither list fails the tool. So does a raw exception from either
 side. Each is printed with the call that makes its table again.
+
+The first run listed two findings as open (D73). Neither is: the order of the
+rows of a fit under time order is pinned (D74 point 4), and a column that
+reproduces the target is always excluded (D73 point 2, D74 point 2), so an
+exact copy of the target that stays a feature, on either side, fails the tool.
 
 Everything this tool writes goes under verify/artifacts/generated/, which the
 loop's snapshot of the judge leaves out. It writes nowhere else, and no cache
@@ -129,17 +159,19 @@ DATES_PER_OTHER_VALUE, FEW_DATES, FEW_OTHER_VALUES = 9, 5, 2
 # is known today. A name is added here only with the number of its decision.
 STATED_LIMITS = {}
 # A finding that is owned and not yet built: name -> (decision, who builds it, what
-# it is). A finding that is on neither list fails the tool.
-OPEN = {
-    "forests_under_time_order": (
-        "D73 point 4", "pass 8",
-        "under time order the two sides hand a fit its rows in different orders, so a "
-        "forest's fold scores differ, and with them whatever follows when a forest is "
-        "chosen on either side: the chosen configuration, the score, the predictions"),
-    "target_copy_kept": (
-        "D73 point 2", "pass 8",
-        "an exact copy of the target that the leak screen leaves a feature, on either side"),
-}
+# it is). A finding that is on neither list fails the tool. Empty since the eighth
+# pass (D73, D74): the class is kept so that its count is always printed, 0.
+OPEN = {}
+# The second clause of the id-like rule for whole numbers (step 5; D74 point 5): more
+# than this share of the values distinct, and the distinct values filling at least
+# that share of their range, whatever the order of the rows.
+ID_DISTINCT_SHARE, ID_RANGE_SHARE = 0.95, 0.5
+# A `largest_row_dominates` record for each share above this (step 11; D74 point 3).
+LARGEST_ROW_SHARE = 0.5
+# Under the grouped scheme, when a fold has fewer training rows than this, and fewer
+# than it has validation rows, no choice between configurations is made (step 9; D74
+# point 6).
+SELECTION_FLOOR = 50
 
 OPENERS = ["called about", "asked for", "complained about", "praised", "returned", "queried",
            "cancelled", "renewed", "upgraded", "paused", "reported", "requested", "disputed",
@@ -1088,6 +1120,37 @@ def check_side(case, out, data_dir):
             bad("a column of dates written YYYYMMDD is excluded as a date, also when it holds "
                 "a value that is no date (step 5, rule 2a; D66, D72)",
                 f"`{rec['name']}` has role {rec.get('role')!r}, reason {rec.get('reason')!r}")
+    # The generator's identifier of whole numbers (step 5, rule 8b; D19, D74 point 5):
+    # id-like when every value is distinct and the values are consecutive or strictly
+    # ordered in file order, or when the values are nearly all distinct and fill half
+    # of their range, whatever the order of the rows. And by nothing else.
+    for rec in doc["columns"]:
+        if rec.get("name") != "row_id" or rec.get("role") in ("time", "group", "target"):
+            continue
+        present = [v for v, ok in zip(frame.iloc[:, rec["position"]], usable)
+                   if ok and not _empty(v)]
+        if not present or any(isinstance(v, str) for v in present):
+            continue
+        whole = [int(v) for v in present]
+        distinct = set(whole)
+        if rec.get("reason") in ("constant", "all_missing", "datetime"):
+            continue                        # an earlier rule of step 5 has the column
+        span = max(distinct) - min(distinct) + 1
+        rising = all(b > a for a, b in zip(whole, whole[1:]))
+        falling = all(b < a for a, b in zip(whole, whole[1:]))
+        ordered = len(whole) > 1 and len(distinct) == len(whole) and (
+            rising or falling or span == len(whole))
+        dense = len(distinct) > 1 and len(distinct) > ID_DISTINCT_SHARE * len(whole) \
+            and len(distinct) >= ID_RANGE_SHARE * span
+        is_id = (rec.get("role"), rec.get("reason")) == ("excluded", "id_like")
+        if (ordered or dense) != is_id:
+            bad("a whole-number column is id-like exactly when every value is distinct and the "
+                "values are consecutive or strictly ordered in file order, or more than 95% of "
+                "its values are distinct and they fill at least half of their range (step 5, "
+                "rule 8b; D19, D74 point 5)",
+                f"`row_id` has role {rec.get('role')!r}, reason {rec.get('reason')!r}; "
+                f"{len(distinct)} distinct of {len(whole)} values over a range of {span}, "
+                f"{'in' if rising or falling else 'not in'} the order of the file")
     want = {"loaded": n, "dropped_missing_target": int(o["y_missing"].sum()),
             "dropped_missing_time": int((~o["y_missing"] & o["t_missing"]).sum())
             if o["declares_time"] else 0}
@@ -1152,6 +1215,97 @@ def check_side(case, out, data_dir):
                                                     and not close(skill, follows, 1e-7)):
             bad("headline.skill follows from the score and the baseline (5.3 rule 4)",
                 f"{skill!r}; from score and baseline {follows!r}")
+    # the largest row's share of the squared error on the holdout (step 11; D74 point 3)
+    share_keys = ("largest_row_share", "largest_row", "baseline_largest_row_share",
+                  "baseline_largest_row")
+    got = {k: at(doc, f"headline.{k}") for k in share_keys}
+    absent = [k for k, v in got.items() if v == ("<absent>",)]
+    if absent:
+        bad("headline holds the largest row's share, for the model and for the baseline "
+            "(5.2; D74 point 3)", f"absent: {absent}")
+    else:
+        if metric == "roc_auc" and any(v is not None for v in got.values()):
+            bad("the largest row's share is null for a classification (5.2)", str(got))
+        elif metric == "mse" and mine is not None:
+            errors = [(x - y) ** 2 for x, y in zip(truth, guesses)]
+            total = math.fsum(errors)
+            if total > 0:
+                top = max(errors)
+                if not is_number(got["largest_row_share"]) or not close(
+                        got["largest_row_share"], top / total, 1e-7):
+                    bad("headline.largest_row_share is the largest squared error over their sum, "
+                        "recomputed from predictions.csv (step 11; D74 point 3)",
+                        f"{got['largest_row_share']!r}; recomputed {top / total!r}")
+                at_top = {p for p, e in zip(held, errors) if close(e, top, 1e-9)}
+                if got["largest_row"] not in at_top:
+                    bad("headline.largest_row is the holdout row with the largest squared error "
+                        "(step 11; D74 point 3)",
+                        f"{got['largest_row']!r}; the judge finds {sorted(at_top)[:3]}")
+            elif got["largest_row_share"] is not None:
+                bad("the largest row's share is null when the model has no error (5.2)",
+                    repr(got["largest_row_share"]))
+            b_share = got["baseline_largest_row_share"]
+            if (b_share is None) != (base == 0):
+                bad("the baseline's largest row has a share exactly when the baseline has an "
+                    "error (5.2)", f"share {b_share!r}, baseline score {base!r}")
+            elif b_share is not None and (not is_number(b_share) or not 0 < b_share <= 1 + 1e-12
+                                          or got["baseline_largest_row"] not in set(held)):
+                bad("the baseline's largest row is a holdout row, and its share is above 0 and "
+                    "at most 1 (5.2)", f"{b_share!r} at row {got['baseline_largest_row']!r}")
+        above = sum(1 for k in ("largest_row_share", "baseline_largest_row_share")
+                    if is_number(got[k]) and got[k] > LARGEST_ROW_SHARE)
+        # The same statement over the selection folds (D74 point 3): four keys in `cv`,
+        # for the chosen configuration and for the headline baseline, and two in every
+        # record of `models`. The folds are inside the training rows, so no row named
+        # there is a holdout row. One record when a configuration's share is above one
+        # half, whichever and however many, and one when the baseline's is.
+        cv = doc.get("cv", {})
+        records = [m for m in doc.get("models", []) if isinstance(m, dict)]
+        lacking = [f"cv.{key}" for key in share_keys if key not in cv] + [
+            f"models[{m.get('config')}].{key}" for m in records
+            for key in share_keys[:2] if key not in m]
+        if lacking:
+            bad("`cv` and every record of `models` hold the largest row's share over the "
+                "selection folds (5.2; D74 point 3)", f"absent: {lacking[:6]}")
+        else:
+            pairs = [(f"cv.{key}", cv[key + "largest_row_share"], cv[key + "largest_row"])
+                     for key in ("", "baseline_")]
+            pairs += [(f"models[{m.get('config')}]", m["largest_row_share"], m["largest_row"])
+                      for m in records]
+            in_holdout = set(held)
+            for where, share, row in pairs:
+                if metric == "roc_auc":
+                    sound = share is None and row is None
+                else:
+                    sound = (share is None and row is None) or (
+                        is_number(share) and 0 < share <= 1 + 1e-12
+                        and isinstance(row, int) and not isinstance(row, bool)
+                        and 0 <= row < n and row not in in_holdout)
+                if not sound:
+                    bad("over the selection folds the largest row's share is null for a "
+                        "classification; for a regression null together with its row, or "
+                        "above 0 and at most 1 at a row that is no holdout row (5.2; D74 "
+                        "point 3)", f"{where}: share {share!r} at row {row!r}")
+            chosen = [m for m in records if m.get("chosen") is True]
+            if len(chosen) == 1 and first_difference(
+                    [cv["largest_row_share"], cv["largest_row"]],
+                    [chosen[0]["largest_row_share"], chosen[0]["largest_row"]]):
+                bad("`cv` holds the largest row's share of the chosen configuration (5.2; D74 "
+                    "point 3)",
+                    f"cv: {cv['largest_row_share']!r} at row {cv['largest_row']!r}; "
+                    f"models[{chosen[0].get('config')}]: {chosen[0]['largest_row_share']!r} "
+                    f"at row {chosen[0]['largest_row']!r}")
+        above += any(is_number(m.get("largest_row_share"))
+                     and m["largest_row_share"] > LARGEST_ROW_SHARE for m in records)
+        over = cv.get("baseline_largest_row_share")
+        above += bool(is_number(over) and over > LARGEST_ROW_SHARE)
+        said = sum(count for (code, _), count in warning_counts(doc).items()
+                   if code == "largest_row_dominates")
+        if said != above:
+            bad("one largest_row_dominates record for each statement above one half: the "
+                "model and the baseline on the holdout, any configuration and the baseline "
+                "over the selection folds (2.5; D74 point 3)",
+                f"{said} record(s); {above} statement(s) above {LARGEST_ROW_SHARE}: {got}")
     # null patterns of 5.2
     codes = {code for code, _ in warning_counts(doc)}
     method = at(doc, "headline.interval_method")
@@ -1175,6 +1329,31 @@ def check_side(case, out, data_dir):
         if records != unscored:
             bad("one fold_not_scored record for each fold not scored (2.5; D72)",
                 f"{records} record(s) for {unscored} fold(s) not scored")
+        sized = [f for f in fold_list if isinstance(f, dict)
+                 and isinstance(f.get("training_rows"), int)]
+        if at(doc, "task.type") == "regression" and unscored:
+            bad("every fold of a regression is scored (step 7)",
+                str([(f.get("training_rows"), f.get("validation_rows"), f.get("scored"))
+                     for f in fold_list if isinstance(f, dict)]))
+        told = sum(count for (code, _), count in warning_counts(doc).items()
+                   if code == "selection_not_made")
+        few = scheme == "grouped" and len(sized) == len(fold_list) and bool(sized) \
+            and any(f["training_rows"] < SELECTION_FLOOR
+                    and f["training_rows"] < f["validation_rows"] for f in sized)
+        if told != int(few):
+            bad("one selection_not_made record exactly when, under the grouped scheme, a fold "
+                "has fewer than 50 training rows and fewer training rows than validation rows "
+                "(step 9; D74 point 6)",
+                f"{told} record(s); the folds train on "
+                f"{[f['training_rows'] for f in sized]} rows under the {scheme} scheme")
+        elif few:
+            fitted = [m.get("config") for m in doc.get("models", [])
+                      if isinstance(m, dict) and m.get("status") == "fitted"]
+            if fitted and at(doc, "cv.chosen") != fitted[0]:
+                bad("with selection_not_made the first configuration in configuration order "
+                    "is used (step 9; D74 point 6)",
+                    f"cv.chosen is {at(doc, 'cv.chosen')!r}; the first fitted configuration is "
+                    f"{fitted[0]!r}")
     p_value = at(doc, "headline.p_value")
     may_have_p = scheme == "random" and skill is not None
     if (p_value is not None) != may_have_p or (p_value is None) != bool(
@@ -1222,6 +1401,40 @@ def check_side(case, out, data_dir):
                     bad("validation.n_holdout_timestamps (5.2)",
                         f"{at(doc, 'validation.n_holdout_timestamps')!r}; counted "
                         f"{split['holdout_stamps']}")
+                if at(doc, "task.type") == "regression":
+                    listed_b = [x.get("name") for x in doc.get("baselines", [])
+                                if isinstance(x, dict)]
+                    if listed_b != ["training_mean", "previous_value"]:
+                        bad("under time order a regression scores both baselines, whether the "
+                            "timestamps repeat or not (step 11; D73 point 1, D74 point 1)",
+                            str(listed_b))
+                    elif not o["declares_entity"]:
+                        # the mean target of the timestamp `gap + 1` distinct timestamps before
+                        try:
+                            value = {i: float(cells[i]) for i in keys}
+                            place = {s: k for k, s in enumerate(split["order"])}
+                            means = [math.fsum(value[i] for i in split["by_stamp"][s])
+                                     / len(split["by_stamp"][s]) for s in split["order"]]
+                            level = math.fsum(value[i] for i in split["training"]) \
+                                / len(split["training"])
+                            by_mean = math.fsum((value[i] - level) ** 2
+                                                for i in split["holdout"]) / len(split["holdout"])
+                            by_prev = math.fsum(
+                                (value[i] - means[place[keys[i]] - args["gap"] - 1]) ** 2
+                                for i in split["holdout"]) / len(split["holdout"])
+                        except (ValueError, TypeError, OverflowError, ZeroDivisionError):
+                            by_mean = by_prev = None
+                        said_b = {x["name"]: x.get("score") for x in doc["baselines"]}
+                        for b_name, b_mine in (("training_mean", by_mean),
+                                               ("previous_value", by_prev)):
+                            if b_mine is not None and math.isfinite(b_mine) and (
+                                    not is_number(said_b[b_name])
+                                    or not close(said_b[b_name], b_mine, 1e-7)):
+                                bad(f"the baseline {b_name} recomputed from the source: with no "
+                                    "entity column the previous value is the mean target of the "
+                                    "timestamp gap + 1 distinct timestamps before (step 11; D73 "
+                                    "point 1, D74 point 1)",
+                                    f"{said_b[b_name]!r}; recomputed {b_mine!r}")
                 if o["declares_entity"] and o["who"] is not None:
                     ent = o["who"]
                     want_units = (len({int(ent[i]) for i in split["training"]}),
@@ -1394,11 +1607,6 @@ TABLE_CODES = {"date_column_undeclared", "values_coerced", "numeric_with_separat
                "duplicate_rows", "unsupported_type", "interval_approximate", "no_previous_value"}
 SPLIT_ERRORS = {"holdout_copies_in_training", "one_class", "too_few_groups",
                 "fast_profile_too_few_rows"}
-# A forest draws its rows by their place in the matrix it is handed, and the order of
-# the rows of one fit is pinned nowhere yet (2.6 pins the index, not the order).
-# Measured: the application hands a fit its rows in file order, the reference in
-# time order. D73 point 4 pins the order in pass 8; until then it is on `OPEN`.
-ROW_ORDER_FAMILIES = {"forest"}
 # Spec 2.5 says when each of these is raised and not how many records it makes.
 # (`duplicate_rows` and `fold_not_scored` left this list with D72: both are pinned.)
 COUNT_NOT_PINNED = {"small_holdout", "no_interval"}
@@ -1413,7 +1621,8 @@ NOT_COMPARED = {
                  "(spec 11)",
 }
 FAILS = ("raw", "outcome", "exact", "fit", "property")      # each of these fails the tool
-# The column the generator makes as an exact copy of the target (D73 point 2).
+# The column the generator makes as an exact copy of the target. A column that
+# reproduces the target is always excluded (D73 point 2, D74 point 2).
 TARGET_COPY = "y_copy"
 
 
@@ -1433,9 +1642,9 @@ def compare(case, app, ref, data_dir):
     differ, and where one side alone breaks what the spec pins.
 
     Each finding has a class. `raw`, `outcome`, `exact`, `fit` and `property` fail
-    the tool; `open` and `limit` carry the name of an entry of `OPEN` or
-    `STATED_LIMITS`; `not_compared` carries why (`NOT_COMPARED`); `harness` is
-    the tool's own fault.
+    the tool; `limit` carries the name of an entry of `STATED_LIMITS` (and `open`
+    one of `OPEN`: no finding has either class while both lists are empty);
+    `not_compared` carries why (`NOT_COMPARED`); `harness` is the tool's own fault.
     """
     found = []
 
@@ -1463,8 +1672,8 @@ def compare(case, app, ref, data_dir):
                 f"{type(exc).__name__}: {exc}" if side == "application" else "",
                 f"{type(exc).__name__}: {exc}" if side == "reference" else "",
                 traceback.format_exc()[-600:])
-        # An exact copy of the target that the leak screen leaves a feature (D73 point
-        # 2): a property of one side. Owned and not yet built, so it is on `OPEN`.
+        # An exact copy of the target that the leak screen leaves a feature: a property
+        # of one side, under every scheme, and it fails the tool (D73 point 2).
         if out["kind"] == "result":
             kept = [c for c in out["doc"].get("columns", [])
                     if c.get("name") == TARGET_COPY and c.get("role") == "feature"]
@@ -1472,9 +1681,9 @@ def compare(case, app, ref, data_dir):
                 text = (f"`{TARGET_COPY}` is a feature; skill "
                         f"{at(out['doc'], 'headline.skill')!r}, warned: "
                         f"{any(k[1] == TARGET_COPY for k in warning_counts(out['doc']))}")
-                add("open", f"{side}: an exact copy of the target is excluded by the leak "
-                            "screen (step 8)", text if side == "application" else "",
-                    text if side == "reference" else "", name="target_copy_kept")
+                add("property", f"{side}: an exact copy of the target is excluded by the leak "
+                                "screen (step 8; D73 point 2, D74 point 2)",
+                    text if side == "application" else "", text if side == "reference" else "")
     if app["kind"] == "error" and ref["kind"] == "error":
         if app["code"] != ref["code"]:
             earned = broken_rules(case)
@@ -1499,15 +1708,13 @@ def compare(case, app, ref, data_dir):
     a, b = app["doc"], ref["doc"]
 
     def exact(path, kind="exact", note=""):
-        """Equal on both sides, or a finding of class `kind`; `rows` and the names of
-        `OPEN` are classes of their own."""
+        """Equal on both sides, or a finding of class `kind`; a kind of `NOT_COMPARED`
+        is listed and no part of the verdict."""
         x, y = at(a, path), at(b, path)
         if not first_difference(x, y):
             return True
         if kind in NOT_COMPARED:
             aside(kind, path, x, y, note)
-        elif kind in OPEN:
-            add("open", path, x, y, note, name=kind)
         else:
             add(kind, path, x, y, note)
         return False
@@ -1582,21 +1789,20 @@ def compare(case, app, ref, data_dir):
             else:
                 aside("rows", path + " (null or not)", at(a, path), at(b, path))
     ma, mb = a.get("models", []), b.get("models", [])
-    by_order = {m.get("config") for m in ma + mb if m.get("family") in ROW_ORDER_FAMILIES}
-    order_note = ("a forest draws its rows by their place in the matrix, and the two sides "
-                  "hand a fit its rows in different orders (D73 point 4)")
-    # What follows from a forest's fit only where a forest was chosen on one side: with
-    # none chosen, the other families' scores decide, and those are compared exactly.
-    forest_chosen = bool({at(a, "headline.model"), at(b, "headline.model")} & by_order)
+    # Under time order the rows of every fit are determined, and so is their order:
+    # time order, ties in file order (D74 point 4). A forest draws its rows by their
+    # place in the matrix it is handed, so it is compared like every other family.
     if timed:
         exact("headline.baseline_score")
         exact("baselines")
         exact("cv.n_scored_folds")
+        for path in ("headline.baseline_largest_row_share", "headline.baseline_largest_row",
+                     "cv.baseline_largest_row_share", "cv.baseline_largest_row"):
+            exact(path)
         for path in ("headline.score", "headline.skill", "headline.model", "cv.chosen",
-                     "cv.chosen_mean", "cv.chosen_std"):
-            exact(path, "forests_under_time_order" if forest_chosen else "fit",
-                  order_note if forest_chosen
-                  else "the same rows on both sides: only the fits can differ")
+                     "cv.chosen_mean", "cv.chosen_std", "headline.largest_row_share",
+                     "headline.largest_row", "cv.largest_row_share", "cv.largest_row"):
+            exact(path, "fit", "the same rows on both sides: only the fits can differ")
     elif at(a, "cv.n_scored_folds") != at(b, "cv.n_scored_folds"):
         aside("rows", "cv.n_scored_folds", at(a, "cv.n_scored_folds"),
               at(b, "cv.n_scored_folds"))
@@ -1607,23 +1813,15 @@ def compare(case, app, ref, data_dir):
     if shape_a != shape_b:
         add("exact", "models (configurations, families, params)", shape_a, shape_b)
     elif timed:
-        # `chosen` follows the ranking, which a forest's score can move: compared
-        # for the families whose fit does not depend on the order of the rows
-        # unless a forest was chosen on one side.
-        keys = ["status", "error", "fold_scores", "cv_mean", "cv_std"] + ([] if forest_chosen
-                                                                          else ["chosen"])
-        steady = [{k: m.get(k) for k in keys} for m in ma if m.get("config") not in by_order]
-        other = [{k: m.get(k) for k in keys} for m in mb if m.get("config") not in by_order]
-        for x, y in zip(steady, other):         # the error text is wording: null or not
+        keys = ["status", "error", "fold_scores", "cv_mean", "cv_std", "chosen",
+                "largest_row_share", "largest_row"]
+        mine = [{k: m.get(k) for k in keys} for m in ma]
+        theirs = [{k: m.get(k) for k in keys} for m in mb]
+        for x, y in zip(mine, theirs):          # the error text is wording: null or not
             x["error"], y["error"] = x["error"] is None, y["error"] is None
-        difference = first_difference(steady, other, "models (linear, tree, boosting)")
+        difference = first_difference(mine, theirs, "models")
         if difference:
             add("fit", "models", difference, "", "the same rows on both sides")
-        moved = [m.get("config") for m, o in zip(ma, mb) if m.get("config") in by_order
-                 and first_difference(m.get("fold_scores"), o.get("fold_scores"))]
-        if moved:
-            add("open", "models (fold scores of the forests)", f"{len(moved)} configurations "
-                "differ", "", order_note, name="forests_under_time_order")
     else:
         status_a, status_b = [m.get("status") for m in ma], [m.get("status") for m in mb]
         if status_a != status_b:
@@ -1660,10 +1858,7 @@ def compare(case, app, ref, data_dir):
                 add("exact", "predictions.csv (y_true)", f"{len(off)} rows differ", "", off[:5])
             far = [row[0] for row, other in zip(pa, pb)
                    if not close(float(row[2]), float(other[2]))]
-            if far and forest_chosen:
-                add("open", "predictions.csv (y_pred)", f"{len(far)} of {len(pa)} rows differ",
-                    "", order_note, name="forests_under_time_order")
-            elif far:
+            if far:
                 add("fit", "predictions.csv (y_pred)", f"{len(far)} of {len(pa)} rows differ",
                     "", "the same rows on both sides: only the fits can differ")
     return found
@@ -1751,7 +1946,8 @@ def main(argv=None):
     parser.add_argument("--only", default=None, help="table numbers, comma-separated")
     parser.add_argument("--jobs", type=int, default=max(2, min(24, (os.cpu_count() or 4) // 2)),
                         help="worker processes side by side")
-    parser.add_argument("--json", default=None, help="write every finding to this file")
+    parser.add_argument("--json", default=None,
+                        help="write every table's class and every finding to this file")
     parser.add_argument("--keep", action="store_true", help="keep the working folder")
     parser.add_argument("--describe", action="store_true", help="print the tables and stop")
     parser.add_argument("--worker", default=None, help=argparse.SUPPRESS)
@@ -1921,6 +2117,7 @@ def main(argv=None):
              "open": {name: sorted(by_name.get(name, ())) for name in OPEN},
              "stated_limits": {name: sorted(by_name.get(name, ())) for name in STATED_LIMITS},
              "failing_findings_by_class": by_fail, "not_compared": asides,
+             "classes": {str(e["number"]): e["class"] for e in report},
              "tables_with_findings": [e for e in report if e["findings"]]},
             indent=1, default=str), encoding="utf-8")
     if not args.keep:

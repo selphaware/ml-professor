@@ -1,0 +1,6 @@
+round 1  per edit (--fast)    14.9 s  GATE: PASS (51 checks)
+round 1  full                 20.5 s  GATE: PASS (53 checks)
+round 2  per edit (--fast)    15.0 s  GATE: PASS (51 checks)
+round 2  full                 22.3 s  GATE: PASS (53 checks)
+round 3  per edit (--fast)    16.1 s  GATE: PASS (51 checks)
+round 3  full                 20.9 s  GATE: PASS (53 checks)

@@ -168,7 +168,9 @@ def skill(metric, score, baseline_score):
 
 
 def previous_value(y, keys, gap=0, groups=None):
-    """For each row, the target `gap + 1` timestamps earlier; NaN where there is none.
+    """For each row, the mean target of the timestamp `gap + 1` distinct timestamps
+    earlier; NaN where there is none (D10, D74). With unique timestamps that is the
+    target of the row before.
 
     With `groups`, one value per row: the target of the latest row of the same
     group that lies at least `gap + 1` distinct timestamps earlier (D57).
@@ -182,11 +184,11 @@ def previous_value(y, keys, gap=0, groups=None):
             raise ValueError("previous_value needs a group for every row, and unique "
                              "timestamps within each group")
         return core._previous_by_group(y, keys, codes, int(gap))
-    if len(np.unique(keys)) != len(keys):
-        raise ValueError("previous_value needs unique timestamps")
-    order = np.argsort(keys, kind="stable")
+    _, stamp = np.unique(keys, return_inverse=True)
+    of_stamp = np.bincount(stamp, weights=y) / np.bincount(stamp)
     out = np.full(len(y), np.nan)
-    out[order[gap + 1:]] = y[order[:len(y) - gap - 1]]
+    has = stamp - int(gap) - 1 >= 0
+    out[has] = of_stamp[stamp[has] - int(gap) - 1]
     return out
 
 

@@ -1,0 +1,10 @@
+## a1: the prototype against the reference of this pass
+records compared: 510 (the other file holds 510); fields compared in each: 18; fields that differ: 0
+## a6: the prototype against the reference of this pass
+records compared: 150 (the other file holds 150); fields compared in each: 18; fields that differ: 0
+## a2: the prototype against the reference of this pass
+records compared: 4380 (the other file holds 4380); fields compared in each: 18; fields that differ: 0
+## a3: the prototype against the reference of this pass
+records compared: 4230 (the other file holds 4230); fields compared in each: 18; fields that differ: 0
+## gate_new: the prototype against the reference of this pass
+records compared: 1110 (the other file holds 1110); fields compared in each: 18; fields that differ: 0

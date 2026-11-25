@@ -3,9 +3,9 @@
 A fixture builder overwrites this file in its own copy with one value; every
 other line of the package stays the same.
 
-Seventy faults in all: thirty-one the gate's self-test proves a check catches
-(F1 to F22, with the forms F6b, F6c, F6d, F7b, F7c, F7d, F8b, F12b and F14b),
-and thirty-nine that only the test suite is relied on for (M1 to M39).
+Eighty-eight faults in all: thirty-seven the gate's self-test proves a check
+catches (F1 to F28, with the forms F6b, F6c, F6d, F7b, F7c, F7d, F8b, F12b and
+F14b), and fifty-one that only the test suite is relied on for (M1 to M51).
 
 "F1" .. "F10" the gate's failure modes (spec.md section 8). The gate's
               self-test proves a check catches each.
@@ -78,8 +78,27 @@ and thirty-nine that only the test suite is relied on for (M1 to M39).
          runs differ
     F22  the resamples are drawn from a stream that depends on the number of
          cores, so the interval differs between `n_jobs` 1 and 4
-"M1" .. "M39" small faults that no gate check is relied on to catch (D39, D46,
-              D52, D57, D62 to D66, D69 to D72). They exist for the test
+"F23" .. "F28" the failure modes of the eighth pass (D73, D74, D76): what the
+              judge's two other tools found on their first run, each with a gate
+              dataset or run and a check that names it.
+    F23  under time order with no entity column, the previous-value baseline is
+         scored only when the timestamps are unique, as it was: one repeated
+         row leaves the training mean as the only baseline, and a random walk
+         looks almost perfectly predictable
+    F24  the leak screen reads a column with its tree alone: a rescaled copy
+         of a trending target is kept under time order, where a tree cannot
+         follow the target beyond the range it was fitted on
+    F25  no training row is set aside from the leak screen and every row is
+         scored: one extreme target cell switches the screen off, and a copy of
+         the target stays a feature
+    F26  the largest row's share is taken of the absolute errors, not of the
+         squared errors: the number reported is not the share of the score
+    F27  the id-like rule for whole numbers is D19's clause alone: an
+         identifier becomes a feature when the rows are shuffled
+    F28  under the grouped scheme the choice between configurations is made
+         however few rows the folds outside one large unit validate on
+"M1" .. "M51" small faults that no gate check is relied on to catch (D39, D46,
+              D52, D57, D62 to D66, D69 to D76). They exist for the test
               suite: verify/mutation_check.py proves a test fails on each.
     M1  the final fit's imputation and scaling statistics are learned from
         training and holdout rows together
@@ -165,5 +184,33 @@ and thirty-nine that only the test suite is relied on for (M1 to M39).
         not scored (D72)
     M39 a row with a cell that cannot be hashed is never counted as a repeat:
         `input.duplicate_rows` is 0 on such a table (D72)
+    M40 at repeated timestamps the previous value is the target of the last
+        row of the timestamp before, not the mean of its rows (D74)
+    M41 the screen's line is fitted by least squares: one cell far off in a
+        copy of the target turns it, and the copy is kept under time order
+    M42 the rows the screen sets aside are left out of its sums only: they
+        stay among each fold's training rows, so one target cell of 999999
+        still shifts every fold's mean and every column is excluded
+    M43 the order reading of the warning tier has no second condition: the
+        lag of a series that only rises is warned about (D76)
+    M44 the order reading excludes the column, where it may only warn (D76)
+    M45 over the selection folds the largest row's share is reported for the
+        chosen configuration only: a cell that ruins another configuration,
+        and with it the choice, is not named (D74)
+    M46 the extreme-value warning compares the gap with the whole range of
+        the other values, not with the spread of the ten values after it: -999
+        in a column of about 50, spread 10, is not named
+    M47 in a classification the screen reads a column with its tree alone: an
+        exact copy of the class is kept when a fold's training rows hold fewer
+        than five rows of one class
+    M48 the no-choice rule of the grouped scheme asks only for a fold of fewer
+        than 50 training rows, whatever it validates on: a small table with
+        even folds gets no choice either (D74)
+    M49 under time order the rows of a fit are handed over in file order, not
+        in time order (D74 point 4)
+    M50 the identifier's second clause asks for every value to be distinct:
+        one repeated row makes a shuffled identifier a feature (D74)
+    M51 the panel warning names the training mean whatever baseline the run
+        used (D74)
 """
 BROKEN = None

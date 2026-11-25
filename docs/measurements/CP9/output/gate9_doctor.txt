@@ -1,0 +1,55 @@
+ok  time.previous_value_at_repeats: unchanged outputs passed
+ok  leak.copy_excluded_under_time: unchanged outputs passed
+ok  leak.excluded_despite_extreme_target: unchanged outputs passed
+ok  result.largest_row_reported: unchanged outputs passed
+ok  data.identifier_survives_shuffle: unchanged outputs passed
+ok  groups.choice_not_made: unchanged outputs passed
+ok  time.previous_value_at_repeats | the previous value is not listed -> failed: baselines on `walk_repeated` lists ['training_mean']. One row of this random walk is written twice, so the date 2021-01-21 holds two rows and the time
+ok  time.previous_value_at_repeats | the previous value scores 1% more -> failed: the previous_value baseline on `walk_repeated` scores 0.9729981516079783; recomputed by the gate from the source it is 0.963365. The previous value of
+ok  time.previous_value_at_repeats | the training mean scores 1% less -> failed: the training_mean baseline on `walk_repeated` scores 295.8460174947532; recomputed by the gate from the source it is 298.834. The previous value of a 
+ok  time.previous_value_at_repeats | the headline baseline is the training mean -> failed: the headline baseline on `walk_repeated` is 'training_mean', giving skill -0.0177. The previous value has the lower error (0.9634 against 298.8 for th
+ok  time.previous_value_at_repeats | skill is off by 0.001 -> failed: headline.skill on `walk_repeated` is -0.016661; 1 - error / previous-value error, recomputed by the gate, is -0.017661
+ok  time.previous_value_at_repeats | skill is null -> failed: `headline.skill` in profile.json on `walk_repeated` is None, not a finite number
+ok  leak.copy_excluded_under_time | the copy is a feature -> failed: `level_scaled` on `walk_copy` has role 'feature', reason None, leak_rule None; skill is 0.0007304472852793786 against the baseline 'previous_value'. T
+ok  leak.copy_excluded_under_time | the copy is excluded by the other rule -> failed: `level_scaled` on `walk_copy` has role 'excluded', reason 'suspected_leak', leak_rule 'missing_by_class'; skill is 0.0007304472852793786 against the b
+ok  leak.copy_excluded_under_time | no warning names the copy -> failed: no warning with code `suspected_leak` names `level_scaled` on `walk_copy`
+ok  leak.copy_excluded_under_time | the lag is excluded -> failed: `level_prev` on `walk_copy` has role 'excluded' and reason 'suspected_leak'. It is yesterday's level, known before today's, and the baseline of this r
+ok  leak.copy_excluded_under_time | skill is 0.9 -> failed: skill on walk_copy is 0.9, expected between -0.3 and 0.05: with the copy excluded this is the skill of `random_walk`; near 1 means the copy is still a
+ok  leak.excluded_despite_extreme_target | no warning names the target -> failed: `extreme_value` warnings on `walk_copy_cell` name no column. The target `level` holds -999 in one row, far outside all its other values, which are the
+ok  leak.excluded_despite_extreme_target | the warning names another column -> failed: `extreme_value` warnings on `walk_copy_cell` name ['level_prev']. The target `level` holds -999 in one row, far outside all its other values, which ar
+ok  leak.excluded_despite_extreme_target | the copy is a feature -> failed: `level_scaled` on `walk_copy_cell` has role 'feature', reason None, leak_rule None; skill is -0.7124242969623755 against the baseline 'previous_value'
+ok  leak.excluded_despite_extreme_target | the lag is excluded -> failed: `level_prev` on `walk_copy_cell` has role 'excluded' and reason 'suspected_leak'. It is yesterday's level, known before today's, and the baseline of t
+ok  result.largest_row_reported | headline.largest_row_share is absent -> failed: profile.json on `walk_late_cell` has no key headline.largest_row_share. A regression run says what share of a squared error its single largest row car
+ok  result.largest_row_reported | a models record has no largest_row -> failed: profile.json on `walk_late_cell` has no key models[tree-0].largest_row. A regression run says what share of a squared error its single largest row car
+ok  result.largest_row_reported | cv has none of the four keys -> failed: profile.json on `walk_late_cell` has no key cv.largest_row_share, cv.largest_row, cv.baseline_largest_row_share, cv.baseline_largest_row. A regression
+ok  result.largest_row_reported | the share is of the absolute errors -> failed: headline.largest_row_share on `walk_late_cell` is 0.9997. The largest squared error of the chosen model on a holdout row, over the sum of them, recomp
+ok  result.largest_row_reported | the share is null -> failed: `headline.largest_row_share` in profile.json on `walk_late_cell` is None, not a finite number
+ok  result.largest_row_reported | the row is another holdout row -> failed: headline.largest_row on `walk_late_cell` is 1. The holdout row with the largest squared error of the chosen model, by the gate's own arithmetic, is so
+ok  result.largest_row_reported | the row is a training row -> failed: headline.largest_row on `walk_late_cell` is 0. The holdout row with the largest squared error of the chosen model, by the gate's own arithmetic, is so
+ok  result.largest_row_reported | the row is null -> failed: `headline.largest_row` in profile.json on `walk_late_cell` is None, expected int
+ok  result.largest_row_reported | the baseline's share is halved -> failed: headline.baseline_largest_row_share on `walk_late_cell` is 0.01503666370360889. The largest squared error of the baseline previous_value on a holdout 
+ok  result.largest_row_reported | the baseline's row is the model's -> failed: headline.baseline_largest_row on `walk_late_cell` is 248. The holdout row with the largest squared error of the baseline previous_value, by the gate's
+ok  result.largest_row_reported | cv's share is not the chosen configuration's -> failed: cv.largest_row_share and cv.largest_row on `walk_late_cell` are 0.01830427874450439 and 230; they are those of the chosen configuration 'linear-0' in 
+ok  result.largest_row_reported | a configuration's row is a holdout row -> failed: over the selection folds, models[linear-0] on `walk_late_cell` states the share 0.01220285249633626 at row 1. For a configuration with a cross-validat
+ok  result.largest_row_reported | a configuration's share is null -> failed: over the selection folds, models[tree-0] on `walk_late_cell` states the share None at row 520. For a configuration with a cross-validation mean, and f
+ok  result.largest_row_reported | the baseline's share over the folds is null -> failed: over the selection folds, cv.baseline on `walk_late_cell` states the share None at row 807. For a configuration with a cross-validation mean, and for 
+ok  result.largest_row_reported | the baseline's share over the folds is 1.5 -> failed: over the selection folds, cv.baseline on `walk_late_cell` states the share 1.5 at row 807. For a configuration with a cross-validation mean, and for t
+ok  result.largest_row_reported | no largest_row_dominates warning -> failed: 0 warning(s) with the code `largest_row_dominates` on `walk_late_cell`; the gate counts 1 statement(s) above one half. One warning for each: the model
+ok  result.largest_row_reported | one largest_row_dominates warning too many -> failed: 2 warning(s) with the code `largest_row_dominates` on `walk_late_cell`; the gate counts 1 statement(s) above one half. One warning for each: the model
+ok  result.largest_row_reported | the baseline over the folds is above one half and no warning is added -> failed: 1 warning(s) with the code `largest_row_dominates` on `walk_late_cell`; the gate counts 2 statement(s) above one half. One warning for each: the model
+ok  result.largest_row_reported | no warning names the feature -> failed: `extreme_value` warnings on `walk_late_cell` name no column. The feature `level_prev` holds 999999 in one row, far outside all its other values, which
+ok  result.largest_row_reported | the headline baseline is chance -> failed: the headline baseline on `walk_late_cell` is 'chance'; under time order with unique timestamps it is training_mean or previous_value (D10)
+ok  data.identifier_survives_shuffle | the identifier is a feature -> failed: `record_id` on `messy_shuffled` has role 'feature' and reason None. In the 1500 rows with a target it holds 1500 distinct whole numbers that fill 97% 
+ok  data.identifier_survives_shuffle | the measure is excluded as id-like -> failed: `visits` on `messy_shuffled` has role 'excluded', reason 'id_like' and kind None. Its 1500 distinct whole numbers fill 1.5% of the range from the smal
+ok  data.identifier_survives_shuffle | the measure is categorical -> failed: `visits` on `messy_shuffled` has role 'feature', reason None and kind 'categorical'. Its 1500 distinct whole numbers fill 1.5% of the range from the s
+ok  data.identifier_survives_shuffle | skill is 0.3 -> failed: skill on messy_shuffled is 0.3, expected between 0.55 and 0.91: the rows of `messy` in another order: the signal is still there under the mess; a wron
+ok  groups.choice_not_made | no selection_not_made warning -> failed: 0 warning(s) with the code `selection_not_made` on `dominant_entity`; cv.chosen is 'linear-0' and skill -0.0062. The training rows are the entity C000
+ok  groups.choice_not_made | two selection_not_made warnings -> failed: 2 warning(s) with the code `selection_not_made` on `dominant_entity`; cv.chosen is 'linear-0' and skill -0.0062. The training rows are the entity C000
+ok  groups.choice_not_made | the tree is chosen -> failed: cv.chosen is 'tree-0' and headline.model 'tree-0' on `dominant_entity`; the first configuration that has a cross-validation mean is 'linear-0'. The tr
+ok  groups.choice_not_made | the headline model is not the chosen one -> failed: cv.chosen is 'linear-0' and headline.model 'tree-0' on `dominant_entity`; the first configuration that has a cross-validation mean is 'linear-0'. The 
+ok  groups.choice_not_made | a fold is not scored -> failed: validation.folds on `dominant_entity` reports scored = [True, True, False, True, True] and cv.n_scored_folds 5. The training rows are the entity C0000
+ok  groups.choice_not_made | four folds scored -> failed: validation.folds on `dominant_entity` reports scored = [True, True, True, True, True] and cv.n_scored_folds 4. The training rows are the entity C0000,
+ok  groups.choice_not_made | skill is -0.5 -> failed: skill on dominant_entity is -0.5, expected between -0.03 and 0.02: the target is noise, so honest skill is about zero, a little below for the first co
+ok  groups.choice_not_made | the first configuration has no mean -> failed: cv.chosen is 'linear-0' and headline.model 'linear-0' on `dominant_entity`; the first configuration that has a cross-validation mean is 'tree-0'. The 
+
+47 changed outputs; problems (with the six unchanged ones): 0

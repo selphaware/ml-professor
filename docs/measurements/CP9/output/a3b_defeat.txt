@@ -1,0 +1,12 @@
+| run | target cells set to -999 | the copy excluded, of 30 | another column excluded | errors |
+|---|---|---|---|---|
+| leak_reg | one cell | 30 of 30 | 0 |  |
+| leak_reg | 0.5% of the rows | 30 of 30 | 0 |  |
+| leak_reg | 1% | 14 of 30 | 0 |  |
+| leak_reg | 2% | 0 of 30 | 0 |  |
+| leak_reg | 5% | 0 of 30 | 0 |  |
+| random_walk | one cell | 30 of 30 | 0 |  |
+| random_walk | 0.5% of the rows | 8 of 30 | 0 |  |
+| random_walk | 1% | 0 of 30 | 0 |  |
+| random_walk | 2% | 0 of 30 | 0 |  |
+| random_walk | 5% | 0 of 30 | 0 |  |

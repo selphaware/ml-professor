@@ -1,0 +1,984 @@
+generated tables: 1000 table(s) from seed 20261122, 334 worker run(s), 24 at a time, under E:\CODE\ml-professor\verify\artifacts\generated\run-xnyo5xzs
+  package:   <scratch>\variants\M13\mlprofessor
+  reference: E:\CODE\ml-professor\verify\reference\mlprofessor
+
+FAILS: on neither list
+
+table 1: dataframe, 2199 rows x 5 columns ['f2', 'when', 'f1', 'seg', 'y']; task='regression', time_col='when', group_col=False, gap=0, profile='fast', seed=4294967295, duplicates='error'; over_cap; statement time; target ambiguous_int; one row for each timestamp; when: datetime
+  application: result: time_ordered, skill 0.5386684280963441, model linear-0
+  reference:   result: time_ordered, skill 0.5386684280963441, model linear-0
+  [exact] columns[f2].n_imputed: 179 | 168
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 1 --keep
+
+table 5: csv, 1365 rows x 6 columns ['who', 'f2', 'y', 'f1', 'notes', 'const']; task='auto', time_col=False, group_col='who', gap=0, profile='fast', seed=7, duplicates='keep'; large; statement entity; target clf_text; entities: equal, 683 of them; white space round some target values
+  application: result: grouped, skill -0.1033243486073675, model linear-0
+  reference:   result: grouped, skill -0.1033243486073675, model linear-0
+  [exact] columns[f2].n_imputed: 44 | 43
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 5 --keep
+
+table 11: dataframe, 600 rows x 8 columns ['', 'strong', 'signup', 'seg', 'y', 'when', 'f1', 'notes']; task='auto', time_col='when', group_col=False, gap=0, profile='fast', seed=1, duplicates='error'; medium; statement time; target reg; some timestamps hold several rows; when: yyyymmdd_int; repeated rows: few (4); a blank column name (was f2)
+  application: result: time_ordered, skill 0.9318415990798099, model linear-0
+  reference:   result: time_ordered, skill 0.9318415990798099, model linear-0
+  [exact] columns[].n_imputed: 55 | 51
+  [exact] columns[seg].n_imputed: 31 | 30
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 11 --keep
+
+table 18: dataframe, 1325 rows x 6 columns ['y', 'who', 'f1', 'count', 'when', 'f2']; task='classification', time_col=False, group_col='who', gap=0, profile='fast', seed=7, duplicates='error'; large; statement entity; target clf_text; panel of 25 entities on 53 timestamps; white space round some target values; when: number, some cells empty
+  application: result: grouped, skill 0.021100655831194803, model linear-0
+  reference:   result: grouped, skill 0.021100655831194803, model linear-0
+  [exact] columns[when].n_imputed: 50 | 44
+  [exact] columns[f2].n_imputed: 105 | 91
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 18 --keep
+
+table 25: dataframe, 131 rows x 9 columns ['f2', 'f1', 'count', 'after', 'big', 'y_copy', 'y', 'seg', 'when']; task='auto', time_col='when', group_col=False, gap=0, profile='fast', seed=123456, duplicates='error'; small; statement time; target clf_text; some timestamps hold several rows; y_copy: a copy of the target; after: filled in for one class only; when: number
+  application: result: time_ordered, skill 0.1160714285714286, model linear-0
+  reference:   result: time_ordered, skill 0.1160714285714286, model linear-0
+  [exact] columns[big].n_imputed: 10 | 8
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 25 --keep
+
+table 39: csv, 2465 rows x 5 columns ['f2', 'when', 'f1', 'y', 'seg']; task='regression', time_col='when', group_col=False, gap=0, profile='fast', seed=1, duplicates='error'; over_cap; statement time; target reg; one row for each timestamp; when: number
+  application: result: time_ordered, skill 0.9398719188892088, model linear-0
+  reference:   result: time_ordered, skill 0.9398719188892088, model linear-0
+  [exact] columns[f2].n_imputed: 94 | 74
+  [exact] columns[seg].n_imputed: 97 | 75
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 39 --keep
+
+table 41: csv, 669 rows x 7 columns ['daynum', 'level_prev', 'f2', 'f1', 'who', 'y', 'when']; task='auto', time_col='when', group_col='who', gap=0, profile='fast', seed=0, duplicates='group'; medium; statement time_entity; target reg; panel of 3 entities on 223 timestamps; the target is a random walk for each entity; level_prev: the level before, of the same series; daynum: dates written YYYYMMDD (text); when: iso_date
+  application: result: time_ordered, skill 0.009459953762635531, model linear-0
+  reference:   result: time_ordered, skill 0.009459953762635531, model linear-0
+  [exact] columns[f2].n_imputed: 54 | 52
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 41 --keep
+
+table 52: csv, 2473 rows x 6 columns ['f2', 'f1', 'dec', 'seg', 'y', 'when']; task='auto', time_col='when', group_col=False, gap=2, profile='fast', seed=123456, duplicates='error'; over_cap; statement time; target reg; one row for each timestamp; when: number
+  application: result: time_ordered, skill 0.9478566271294323, model linear-0
+  reference:   result: time_ordered, skill 0.9478566271294323, model linear-0
+  [exact] columns[dec].n_imputed: 104 | 87
+  [exact] columns[seg].n_imputed: 109 | 86
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 52 --keep
+
+table 54: dataframe, 347 rows x 4 columns ['f1', 'seg', 'f2', 'y']; task='classification', time_col=False, group_col=False, gap=0, profile='fast', seed=0, duplicates='keep'; medium; statement none; target clf_int
+  application: result: random, skill 0.6724738675958188, model linear-0
+  reference:   result: random, skill 0.6724738675958188, model linear-0
+  [exact] columns[seg].n_imputed: 11 | 10
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 54 --keep
+
+table 70: dataframe, 469 rows x 7 columns ['spend', 'const', 'f2', 'when', 'y', 'f1', 'after']; task='auto', time_col='when', group_col=False, gap=0, profile='fast', seed=0, duplicates='error'; medium; statement time; target clf_bool; one row for each timestamp; after: filled in for one class only; when: yyyymmdd_text
+  application: result: time_ordered, skill -0.057467423989308375, model tree-0
+  reference:   result: time_ordered, skill -0.057467423989308375, model tree-0
+  [exact] columns[f2].n_imputed: 13 | 12
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 70 --keep
+
+table 79: csv, 242 rows x 5 columns ['when', 'y', 'big', 'f1', 'f2']; task='regression', time_col='when', group_col=False, gap=5, profile='fast', seed=1, duplicates='error'; small; statement time; target reg_whole; some timestamps hold several rows; the target is a random walk; when: yyyymmdd_text; repeated rows: heavy (69)
+  application: result: time_ordered, skill -14.714314890947506, model linear-0
+  reference:   result: time_ordered, skill -14.714314890947506, model linear-0
+  [exact] columns[f2].n_imputed: 14 | 12
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 79 --keep
+
+table 91: dataframe, 1990 rows x 9 columns ['y', 'who', 'when', 'const', 'f2', 'f1', 'seg', 'empty', 'strong']; task='auto', time_col='when', group_col=False, gap=0, profile='fast', seed=4294967295, duplicates='error'; large; statement time; target reg; panel of 5 entities on 199 timestamps; when: yyyymmdd_int; repeated rows: heavy (995)
+  application: result: time_ordered, skill 0.6518819456442746, model linear-0
+  reference:   result: time_ordered, skill 0.6518819456442746, model linear-0
+  [exact] columns[f2].n_imputed: 148 | 140
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 91 --keep
+
+table 97: csv, 510 rows x 7 columns ['f1', 'flag', 'when', 'revenue', 'empty', 'f2', 'y']; task='classification', time_col=False, group_col=False, gap=0, profile='fast', seed=0, duplicates='error'; medium; statement none; target clf_text; one row for each timestamp; white space round some target values; when: iso_date, some cells empty
+  application: result: random, skill 0.6193874516800475, model linear-0
+  reference:   result: random, skill 0.6193874516800475, model linear-0
+  [exact] columns[f2].n_imputed: 44 | 37
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 97 --keep
+
+table 101: dataframe, 1072 rows x 5 columns ['f1', 'f2', 'seg', 'count', 'y']; task='auto', time_col=False, group_col=False, gap=0, profile='fast', seed=123456, duplicates='error'; large; statement none; target clf_bool; repeated rows: few (3)
+  application: result: random, skill 0.7613107119095144, model linear-0
+  reference:   result: random, skill 0.7613107119095144, model linear-0
+  [exact] columns[f2].n_imputed: 29 | 27
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 101 --keep
+
+table 106: dataframe, 669 rows x 7 columns ['f2', 'seg', 'count', 'who', 'spend', 'y', 'f1']; task='regression', time_col=False, group_col='who', gap=0, profile='fast', seed=7, duplicates='keep'; medium; statement entity; target reg; one entity of 535 of the 669 rows; entities: one_large, 68 of them; f1 identifies the entity
+  application: result: grouped, skill -0.037090278769607465, model linear-0
+  reference:   result: grouped, skill -0.037090278769607465, model linear-0
+  [exact] columns[f2].n_imputed: 52 | 46
+  [exact] columns[seg].n_imputed: 25 | 24
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 106 --keep
+
+table 111: dataframe, 2502 rows x 7 columns ['y_copy', 'f1', 'who', 'f2', 'when', 'spend', 'y']; task='classification', time_col='when', group_col='who', gap=5, profile='fast', seed=0, duplicates='error'; over_cap; statement time_entity; target clf_text; panel of 25 entities on 100 timestamps; y_copy: a copy of the target; when: big_int; repeated rows: few (2)
+  application: result: time_ordered, skill 0.6910569105691058, model linear-0
+  reference:   result: time_ordered, skill 0.6910569105691058, model linear-0
+  [exact] columns[f2].n_imputed: 202 | 161
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 111 --keep
+
+table 114: csv, 2896 rows x 8 columns ['f2', 'const', 'y', 'odd', 'f1', 'who', 'count', 'when']; task='classification', time_col='when', group_col='who', gap=1, profile='fast', seed=0, duplicates='error'; large; statement time_entity; target clf_text; panel of 8 entities on 181 timestamps; odd: a column of mixed; when: iso_datetime; repeated rows: heavy (1448)
+  application: result: time_ordered, skill 0.6487050960735172, model linear-0
+  reference:   result: time_ordered, skill 0.6487050960735172, model linear-0
+  [exact] columns[count].n_imputed: 114 | 76
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 114 --keep
+
+table 119: dataframe, 146 rows x 5 columns ['y', 'seg', 'f2', 'when', 'f1']; task='regression', time_col='when', group_col=False, gap=0, profile='fast', seed=0, duplicates='error'; small; statement time; target reg; one row for each timestamp; when: number
+  application: result: time_ordered, skill 0.9077312892201339, model linear-0
+  reference:   result: time_ordered, skill 0.9077312892201339, model linear-0
+  [exact] columns[f2].n_imputed: 11 | 10
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 119 --keep
+
+table 130: csv, 228 rows x 4 columns ['f1', 'f2', 'count', 'y']; task='classification', time_col=False, group_col=False, gap=0, profile='fast', seed=7, duplicates='error'; small; statement none; target clf_text
+  application: result: random, skill 0.4566326530612246, model linear-0
+  reference:   result: random, skill 0.4566326530612246, model linear-0
+  [exact] columns[count].n_imputed: 15 | 13
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 130 --keep
+
+table 134: csv, 1292 rows x 7 columns ['seg', 'signup', 'f1', 'f2', 'big', 'y', 'dec']; task='classification', time_col=False, group_col=False, gap=0, profile='fast', seed=7, duplicates='group'; medium; statement none; target clf_text; repeated rows: heavy (646)
+  application: result: grouped, skill 0.745233399079553, model linear-0
+  reference:   result: grouped, skill 0.745233399079553, model linear-0
+  [exact] columns[f2].n_imputed: 96 | 94
+  [exact] columns[dec].n_imputed: 32 | 30
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 134 --keep
+
+table 135: dataframe, 894 rows x 3 columns ['f1', 'y', 'f2']; task='auto', time_col=False, group_col=False, gap=0, profile='fast', seed=123456, duplicates='group'; large; statement none; target clf_text
+  application: result: random, skill 0.6841292977793021, model linear-0
+  reference:   result: random, skill 0.6841292977793021, model linear-0
+  [exact] columns[f2].n_imputed: 79 | 76
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 135 --keep
+
+table 151: dataframe, 156 rows x 5 columns ['when', 'f2', 'y', 'optint', 'f1']; task='auto', time_col=False, group_col=False, gap=0, profile='full', seed=123456, duplicates='keep'; small; statement none; target reg; some timestamps hold several rows; when: number
+  application: result: random, skill 0.8351709202598182, model linear-1
+  reference:   result: random, skill 0.8351709202598182, model linear-1
+  [exact] columns[f2].n_imputed: 17 | 15
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 151 --keep
+
+table 159: csv, 211 rows x 9 columns ['when', 'signup', 'seg', 'revenue', 'y_copy', 'who', 'y', 'f2', 'f1']; task='regression', time_col='when', group_col='who', gap=0, profile='fast', seed=0, duplicates='error'; medium; statement time_entity; target reg; panel of 12 entities on 24 timestamps, irregular; the target is a random walk for each entity; y_copy: a copy of the target; when: iso_date, some cells empty
+  application: result: time_ordered, skill -273.015308146319, model linear-0
+  reference:   result: time_ordered, skill -273.015308146319, model linear-0
+  [exact] columns[revenue].n_imputed: 1 | 0
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 159 --keep
+
+table 164: csv, 2121 rows x 6 columns ['y', 'strong', 'f2', 'revenue', 'when', 'f1']; task='auto', time_col='when', group_col=False, gap=0, profile='fast', seed=123456, duplicates='error'; over_cap; statement time; target clf_int; some timestamps hold several rows; when: number, some cells empty
+  application: result: time_ordered, skill 0.43973503576057227, model linear-0
+  reference:   result: time_ordered, skill 0.43973503576057227, model linear-0
+  [exact] columns[f2].n_imputed: 76 | 71
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 164 --keep
+
+table 165: dataframe, 710 rows x 5 columns ['f2', 'f1', 'y_copy', 'big', 'y']; task='auto', time_col=False, group_col=False, gap=0, profile='fast', seed=0, duplicates='keep'; large; statement none; target clf_text; y_copy: a copy of the target
+  application: result: random, skill 0.7056936647955092, model linear-0
+  reference:   result: random, skill 0.7056936647955092, model linear-0
+  [exact] columns[big].n_imputed: 26 | 25
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 165 --keep
+
+table 167: dataframe, 1560 rows x 8 columns ['f1', 'row_id', 'daynum', 'when', 'f2', 'y', 'signup', 'after']; task='auto', time_col='when', group_col=False, gap=0, profile='fast', seed=4294967295, duplicates='error'; large; statement time; target clf_text; one row for each timestamp; white space round some target values; row_id: an identifier (text); daynum: dates written YYYYMMDD (float_gaps); after: filled in for one class only; when: yyyymmdd_int
+  application: result: time_ordered, skill 0.6874003189792663, model linear-0
+  reference:   result: time_ordered, skill 0.6874003189792663, model linear-0
+  [exact] columns[f2].n_imputed: 35 | 32
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 167 --keep
+
+table 185: dataframe, 624 rows x 9 columns ['daynum', 'seg', 'who', 'y', 'signup', 'f2', 'when', 'f1', 'count']; task='classification', time_col='when', group_col='who', gap=1, profile='fast', seed=0, duplicates='keep'; large; statement time_entity; target clf_text; panel of 5 entities on 167 timestamps, irregular; daynum: dates written YYYYMMDD (text), one sentinel cell; when: iso_date, some cells empty
+  application: result: time_ordered, skill 0.7856697819314642, model linear-0
+  reference:   result: time_ordered, skill 0.7856697819314642, model linear-0
+  [exact] columns[count].n_imputed: 23 | 22
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 185 --keep
+
+table 191: csv, 2711 rows x 10 columns ['f1', 'strong', 'y', 'flag', 'odd', 'f2', 'seg', 'y_near', 'who', 'when']; task='auto', time_col='when', group_col='who', gap=0, profile='fast', seed=1, duplicates='error'; medium; statement time_entity; target reg; panel of 300 entities on 12 timestamps, irregular; y_near: a near-copy of the target; odd: a column of list; when: iso_date
+  application: result: time_ordered, skill 0.9670611137494034, model linear-0
+  reference:   result: time_ordered, skill 0.9670611137494034, model linear-0
+  [exact] columns[seg].n_imputed: 100 | 68
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 191 --keep
+
+table 196: dataframe, 349 rows x 11 columns ['y', 'daynum', 'revenue', 'seg', 'who', 'big', 'f1', 'empty', 'f2', 'when', 'flag']; task='classification', time_col='when', group_col='who', gap=0, profile='fast', seed=0, duplicates='error'; medium; statement time_entity; target clf_text; panel of 5 entities on 69 timestamps; daynum: dates written YYYYMMDD (int); when: number; repeated rows: few (4)
+  application: result: time_ordered, skill 0.657505285412262, model linear-0
+  reference:   result: time_ordered, skill 0.657505285412262, model linear-0
+  [exact] columns[big].n_imputed: 30 | 28
+  [exact] columns[f2].n_imputed: 11 | 10
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 196 --keep
+
+table 199: csv, 2486 rows x 8 columns ['flag', 'f2', 'when', 'f1', 'seg', 'daynum', 'spend', 'y']; task='auto', time_col='when', group_col=False, gap=2, profile='fast', seed=123456, duplicates='group'; over_cap; statement time; target reg; one row for each timestamp; daynum: dates written YYYYMMDD (int); when: iso_date
+  application: result: time_ordered, skill -0.003179251046059317, model linear-0
+  reference:   result: time_ordered, skill -0.003179251046059317, model linear-0
+  [exact] columns[f2].n_imputed: 63 | 49
+  [exact] columns[seg].n_imputed: 90 | 72
+  [exact] columns[spend].n_imputed: 3 | 1
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 199 --keep
+
+table 201: dataframe, 456 rows x 5 columns ['f1', 'who', 'y', 'when', 'f2']; task='auto', time_col='when', group_col='who', gap=2, profile='fast', seed=0, duplicates='error'; medium; statement time_entity; target reg; panel of 3 entities on 152 timestamps; when: iso_date
+  application: result: time_ordered, skill 0.011853088024827096, model linear-0
+  reference:   result: time_ordered, skill 0.011853088024827096, model linear-0
+  [exact] columns[f2].n_imputed: 33 | 31
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 201 --keep
+
+table 214: dataframe, 176 rows x 8 columns ['flag', 'y', 'f2', 'who', 'signup', 'when', 'f1', 'seg']; task='regression', time_col=False, group_col='who', gap=0, profile='fast', seed=7, duplicates='error'; small; statement entity; target reg; panel of 8 entities on 29 timestamps, irregular; when: iso_datetime
+  application: result: grouped, skill 0.9384526397676847, model linear-0
+  reference:   result: grouped, skill 0.9384526397676847, model linear-0
+  [exact] columns[f2].n_imputed: 20 | 19
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 214 --keep
+
+table 216: csv, 740 rows x 7 columns ['y', 'big', 'strong', 'when', 'f2', 'f1', 'who']; task='auto', time_col='when', group_col=False, gap=0, profile='fast', seed=7, duplicates='error'; large; statement time; target clf_int; panel of 3 entities on 332 timestamps, irregular; when: iso_date
+  application: result: time_ordered, skill 0.7407894736842104, model linear-0
+  reference:   result: time_ordered, skill 0.7407894736842104, model linear-0
+  [exact] columns[big].n_imputed: 41 | 39
+  [exact] columns[f2].n_imputed: 21 | 20
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 216 --keep
+
+table 226: csv, 409 rows x 8 columns ['flag', 'const', 'f2', 'signup', 'when', 'y', 'f1', 'empty']; task='auto', time_col='when', group_col=False, gap=0, profile='fast', seed=0, duplicates='error'; medium; statement time; target reg_whole; one row for each timestamp; when: yyyymmdd_int, some cells empty
+  application: result: time_ordered, skill -0.0192645090109842, model linear-0
+  reference:   result: time_ordered, skill -0.0192645090109842, model linear-0
+  [exact] columns[f2].n_imputed: 8 | 7
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 226 --keep
+
+table 227: dataframe, 1136 rows x 4 columns ['f1', 'f2', 'when', 'y']; task='auto', time_col='when', group_col=False, gap=0, profile='fast', seed=1, duplicates='error'; large; statement time; target reg; one row for each timestamp; the target is a random walk; when: iso_date, some cells empty
+  application: result: time_ordered, skill -1168.1724210167233, model linear-0
+  reference:   result: time_ordered, skill -1168.1724210167233, model linear-0
+  [exact] columns[f2].n_imputed: 92 | 86
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 227 --keep
+
+table 228: dataframe, 2346 rows x 9 columns ['f1', 'flag', 'y', 'const', 'f2', 'notes', 'who', 'seg', 'when']; task='auto', time_col='when', group_col='who', gap=0, profile='fast', seed=7, duplicates='error'; over_cap; statement time_entity; target clf_text; panel of 3 entities on 782 timestamps; when: yyyymmdd_int
+  application: result: time_ordered, skill 0.725360824742268, model linear-0
+  reference:   result: time_ordered, skill 0.725360824742268, model linear-0
+  [exact] columns[f2].n_imputed: 198 | 163
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 228 --keep
+
+table 232: csv, 628 rows x 4 columns ['f2', 'y', 'f1', 'who']; task='auto', time_col=False, group_col='who', gap=0, profile='fast', seed=7, duplicates='error'; medium; statement entity; target reg; entities: equal, 79 of them; f1 identifies the entity; repeated rows: few (1)
+  application: result: grouped, skill 0.8462870603772344, model linear-0
+  reference:   result: grouped, skill 0.8462870603772344, model linear-0
+  [exact] columns[f2].n_imputed: 46 | 43
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 232 --keep
+
+table 234: csv, 631 rows x 7 columns ['const', 'y', 'flag', 'f2', 'seg', 'f1', 'who']; task='auto', time_col=False, group_col=False, gap=0, profile='fast', seed=0, duplicates='error'; medium; statement none; target reg; entities: own, 631 of them
+  application: result: random, skill 0.9354037239150365, model linear-0
+  reference:   result: random, skill 0.9354037239150365, model linear-0
+  [exact] columns[seg].n_imputed: 18 | 17
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 234 --keep
+
+table 235: dataframe, 1213 rows x 9 columns ['const', 'flag', 'y', 'dec', 'odd', 'level_prev', 'f1', 'f2', 'when']; task='auto', time_col='when', group_col=False, gap=1, profile='fast', seed=0, duplicates='error'; large; statement time; target reg; some timestamps hold several rows; the target is a random walk; level_prev: the level before, of the same series; odd: a column of timedelta; when: iso_date, some cells empty; repeated rows: few (4)
+  application: result: time_ordered, skill 0.6244501818010009, model linear-0
+  reference:   result: time_ordered, skill 0.6244501818010009, model linear-0
+  [exact] columns[dec].n_imputed: 64 | 61
+  [exact] columns[f2].n_imputed: 98 | 94
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 235 --keep
+
+table 239: dataframe, 1101 rows x 9 columns ['f1', 'when', 'level_prev', 'f2', 'big', 'y', 'seg', 'flag', 'const']; task='regression', time_col='when', group_col=False, gap=0, profile='fast', seed=7, duplicates='error'; large; statement time; target reg; one row for each timestamp; the target is a random walk; level_prev: the level before, of the same series; when: iso_date
+  application: result: time_ordered, skill 0.07639068239456082, model linear-0
+  reference:   result: time_ordered, skill 0.07639068239456082, model linear-0
+  [exact] columns[f2].n_imputed: 77 | 76
+  [exact] columns[big].n_imputed: 67 | 66
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 239 --keep
+
+table 249: csv, 560 rows x 6 columns ['f1', 'seg', 'signup', 'y', 'f2', 'count']; task='auto', time_col=False, group_col=False, gap=0, profile='fast', seed=0, duplicates='keep'; medium; statement none; target clf_int; repeated rows: heavy (280)
+  application: result: random, skill 0.90625, model tree-0
+  reference:   result: random, skill 0.90625, model tree-0
+  [exact] columns[f2].n_imputed: 52 | 48
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 249 --keep
+
+table 252: dataframe, 2039 rows x 10 columns ['f2', 'f1', 'y', 'spend', 'const', 'seg', 'when', 'optint', 'notes', 'count']; task='auto', time_col='when', group_col=False, gap=0, profile='fast', seed=0, duplicates='group'; large; statement time; target clf_text; some timestamps hold several rows; when: iso_date; repeated rows: heavy (582)
+  application: result: time_ordered, skill 0.6668983683324796, model linear-0
+  reference:   result: time_ordered, skill 0.6668983683324796, model linear-0
+  [exact] columns[optint].n_imputed: 131 | 130
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 252 --keep
+
+table 255: csv, 205 rows x 11 columns ['revenue', 'odd', 'who', 'f1', 'count', 'daynum', 'f2', 'const', 'seg', 'spend', 'y']; task='auto', time_col=False, group_col='who', gap=0, profile='fast', seed=7, duplicates='error'; small; statement entity; target reg; entities: long_tail, 48 of them; daynum: dates written YYYYMMDD (int); odd: a column of mixed; 3 blank line(s) in the file
+  application: result: grouped, skill -0.06000407889097037, model linear-0
+  reference:   result: grouped, skill -0.06000407889097037, model linear-0
+  [exact] columns[spend].n_imputed: 3 | 2
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 255 --keep
+
+table 261: csv, 498 rows x 8 columns ['when', 'spend', 'daynum', 'big', 'f1', 'y', 'f2', 'count']; task='auto', time_col='when', group_col=False, gap=0, profile='fast', seed=123456, duplicates='error'; medium; statement time; target reg; some timestamps hold several rows; the target is a random walk; infinite target cells; daynum: dates written YYYYMMDD (float_gaps); when: iso_date
+  application: result: time_ordered, skill -92.3944827039798, model linear-0
+  reference:   result: time_ordered, skill -92.3944827039798, model linear-0
+  [exact] columns[big].n_imputed: 26 | 23
+  [exact] columns[f2].n_imputed: 35 | 34
+  [exact] columns[count].n_imputed: 26 | 24
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 261 --keep
+
+table 271: dataframe, 228 rows x 7 columns ['y', 'notes', 'when', 'dec', 'f1', 'seg', 'f2']; task='regression', time_col='when', group_col=False, gap=2, profile='fast', seed=0, duplicates='keep'; small; statement time; target reg; some timestamps hold several rows; the target is a random walk; when: number
+  application: result: time_ordered, skill -161.04410883400382, model linear-0
+  reference:   result: time_ordered, skill -161.04410883400382, model linear-0
+  [exact] columns[dec].n_imputed: 10 | 9
+  [exact] columns[f2].n_imputed: 22 | 21
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 271 --keep
+
+table 276: dataframe, 697 rows x 6 columns ['when', 'f2', 'huge', 'y', 'f1', 'spend']; task='auto', time_col='when', group_col=False, gap=0, profile='fast', seed=1, duplicates='keep'; medium; statement time; target clf_text; one row for each timestamp; when: iso_date
+  application: result: time_ordered, skill 0.08001675743611236, model linear-0
+  reference:   result: time_ordered, skill 0.08001675743611236, model linear-0
+  [exact] columns[f2].n_imputed: 19 | 18
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 276 --keep
+
+table 281: csv, 1393 rows x 7 columns ['y_copy', 'f1', 'f2', 'who', 'empty', 'const', 'y']; task='regression', time_col=False, group_col='who', gap=0, profile='fast', seed=123456, duplicates='keep'; large; statement entity; target reg; one entity of 1114 of the 1393 rows; entities: one_large, 280 of them; f1 identifies the entity; y_copy: a copy of the target; 1 blank line(s) in the file
+  application: result: grouped, skill -0.01659150757001715, model linear-0
+  reference:   result: grouped, skill -0.01659150757001715, model linear-0
+  [exact] columns[f2].n_imputed: 36 | 32
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 281 --keep
+
+table 282: csv, 2200 rows x 10 columns ['f1', 'y', 'count', 'f2', 'when', 'y_near', 'strong', 'notes', 'big', 'empty']; task='auto', time_col='when', group_col=False, gap=0, profile='fast', seed=0, duplicates='error'; large; statement time; target clf_bool; one row for each timestamp; y_near: a near-copy of the target; when: iso_date, some cells empty; repeated rows: heavy (628); 2 blank line(s) in the file
+  application: result: time_ordered, skill 0.9293440934065933, model linear-0
+  reference:   result: time_ordered, skill 0.9293440934065933, model linear-0
+  [exact] columns[count].n_imputed: 83 | 76
+  [exact] columns[f2].n_imputed: 65 | 57
+  [exact] columns[big].n_imputed: 122 | 107
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 282 --keep
+
+table 296: csv, 180 rows x 8 columns ['when', 'f2', 'level_prev', 'notes', 'f1', 'huge', 'seg', 'y']; task='auto', time_col='when', group_col=False, gap=0, profile='full', seed=7, duplicates='error'; small; statement time; target reg; one row for each timestamp; the target is a random walk; level_prev: the level before, of the same series; when: iso_datetime, some cells empty; repeated rows: few (2)
+  application: result: time_ordered, skill -0.06262765718561614, model linear-1
+  reference:   result: time_ordered, skill -0.06262765718561614, model linear-1
+  [exact] columns[seg].n_imputed: 11 | 10
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 296 --keep
+
+table 313: dataframe, 580 rows x 7 columns ['y_copy', 'when', 'f2', 'empty', 'row_id', 'f1', 'y']; task='auto', time_col='when', group_col=False, gap=0, profile='fast', seed=7, duplicates='group'; medium; statement time; target clf_int; one row for each timestamp; row_id: an identifier (text); y_copy: a copy of the target; when: datetime
+  application: result: time_ordered, skill 0.6525252525252525, model linear-0
+  reference:   result: time_ordered, skill 0.6525252525252525, model linear-0
+  [exact] columns[f2].n_imputed: 16 | 14
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 313 --keep
+
+table 322: csv, 2404 rows x 8 columns ['y_near', 'when', 'seg', 'daynum', 'optint', 'y', 'f2', 'f1']; task='auto', time_col='when', group_col=False, gap=1, profile='fast', seed=4294967295, duplicates='keep'; large; statement time; target reg_whole; one row for each timestamp; daynum: dates written YYYYMMDD (int); y_near: a near-copy of the target; when: iso_date; repeated rows: heavy (1202)
+  application: result: time_ordered, skill 0.9619788140441303, model linear-0
+  reference:   result: time_ordered, skill 0.9619788140441303, model linear-0
+  [exact] columns[seg].n_imputed: 82 | 66
+  [exact] columns[optint].n_imputed: 122 | 98
+  [exact] columns[f2].n_imputed: 62 | 56
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 322 --keep
+
+table 324: dataframe, 1204 rows x 6 columns ['f2', 'seg', 'who', 'f1', 'signup', 'y']; task='auto', time_col=False, group_col='who', gap=0, profile='fast', seed=7, duplicates='keep'; medium; statement entity; target clf_int; entities: equal, 121 of them; one label for each entity; repeated rows: heavy (602)
+  application: result: grouped, skill -0.04029304029304026, model tree-0
+  reference:   result: grouped, skill -0.04029304029304026, model tree-0
+  [exact] columns[f2].n_imputed: 78 | 70
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 324 --keep
+
+table 328: dataframe, 2100 rows x 8 columns ['when', 'who', 'f1', 'f2', 'y', 'huge', 'level_prev', 'count']; task='auto', time_col='when', group_col='who', gap=0, profile='fast', seed=123456, duplicates='group'; over_cap; statement time_entity; target reg; panel of 60 entities on 35 timestamps; the target is a random walk for each entity; level_prev: the level before, of the same series; when: iso_date, some cells empty
+  application: result: time_ordered, skill 0.016667048673353557, model linear-0
+  reference:   result: time_ordered, skill 0.016667048673353557, model linear-0
+  [exact] columns[f2].n_imputed: 175 | 167
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 328 --keep
+
+table 329: dataframe, 675 rows x 8 columns ['y', 'who', 'big', 'when', 'seg', 'daynum', 'f2', 'f1']; task='auto', time_col='when', group_col='who', gap=0, profile='fast', seed=0, duplicates='error'; medium; statement time_entity; target clf_int; panel of 25 entities on 27 timestamps; daynum: dates written YYYYMMDD (float_gaps); when: iso_date
+  application: result: time_ordered, skill 0.8351515151515152, model linear-0
+  reference:   result: time_ordered, skill 0.8351515151515152, model linear-0
+  [exact] columns[big].n_imputed: 42 | 41
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 329 --keep
+
+table 340: dataframe, 720 rows x 7 columns ['who', 'f1', 'y', 'big', 'when', 'flag', 'f2']; task='auto', time_col='when', group_col='who', gap=1, profile='fast', seed=7, duplicates='error'; small; statement time_entity; target clf_text; panel of 60 entities on 12 timestamps; when: iso_datetime
+  application: result: time_ordered, skill 0.004061078622482173, model linear-0
+  reference:   result: time_ordered, skill 0.004061078622482173, model linear-0
+  [exact] columns[big].n_imputed: 43 | 39
+  [exact] columns[f2].n_imputed: 17 | 16
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 340 --keep
+
+table 350: dataframe, 1184 rows x 4 columns ['f2', 'y_near', 'y', 'f1']; task='classification', time_col=False, group_col=False, gap=0, profile='fast', seed=7, duplicates='error'; large; statement none; target clf_int; y_near: a near-copy of the target
+  application: result: random, skill 0.9208502939846224, model linear-0
+  reference:   result: random, skill 0.9208502939846224, model linear-0
+  [exact] columns[f2].n_imputed: 87 | 83
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 350 --keep
+
+table 356: dataframe, 2125 rows x 5 columns ['f2', 'who', 'f1', 'when', 'y']; task='auto', time_col='when', group_col='who', gap=0, profile='fast', seed=123456, duplicates='error'; over_cap; statement time_entity; target clf_text; panel of 8 entities on 265 timestamps; when: iso_date; repeated rows: few (5)
+  application: result: time_ordered, skill 0.0766913518262835, model linear-0
+  reference:   result: time_ordered, skill 0.0766913518262835, model linear-0
+  [exact] columns[f2].n_imputed: 173 | 160
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 356 --keep
+
+table 360: csv, 164 rows x 6 columns ['y', 'who', 'optint', 'f1', 'f2', 'seg']; task='regression', time_col=False, group_col='who', gap=0, profile='full', seed=0, duplicates='error'; small; statement entity; target reg; entities: equal, 33 of them; f1 identifies the entity
+  application: result: grouped, skill 0.9343846866493569, model linear-0
+  reference:   result: grouped, skill 0.9343846866493569, model linear-0
+  [exact] columns[optint].n_imputed: 9 | 8
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 360 --keep
+
+table 377: dataframe, 605 rows x 7 columns ['f2', 'seg', 'notes', 'const', 'f1', 'y', 'when']; task='auto', time_col='when', group_col=False, gap=0, profile='fast', seed=7, duplicates='error'; medium; statement time; target clf_text; one row for each timestamp; when: datetime, some cells empty
+  application: result: time_ordered, skill 0.7411858974358974, model linear-0
+  reference:   result: time_ordered, skill 0.7411858974358974, model linear-0
+  [exact] columns[f2].n_imputed: 27 | 25
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 377 --keep
+
+table 385: dataframe, 1092 rows x 8 columns ['when', 'f2', 'notes', 'y', 'seg', 'flag', 'who', 'f1']; task='regression', time_col='when', group_col='who', gap=0, profile='fast', seed=0, duplicates='keep'; large; statement time_entity; target reg; panel of 25 entities on 58 timestamps, irregular; target held as Decimal objects; when: iso_date, some cells empty
+  application: result: time_ordered, skill 0.9256526875482226, model linear-0
+  reference:   result: time_ordered, skill 0.9256526875482226, model linear-0
+  [exact] columns[f2].n_imputed: 48 | 43
+  [exact] columns[seg].n_imputed: 36 | 35
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 385 --keep
+
+table 396: csv, 4112 rows x 5 columns ['f2', 'f1', 'when', 'dec', 'y']; task='classification', time_col='when', group_col=False, gap=0, profile='fast', seed=7, duplicates='error'; over_cap; statement time; target clf_text; some timestamps hold several rows; when: iso_date, some cells empty; repeated rows: heavy (2056)
+  application: result: time_ordered, skill 0.6990161853379879, model linear-0
+  reference:   result: time_ordered, skill 0.6990161853379879, model linear-0
+  [exact] columns[f2].n_imputed: 300 | 156
+  [exact] columns[dec].n_imputed: 168 | 70
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 396 --keep
+
+table 398: dataframe, 2318 rows x 7 columns ['optint', 'when', 'y', 'notes', 'spend', 'f1', 'f2']; task='auto', time_col='when', group_col=False, gap=0, profile='fast', seed=0, duplicates='group'; over_cap; statement time; target clf_text; some timestamps hold several rows; when: datetime
+  application: result: time_ordered, skill 0.71957561888912, model linear-0
+  reference:   result: time_ordered, skill 0.71957561888912, model linear-0
+  [exact] columns[optint].n_imputed: 144 | 125
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 398 --keep
+
+table 417: csv, 494 rows x 9 columns ['y', 'signup', 'flag', 'f2', 'f1', 'after', 'seg', 'revenue', 'row_id']; task='classification', time_col=False, group_col=False, gap=0, profile='fast', seed=7, duplicates='group'; medium; statement none; target clf_text; row_id: an identifier (consecutive); after: filled in for one class only
+  application: result: random, skill 0.0799220272904484, model tree-0
+  reference:   result: random, skill 0.0799220272904484, model tree-0
+  [exact] columns[seg].n_imputed: 21 | 19
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 417 --keep
+
+table 422: dataframe, 2292 rows x 9 columns ['who', 'seg', 'count', 'level_prev', 'f2', 'strong', 'when', 'f1', 'y']; task='auto', time_col='when', group_col=False, gap=0, profile='fast', seed=7, duplicates='group'; over_cap; statement time; target reg_whole; panel of 8 entities on 286 timestamps; the target is a random walk for each entity; level_prev: the level before, of the same series; when: number, some cells empty; repeated rows: few (4)
+  application: result: time_ordered, skill 0.7871215879312767, model tree-0
+  reference:   result: time_ordered, skill 0.7871215879312767, model tree-0
+  [exact] columns[f2].n_imputed: 194 | 169
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 422 --keep
+
+table 429: dataframe, 664 rows x 6 columns ['when', 'f1', 'f2', 'y', 'daynum', 'level_prev']; task='auto', time_col='when', group_col=False, gap=0, profile='fast', seed=0, duplicates='error'; medium; statement time; target reg; one row for each timestamp; the target is a random walk; level_prev: the level before, of the same series; daynum: dates written YYYYMMDD (int), one sentinel cell; when: iso_date, some cells empty
+  application: result: time_ordered, skill -0.030916148724251524, model linear-0
+  reference:   result: time_ordered, skill -0.030916148724251524, model linear-0
+  [exact] columns[f2].n_imputed: 29 | 27
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 429 --keep
+
+table 431: dataframe, 2533 rows x 6 columns ['f1', 'when', 'y', 'count', 'y_copy', 'f2']; task='auto', time_col='when', group_col=False, gap=0, profile='fast', seed=0, duplicates='error'; over_cap; statement time; target clf_text; some timestamps hold several rows; y_copy: a copy of the target; when: iso_date
+  application: result: time_ordered, skill 0.3938565308540698, model linear-0
+  reference:   result: time_ordered, skill 0.3938565308540698, model linear-0
+  [exact] columns[count].n_imputed: 88 | 71
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 431 --keep
+
+table 438: dataframe, 130 rows x 5 columns ['seg', 'y', 'f1', 'flag', 'f2']; task='auto', time_col=False, group_col=False, gap=0, profile='fast', seed=1, duplicates='error'; small; statement none; target reg; repeated rows: few (1)
+  application: result: random, skill 0.9472861658861608, model linear-0
+  reference:   result: random, skill 0.9472861658861608, model linear-0
+  [exact] columns[f2].n_imputed: 11 | 9
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 438 --keep
+
+table 439: csv, 2155 rows x 7 columns ['count', 'f2', 'f1', 'strong', 'seg', 'y', 'when']; task='regression', time_col='when', group_col=False, gap=0, profile='fast', seed=0, duplicates='keep'; over_cap; statement time; target ambiguous_int; some timestamps hold several rows; when: iso_date
+  application: result: time_ordered, skill 0.5737242309945922, model linear-0
+  reference:   result: time_ordered, skill 0.5737242309945922, model linear-0
+  [exact] columns[f2].n_imputed: 172 | 158
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 439 --keep
+
+table 442: dataframe, 720 rows x 7 columns ['notes', 'f1', 'when', 'level_prev', 'y', 'f2', 'who']; task='regression', time_col='when', group_col='who', gap=1, profile='fast', seed=0, duplicates='error'; small; statement time_entity; target reg; panel of 60 entities on 12 timestamps; the target is a random walk for each entity; level_prev: the level before, of the same series; when: iso_date
+  application: result: time_ordered, skill 0.49161919337093873, model linear-0
+  reference:   result: time_ordered, skill 0.49161919337093873, model linear-0
+  [exact] columns[f2].n_imputed: 63 | 62
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 442 --keep
+
+table 445: csv, 1669 rows x 9 columns ['when', 'f1', 'strong', 'y', 'odd', 'f2', 'who', 'count', 'seg']; task='auto', time_col='when', group_col='who', gap=5, profile='fast', seed=0, duplicates='error'; over_cap; statement time_entity; target reg; panel of 3 entities on 747 timestamps, irregular; odd: a column of complex; when: iso_date, some cells empty
+  application: result: time_ordered, skill 0.9500086768745811, model linear-0
+  reference:   result: time_ordered, skill 0.9500086768745811, model linear-0
+  [exact] columns[count].n_imputed: 71 | 66
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 445 --keep
+
+table 450: csv, 2099 rows x 5 columns ['f1', 'level_prev', 'y', 'f2', 'when']; task='auto', time_col='when', group_col=False, gap=0, profile='fast', seed=7, duplicates='keep'; over_cap; statement time; target reg; some timestamps hold several rows; the target is a random walk; level_prev: the level before, of the same series; when: iso_date; 3 blank line(s) in the file
+  application: result: time_ordered, skill 0.34601538152409705, model linear-0
+  reference:   result: time_ordered, skill 0.34601538152409705, model linear-0
+  [exact] columns[f2].n_imputed: 67 | 66
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 450 --keep
+
+table 451: dataframe, 1570 rows x 7 columns ['who', 'y', 'f2', 'dec', 'seg', 'f1', 'count']; task='auto', time_col=False, group_col='who', gap=0, profile='fast', seed=0, duplicates='error'; large; statement entity; target clf_text; one entity of 1256 of the 1570 rows; entities: one_large, 158 of them; f1 identifies the entity; white space round some target values
+  application: result: grouped, skill 0.6152408697568783, model linear-0
+  reference:   result: grouped, skill 0.6152408697568783, model linear-0
+  [exact] columns[f2].n_imputed: 47 | 45
+  [exact] columns[dec].n_imputed: 75 | 73
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 451 --keep
+
+table 459: dataframe, 424 rows x 9 columns ['spend', 'y', 'when', 'const', 'flag', 'seg', 'f2', 'who', 'f1']; task='auto', time_col='when', group_col='who', gap=0, profile='fast', seed=0, duplicates='error'; medium; statement time_entity; target reg; panel of 8 entities on 53 timestamps; when: yyyymmdd_int, some cells empty
+  application: result: time_ordered, skill 0.937857897844491, model linear-0
+  reference:   result: time_ordered, skill 0.937857897844491, model linear-0
+  [exact] columns[f2].n_imputed: 29 | 27
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 459 --keep
+
+table 463: csv, 150 rows x 8 columns ['y_copy', 'f1', 'y', 'who', 'f2', 'signup', 'seg', 'const']; task='auto', time_col=False, group_col='who', gap=0, profile='fast', seed=0, duplicates='error'; small; statement entity; target reg; one entity of 116 of the 145 rows; entities: one_large, 30 of them; y_copy: a copy of the target; repeated rows: few (5)
+  application: result: grouped, skill 0.9201272059017924, model linear-0
+  reference:   result: grouped, skill 0.9201272059017924, model linear-0
+  [exact] columns[f2].n_imputed: 12 | 10
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 463 --keep
+
+table 469: csv, 149 rows x 6 columns ['level_prev', 'y', 'when', 'seg', 'f1', 'f2']; task='auto', time_col='when', group_col=False, gap=2, profile='fast', seed=7, duplicates='error'; small; statement time; target reg_whole; some timestamps hold several rows; the target is a random walk; level_prev: the level before, of the same series; when: number, some cells empty; 2 blank line(s) in the file
+  application: result: time_ordered, skill 0.8526340184128203, model linear-0
+  reference:   result: time_ordered, skill 0.8526340184128203, model linear-0
+  [exact] columns[f2].n_imputed: 7 | 6
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 469 --keep
+
+table 471: dataframe, 198 rows x 5 columns ['f1', 'seg', 'y', 'f2', 'signup']; task='classification', time_col=False, group_col=False, gap=0, profile='fast', seed=7, duplicates='error'; small; statement none; target clf_text
+  application: result: random, skill 0.8666666666666667, model linear-0
+  reference:   result: random, skill 0.8666666666666667, model linear-0
+  [exact] columns[seg].n_imputed: 9 | 7
+  [exact] columns[f2].n_imputed: 17 | 14
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 471 --keep
+
+table 472: dataframe, 861 rows x 9 columns ['signup', 'who', 'seg', 'y', 'when', 'after', 'f2', 'f1', 'flag']; task='auto', time_col='when', group_col='who', gap=2, profile='fast', seed=0, duplicates='group'; large; statement time_entity; target clf_text; panel of 5 entities on 225 timestamps, irregular; after: filled in for one class only; when: iso_date, some cells empty; repeated rows: few (1)
+  application: result: time_ordered, skill 0.7506857665345932, model linear-0
+  reference:   result: time_ordered, skill 0.7506857665345932, model linear-0
+  [exact] columns[seg].n_imputed: 29 | 28
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 472 --keep
+
+table 482: dataframe, 470 rows x 6 columns ['when', 'f1', 'big', 'y', 'f2', 'seg']; task='auto', time_col='when', group_col=False, gap=0, profile='fast', seed=123456, duplicates='group'; small; statement time; target clf_bool; some timestamps hold several rows; when: iso_date; repeated rows: heavy (235)
+  application: result: time_ordered, skill 0.6349924585218703, model linear-0
+  reference:   result: time_ordered, skill 0.6349924585218703, model linear-0
+  [exact] columns[big].n_imputed: 26 | 24
+  [exact] columns[f2].n_imputed: 42 | 38
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 482 --keep
+
+table 494: dataframe, 128 rows x 9 columns ['f1', 'flag', 'f2', 'when', 'signup', 'y_copy', 'row_id', 'seg', 'y']; task='auto', time_col='when', group_col=False, gap=0, profile='fast', seed=4294967295, duplicates='group'; small; statement time; target clf_text; some timestamps hold several rows; row_id: an identifier (text); y_copy: a copy of the target; when: number, some cells empty
+  application: result: time_ordered, skill 0.1507936507936507, model linear-0
+  reference:   result: time_ordered, skill 0.1507936507936507, model linear-0
+  [exact] columns[seg].n_imputed: 6 | 5
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 494 --keep
+
+table 498: dataframe, 534 rows x 10 columns ['seg', 'f2', 'spend', 'daynum', 'y', 'notes', 'who', 'count', 'f1', 'y_copy']; task='auto', time_col=False, group_col=False, gap=0, profile='fast', seed=4294967295, duplicates='group'; medium; statement none; target reg; entities: equal, 67 of them; daynum: dates written YYYYMMDD (text); y_copy: a copy of the target
+  application: result: random, skill 0.9381439573967392, model linear-0
+  reference:   result: random, skill 0.9381439573967392, model linear-0
+  [exact] columns[f2].n_imputed: 13 | 11
+  [exact] columns[spend].n_imputed: 3 | 2
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 498 --keep
+
+table 500: dataframe, 249 rows x 8 columns ['seg', 'f1', 'when', 'daynum', 'f2', 'y', 'huge', 'flag']; task='auto', time_col='when', group_col=False, gap=0, profile='fast', seed=0, duplicates='error'; small; statement time; target clf_text; some timestamps hold several rows; daynum: dates written YYYYMMDD (int); when: iso_date, some cells empty
+  application: result: time_ordered, skill 0.6455026455026456, model linear-0
+  reference:   result: time_ordered, skill 0.6455026455026456, model linear-0
+  [exact] columns[flag].n_imputed: 14 | 12
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 500 --keep
+
+table 525: dataframe, 451 rows x 5 columns ['f1', 'f2', 'y', 'flag', 'strong']; task='auto', time_col=False, group_col=False, gap=0, profile='fast', seed=123456, duplicates='keep'; medium; statement none; target clf_text; repeated rows: few (4)
+  application: result: random, skill 0.7274959083469721, model linear-0
+  reference:   result: random, skill 0.7274959083469721, model linear-0
+  [exact] columns[f2].n_imputed: 33 | 31
+  [exact] columns[flag].n_imputed: 33 | 28
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 525 --keep
+
+table 534: dataframe, 204 rows x 3 columns ['y', 'f1', 'f2']; task='auto', time_col=False, group_col=False, gap=0, profile='fast', seed=1, duplicates='error'; small; statement none; target clf_int
+  application: result: random, skill 0.7333333333333334, model linear-0
+  reference:   result: random, skill 0.7333333333333334, model linear-0
+  [exact] columns[f2].n_imputed: 8 | 7
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 534 --keep
+
+table 536: dataframe, 160 rows x 8 columns ['who', 'f1', 'y', 'big', 'when', 'flag', 'signup', 'f2']; task='auto', time_col='when', group_col='who', gap=0, profile='fast', seed=123456, duplicates='keep'; small; statement time_entity; target clf_int; panel of 8 entities on 20 timestamps; when: big_int
+  application: result: time_ordered, skill 0.7851662404092072, model linear-0
+  reference:   result: time_ordered, skill 0.7851662404092072, model linear-0
+  [exact] columns[big].n_imputed: 8 | 7
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 536 --keep
+
+table 538: dataframe, 2080 rows x 9 columns ['when', 'daynum', 'seg', 'f1', 'f2', 'count', 'row_id', 'y', 'flag']; task='auto', time_col='when', group_col=False, gap=2, profile='fast', seed=123456, duplicates='error'; over_cap; statement time; target reg; one row for each timestamp; infinite target cells; row_id: an identifier (text); daynum: dates written YYYYMMDD (text), one sentinel cell; when: number
+  application: result: time_ordered, skill 0.9280985710643801, model linear-0
+  reference:   result: time_ordered, skill 0.9280985710643801, model linear-0
+  [exact] columns[f2].n_imputed: 65 | 55
+  [exact] columns[count].n_imputed: 74 | 68
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 538 --keep
+
+table 542: dataframe, 1527 rows x 6 columns ['const', 'when', 'f2', 'f1', 'who', 'y']; task='classification', time_col='when', group_col=False, gap=40, profile='fast', seed=123456, duplicates='error'; large; statement time; target clf_text; panel of 3 entities on 509 timestamps; white space round some target values; when: datetime, some cells empty
+  application: result: time_ordered, skill 0.711953828664704, model linear-0
+  reference:   result: time_ordered, skill 0.711953828664704, model linear-0
+  [exact] columns[f2].n_imputed: 119 | 109
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 542 --keep
+
+table 555: csv, 170 rows x 7 columns ['f1', 'flag', 'seg', 'y', 'f2', 'strong', 'count']; task='auto', time_col=False, group_col=False, gap=0, profile='fast', seed=7, duplicates='error'; small; statement none; target reg
+  application: result: random, skill 0.9289931926647651, model linear-0
+  reference:   result: random, skill 0.9289931926647651, model linear-0
+  [exact] columns[f2].n_imputed: 8 | 7
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 555 --keep
+
+table 557: csv, 149 rows x 6 columns ['f2', 'when', 'y', 'signup', 'seg', 'f1']; task='regression', time_col='when', group_col=False, gap=1, profile='fast', seed=0, duplicates='error'; small; statement time; target reg; one row for each timestamp; when: iso_date
+  application: result: time_ordered, skill 0.9274164658941001, model linear-0
+  reference:   result: time_ordered, skill 0.9274164658941001, model linear-0
+  [exact] columns[f2].n_imputed: 9 | 8
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 557 --keep
+
+table 574: dataframe, 447 rows x 9 columns ['seg', 'strong', 'const', 'f2', 'y', 'count', 'f1', 'level_prev', 'when']; task='auto', time_col='when', group_col=False, gap=0, profile='fast', seed=0, duplicates='error'; medium; statement time; target reg; one row for each timestamp; the target is a random walk; level_prev: the level before, of the same series; when: number, some cells empty; repeated rows: few (1)
+  application: result: time_ordered, skill 0.07588384502695955, model linear-0
+  reference:   result: time_ordered, skill 0.07588384502695955, model linear-0
+  [exact] columns[count].n_imputed: 20 | 18
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 574 --keep
+
+table 575: dataframe, 180 rows x 7 columns ['f1', 'flag', 'who', 'count', 'f2', 'when', 'y']; task='auto', time_col='when', group_col='who', gap=0, profile='fast', seed=4294967295, duplicates='keep'; small; statement time_entity; target reg; panel of 12 entities on 15 timestamps; when: big_int
+  application: result: time_ordered, skill -0.05130362814054923, model linear-0
+  reference:   result: time_ordered, skill -0.05130362814054923, model linear-0
+  [exact] columns[f2].n_imputed: 13 | 12
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 575 --keep
+
+table 577: csv, 313 rows x 4 columns ['when', 'f1', 'f2', 'y']; task='auto', time_col='when', group_col=False, gap=0, profile='fast', seed=0, duplicates='keep'; small; statement time; target clf_text; some timestamps hold several rows; when: iso_date, some cells empty; repeated rows: heavy (89)
+  application: result: time_ordered, skill 0.07187894073139978, model tree-0
+  reference:   result: time_ordered, skill 0.07187894073139978, model tree-0
+  [exact] columns[f2].n_imputed: 28 | 23
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 577 --keep
+
+table 591: csv, 228 rows x 8 columns ['seg', 'when', 'strong', 'f2', 'f1', 'y_copy', 'optint', 'y']; task='auto', time_col='when', group_col=False, gap=2, profile='fast', seed=0, duplicates='error'; small; statement time; target clf_text; some timestamps hold several rows; white space round some target values; y_copy: a copy of the target; when: yyyymmdd_text, some cells empty; repeated rows: heavy (65)
+  application: result: time_ordered, skill 0.46944444444444455, model linear-0
+  reference:   result: time_ordered, skill 0.46944444444444455, model linear-0
+  [exact] columns[seg].n_imputed: 14 | 12
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 591 --keep
+
+table 616: csv, 944 rows x 4 columns ['f2', 'count', 'f1', 'y']; task='auto', time_col=False, group_col=False, gap=0, profile='fast', seed=4294967295, duplicates='error'; large; statement none; target clf_text
+  application: result: random, skill 0.6848484848484848, model linear-0
+  reference:   result: random, skill 0.6848484848484848, model linear-0
+  [exact] columns[f2].n_imputed: 88 | 87
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 616 --keep
+
+table 619: dataframe, 600 rows x 6 columns ['seg', 'odd', 'f1', 'who', 'f2', 'y']; task='auto', time_col=False, group_col='who', gap=0, profile='fast', seed=7, duplicates='error'; medium; statement entity; target reg; entities: equal, 75 of them; odd: a column of complex
+  application: result: grouped, skill 0.9034603709187167, model linear-0
+  reference:   result: grouped, skill 0.9034603709187167, model linear-0
+  [exact] columns[f2].n_imputed: 51 | 44
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 619 --keep
+
+table 630: dataframe, 324 rows x 7 columns ['signup', 'big', 'seg', 'f2', 'y', 'count', 'f1']; task='auto', time_col=False, group_col=False, gap=0, profile='fast', seed=123456, duplicates='group'; medium; statement none; target reg
+  application: result: random, skill 0.9164732753110919, model linear-0
+  reference:   result: random, skill 0.9164732753110919, model linear-0
+  [exact] columns[big].n_imputed: 31 | 28
+  [exact] columns[f2].n_imputed: 11 | 10
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 630 --keep
+
+table 632: csv, 2265 rows x 7 columns ['f2', 'when', 'y', 'row_id', 'f1', 'spend', 'seg']; task='auto', time_col='when', group_col=False, gap=1, profile='fast', seed=4294967295, duplicates='error'; over_cap; statement time; target reg; one row for each timestamp; row_id: an identifier (text); when: yyyymmdd_int
+  application: result: time_ordered, skill 0.9376832788713888, model linear-0
+  reference:   result: time_ordered, skill 0.9376832788713888, model linear-0
+  [exact] columns[f2].n_imputed: 67 | 56
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 632 --keep
+
+table 636: csv, 751 rows x 9 columns ['f1', 'row_id', 'when', 'strong', 'f2', 'seg', 'flag', 'y', 'count']; task='classification', time_col='when', group_col=False, gap=40, profile='fast', seed=0, duplicates='error'; large; statement time; target clf_int; one row for each timestamp; row_id: an identifier (consecutive); when: iso_date
+  application: result: time_ordered, skill 0.752355010781977, model linear-0
+  reference:   result: time_ordered, skill 0.752355010781977, model linear-0
+  [exact] columns[f2].n_imputed: 74 | 70
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 636 --keep
+
+table 649: dataframe, 506 rows x 8 columns ['dec', 'count', 'seg', 'f1', 'empty', 'f2', 'y', 'big']; task='auto', time_col=False, group_col=False, gap=0, profile='fast', seed=4294967295, duplicates='error'; medium; statement none; target reg
+  application: result: random, skill 0.9386452890951544, model linear-0
+  reference:   result: random, skill 0.9386452890951544, model linear-0
+  [exact] columns[big].n_imputed: 30 | 29
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 649 --keep
+
+table 653: dataframe, 1350 rows x 8 columns ['who', 'revenue', 'seg', 'f2', 'y', 'y_near', 'f1', 'when']; task='auto', time_col=False, group_col=False, gap=0, profile='fast', seed=4294967295, duplicates='error'; large; statement none; target clf_text; panel of 25 entities on 54 timestamps; white space round some target values; y_near: a near-copy of the target; when: one cell of 0, which is no date; when: yyyymmdd_int, some cells empty
+  application: result: random, skill 0.9848870267843783, model linear-0
+  reference:   result: random, skill 0.9848870267843783, model linear-0
+  [exact] columns[f2].n_imputed: 102 | 98
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 653 --keep
+
+table 655: dataframe, 793 rows x 5 columns ['f2', 'y', 'const', 'f1', 'when']; task='auto', time_col='when', group_col=False, gap=1, profile='fast', seed=4294967295, duplicates='error'; large; statement time; target reg; one row for each timestamp; when: datetime, some cells empty
+  application: result: time_ordered, skill 0.8558646609836374, model linear-0
+  reference:   result: time_ordered, skill 0.8558646609836374, model linear-0
+  [exact] columns[f2].n_imputed: 61 | 60
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 655 --keep
+
+table 656: dataframe, 1404 rows x 8 columns ['when', 'y', 'row_id', 'seg', 'notes', 'f2', 'f1', 'empty']; task='auto', time_col='when', group_col=False, gap=0, profile='fast', seed=1, duplicates='group'; large; statement time; target clf_text; some timestamps hold several rows; row_id: an identifier (increasing); when: datetime; repeated rows: heavy (702)
+  application: result: time_ordered, skill 0.10102843315184518, model linear-0
+  reference:   result: time_ordered, skill 0.10102843315184518, model linear-0
+  [exact] columns[seg].n_imputed: 72 | 58
+  [exact] columns[f2].n_imputed: 44 | 40
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 656 --keep
+
+table 658: dataframe, 683 rows x 10 columns ['f2', 'seg', 'level_prev', 'strong', 'f1', 'big', 'empty', 'count', 'y', 'when']; task='regression', time_col='when', group_col=False, gap=0, profile='fast', seed=0, duplicates='error'; medium; statement time; target reg; one row for each timestamp; the target is a random walk; infinite target cells; level_prev: the level before, of the same series; when: iso_date, some cells empty
+  application: result: time_ordered, skill 0.14396921940808338, model linear-0
+  reference:   result: time_ordered, skill 0.14396921940808338, model linear-0
+  [exact] columns[f2].n_imputed: 58 | 55
+  [exact] columns[seg].n_imputed: 24 | 21
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 658 --keep
+
+table 659: csv, 2311 rows x 7 columns ['strong', 'y', 'f1', 'y_copy', 'f2', 'when', 'after']; task='classification', time_col='when', group_col=False, gap=5, profile='fast', seed=0, duplicates='error'; over_cap; statement time; target clf_text; one row for each timestamp; y_copy: a copy of the target; after: filled in for one class only; when: iso_date
+  application: result: time_ordered, skill 0.742422058894173, model linear-0
+  reference:   result: time_ordered, skill 0.742422058894173, model linear-0
+  [exact] columns[f2].n_imputed: 65 | 57
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 659 --keep
+
+table 678: csv, 2289 rows x 6 columns ['', 'when', 'y', 'count', 'seg', 'f2']; task='auto', time_col='when', group_col=False, gap=0, profile='fast', seed=0, duplicates='group'; over_cap; statement time; target clf_text; one row for each timestamp; when: iso_datetime; a blank column name (was f1)
+  application: result: time_ordered, skill 0.08505203605581468, model tree-0
+  reference:   result: time_ordered, skill 0.08505203605581468, model tree-0
+  [exact] columns[f2].n_imputed: 77 | 70
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 678 --keep
+
+table 679: dataframe, 2131 rows x 6 columns ['count', 'y', 'f2', 'optint', 'when', 'f1']; task='auto', time_col='when', group_col=False, gap=40, profile='fast', seed=7, duplicates='error'; over_cap; statement time; target clf_bool; one row for each timestamp; when: iso_datetime
+  application: result: time_ordered, skill 0.6595082177709297, model linear-0
+  reference:   result: time_ordered, skill 0.6595082177709297, model linear-0
+  [exact] columns[count].n_imputed: 81 | 74
+  [exact] columns[f2].n_imputed: 165 | 153
+  [exact] columns[optint].n_imputed: 111 | 107
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 679 --keep
+
+table 680: dataframe, 1137 rows x 7 columns ['f1', 'when', 'signup', 'seg', 'count', 'f2', 'y']; task='regression', time_col='when', group_col=False, gap=1, profile='fast', seed=1, duplicates='keep'; large; statement time; target ambiguous_int; one row for each timestamp; when: iso_date, some cells empty
+  application: result: time_ordered, skill 0.5628812520588551, model linear-0
+  reference:   result: time_ordered, skill 0.5628812520588551, model linear-0
+  [exact] columns[count].n_imputed: 40 | 35
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 680 --keep
+
+table 689: dataframe, 1080 rows x 8 columns ['f2', 'when', 'y', 'spend', 'f1', 'who', 'dec', 'big']; task='auto', time_col='when', group_col='who', gap=0, profile='fast', seed=7, duplicates='error'; medium; statement time_entity; target clf_text; panel of 3 entities on 180 timestamps; when: yyyymmdd_int, some cells empty; repeated rows: heavy (540)
+  application: result: time_ordered, skill 0.6880062712307291, model linear-0
+  reference:   result: time_ordered, skill 0.6880062712307291, model linear-0
+  [exact] columns[spend].n_imputed: 6 | 4
+  [exact] columns[big].n_imputed: 64 | 60
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 689 --keep
+
+table 704: csv, 603 rows x 8 columns ['seg', 'big', 'when', 'optint', 'f1', 'f2', 'spend', 'y']; task='auto', time_col='when', group_col=False, gap=0, profile='fast', seed=1, duplicates='error'; medium; statement time; target reg_whole; some timestamps hold several rows; when: number, some cells empty
+  application: result: time_ordered, skill 0.9332365967135385, model linear-0
+  reference:   result: time_ordered, skill 0.9332365967135385, model linear-0
+  [exact] columns[big].n_imputed: 34 | 32
+  [exact] columns[optint].n_imputed: 37 | 35
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 704 --keep
+
+table 706: dataframe, 2233 rows x 7 columns ['notes', 'when', 'seg', 'strong', 'y', 'f1', 'f2']; task='auto', time_col='when', group_col=False, gap=0, profile='fast', seed=123456, duplicates='error'; over_cap; statement time; target reg; some timestamps hold several rows; the target is a random walk; when: number
+  application: result: time_ordered, skill -1103.0361689736162, model linear-0
+  reference:   result: time_ordered, skill -1103.0361689736162, model linear-0
+  [exact] columns[f2].n_imputed: 171 | 159
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 706 --keep
+
+table 719: dataframe, 600 rows x 7 columns ['f2', 'when', 'f1', 'flag', 'y', 'count', 'who']; task='auto', time_col='when', group_col='who', gap=0, profile='fast', seed=1, duplicates='group'; medium; statement time_entity; target reg_whole; panel of 12 entities on 50 timestamps; when: iso_date
+  application: result: time_ordered, skill 0.7592285108838247, model linear-0
+  reference:   result: time_ordered, skill 0.7592285108838247, model linear-0
+  [exact] columns[f2].n_imputed: 57 | 56
+  [exact] columns[flag].n_imputed: 29 | 28
+  [exact] columns[count].n_imputed: 31 | 29
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 719 --keep
+
+table 725: dataframe, 300 rows x 7 columns ['f2', 'y', 'seg', 'f1', 'who', 'when', 'flag']; task='auto', time_col='when', group_col='who', gap=0, profile='fast', seed=4294967295, duplicates='keep'; medium; statement time_entity; target clf_int; panel of 12 entities on 25 timestamps; when: iso_date
+  application: result: time_ordered, skill 0.5115384615384615, model linear-0
+  reference:   result: time_ordered, skill 0.5115384615384615, model linear-0
+  [exact] columns[f2].n_imputed: 20 | 18
+  [exact] columns[seg].n_imputed: 12 | 10
+  [exact] columns[flag].n_imputed: 11 | 10
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 725 --keep
+
+table 734: csv, 2512 rows x 9 columns ['f2', 'y', 'seg', 'when', 'after', 'f1', 'strong', 'who', 'revenue']; task='auto', time_col='when', group_col='who', gap=0, profile='fast', seed=123456, duplicates='error'; over_cap; statement time_entity; target clf_text; panel of 8 entities on 314 timestamps; after: filled in for one class only; when: iso_date
+  application: result: time_ordered, skill 0.7732930969445493, model linear-0
+  reference:   result: time_ordered, skill 0.7732930969445493, model linear-0
+  [exact] columns[f2].n_imputed: 61 | 53
+  [exact] columns[seg].n_imputed: 102 | 85
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 734 --keep
+
+table 737: dataframe, 720 rows x 9 columns ['who', 'f2', 'daynum', 'row_id', 'f1', 'when', 'empty', 'seg', 'y']; task='auto', time_col=False, group_col=False, gap=0, profile='fast', seed=123456, duplicates='group'; small; statement none; target clf_text; panel of 60 entities on 12 timestamps; row_id: an identifier (increasing); daynum: dates written YYYYMMDD (int), one sentinel cell; when: datetime
+  application: result: random, skill 0.6777471331107563, model linear-0
+  reference:   result: random, skill 0.6777471331107563, model linear-0
+  [exact] columns[f2].n_imputed: 68 | 62
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 737 --keep
+
+table 745: csv, 186 rows x 5 columns ['row_id', 'y', 'seg', 'f2', 'f1']; task='classification', time_col=False, group_col=False, gap=0, profile='fast', seed=7, duplicates='error'; small; statement none; target clf_text; row_id: an identifier (consecutive)
+  application: result: random, skill -0.24009324009324007, model tree-0
+  reference:   result: random, skill -0.24009324009324007, model tree-0
+  [exact] columns[f2].n_imputed: 14 | 13
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 745 --keep
+
+table 748: csv, 2502 rows x 11 columns ['y_copy', 'revenue', 'f1', 'strong', 'f2', 'seg', 'daynum', 'when', 'y', 'y_near', 'optint']; task='auto', time_col='when', group_col=False, gap=0, profile='fast', seed=7, duplicates='group'; over_cap; statement time; target clf_int; one row for each timestamp; daynum: dates written YYYYMMDD (text); y_copy: a copy of the target; y_near: a near-copy of the target; when: iso_datetime, some cells empty; repeated rows: few (3)
+  application: result: time_ordered, skill 0.9802703690171721, model linear-0
+  reference:   result: time_ordered, skill 0.9802703690171721, model linear-0
+  [exact] columns[f2].n_imputed: 169 | 133
+  [exact] columns[seg].n_imputed: 108 | 94
+  [exact] columns[optint].n_imputed: 138 | 115
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 748 --keep
+
+table 774: dataframe, 1049 rows x 7 columns ['when', 'f1', 'f2', 'odd', 'optint', 'y', 'spend']; task='auto', time_col=False, group_col=False, gap=0, profile='fast', seed=7, duplicates='keep'; large; statement none; target reg; some timestamps hold several rows; odd: a column of bytes; when: datetime; repeated rows: few (5)
+  application: result: random, skill 0.7853109829274334, model linear-0
+  reference:   result: random, skill 0.7853109829274334, model linear-0
+  [exact] columns[f2].n_imputed: 97 | 94
+  [exact] columns[optint].n_imputed: 53 | 52
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 774 --keep
+
+table 775: dataframe, 2440 rows x 11 columns ['seg', 'flag', 'optint', 'notes', 'signup', 'y', 'level_prev', 'f1', 'f2', 'when', 'row_id']; task='regression', time_col='when', group_col=False, gap=0, profile='fast', seed=4294967295, duplicates='group'; large; statement time; target reg_whole; some timestamps hold several rows; the target is a random walk; level_prev: the level before, of the same series; row_id: an identifier (text); when: yyyymmdd_int; repeated rows: heavy (1220)
+  application: result: time_ordered, skill 0.27298554054317825, model linear-0
+  reference:   result: time_ordered, skill 0.27298554054317825, model linear-0
+  [exact] columns[flag].n_imputed: 112 | 82
+  [exact] columns[optint].n_imputed: 194 | 156
+  [exact] columns[f2].n_imputed: 78 | 58
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 775 --keep
+
+table 781: csv, 234 rows x 8 columns ['y', 'optint', 'f1', 'when', 'strong', 'f2', 'daynum', 'seg']; task='auto', time_col='when', group_col=False, gap=0, profile='fast', seed=0, duplicates='error'; small; statement time; target clf_int; one row for each timestamp; daynum: dates written YYYYMMDD (text); when: yyyymmdd_int
+  application: result: time_ordered, skill 0.6125, model linear-0
+  reference:   result: time_ordered, skill 0.6125, model linear-0
+  [exact] columns[optint].n_imputed: 13 | 11
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 781 --keep
+
+table 783: dataframe, 252 rows x 4 columns ['f1', 'y', 'f2', 'empty']; task='auto', time_col=False, group_col=False, gap=0, profile='fast', seed=1, duplicates='keep'; small; statement none; target reg; repeated rows: few (4)
+  application: result: random, skill 0.8372738583324313, model linear-0
+  reference:   result: random, skill 0.8372738583324313, model linear-0
+  [exact] columns[f2].n_imputed: 18 | 17
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 783 --keep
+
+table 788: dataframe, 456 rows x 7 columns ['f2', 'when', 'const', 'flag', 'f1', 'daynum', 'y']; task='regression', time_col=False, group_col=False, gap=0, profile='fast', seed=0, duplicates='error'; medium; statement none; target reg; some timestamps hold several rows; daynum: dates written YYYYMMDD (int); when: big_int
+  application: result: random, skill -0.041668565434604066, model linear-0
+  reference:   result: random, skill -0.041668565434604066, model linear-0
+  [exact] columns[f2].n_imputed: 15 | 14
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 788 --keep
+
+table 796: dataframe, 1292 rows x 9 columns ['revenue', 'f2', 'flag', 'seg', 'y', 'f1', 'dec', 'daynum', 'when']; task='auto', time_col='when', group_col=False, gap=1, profile='fast', seed=123456, duplicates='group'; large; statement time; target clf_text; one row for each timestamp; daynum: dates written YYYYMMDD (int); when: number, some cells empty
+  application: result: time_ordered, skill 0.7261059089441395, model linear-0
+  reference:   result: time_ordered, skill 0.7261059089441395, model linear-0
+  [exact] columns[seg].n_imputed: 48 | 46
+  [exact] columns[dec].n_imputed: 49 | 46
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 796 --keep
+
+table 806: csv, 255 rows x 5 columns ['who', 'y_near', 'f2', 'y', 'f1']; task='auto', time_col=False, group_col='who', gap=0, profile='fast', seed=7, duplicates='group'; small; statement entity; target reg; entities: equal, 32 of them; f1 identifies the entity; y_near: a near-copy of the target
+  application: result: grouped, skill 0.972635449257051, model linear-0
+  reference:   result: grouped, skill 0.972635449257051, model linear-0
+  [exact] columns[f2].n_imputed: 9 | 8
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 806 --keep
+
+table 815: csv, 247 rows x 5 columns ['f1', 'f2', 'who', 'const', 'y']; task='auto', time_col=False, group_col='who', gap=0, profile='fast', seed=4294967295, duplicates='error'; small; statement entity; target clf_text; entities: long_tail, 73 of them
+  application: result: grouped, skill -0.11546840958605664, model linear-0
+  reference:   result: grouped, skill -0.11546840958605664, model linear-0
+  [exact] columns[f2].n_imputed: 24 | 23
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 815 --keep
+
+table 819: csv, 129 rows x 6 columns ['daynum', 'when', 'f1', 'seg', 'y', 'f2']; task='auto', time_col='when', group_col=False, gap=0, profile='fast', seed=4294967295, duplicates='error'; small; statement time; target clf_text; one row for each timestamp; white space round some target values; daynum: dates written YYYYMMDD (text), a sentinel in a third of the rows; when: iso_date
+  application: result: time_ordered, skill 0.6536796536796536, model linear-0
+  reference:   result: time_ordered, skill 0.6536796536796536, model linear-0
+  [exact] columns[f2].n_imputed: 13 | 12
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 819 --keep
+
+table 821: dataframe, 302 rows x 4 columns ['f1', 'f2', 'y', 'seg']; task='auto', time_col=False, group_col=False, gap=0, profile='fast', seed=0, duplicates='group'; medium; statement none; target reg; repeated rows: few (4)
+  application: result: grouped, skill 0.9216661925151305, model linear-0
+  reference:   result: grouped, skill 0.9216661925151305, model linear-0
+  [exact] columns[seg].n_imputed: 13 | 12
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 821 --keep
+
+table 824: dataframe, 896 rows x 8 columns ['flag', 'count', 'f2', 'const', 'f1', 'seg', 'y_copy', 'y']; task='auto', time_col=False, group_col=False, gap=0, profile='fast', seed=0, duplicates='keep'; medium; statement none; target clf_text; y_copy: a copy of the target; repeated rows: heavy (256)
+  application: result: random, skill 0.5555555555555556, model tree-0
+  reference:   result: random, skill 0.5555555555555556, model tree-0
+  [exact] columns[flag].n_imputed: 45 | 44
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 824 --keep
+
+table 828: csv, 973 rows x 6 columns ['signup', 'seg', 'f2', 'who', 'f1', 'y']; task='regression', time_col=False, group_col='who', gap=0, profile='fast', seed=4294967295, duplicates='error'; large; statement entity; target reg; entities: equal, 195 of them; f1 identifies the entity; infinite target cells
+  application: result: grouped, skill 0.9495479542807828, model linear-0
+  reference:   result: grouped, skill 0.9495479542807828, model linear-0
+  [exact] columns[seg].n_imputed: 39 | 38
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 828 --keep
+
+table 835: dataframe, 2100 rows x 7 columns ['when', 'count', 'f1', 'big', 'who', 'y', 'f2']; task='auto', time_col='when', group_col='who', gap=0, profile='fast', seed=0, duplicates='error'; large; statement time_entity; target clf_text; panel of 25 entities on 42 timestamps; when: yyyymmdd_int; repeated rows: heavy (1050)
+  application: result: time_ordered, skill 0.6460381723539619, model linear-0
+  reference:   result: time_ordered, skill 0.6460381723539619, model linear-0
+  [exact] columns[count].n_imputed: 66 | 64
+  [exact] columns[big].n_imputed: 112 | 110
+  [exact] columns[f2].n_imputed: 46 | 42
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 835 --keep
+
+table 837: csv, 222 rows x 7 columns ['dec', 'f1', 'y', 'spend', 'count', 'f2', 'y_copy']; task='auto', time_col=False, group_col=False, gap=0, profile='fast', seed=4294967295, duplicates='group'; small; statement none; target clf_text; y_copy: a copy of the target
+  application: result: random, skill -0.34153846153846157, model tree-0
+  reference:   result: random, skill -0.34153846153846157, model tree-0
+  [exact] columns[spend].n_imputed: 3 | 2
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 837 --keep
+
+table 854: dataframe, 1005 rows x 9 columns ['f1', 'revenue', 'f2', 'y', 'when', 'flag', 'empty', 'row_id', 'seg']; task='auto', time_col='when', group_col=False, gap=2, profile='fast', seed=123456, duplicates='group'; large; statement time; target clf_bool; one row for each timestamp; row_id: an identifier (consecutive); when: iso_date
+  application: result: time_ordered, skill 0.7885375494071147, model linear-0
+  reference:   result: time_ordered, skill 0.7885375494071147, model linear-0
+  [exact] columns[f2].n_imputed: 96 | 95
+  [exact] columns[flag].n_imputed: 51 | 49
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 854 --keep
+
+table 857: csv, 2135 rows x 7 columns ['level_prev', 'when', 'y', 'y_near', 'const', 'f1', 'f2']; task='auto', time_col='when', group_col=False, gap=0, profile='fast', seed=0, duplicates='group'; over_cap; statement time; target reg; one row for each timestamp; the target is a random walk; level_prev: the level before, of the same series; y_near: a near-copy of the target; when: yyyymmdd_text
+  application: result: time_ordered, skill 0.0216774737518598, model linear-0
+  reference:   result: time_ordered, skill 0.0216774737518598, model linear-0
+  [exact] columns[f2].n_imputed: 191 | 179
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 857 --keep
+
+table 859: csv, 200 rows x 9 columns ['y', 'level_prev', 'when', 'y_near', 'f2', 'signup', 'who', 'f1', 'strong']; task='auto', time_col=False, group_col='who', gap=0, profile='fast', seed=1, duplicates='error'; small; statement entity; target reg; panel of 25 entities on 8 timestamps; the target is a random walk for each entity; level_prev: the level before, of the same series; y_near: a near-copy of the target; when: iso_date
+  application: result: grouped, skill 0.9507463368683909, model linear-0
+  reference:   result: grouped, skill 0.9507463368683909, model linear-0
+  [exact] columns[f2].n_imputed: 18 | 17
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 859 --keep
+
+table 866: csv, 2161 rows x 10 columns ['f2', 'const', 'f1', 'y_near', 'count', 'y', 'seg', 'when', 'dec', 'signup']; task='auto', time_col='when', group_col=False, gap=0, profile='fast', seed=7, duplicates='group'; over_cap; statement time; target clf_int; one row for each timestamp; y_near: a near-copy of the target; when: number, some cells empty
+  application: result: time_ordered, skill 0.982768320714986, model linear-0
+  reference:   result: time_ordered, skill 0.982768320714986, model linear-0
+  [exact] columns[f2].n_imputed: 58 | 53
+  [exact] columns[dec].n_imputed: 78 | 71
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 866 --keep
+
+table 884: csv, 902 rows x 8 columns ['when', 'f1', 'spend', 'y', 'who', 'f2', 'signup', 'big']; task='classification', time_col='when', group_col='who', gap=2, profile='fast', seed=7, duplicates='keep'; large; statement time_entity; target clf_int; panel of 25 entities on 36 timestamps; when: number, some cells empty; repeated rows: few (2)
+  application: result: time_ordered, skill 0.19188034188034186, model linear-0
+  reference:   result: time_ordered, skill 0.19188034188034186, model linear-0
+  [exact] columns[big].n_imputed: 61 | 53
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 884 --keep
+
+table 895: csv, 593 rows x 7 columns ['f2', 'f1', 'when', 'flag', 'optint', 'const', 'y']; task='auto', time_col='when', group_col=False, gap=0, profile='fast', seed=7, duplicates='error'; medium; statement time; target clf_bool; some timestamps hold several rows; when: yyyymmdd_int, some cells empty
+  application: result: time_ordered, skill 0.6571207430340558, model linear-0
+  reference:   result: time_ordered, skill 0.6571207430340558, model linear-0
+  [exact] columns[f2].n_imputed: 39 | 38
+  [exact] columns[optint].n_imputed: 32 | 31
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 895 --keep
+
+table 899: csv, 354 rows x 10 columns ['f2', 'const', 'f1', 'y', 'when', 'big', 'count', 'notes', 'who', 'seg']; task='auto', time_col='when', group_col='who', gap=0, profile='fast', seed=123456, duplicates='keep'; small; statement time_entity; target clf_text; panel of 5 entities on 48 timestamps, irregular; when: iso_date; repeated rows: heavy (177)
+  application: result: time_ordered, skill -0.31376518218623484, model tree-0
+  reference:   result: time_ordered, skill -0.31376518218623484, model tree-0
+  [exact] columns[count].n_imputed: 16 | 14
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 899 --keep
+
+table 904: dataframe, 106 rows x 4 columns ['f1', 'f2', 'who', 'y']; task='auto', time_col=False, group_col='who', gap=0, profile='full', seed=123456, duplicates='error'; tiny; statement entity; target reg; entities: equal, 14 of them; infinite target cells
+  application: result: grouped, skill -0.0018708065345505176, model forest-4
+  reference:   result: grouped, skill -0.0018708065345505176, model forest-4
+  [exact] columns[f2].n_imputed: 4 | 3
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 904 --keep
+
+table 923: dataframe, 173 rows x 8 columns ['y_near', 'count', 'seg', 'f2', 'f1', 'who', 'y', 'strong']; task='regression', time_col=False, group_col='who', gap=0, profile='full', seed=0, duplicates='error'; small; statement entity; target reg; one entity of 102 of the 170 rows; entities: one_large, 69 of them; f1 identifies the entity; y_near: a near-copy of the target; repeated rows: few (3)
+  application: result: grouped, skill 0.9777241203749883, model linear-0
+  reference:   result: grouped, skill 0.9777241203749883, model linear-0
+  [exact] columns[seg].n_imputed: 4 | 3
+  [exact] columns[f2].n_imputed: 16 | 15
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 923 --keep
+
+table 927: csv, 363 rows x 9 columns ['signup', 'seg', 'when', 'y', 'f2', 'f1', 'y_copy', 'count', 'notes']; task='regression', time_col='when', group_col=False, gap=0, profile='fast', seed=0, duplicates='error'; medium; statement time; target clf_int; one row for each timestamp; y_copy: a copy of the target; when: big_int
+  application: result: time_ordered, skill 0.48336335146023424, model linear-0
+  reference:   result: time_ordered, skill 0.48336335146023424, model linear-0
+  [exact] columns[count].n_imputed: 15 | 14
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 927 --keep
+
+table 931: dataframe, 478 rows x 8 columns ['', 'f1', 'count', 'big', 'y', 'f2', 'when', 'notes']; task='auto', time_col=False, group_col=False, gap=0, profile='fast', seed=1, duplicates='error'; medium; statement none; target reg; one row for each timestamp; when: big_int; a blank column name (was strong)
+  application: result: random, skill 0.6778056821739538, model linear-0
+  reference:   result: random, skill 0.6778056821739538, model linear-0
+  [exact] columns[big].n_imputed: 25 | 23
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 931 --keep
+
+table 932: dataframe, 504 rows x 7 columns ['who', 'seg', 'f2', 'y', 'count', 'row_id', 'f1']; task='auto', time_col=False, group_col='who', gap=0, profile='fast', seed=0, duplicates='error'; small; statement entity; target reg; one entity of 201 of the 252 rows; entities: one_large, 52 of them; f1 identifies the entity; target held as Decimal objects; row_id: an identifier (text); repeated rows: heavy (252)
+  application: result: grouped, skill 0.9627806555484804, model linear-0
+  reference:   result: grouped, skill 0.9627806555484804, model linear-0
+  [exact] columns[f2].n_imputed: 30 | 28
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 932 --keep
+
+table 934: csv, 186 rows x 5 columns ['f1', 'const', 'f2', 'seg', 'y']; task='auto', time_col=False, group_col=False, gap=0, profile='fast', seed=1, duplicates='error'; small; statement none; target reg
+  application: result: random, skill 0.9262224838332596, model linear-0
+  reference:   result: random, skill 0.9262224838332596, model linear-0
+  [exact] columns[f2].n_imputed: 9 | 7
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 934 --keep
+
+table 937: csv, 1191 rows x 7 columns ['when', 'f1', 'count', 'flag', 'seg', 'y', 'f2']; task='auto', time_col='when', group_col=False, gap=0, profile='fast', seed=7, duplicates='error'; large; statement time; target reg; one row for each timestamp; when: iso_datetime, some cells empty
+  application: result: time_ordered, skill 0.9265175427760608, model linear-0
+  reference:   result: time_ordered, skill 0.9265175427760608, model linear-0
+  [exact] columns[f2].n_imputed: 23 | 22
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 937 --keep
+
+table 950: csv, 143 rows x 5 columns ['f2', 'f1', 'daynum', 'revenue', 'y']; task='auto', time_col=False, group_col=False, gap=0, profile='fast', seed=0, duplicates='error'; small; statement none; target clf_text; daynum: dates written YYYYMMDD (int), one sentinel cell
+  application: result: random, skill 0.7333333333333334, model linear-0
+  reference:   result: random, skill 0.7333333333333334, model linear-0
+  [exact] columns[f2].n_imputed: 17 | 14
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 950 --keep
+
+table 953: csv, 245 rows x 8 columns ['dec', 'f1', 'when', 'who', 'optint', 'f2', 'y', 'count']; task='auto', time_col=False, group_col='who', gap=0, profile='fast', seed=4294967295, duplicates='keep'; small; statement entity; target clf_int; panel of 60 entities on 4 timestamps; when: iso_date, some cells empty; repeated rows: few (5); 2 blank line(s) in the file
+  application: result: grouped, skill 0.7389277389277389, model linear-0
+  reference:   result: grouped, skill 0.7389277389277389, model linear-0
+  [exact] columns[optint].n_imputed: 14 | 13
+  [exact] columns[f2].n_imputed: 23 | 22
+  [exact] columns[count].n_imputed: 9 | 8
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 953 --keep
+
+table 962: dataframe, 460 rows x 7 columns ['revenue', 'y', 'daynum', 'who', 'seg', 'f2', 'f1']; task='auto', time_col=False, group_col='who', gap=0, profile='fast', seed=4294967295, duplicates='group'; medium; statement entity; target clf_text; entities: equal, 92 of them; white space round some target values; daynum: dates written YYYYMMDD (float_gaps)
+  application: result: grouped, skill 0.6304347826086956, model linear-0
+  reference:   result: grouped, skill 0.6304347826086956, model linear-0
+  [exact] columns[f2].n_imputed: 14 | 11
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 962 --keep
+
+table 968: csv, 1008 rows x 7 columns ['when', 'f2', 'f1', 'seg', 'y', 'signup', 'who']; task='auto', time_col='when', group_col='who', gap=5, profile='fast', seed=0, duplicates='error'; large; statement time_entity; target reg; panel of 12 entities on 84 timestamps; when: number, some cells empty
+  application: result: time_ordered, skill 0.0005606636664674536, model linear-0
+  reference:   result: time_ordered, skill 0.0005606636664674536, model linear-0
+  [exact] columns[f2].n_imputed: 91 | 84
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 968 --keep
+
+table 975: dataframe, 778 rows x 8 columns ['const', 'strong', 'f2', 'count', 'when', 'y', 'f1', 'flag']; task='auto', time_col='when', group_col=False, gap=0, profile='fast', seed=0, duplicates='error'; large; statement time; target clf_text; one row for each timestamp; white space round some target values; when: iso_date, some cells empty
+  application: result: time_ordered, skill 0.4493811488416375, model linear-0
+  reference:   result: time_ordered, skill 0.4493811488416375, model linear-0
+  [exact] columns[f2].n_imputed: 23 | 22
+  [exact] columns[count].n_imputed: 33 | 30
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 975 --keep
+
+table 978: csv, 2275 rows x 7 columns ['who', 'f1', 'when', 'y', 'f2', 'strong', 'seg']; task='auto', time_col='when', group_col='who', gap=0, profile='fast', seed=0, duplicates='error'; over_cap; statement time_entity; target reg; panel of 25 entities on 91 timestamps; the target is a random walk for each entity; when: iso_date, some cells empty
+  application: result: time_ordered, skill -332.96748652594925, model linear-0
+  reference:   result: time_ordered, skill -332.96748652594925, model linear-0
+  [exact] columns[f2].n_imputed: 187 | 166
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 978 --keep
+
+table 987: csv, 3094 rows x 6 columns ['', 'when', 'f1', 'y', 'f2', 'strong']; task='auto', time_col='when', group_col=False, gap=0, profile='fast', seed=7, duplicates='error'; large; statement time; target clf_int; one row for each timestamp; when: iso_date; repeated rows: heavy (1547); a blank column name (was seg)
+  application: result: time_ordered, skill 0.6768530975719136, model linear-0
+  reference:   result: time_ordered, skill 0.6768530975719136, model linear-0
+  [exact] columns[f2].n_imputed: 100 | 64
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 987 --keep
+
+table 997: csv, 225 rows x 7 columns ['f2', 'count', 'const', 'f1', 'when', 'y', 'odd']; task='auto', time_col=False, group_col=False, gap=0, profile='fast', seed=7, duplicates='group'; small; statement none; target clf_bool; some timestamps hold several rows; odd: a column of list; when: iso_date
+  application: result: random, skill -0.29721362229102166, model linear-0
+  reference:   result: random, skill -0.29721362229102166, model linear-0
+  [exact] columns[f2].n_imputed: 4 | 3
+  again: python verify/generated_tables.py <scratch>\variants\M13\mlprofessor --seed 20261122 --only 997 --keep
+
+STATED LIMITS
+  none is known
+
+OPEN: owned, not yet built
+  none is known
+
+NOT COMPARED (no part of the verdict): differences by kind
+      0  the table earns two named errors of steps 1 to 4, and which is raised is open (spec 2.4)
+      0  it depends on which rows a random or a grouped split took, or the fast cap kept (spec 11)
+      0  both sides raise the warning; how many records it has is not pinned (spec 2.5)
+      0  which estimator of the lag-1 autocorrelation the panel warning uses is open (spec 11)
+
+application: 585 result(s) {'grouped': 156, 'random': 190, 'time_ordered': 239}, 415 named error(s) {'column_not_found': 8, 'duplicate_columns': 14, 'entities_undeclared': 34, 'fast_profile_group_too_large': 3, 'fast_profile_too_few_rows': 2, 'fast_profile_too_few_timestamps': 5, 'feature_name_collision': 13, 'gap_too_large': 12, 'group_column_invalid': 31, 'holdout_copies_in_training': 47, 'input_error': 8, 'non_finite_score': 10, 'target_constant': 20, 'task_ambiguous': 35, 'task_unsupported': 38, 'time_column_invalid': 23, 'time_order_undeclared': 56, 'too_few_groups': 19, 'too_few_rows': 37}, 0 other
+reference: 585 result(s) {'grouped': 156, 'random': 190, 'time_ordered': 239}, 415 named error(s) {'column_not_found': 8, 'duplicate_columns': 14, 'entities_undeclared': 34, 'fast_profile_group_too_large': 3, 'fast_profile_too_few_rows': 2, 'fast_profile_too_few_timestamps': 5, 'feature_name_collision': 13, 'gap_too_large': 12, 'group_column_invalid': 31, 'holdout_copies_in_training': 47, 'input_error': 8, 'non_finite_score': 10, 'target_constant': 20, 'task_ambiguous': 35, 'task_unsupported': 38, 'time_column_invalid': 23, 'time_order_undeclared': 56, 'too_few_groups': 19, 'too_few_rows': 37}, 0 other
+time: 297 s wall-clock at 24 worker(s) (12 s making the tables); in the tool: application 357 s, reference 341 s
+GENERATED TABLES: FAIL (1000 tables from seed 20261122: 849 agree, 0 stated limit, 0 open, 151 fail)
+exit 1

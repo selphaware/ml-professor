@@ -1,0 +1,145 @@
+the 3 outermost distinct values at each end; the spread of the 10 values after; cut-offs K = 20, 25, 30, 40, 50
+
+## 1. One cell planted
+
+| table | numeric features and regression target | cell | named at K = 20 / 25 / 30 / 40 / 50, of seeds x columns | smallest ratio |
+|---|---|---|---|---|
+| signal_clf | f1, f2, n1, n2, n3 | -999 | 150 / 150 / 150 / 150 / 150 of 150 | 537 |
+| signal_clf | f1, f2, n1, n2, n3 | 999999 | 150 / 150 / 150 / 150 / 150 of 150 | 5.79e+05 |
+| signal_reg | f1, f2, n1, n2, n3, amount | -999 | 180 / 180 / 180 / 180 / 180 of 180 | 278 |
+| signal_reg | f1, f2, n1, n2, n3, amount | 999999 | 180 / 180 / 180 / 180 / 180 of 180 | 2.21e+05 |
+| noise_clf | n001 ... n300 (300) | -999 | 9000 / 9000 / 9000 / 9000 / 9000 of 9000 | 340 |
+| noise_clf | n001 ... n300 (300) | 999999 | 9000 / 9000 / 9000 / 9000 / 9000 of 9000 | 3.52e+05 |
+| noise_reg | n001 ... amount (301) | -999 | 9030 / 9030 / 9030 / 9030 / 9030 of 9030 | 346 |
+| noise_reg | n001 ... amount (301) | 999999 | 9030 / 9030 / 9030 / 9030 / 9030 of 9030 | 3.23e+05 |
+| imbalanced | n001, n002, n003, n004, n005, n006 | -999 | 180 / 180 / 180 / 180 / 180 of 180 | 523 |
+| imbalanced | n001, n002, n003, n004, n005, n006 | 999999 | 180 / 180 / 180 / 180 / 180 of 180 | 4.18e+05 |
+| leak | f1, f2, n1, n2, n3, strong_feature | -999 | 180 / 180 / 180 / 180 / 180 of 180 | 247 |
+| leak | f1, f2, n1, n2, n3, strong_feature | 999999 | 180 / 180 / 180 / 180 / 180 of 180 | 3.2e+05 |
+| leak_reg | f1, f2, n1, n2, n3, amount | -999 | 180 / 180 / 180 / 180 / 180 of 180 | 265 |
+| leak_reg | f1, f2, n1, n2, n3, amount | 999999 | 180 / 180 / 180 / 180 / 180 of 180 | 2.05e+05 |
+| near_leak | f1, f2, n1, n2, n3 | -999 | 150 / 150 / 150 / 150 / 150 of 150 | 445 |
+| near_leak | f1, f2, n1, n2, n3 | 999999 | 150 / 150 / 150 / 150 / 150 of 150 | 5.55e+05 |
+| binary_numeric | f1, f2, n1, n2, n3 | -999 | 150 / 150 / 150 / 150 / 150 of 150 | 583 |
+| binary_numeric | f1, f2, n1, n2, n3 | 999999 | 150 / 150 / 150 / 150 / 150 of 150 | 5.23e+05 |
+| ambiguous_target | (the run stops: task_ambiguous) | | | |
+| messy | f1, f2, n1, spend, visits | -999 | 120 / 120 / 120 / 120 / 120 of 150 | 1.59 |
+| messy | f1, f2, n1, spend, visits | 999999 | 150 / 150 / 150 / 150 / 150 of 150 | 778 |
+| long_rows | f1, f2, n1, n2, n3 | -999 | 150 / 150 / 150 / 150 / 150 of 150 | 544 |
+| long_rows | f1, f2, n1, n2, n3 | 999999 | 150 / 150 / 150 / 150 / 150 of 150 | 4.75e+05 |
+| dup_noise | (the run stops: holdout_copies_in_training) | | | |
+| time_blocks | b1, b2, b3, b4, b5, b6, b7, b8 | -999 | 240 / 240 / 240 / 240 / 240 of 240 | 499 |
+| time_blocks | b1, b2, b3, b4, b5, b6, b7, b8 | 999999 | 240 / 240 / 240 / 240 / 240 of 240 | 5e+05 |
+| time_dayfirst | (the run stops: time_column_invalid) | | | |
+| random_walk | level_prev, level | -999 | 60 / 60 / 60 / 60 / 60 of 60 | 163 |
+| random_walk | level_prev, level | 999999 | 60 / 60 / 60 / 60 / 60 of 60 | 2.47e+05 |
+| int_stamps | level_prev, level | -999 | 60 / 60 / 60 / 60 / 60 of 60 | 119 |
+| int_stamps | level_prev, level | 999999 | 60 / 60 / 60 / 60 / 60 of 60 | 3.07e+05 |
+| flat_tail | footfall, promo, sales | -999 | 90 / 90 / 90 / 90 / 90 of 90 | 188 |
+| flat_tail | footfall, promo, sales | 999999 | 90 / 90 / 90 / 90 / 90 of 90 | 8.55e+04 |
+| entities | m1, m2, m3, m4, m5, m6 | -999 | 180 / 180 / 180 / 180 / 180 of 180 | 669 |
+| entities | m1, m2, m3, m4, m5, m6 | 999999 | 180 / 180 / 180 / 180 / 180 of 180 | 6.36e+05 |
+| panel | level_prev, level | -999 | 60 / 60 / 60 / 60 / 60 of 60 | 176 |
+| panel | level_prev, level | 999999 | 60 / 60 / 60 / 60 / 60 of 60 | 2.43e+05 |
+| noise_small | n001 ... n010 (10) | -999 | 300 / 300 / 300 / 300 / 300 of 300 | 416 |
+| noise_small | n001 ... n010 (10) | 999999 | 300 / 300 / 300 / 300 / 300 of 300 | 3.72e+05 |
+| signal_clf_small | f1, f2, n1, n2, n3 | -999 | 150 / 150 / 150 / 150 / 150 of 150 | 365 |
+| signal_clf_small | f1, f2, n1, n2, n3 | 999999 | 150 / 150 / 150 / 150 / 150 of 150 | 3.99e+05 |
+| signal_reg_small | f1, f2, n1, n2, n3, amount | -999 | 180 / 180 / 180 / 180 / 180 of 180 | 207 |
+| signal_reg_small | f1, f2, n1, n2, n3, amount | 999999 | 180 / 180 / 180 / 180 / 180 of 180 | 2.25e+05 |
+| few_valued | none | | | |
+| dominant_entity | n1, n2, n3, n4, amount | -999 | 150 / 150 / 150 / 150 / 150 of 150 | 463 |
+| dominant_entity | n1, n2, n3, n4, amount | 999999 | 150 / 150 / 150 / 150 / 150 of 150 | 4.96e+05 |
+| day_numbers | n1, n2, n3, n4 | -999 | 120 / 120 / 120 / 120 / 120 of 120 | 424 |
+| day_numbers | n1, n2, n3, n4 | 999999 | 120 / 120 / 120 / 120 / 120 of 120 | 4.04e+05 |
+| day_sentinel | n1, n2, n3, n4 | -999 | 120 / 120 / 120 / 120 / 120 of 120 | 444 |
+| day_sentinel | n1, n2, n3, n4 | 999999 | 120 / 120 / 120 / 120 / 120 of 120 | 4.11e+05 |
+| few_valued_leak | (the run stops: holdout_copies_in_training) | | | |
+| large_entity | (the run stops: fast_profile_group_too_large) | | | |
+| quarter_entity | n1, n2, n3, n4, amount | -999 | 150 / 150 / 150 / 150 / 150 of 150 | 450 |
+| quarter_entity | n1, n2, n3, n4, amount | 999999 | 150 / 150 / 150 / 150 / 150 of 150 | 5.02e+05 |
+
+Every column and cell not named on all seeds at some cut-off (named of 30 seeds at K = 20 / 25 / 30 / 40 / 50; smallest ratio):
+  messy.visits with -999: 0 / 0 / 0 / 0 / 0; 1.59
+
+The weakest planted cell that is named on every seed at every cut-off: messy.spend with -999, smallest ratio 51.8
+
+## 2. Nothing planted
+
+| table | columns x seeds where a value is named at K = 20 / 25 / 30 / 40 / 50 | largest ratio |
+|---|---|---|
+| signal_clf | 0 / 0 / 0 / 0 / 0 of 150 | 2.46 |
+| signal_reg | 0 / 0 / 0 / 0 / 0 of 180 | 3.07 |
+| noise_clf | 0 / 0 / 0 / 0 / 0 of 9000 | 6.67 |
+| noise_reg | 0 / 0 / 0 / 0 / 0 of 9030 | 8.24 |
+| imbalanced | 0 / 0 / 0 / 0 / 0 of 180 | 3.02 |
+| leak | 0 / 0 / 0 / 0 / 0 of 180 | 4.22 |
+| leak_reg | 0 / 0 / 0 / 0 / 0 of 180 | 5.03 |
+| near_leak | 0 / 0 / 0 / 0 / 0 of 150 | 3.83 |
+| binary_numeric | 0 / 0 / 0 / 0 / 0 of 150 | 4.17 |
+| messy | 0 / 0 / 0 / 0 / 0 of 150 | 2.52 |
+| long_rows | 0 / 0 / 0 / 0 / 0 of 150 | 2.9 |
+| time_blocks | 0 / 0 / 0 / 0 / 0 of 240 | 1 |
+| random_walk | 0 / 0 / 0 / 0 / 0 of 60 | 1.61 |
+| int_stamps | 0 / 0 / 0 / 0 / 0 of 60 | 1.46 |
+| flat_tail | 0 / 0 / 0 / 0 / 0 of 90 | 2.87 |
+| entities | 0 / 0 / 0 / 0 / 0 of 180 | 1.57 |
+| panel | 0 / 0 / 0 / 0 / 0 of 60 | 1.09 |
+| noise_small | 0 / 0 / 0 / 0 / 0 of 300 | 4.15 |
+| signal_clf_small | 0 / 0 / 0 / 0 / 0 of 150 | 3.33 |
+| signal_reg_small | 0 / 0 / 0 / 0 / 0 of 180 | 3.07 |
+| dominant_entity | 0 / 0 / 0 / 0 / 0 of 150 | 3.73 |
+| day_numbers | 0 / 0 / 0 / 0 / 0 of 120 | 5.51 |
+| day_sentinel | 0 / 0 / 0 / 0 / 0 of 120 | 4.14 |
+| quarter_entity | 0 / 0 / 0 / 0 / 0 of 150 | 4.88 |
+
+## 3. examples/customers.csv
+
+monthly_spend: named at K = 20 / 25 / 30 / 40 / 50: [False, False, False, False, False]; largest ratio 0.648
+support_calls: named at K = 20 / 25 / 30 / 40 / 50: [False, False, False, False, False]; largest ratio 0.167
+age: named at K = 20 / 25 / 30 / 40 / 50: [False, False, False, False, False]; largest ratio 0.1
+
+## 4. Long tails
+
+| column | rows | a value named at K = 20 / 25 / 30 / 40 / 50, of seeds | largest ratio |
+|---|---|---|---|
+| normal | 200 | 0 / 0 / 0 / 0 / 0 of 30 | 2.14 |
+| log-normal, sigma 1 | 200 | 0 / 0 / 0 / 0 / 0 of 30 | 9.71 |
+| log-normal, sigma 1.5 | 200 | 0 / 0 / 0 / 0 / 0 of 30 | 12.3 |
+| log-normal, sigma 2 | 200 | 0 / 0 / 0 / 0 / 0 of 30 | 8.88 |
+| traded volume (log-normal(13, 1.5), rounded) | 200 | 0 / 0 / 0 / 0 / 0 of 30 | 15 |
+| Pareto, shape 2.5 | 200 | 0 / 0 / 0 / 0 / 0 of 30 | 7.55 |
+| Pareto, shape 1.5 | 200 | 1 / 1 / 0 / 0 / 0 of 30 | 27.2 |
+| Student t, 3 degrees of freedom | 200 | 0 / 0 / 0 / 0 / 0 of 30 | 4.9 |
+| exponential | 200 | 0 / 0 / 0 / 0 / 0 of 30 | 1.89 |
+| a count (Poisson, mean 3) | 200 | 0 / 0 / 0 / 0 / 0 of 30 | 0.429 |
+| normal | 2,000 | 0 / 0 / 0 / 0 / 0 of 30 | 2.03 |
+| log-normal, sigma 1 | 2,000 | 0 / 0 / 0 / 0 / 0 of 30 | 2.5 |
+| log-normal, sigma 1.5 | 2,000 | 0 / 0 / 0 / 0 / 0 of 30 | 14.5 |
+| log-normal, sigma 2 | 2,000 | 0 / 0 / 0 / 0 / 0 of 30 | 12.2 |
+| traded volume (log-normal(13, 1.5), rounded) | 2,000 | 0 / 0 / 0 / 0 / 0 of 30 | 6.59 |
+| Pareto, shape 2.5 | 2,000 | 0 / 0 / 0 / 0 / 0 of 30 | 6.63 |
+| Pareto, shape 1.5 | 2,000 | 2 / 1 / 1 / 1 / 1 of 30 | 211 |
+| Student t, 3 degrees of freedom | 2,000 | 0 / 0 / 0 / 0 / 0 of 30 | 9.36 |
+| exponential | 2,000 | 0 / 0 / 0 / 0 / 0 of 30 | 6.18 |
+| a count (Poisson, mean 3) | 2,000 | 0 / 0 / 0 / 0 / 0 of 30 | 0.3 |
+| normal | 20,000 | 0 / 0 / 0 / 0 / 0 of 30 | 2.21 |
+| log-normal, sigma 1 | 20,000 | 0 / 0 / 0 / 0 / 0 of 30 | 3.94 |
+| log-normal, sigma 1.5 | 20,000 | 0 / 0 / 0 / 0 / 0 of 30 | 8.89 |
+| log-normal, sigma 2 | 20,000 | 0 / 0 / 0 / 0 / 0 of 30 | 6.63 |
+| traded volume (log-normal(13, 1.5), rounded) | 20,000 | 0 / 0 / 0 / 0 / 0 of 30 | 4.76 |
+| Pareto, shape 2.5 | 20,000 | 0 / 0 / 0 / 0 / 0 of 30 | 3.95 |
+| Pareto, shape 1.5 | 20,000 | 3 / 3 / 3 / 0 / 0 of 30 | 35.9 |
+| Student t, 3 degrees of freedom | 20,000 | 0 / 0 / 0 / 0 / 0 of 30 | 5.17 |
+| exponential | 20,000 | 0 / 0 / 0 / 0 / 0 of 30 | 2.25 |
+| a count (Poisson, mean 3) | 20,000 | 0 / 0 / 0 / 0 / 0 of 30 | 0.3 |
+| normal | 100,000 | 0 / 0 / 0 / 0 / 0 of 30 | 3.38 |
+| log-normal, sigma 1 | 100,000 | 0 / 0 / 0 / 0 / 0 of 30 | 3.11 |
+| log-normal, sigma 1.5 | 100,000 | 0 / 0 / 0 / 0 / 0 of 30 | 4.41 |
+| log-normal, sigma 2 | 100,000 | 0 / 0 / 0 / 0 / 0 of 30 | 3.94 |
+| traded volume (log-normal(13, 1.5), rounded) | 100,000 | 0 / 0 / 0 / 0 / 0 of 30 | 9.35 |
+| Pareto, shape 2.5 | 100,000 | 0 / 0 / 0 / 0 / 0 of 30 | 6.61 |
+| Pareto, shape 1.5 | 100,000 | 1 / 0 / 0 / 0 / 0 of 30 | 23.5 |
+| Student t, 3 degrees of freedom | 100,000 | 0 / 0 / 0 / 0 / 0 of 30 | 10.7 |
+| exponential | 100,000 | 0 / 0 / 0 / 0 / 0 of 30 | 3.46 |
+| a count (Poisson, mean 3) | 100,000 | 0 / 0 / 0 / 0 / 0 of 30 | 0.3 |

@@ -1,0 +1,17 @@
+| run | column added | as ruled: excluded / warned / silent | with the order reading: excluded / warned / silent |
+|---|---|---|---|
+| random_walk | copy_2pct_cells_differ | 1 / 0 / 29 | 1 / 29 / 0 |
+| random_walk | copy_noise_5pct | 0 / 1 / 29 | 0 / 1 / 29 |
+| random_walk | copy_squared | 0 / 1 / 29 | 0 / 30 / 0 |
+| random_walk | copy_exp | 0 / 0 / 30 | 0 / 30 / 0 |
+| int_stamps | copy_2pct_cells_differ | 1 / 0 / 29 | 1 / 29 / 0 |
+| int_stamps | copy_noise_5pct | 0 / 0 / 30 | 0 / 0 / 30 |
+| int_stamps | copy_squared | 0 / 1 / 29 | 0 / 30 / 0 |
+| int_stamps | copy_exp | 0 / 0 / 30 | 0 / 30 / 0 |
+| panel | copy_2pct_cells_differ | 1 / 0 / 29 | 1 / 29 / 0 |
+| panel | copy_noise_5pct | 0 / 0 / 30 | 0 / 0 / 30 |
+| panel | copy_squared | 0 / 0 / 30 | 0 / 30 / 0 |
+| panel | copy_exp | 0 / 0 / 30 | 0 / 30 / 0 |
+
+gate: 960 clean fast runs; runs that gain a warning or move with the order reading: 0 []
+a running total with its own lag, under time order: the lag warned about on 0 of 30 seeds

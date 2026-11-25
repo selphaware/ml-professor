@@ -223,3 +223,5 @@ verify/artifacts/
 .claude/settings.local.json
 .claude/settings.json.bak
 /mlprof_env/
+
+latest.claude

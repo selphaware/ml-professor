@@ -1,0 +1,2 @@
+585 finished runs; runs with each new warning: {'selection_not_made': 3, 'largest_row_dominates': 1}
+tables with an extreme_value warning: 0; columns named: []

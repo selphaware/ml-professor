@@ -1,0 +1,584 @@
+FAIL messy:base [base]
+     the change: the gate's run as it is
+     must hold: the gate's own conclusion
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 39
+     seen: rc=0, error=None, skill=0.722, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy__base.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy__base
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy:base
+FAIL messy:date_sentinel_9999 [same]
+     the change: one cell of the ISO date column is set to 9999-12-31
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: one cell of the undeclared date column set to '9999-12-31': at least 95% of its values are still in a date form (rule 4), and it reaches nothing either way
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 39
+     seen: rc=0, error=None, skill=0.722, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy__date_sentinel_9999.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy__date_sentinel_9999
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy:date_sentinel_9999
+FAIL messy:date_sentinel_1900 [same]
+     the change: one cell of the ISO date column is set to 1900-01-01
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: one cell of the undeclared date column set to '1900-01-01': at least 95% of its values are still in a date form (rule 4), and it reaches nothing either way
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 39
+     seen: rc=0, error=None, skill=0.722, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy__date_sentinel_1900.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy__date_sentinel_1900
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy:date_sentinel_1900
+FAIL messy:date_sentinel_zero [same]
+     the change: one cell of the ISO date column is set to 0
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: one cell of the undeclared date column set to '0': at least 95% of its values are still in a date form (rule 4), and it reaches nothing either way
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 39
+     seen: rc=0, error=None, skill=0.722, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy__date_sentinel_zero.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy__date_sentinel_zero
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy:date_sentinel_zero
+FAIL messy:number_sentinel_-999 [band-or-named]
+     the change: one cell of a numeric feature is set to -999
+     must hold: the run's own conclusion (its band, its roles, its counts): one cell of the numeric feature `f1` set to -999. Skill is inside the run's band; or the result names the row (`largest_row_dominates`) or the value (`extreme_value`), and the same call on the table without the named rows is inside the band. The roles are those of the unperturbed run
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 39
+     seen: rc=0, error=None, skill=0.465, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, changed=row 1189: training, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy__number_sentinel_-999.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy__number_sentinel_-999
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy:number_sentinel_-999
+FAIL messy:number_sentinel_999999 [band-or-named]
+     the change: one cell of a numeric feature is set to 999999
+     must hold: the run's own conclusion (its band, its roles, its counts): one cell of the numeric feature `f1` set to 999999. Skill is inside the run's band; or the result names the row (`largest_row_dominates`) or the value (`extreme_value`), and the same call on the table without the named rows is inside the band. The roles are those of the unperturbed run
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 39
+     seen: rc=0, error=None, skill=0.7221, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, changed=row 1073: holdout, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy__number_sentinel_999999.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy__number_sentinel_999999
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy:number_sentinel_999999
+FAIL messy:number_sentinel_1e308 [band]
+     the change: one cell of a numeric feature is set to 1e308
+     must hold: the run's own conclusion (its band, its roles, its counts): one cell of the numeric feature `f1` set to 1e308; a value above 3.4e38 is read as missing, counted in `n_infinite` and named by `infinite_values` (D48)
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 39
+     seen: rc=0, error=None, skill=0.7219, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, changed=row 834: training, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy__number_sentinel_1e308.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy__number_sentinel_1e308
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy:number_sentinel_1e308
+FAIL messy:copy_two_valued [same]
+     the change: a column `status_copy` is added: the target relabelled closed and open
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: a relabelled copy of the target is excluded by the leak screen (step 8, rule 2), after the split, so nothing else moves
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 39
+     seen: rc=0, error=None, skill=0.722, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like', 'status_copy': 'excluded/suspected_leak'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy__copy_two_valued.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy__copy_two_valued
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy:copy_two_valued
+FAIL messy:copy_distinct [same]
+     the change: a column `target_copy` is added: the target made distinct in every row (the class plus a millionth of the row number; for regression the target rescaled)
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: a copy of the target that is distinct in every row (the class plus a millionth of the row number; for regression the target rescaled) is excluded by the leak screen, after the split, so nothing else moves
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 39
+     seen: rc=0, error=None, skill=0.722, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like', 'target_copy': 'excluded/suspected_leak'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy__copy_distinct.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy__copy_distinct
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy:copy_distinct
+FAIL messy:constant_added [same]
+     the change: a column `const_added` of one value is added
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: a column of one value is excluded as `constant` at step 5 and reaches nothing
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 39
+     seen: rc=0, error=None, skill=0.722, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like', 'const_added': 'excluded/constant'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy__constant_added.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy__constant_added
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy:constant_added
+FAIL messy:id_added_int [same]
+     the change: a column `row_id_added` of consecutive whole numbers is added
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: consecutive whole numbers in file order are `id_like` (rule 8b) and reach nothing; an excluded column plays no part in the copies rule (step 8a)
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 39
+     seen: rc=0, error=None, skill=0.722, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like', 'row_id_added': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy__id_added_int.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy__id_added_int
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy:id_added_int
+FAIL messy:id_added_text [same]
+     the change: a column `ref_added` of text distinct in every row is added
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: text distinct in every row is `id_like` (rule 6a) and reaches nothing
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 39
+     seen: rc=0, error=None, skill=0.722, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like', 'ref_added': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy__id_added_text.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy__id_added_text
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy:id_added_text
+FAIL messy:second_date_added [same]
+     the change: a column `added_date` of ISO dates is added
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: a text column of ISO dates is excluded as `datetime` (rule 4); under --no-time-order one `date_column_undeclared` warning names it, under a time column none does
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 39
+     seen: rc=0, error=None, skill=0.722, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like', 'added_date': 'excluded/datetime'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy__second_date_added.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy__second_date_added
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy:second_date_added
+FAIL messy:noise_added [band]
+     the change: a column `noise_added` of normal noise is added
+     must hold: the run's own conclusion (its band, its roles, its counts): one more column of noise is a feature like any other and predicts nothing
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 39
+     seen: rc=0, error=None, skill=0.723, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like', 'noise_added': 'feature/None'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy__noise_added.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy__noise_added
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy:noise_added
+FAIL messy:rows_shuffled [band]
+     the change: the rows are written in another order
+     must hold: the run's own conclusion (its band, its roles, its counts): the order of the rows in the file carries nothing in this table (under time order the rows are put in time order by the tool)
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 39
+     seen: rc=0, error=None, skill=0.7024, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy__rows_shuffled.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy__rows_shuffled
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy:rows_shuffled
+FAIL messy:row_repeated [band]
+     the change: one row is written twice
+     must hold: the run's own conclusion (its band, its roles, its counts): one row written twice is one more row; `input.duplicate_rows` counts it and a `duplicate_rows` warning says so
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 39
+     seen: rc=0, error=None, skill=0.7254, scheme=random, baseline=chance, model=linear-0, holdout=376, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy__row_repeated.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy__row_repeated
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy:row_repeated
+FAIL messy:blank_line_added [same]
+     the change: one blank line is added between two rows
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: a blank line is not a row (spec section 6), so every row keeps its position
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 39
+     seen: rc=0, error=None, skill=0.722, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy__blank_line_added.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy__blank_line_added
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy:blank_line_added
+FAIL messy:missing_cell_feature [band-or-named]
+     the change: one cell of a feature is emptied
+     must hold: the run's own conclusion (its band, its roles, its counts): one empty cell in the feature `f1` is counted in `n_missing` and imputed. Skill is inside the run's band; or the result names the row (`largest_row_dominates`) or the value (`extreme_value`), and the same call on the table without the named rows is inside the band. The roles are those of the unperturbed run
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 39
+     seen: rc=0, error=None, skill=0.7221, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, changed=row 591: training, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy__missing_cell_feature.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy__missing_cell_feature
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy:missing_cell_feature
+FAIL messy:missing_cell_date [same]
+     the change: one cell of the time column, or of a date column, is emptied
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: an empty cell is not looked at by the date rules (step 5), and the column reaches nothing either way
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 39
+     seen: rc=0, error=None, skill=0.722, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy__missing_cell_date.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy__missing_cell_date
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy:missing_cell_date
+FAIL messy:missing_cell_target [band]
+     the change: one cell of the target is emptied
+     must hold: the run's own conclusion (its band, its roles, its counts): a row with no target is dropped and counted in `dropped_missing_target`
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 39
+     seen: rc=0, error=None, skill=0.7477, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy__missing_cell_target.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy__missing_cell_target
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy:missing_cell_target
+FAIL messy:feature_renamed [same]
+     the change: a feature is renamed `renamed_feature`
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: a column's name carries nothing
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 39
+     seen: rc=0, error=None, skill=0.722, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy__feature_renamed.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy__feature_renamed
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy:feature_renamed
+FAIL messy:feature_renamed_awkward [same]
+     the change: a feature is renamed `net value, £ (2024)`
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: a column's name carries nothing, a name with a comma, a space and a non-ASCII letter included
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 39
+     seen: rc=0, error=None, skill=0.722, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy__feature_renamed_awkward.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy__feature_renamed_awkward
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy:feature_renamed_awkward
+FAIL messy:target_renamed [same]
+     the change: the target is renamed `the outcome`
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: the target's name carries nothing
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 39
+     seen: rc=0, error=None, skill=0.722, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy__target_renamed.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy__target_renamed
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy:target_renamed
+FAIL messy:role_column_renamed [same]
+     the change: the time or date column is renamed `when`, the entity column `who`
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: the name of the date column carries nothing
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 39
+     seen: rc=0, error=None, skill=0.722, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy__role_column_renamed.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy__role_column_renamed
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy:role_column_renamed
+FAIL messy:target_first [same]
+     the change: the target is moved to the first column
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: where the target stands among the columns carries nothing: the features keep their order
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 39
+     seen: rc=0, error=None, skill=0.722, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy__target_first.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy__target_first
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy:target_first
+FAIL messy:target_respelt [same]
+     the change: the two classes are respelt, in the same sorted order
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: the classes respelt in the same sorted order: the same 0 and 1 reach every step
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 39
+     seen: rc=0, error=None, skill=0.722, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy__target_respelt.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy__target_respelt
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy:target_respelt
+FAIL messy:target_respelt_flipped [band]
+     the change: the two classes are respelt so that the other sorts second
+     must hold: the run's own conclusion (its band, its roles, its counts): the classes respelt so that the other one sorts second: the positive class changes and skill, 2 x AUC - 1, does not depend on which it is
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 39
+     seen: rc=0, error=None, skill=0.7302, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy__target_respelt_flipped.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy__target_respelt_flipped
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy:target_respelt_flipped
+FAIL messy:white_space_cells [same]
+     the change: white space is put round some target values, levels and entity values
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: white space round a target value, a categorical level or an entity value is not part of it (D42, D46, step 5)
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 39
+     seen: rc=0, error=None, skill=0.722, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy__white_space_cells.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy__white_space_cells
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy:white_space_cells
+FAIL messy:float_whole_numbers [same]
+     the change: whole numbers are written as floats (20150101.0)
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: whole numbers written as floats (record_id, visits) are judged by value: a date number, an identifier, a two-valued target (steps 4 and 5)
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 39
+     seen: rc=0, error=None, skill=0.722, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy__float_whole_numbers.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy__float_whole_numbers
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy:float_whole_numbers
+FAIL messy:number_two_sentinels [band-or-named]
+     the change: two cells of a numeric feature, in two rows, are set to 999999
+     must hold: the run's own conclusion (its band, its roles, its counts): two cells of the numeric feature `f1`, in two rows, set to 999999. Skill is inside the run's band; or the result names the row (`largest_row_dominates`) or the value (`extreme_value`), and the same call on the table without the named rows is inside the band. The roles are those of the unperturbed run
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 39
+     seen: rc=0, error=None, skill=0.4672, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, changed=row 971: training; row 1274: holdout, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy__number_two_sentinels.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy__number_two_sentinels
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy:number_two_sentinels
+FAIL messy:id_shuffled_and_repeated [band]
+     the change: the rows are written in another order and one of them twice
+     must hold: the run's own conclusion (its band, its roles, its counts): the rows are written in another order and one of them twice: `record_id` is an identifier all the same
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 39
+     seen: rc=0, error=None, skill=0.7324, scheme=random, baseline=chance, model=linear-0, holdout=376, copies=1, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy__id_shuffled_and_repeated.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy__id_shuffled_and_repeated
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy:id_shuffled_and_repeated
+FAIL messy:rows_deleted_shuffled [band]
+     the change: 3% of the rows are deleted and the rest written in another order
+     must hold: the run's own conclusion (its band, its roles, its counts): 3% of the rows are deleted and the rest written in another order: `record_id` has gaps and no order, and is an identifier all the same
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 39
+     seen: rc=0, error=None, skill=0.7736, scheme=random, baseline=chance, model=linear-0, holdout=364, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy__rows_deleted_shuffled.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy__rows_deleted_shuffled
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy:rows_deleted_shuffled
+FAIL messy:id_floats_shuffled [band]
+     the change: the identifier and the measure are written as floats and the rows in another order
+     must hold: the run's own conclusion (its band, its roles, its counts): the identifier and the measure are written as floats (100001.0) and the rows in another order: both are judged by value
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 39
+     seen: rc=0, error=None, skill=0.6647, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy__id_floats_shuffled.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy__id_floats_shuffled
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy:id_floats_shuffled
+FAIL messy:id_steps_by_7 [band]
+     the change: the identifier steps by 7 down the file
+     must hold: the run's own conclusion (its band, its roles, its counts): `record_id` steps by 7 down the file, 100001, 100008, ...: strictly ordered and not consecutive, `id_like` by D19's ordered clause
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 39
+     seen: rc=0, error=None, skill=0.722, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy__id_steps_by_7.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy__id_steps_by_7
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy:id_steps_by_7
+FAIL messy:id_added_gaps [same]
+     the change: a column `row_id_gaps` is added: distinct whole numbers in no order, 3% of their range missing
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: whole numbers distinct in every row, in no order and with 3% of the numbers of their range missing, are an identifier and reach nothing
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 39
+     seen: rc=0, error=None, skill=0.722, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy__id_added_gaps.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy__id_added_gaps
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy:id_added_gaps
+FAIL messy:measure_sentinel_-999 [band-or-named]
+     the change: one cell of the whole-number measure `visits` is set to -999
+     must hold: the run's own conclusion (its band, its roles, its counts): one cell of the whole-number measure `visits` set to -999, just below its smallest value. Skill is inside the run's band; or the result names the row (`largest_row_dominates`) or the value (`extreme_value`), and the same call on the table without the named rows is inside the band. The roles are those of the unperturbed run
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 39
+     seen: rc=0, error=None, skill=0.722, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, changed=row 914: training, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy__measure_sentinel_-999.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy__measure_sentinel_-999
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy:measure_sentinel_-999
+FAIL messy_shuffled:base [base]
+     the change: the gate's run as it is
+     must hold: the gate's own conclusion
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 38
+     seen: rc=0, error=None, skill=0.7753, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy_shuffled__base.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy_shuffled__base
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy_shuffled:base
+FAIL messy_shuffled:date_sentinel_9999 [same]
+     the change: one cell of the ISO date column is set to 9999-12-31
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: one cell of the undeclared date column set to '9999-12-31': at least 95% of its values are still in a date form (rule 4), and it reaches nothing either way
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 38
+     seen: rc=0, error=None, skill=0.7753, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy_shuffled__date_sentinel_9999.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy_shuffled__date_sentinel_9999
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy_shuffled:date_sentinel_9999
+FAIL messy_shuffled:date_sentinel_1900 [same]
+     the change: one cell of the ISO date column is set to 1900-01-01
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: one cell of the undeclared date column set to '1900-01-01': at least 95% of its values are still in a date form (rule 4), and it reaches nothing either way
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 38
+     seen: rc=0, error=None, skill=0.7753, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy_shuffled__date_sentinel_1900.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy_shuffled__date_sentinel_1900
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy_shuffled:date_sentinel_1900
+FAIL messy_shuffled:date_sentinel_zero [same]
+     the change: one cell of the ISO date column is set to 0
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: one cell of the undeclared date column set to '0': at least 95% of its values are still in a date form (rule 4), and it reaches nothing either way
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 38
+     seen: rc=0, error=None, skill=0.7753, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy_shuffled__date_sentinel_zero.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy_shuffled__date_sentinel_zero
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy_shuffled:date_sentinel_zero
+FAIL messy_shuffled:number_sentinel_-999 [band-or-named]
+     the change: one cell of a numeric feature is set to -999
+     must hold: the run's own conclusion (its band, its roles, its counts): one cell of the numeric feature `f1` set to -999. Skill is inside the run's band; or the result names the row (`largest_row_dominates`) or the value (`extreme_value`), and the same call on the table without the named rows is inside the band. The roles are those of the unperturbed run
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 38
+     seen: rc=0, error=None, skill=0.6724, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, changed=row 847: training, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy_shuffled__number_sentinel_-999.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy_shuffled__number_sentinel_-999
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy_shuffled:number_sentinel_-999
+FAIL messy_shuffled:number_sentinel_999999 [band-or-named]
+     the change: one cell of a numeric feature is set to 999999
+     must hold: the run's own conclusion (its band, its roles, its counts): one cell of the numeric feature `f1` set to 999999. Skill is inside the run's band; or the result names the row (`largest_row_dominates`) or the value (`extreme_value`), and the same call on the table without the named rows is inside the band. The roles are those of the unperturbed run
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 38
+     seen: rc=0, error=None, skill=0.7755, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, changed=row 269: holdout, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy_shuffled__number_sentinel_999999.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy_shuffled__number_sentinel_999999
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy_shuffled:number_sentinel_999999
+FAIL messy_shuffled:number_sentinel_1e308 [band]
+     the change: one cell of a numeric feature is set to 1e308
+     must hold: the run's own conclusion (its band, its roles, its counts): one cell of the numeric feature `f1` set to 1e308; a value above 3.4e38 is read as missing, counted in `n_infinite` and named by `infinite_values` (D48)
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 38
+     seen: rc=0, error=None, skill=0.7756, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, changed=row 690: training, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy_shuffled__number_sentinel_1e308.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy_shuffled__number_sentinel_1e308
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy_shuffled:number_sentinel_1e308
+FAIL messy_shuffled:copy_two_valued [same]
+     the change: a column `status_copy` is added: the target relabelled closed and open
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: a relabelled copy of the target is excluded by the leak screen (step 8, rule 2), after the split, so nothing else moves
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 38
+     seen: rc=0, error=None, skill=0.7753, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like', 'status_copy': 'excluded/suspected_leak'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy_shuffled__copy_two_valued.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy_shuffled__copy_two_valued
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy_shuffled:copy_two_valued
+FAIL messy_shuffled:copy_distinct [same]
+     the change: a column `target_copy` is added: the target made distinct in every row (the class plus a millionth of the row number; for regression the target rescaled)
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: a copy of the target that is distinct in every row (the class plus a millionth of the row number; for regression the target rescaled) is excluded by the leak screen, after the split, so nothing else moves
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 38
+     seen: rc=0, error=None, skill=0.7753, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like', 'target_copy': 'excluded/suspected_leak'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy_shuffled__copy_distinct.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy_shuffled__copy_distinct
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy_shuffled:copy_distinct
+FAIL messy_shuffled:constant_added [same]
+     the change: a column `const_added` of one value is added
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: a column of one value is excluded as `constant` at step 5 and reaches nothing
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 38
+     seen: rc=0, error=None, skill=0.7753, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like', 'const_added': 'excluded/constant'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy_shuffled__constant_added.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy_shuffled__constant_added
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy_shuffled:constant_added
+FAIL messy_shuffled:id_added_int [same]
+     the change: a column `row_id_added` of consecutive whole numbers is added
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: consecutive whole numbers in file order are `id_like` (rule 8b) and reach nothing; an excluded column plays no part in the copies rule (step 8a)
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 38
+     seen: rc=0, error=None, skill=0.7753, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like', 'row_id_added': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy_shuffled__id_added_int.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy_shuffled__id_added_int
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy_shuffled:id_added_int
+FAIL messy_shuffled:id_added_text [same]
+     the change: a column `ref_added` of text distinct in every row is added
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: text distinct in every row is `id_like` (rule 6a) and reaches nothing
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 38
+     seen: rc=0, error=None, skill=0.7753, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like', 'ref_added': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy_shuffled__id_added_text.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy_shuffled__id_added_text
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy_shuffled:id_added_text
+FAIL messy_shuffled:second_date_added [same]
+     the change: a column `added_date` of ISO dates is added
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: a text column of ISO dates is excluded as `datetime` (rule 4); under --no-time-order one `date_column_undeclared` warning names it, under a time column none does
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 38
+     seen: rc=0, error=None, skill=0.7753, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like', 'added_date': 'excluded/datetime'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy_shuffled__second_date_added.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy_shuffled__second_date_added
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy_shuffled:second_date_added
+FAIL messy_shuffled:noise_added [band]
+     the change: a column `noise_added` of normal noise is added
+     must hold: the run's own conclusion (its band, its roles, its counts): one more column of noise is a feature like any other and predicts nothing
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 38
+     seen: rc=0, error=None, skill=0.7791, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like', 'noise_added': 'feature/None'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy_shuffled__noise_added.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy_shuffled__noise_added
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy_shuffled:noise_added
+FAIL messy_shuffled:rows_shuffled [band]
+     the change: the rows are written in another order
+     must hold: the run's own conclusion (its band, its roles, its counts): the order of the rows in the file carries nothing in this table (under time order the rows are put in time order by the tool)
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 38
+     seen: rc=0, error=None, skill=0.7776, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy_shuffled__rows_shuffled.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy_shuffled__rows_shuffled
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy_shuffled:rows_shuffled
+FAIL messy_shuffled:row_repeated [band]
+     the change: one row is written twice
+     must hold: the run's own conclusion (its band, its roles, its counts): one row written twice is one more row; `input.duplicate_rows` counts it and a `duplicate_rows` warning says so
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 38
+     seen: rc=0, error=None, skill=0.7638, scheme=random, baseline=chance, model=linear-0, holdout=376, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy_shuffled__row_repeated.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy_shuffled__row_repeated
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy_shuffled:row_repeated
+FAIL messy_shuffled:blank_line_added [same]
+     the change: one blank line is added between two rows
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: a blank line is not a row (spec section 6), so every row keeps its position
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 38
+     seen: rc=0, error=None, skill=0.7753, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy_shuffled__blank_line_added.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy_shuffled__blank_line_added
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy_shuffled:blank_line_added
+FAIL messy_shuffled:missing_cell_feature [band-or-named]
+     the change: one cell of a feature is emptied
+     must hold: the run's own conclusion (its band, its roles, its counts): one empty cell in the feature `f1` is counted in `n_missing` and imputed. Skill is inside the run's band; or the result names the row (`largest_row_dominates`) or the value (`extreme_value`), and the same call on the table without the named rows is inside the band. The roles are those of the unperturbed run
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 38
+     seen: rc=0, error=None, skill=0.7757, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, changed=row 8: training, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy_shuffled__missing_cell_feature.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy_shuffled__missing_cell_feature
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy_shuffled:missing_cell_feature
+FAIL messy_shuffled:missing_cell_date [same]
+     the change: one cell of the time column, or of a date column, is emptied
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: an empty cell is not looked at by the date rules (step 5), and the column reaches nothing either way
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 38
+     seen: rc=0, error=None, skill=0.7753, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy_shuffled__missing_cell_date.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy_shuffled__missing_cell_date
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy_shuffled:missing_cell_date
+FAIL messy_shuffled:missing_cell_target [band]
+     the change: one cell of the target is emptied
+     must hold: the run's own conclusion (its band, its roles, its counts): a row with no target is dropped and counted in `dropped_missing_target`
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 38
+     seen: rc=0, error=None, skill=0.7646, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy_shuffled__missing_cell_target.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy_shuffled__missing_cell_target
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy_shuffled:missing_cell_target
+FAIL messy_shuffled:feature_renamed [same]
+     the change: a feature is renamed `renamed_feature`
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: a column's name carries nothing
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 38
+     seen: rc=0, error=None, skill=0.7753, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy_shuffled__feature_renamed.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy_shuffled__feature_renamed
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy_shuffled:feature_renamed
+FAIL messy_shuffled:feature_renamed_awkward [same]
+     the change: a feature is renamed `net value, £ (2024)`
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: a column's name carries nothing, a name with a comma, a space and a non-ASCII letter included
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 38
+     seen: rc=0, error=None, skill=0.7753, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy_shuffled__feature_renamed_awkward.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy_shuffled__feature_renamed_awkward
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy_shuffled:feature_renamed_awkward
+FAIL messy_shuffled:target_renamed [same]
+     the change: the target is renamed `the outcome`
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: the target's name carries nothing
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 38
+     seen: rc=0, error=None, skill=0.7753, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy_shuffled__target_renamed.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy_shuffled__target_renamed
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy_shuffled:target_renamed
+FAIL messy_shuffled:role_column_renamed [same]
+     the change: the time or date column is renamed `when`, the entity column `who`
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: the name of the date column carries nothing
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 38
+     seen: rc=0, error=None, skill=0.7753, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy_shuffled__role_column_renamed.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy_shuffled__role_column_renamed
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy_shuffled:role_column_renamed
+FAIL messy_shuffled:target_first [same]
+     the change: the target is moved to the first column
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: where the target stands among the columns carries nothing: the features keep their order
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 38
+     seen: rc=0, error=None, skill=0.7753, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy_shuffled__target_first.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy_shuffled__target_first
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy_shuffled:target_first
+FAIL messy_shuffled:target_respelt [same]
+     the change: the two classes are respelt, in the same sorted order
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: the classes respelt in the same sorted order: the same 0 and 1 reach every step
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 38
+     seen: rc=0, error=None, skill=0.7753, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy_shuffled__target_respelt.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy_shuffled__target_respelt
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy_shuffled:target_respelt
+FAIL messy_shuffled:target_respelt_flipped [band]
+     the change: the two classes are respelt so that the other sorts second
+     must hold: the run's own conclusion (its band, its roles, its counts): the classes respelt so that the other one sorts second: the positive class changes and skill, 2 x AUC - 1, does not depend on which it is
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 38
+     seen: rc=0, error=None, skill=0.7571, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy_shuffled__target_respelt_flipped.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy_shuffled__target_respelt_flipped
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy_shuffled:target_respelt_flipped
+FAIL messy_shuffled:white_space_cells [same]
+     the change: white space is put round some target values, levels and entity values
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: white space round a target value, a categorical level or an entity value is not part of it (D42, D46, step 5)
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 38
+     seen: rc=0, error=None, skill=0.7753, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy_shuffled__white_space_cells.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy_shuffled__white_space_cells
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy_shuffled:white_space_cells
+FAIL messy_shuffled:number_two_sentinels [band-or-named]
+     the change: two cells of a numeric feature, in two rows, are set to 999999
+     must hold: the run's own conclusion (its band, its roles, its counts): two cells of the numeric feature `f1`, in two rows, set to 999999. Skill is inside the run's band; or the result names the row (`largest_row_dominates`) or the value (`extreme_value`), and the same call on the table without the named rows is inside the band. The roles are those of the unperturbed run
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 38
+     seen: rc=0, error=None, skill=0.5435, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, changed=row 654: holdout; row 762: training, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy_shuffled__number_two_sentinels.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy_shuffled__number_two_sentinels
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy_shuffled:number_two_sentinels
+FAIL messy_shuffled:id_added_gaps [same]
+     the change: a column `row_id_gaps` is added: distinct whole numbers in no order, 3% of their range missing
+     must hold: headline, row counts and predictions equal to the unperturbed run, and the run's own conclusion: whole numbers distinct in every row, in no order and with 3% of the numbers of their range missing, are an identifier and reach nothing
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 38
+     seen: rc=0, error=None, skill=0.7753, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy_shuffled__id_added_gaps.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy_shuffled__id_added_gaps
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy_shuffled:id_added_gaps
+STATED LIMIT (D31): messy:sorted_by_measure [band]
+     the change: the table is sorted by the whole-number measure `visits`
+     must hold: the run's own conclusion (its band, its roles, its counts): the table is sorted by the whole-number measure `visits`: a measure is a feature whatever the order of the rows. A stated limit (D31): every value is distinct and in the order of the file, so the first clause of the id-like rule (D19) excludes it
+     messy_roles: `visits` has role 'excluded', reason 'id_like'; expected 'feature', None
+     messy_coercion: `n1` reports n_imputed = 40; the judge counts 39
+     seen: rc=0, error=None, skill=0.7122, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\messy__sorted_by_measure.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\messy__sorted_by_measure
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only messy:sorted_by_measure
+STATED LIMIT (D60): dup_noise:noise_added [stop-or-band]
+     the change: a column `noise_added` of normal noise is added
+     must hold: the stop `holdout_copies_in_training`, or no skill (the band of `noise_clf`, borrowed): every row is still present twice and the target is noise. By spec step 8a the rows are no longer copies and the run goes ahead: a copy that differs in one feature is not detected (D60)
+     band:noise_clf: skill is 0.6742, expected between -0.27 and 0.27 (the band of `noise_clf`)
+     seen: rc=0, error=None, skill=0.6742, scheme=random, baseline=chance, model=tree-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'noise_added': 'feature/None'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\dup_noise__noise_added.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\dup_noise__noise_added
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only dup_noise:noise_added
+STATED LIMIT (D76): random_walk:copy_noise_5pct [structure]
+     the change: a column `target_copy` is added: the target rescaled, with noise of 5% of the target's spread
+     must hold: the added column `target_copy` is excluded as a suspected leak, or at least named by a `strong_single_column` warning: a rescaled copy of the target with noise of 5% of the target's spread added. A stated limit (D76 point 2): above 1% such a column cannot be told from a strong feature measured at the same moment, and whether it is known before the outcome is the caller's to say
+     copy_told:target_copy: the added column `target_copy` is a feature (role 'feature', reason None) and no `strong_single_column` warning names it; skill 0.4896780229461525 against 'previous_value', model linear-0
+     seen: rc=0, error=None, skill=0.4897, scheme=time_ordered, baseline=previous_value, model=linear-0, holdout=375, copies=None, cap=0, share=0.0286, base_share=0.0417, folds=None, roles={'target_copy': 'feature/None'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\random_walk__copy_noise_5pct.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\random_walk__copy_noise_5pct
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only random_walk:copy_noise_5pct
+STATED LIMIT (D55): int_stamps:missing_cell_date [structure]
+     the change: one cell of the time column, or of a date column, is emptied
+     must hold: the run's own conclusion (its band, its roles, its counts): a row with no time value is dropped and counted in `dropped_missing_time` (step 2)
+     u_largest_row: `headline.baseline_largest_row_share` is 0.025040227109897645; the judge computes 0.03031797829538831 for the headline baseline (row 760)
+     time_split: the holdout is 377 rows; the judge expects the 375 latest (2 unexpected, 0 missing)
+     walk_baselines: the training_mean baseline scores 209.50897449007985; the judge computes 208.75221214027528
+     int_keys: training and holdout timestamps, unique, form: (439, 148, False, 'numeric'); the judge counts (1124, 375, True, 'numeric')
+     seen: rc=0, error=None, skill=0.5384, scheme=time_ordered, baseline=previous_value, model=linear-0, holdout=377, copies=None, cap=0, share=0.0318, base_share=0.025, folds=None, roles={}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\int_stamps__missing_cell_date.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\int_stamps__missing_cell_date
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only int_stamps:missing_cell_date
+STATED LIMIT (D76): int_stamps:copy_noise_5pct [structure]
+     the change: a column `target_copy` is added: the target rescaled, with noise of 5% of the target's spread
+     must hold: the added column `target_copy` is excluded as a suspected leak, or at least named by a `strong_single_column` warning: a rescaled copy of the target with noise of 5% of the target's spread added. A stated limit (D76 point 2): above 1% such a column cannot be told from a strong feature measured at the same moment, and whether it is known before the outcome is the caller's to say
+     copy_told:target_copy: the added column `target_copy` is a feature (role 'feature', reason None) and no `strong_single_column` warning names it; skill 0.8018094664408543 against 'previous_value', model linear-0
+     seen: rc=0, error=None, skill=0.8018, scheme=time_ordered, baseline=previous_value, model=linear-0, holdout=375, copies=None, cap=0, share=0.0331, base_share=0.0304, folds=None, roles={'target_copy': 'feature/None'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\int_stamps__copy_noise_5pct.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\int_stamps__copy_noise_5pct
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only int_stamps:copy_noise_5pct
+STATED LIMIT (D76): panel:copy_noise_5pct [structure]
+     the change: a column `target_copy` is added: the target rescaled, with noise of 5% of the target's spread
+     must hold: the added column `target_copy` is excluded as a suspected leak, or at least named by a `strong_single_column` warning: a rescaled copy of the target with noise of 5% of the target's spread added. A stated limit (D76 point 2): above 1% such a column cannot be told from a strong feature measured at the same moment, and whether it is known before the outcome is the caller's to say
+     copy_told:target_copy: the added column `target_copy` is a feature (role 'feature', reason None) and no `strong_single_column` warning names it; skill 0.4276190101071946 against 'previous_value', model linear-0
+     seen: rc=0, error=None, skill=0.4276, scheme=time_ordered, baseline=previous_value, model=linear-0, holdout=384, copies=None, cap=0, share=0.0309, base_share=0.0261, folds=None, roles={'target_copy': 'feature/None'}
+     table: <scratch>\out\tools_stage\final\work_variant_M13\data\panel__copy_noise_5pct.csv
+     output: <scratch>\out\tools_stage\final\work_variant_M13\runs\M13\panel__copy_noise_5pct
+     again: python verify/battery.py <scratch>/variants/M13/mlprofessor --only panel:copy_noise_5pct
+1229 tool runs, and 143 second calls by the judge, in 1448 s at 16 side by side (22620 s of tool time): 37 gate runs as they are and 1192 pairs; 1398 pairs left out (--list says why)
+holds 1157; stated limit 6 of 6 listed; open 0 of 0 listed; on neither list and failing 66
+BATTERY: FAIL (66 of 1229 do not hold and are on neither list; holds 1157, stated limit 6, open 0)
+exit 1

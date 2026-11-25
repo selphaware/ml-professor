@@ -1,0 +1,7266 @@
+{
+ "what": "the failures of the judge's two other tools on the application as it stands, each with the rule of pass 8 that owns it (CP9 section A)",
+ "note": "final: reference core.py 116caf51, battery a76fbb5c, generated_tables 9dc7b4f3, gate 7af964a4 (first 8 of each SHA-256); made 2026-11-25",
+ "sha256": {
+  "verify/reference/mlprofessor/core.py": "116caf510038874fc9774413702ce7f5105e612f16bdc90d70404f6a8c96df8e",
+  "verify/battery.py": "a76fbb5c570b7bb648e6667175b3f12e34159ce65a01e7f28e6e1d97b3c66fb0",
+  "verify/generated_tables.py": "9dc7b4f3a022d573a76b623776fd967a7763672fdd4423dac224932f8099fffb",
+  "verify/smoke_test.py": "7af964a499938a84ef359ff3be085306ac2de173928d4b096e38f66e5046391c"
+ },
+ "battery": {
+  "command": "python verify/battery.py mlprofessor --json FILE",
+  "runs": 1229,
+  "counts": {
+   "holds": 299,
+   "stated limit": 6,
+   "open": 0,
+   "fails": 924
+  },
+  "stated_limits": {
+   "dup_noise:noise_added": "D60",
+   "int_stamps:missing_cell_date": "D55",
+   "messy:sorted_by_measure": "D31",
+   "random_walk:copy_noise_5pct": "D76",
+   "int_stamps:copy_noise_5pct": "D76",
+   "panel:copy_noise_5pct": "D76"
+  },
+  "stated_limit_pairs_that_fail": [
+   "dup_noise:noise_added",
+   "int_stamps:copy_noise_5pct",
+   "int_stamps:missing_cell_date",
+   "messy:sorted_by_measure",
+   "panel:copy_noise_5pct",
+   "random_walk:copy_noise_5pct"
+  ],
+  "pairs": {
+   "signal_clf:base": [
+    "A3 statements"
+   ],
+   "signal_clf:number_sentinel_-999": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "signal_clf:number_sentinel_999999": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "signal_clf:number_sentinel_1e308": [
+    "A3 statements"
+   ],
+   "signal_clf:copy_two_valued": [
+    "A3 statements"
+   ],
+   "signal_clf:copy_distinct": [
+    "A3 statements"
+   ],
+   "signal_clf:constant_added": [
+    "A3 statements"
+   ],
+   "signal_clf:id_added_int": [
+    "A3 statements"
+   ],
+   "signal_clf:id_added_text": [
+    "A3 statements"
+   ],
+   "signal_clf:second_date_added": [
+    "A3 statements"
+   ],
+   "signal_clf:noise_added": [
+    "A3 statements"
+   ],
+   "signal_clf:rows_shuffled": [
+    "A3 statements"
+   ],
+   "signal_clf:row_repeated": [
+    "A3 statements"
+   ],
+   "signal_clf:blank_line_added": [
+    "A3 statements"
+   ],
+   "signal_clf:missing_cell_feature": [
+    "A3 statements"
+   ],
+   "signal_clf:missing_cell_target": [
+    "A3 statements"
+   ],
+   "signal_clf:feature_renamed": [
+    "A3 statements"
+   ],
+   "signal_clf:feature_renamed_awkward": [
+    "A3 statements"
+   ],
+   "signal_clf:target_renamed": [
+    "A3 statements"
+   ],
+   "signal_clf:target_first": [
+    "A3 statements"
+   ],
+   "signal_clf:target_respelt": [
+    "A3 statements"
+   ],
+   "signal_clf:target_respelt_flipped": [
+    "A3 statements"
+   ],
+   "signal_clf:white_space_cells": [
+    "A3 statements"
+   ],
+   "signal_clf:number_two_sentinels": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "signal_clf:id_added_gaps": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "signal_reg:base": [
+    "A3 statements"
+   ],
+   "signal_reg:number_sentinel_-999": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "signal_reg:number_sentinel_999999": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "signal_reg:number_sentinel_1e308": [
+    "A3 statements"
+   ],
+   "signal_reg:target_sentinel_-999": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "signal_reg:copy_distinct": [
+    "A3 statements"
+   ],
+   "signal_reg:constant_added": [
+    "A3 statements"
+   ],
+   "signal_reg:id_added_int": [
+    "A3 statements"
+   ],
+   "signal_reg:id_added_text": [
+    "A3 statements"
+   ],
+   "signal_reg:second_date_added": [
+    "A3 statements"
+   ],
+   "signal_reg:noise_added": [
+    "A3 statements"
+   ],
+   "signal_reg:rows_shuffled": [
+    "A3 statements"
+   ],
+   "signal_reg:row_repeated": [
+    "A3 statements"
+   ],
+   "signal_reg:blank_line_added": [
+    "A3 statements"
+   ],
+   "signal_reg:missing_cell_feature": [
+    "A3 statements"
+   ],
+   "signal_reg:missing_cell_target": [
+    "A3 statements"
+   ],
+   "signal_reg:feature_renamed": [
+    "A3 statements"
+   ],
+   "signal_reg:feature_renamed_awkward": [
+    "A3 statements"
+   ],
+   "signal_reg:target_renamed": [
+    "A3 statements"
+   ],
+   "signal_reg:target_first": [
+    "A3 statements"
+   ],
+   "signal_reg:white_space_cells": [
+    "A3 statements"
+   ],
+   "signal_reg:copy_exact": [
+    "A3 statements"
+   ],
+   "signal_reg:copy_negative_scale": [
+    "A3 statements"
+   ],
+   "signal_reg:copy_5_cells_differ": [
+    "A3 statements"
+   ],
+   "signal_reg:copy_one_cell_999999": [
+    "A3 statements"
+   ],
+   "signal_reg:copy_and_target_sentinel": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "signal_reg:target_sentinel_999999": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "signal_reg:target_two_sentinels": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "signal_reg:number_two_sentinels": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "signal_reg:id_added_gaps": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "noise_clf:base": [
+    "A3 statements"
+   ],
+   "noise_clf:number_sentinel_-999": [
+    "A3 statements"
+   ],
+   "noise_clf:number_sentinel_999999": [
+    "A3 statements"
+   ],
+   "noise_clf:number_sentinel_1e308": [
+    "A3 statements"
+   ],
+   "noise_clf:copy_two_valued": [
+    "A3 statements"
+   ],
+   "noise_clf:copy_distinct": [
+    "A3 statements"
+   ],
+   "noise_clf:constant_added": [
+    "A3 statements"
+   ],
+   "noise_clf:id_added_int": [
+    "A3 statements"
+   ],
+   "noise_clf:id_added_text": [
+    "A3 statements"
+   ],
+   "noise_clf:second_date_added": [
+    "A3 statements"
+   ],
+   "noise_clf:noise_added": [
+    "A3 statements"
+   ],
+   "noise_clf:rows_shuffled": [
+    "A3 statements"
+   ],
+   "noise_clf:row_repeated": [
+    "A3 statements"
+   ],
+   "noise_clf:blank_line_added": [
+    "A3 statements"
+   ],
+   "noise_clf:missing_cell_feature": [
+    "A3 statements"
+   ],
+   "noise_clf:missing_cell_target": [
+    "A3 statements"
+   ],
+   "noise_clf:feature_renamed": [
+    "A3 statements"
+   ],
+   "noise_clf:feature_renamed_awkward": [
+    "A3 statements"
+   ],
+   "noise_clf:target_renamed": [
+    "A3 statements"
+   ],
+   "noise_clf:target_first": [
+    "A3 statements"
+   ],
+   "noise_clf:target_respelt": [
+    "A3 statements"
+   ],
+   "noise_clf:target_respelt_flipped": [
+    "A3 statements"
+   ],
+   "noise_clf:white_space_cells": [
+    "A3 statements"
+   ],
+   "noise_clf:number_two_sentinels": [
+    "A3 statements"
+   ],
+   "noise_clf:id_added_gaps": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "noise_reg:base": [
+    "A3 statements"
+   ],
+   "noise_reg:number_sentinel_-999": [
+    "A3 statements"
+   ],
+   "noise_reg:number_sentinel_999999": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "noise_reg:number_sentinel_1e308": [
+    "A3 statements"
+   ],
+   "noise_reg:target_sentinel_-999": [
+    "A3 statements"
+   ],
+   "noise_reg:copy_distinct": [
+    "A3 statements"
+   ],
+   "noise_reg:constant_added": [
+    "A3 statements"
+   ],
+   "noise_reg:id_added_int": [
+    "A3 statements"
+   ],
+   "noise_reg:id_added_text": [
+    "A3 statements"
+   ],
+   "noise_reg:second_date_added": [
+    "A3 statements"
+   ],
+   "noise_reg:noise_added": [
+    "A3 statements"
+   ],
+   "noise_reg:rows_shuffled": [
+    "A3 statements"
+   ],
+   "noise_reg:row_repeated": [
+    "A3 statements"
+   ],
+   "noise_reg:blank_line_added": [
+    "A3 statements"
+   ],
+   "noise_reg:missing_cell_feature": [
+    "A3 statements"
+   ],
+   "noise_reg:missing_cell_target": [
+    "A3 statements"
+   ],
+   "noise_reg:feature_renamed": [
+    "A3 statements"
+   ],
+   "noise_reg:feature_renamed_awkward": [
+    "A3 statements"
+   ],
+   "noise_reg:target_renamed": [
+    "A3 statements"
+   ],
+   "noise_reg:target_first": [
+    "A3 statements"
+   ],
+   "noise_reg:copy_exact": [
+    "A3 statements"
+   ],
+   "noise_reg:copy_negative_scale": [
+    "A3 statements"
+   ],
+   "noise_reg:copy_5_cells_differ": [
+    "A3 statements"
+   ],
+   "noise_reg:copy_one_cell_999999": [
+    "A3 statements"
+   ],
+   "noise_reg:copy_and_target_sentinel": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "noise_reg:target_sentinel_999999": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "noise_reg:target_two_sentinels": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "noise_reg:number_two_sentinels": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "noise_reg:id_added_gaps": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "imbalanced:base": [
+    "A3 statements"
+   ],
+   "imbalanced:number_sentinel_-999": [
+    "A3 statements"
+   ],
+   "imbalanced:number_sentinel_999999": [
+    "A3 statements"
+   ],
+   "imbalanced:number_sentinel_1e308": [
+    "A3 statements"
+   ],
+   "imbalanced:copy_two_valued": [
+    "A3 statements"
+   ],
+   "imbalanced:copy_distinct": [
+    "A3 statements"
+   ],
+   "imbalanced:constant_added": [
+    "A3 statements"
+   ],
+   "imbalanced:id_added_int": [
+    "A3 statements"
+   ],
+   "imbalanced:id_added_text": [
+    "A3 statements"
+   ],
+   "imbalanced:second_date_added": [
+    "A3 statements"
+   ],
+   "imbalanced:noise_added": [
+    "A3 statements"
+   ],
+   "imbalanced:rows_shuffled": [
+    "A3 statements"
+   ],
+   "imbalanced:row_repeated": [
+    "A3 statements"
+   ],
+   "imbalanced:blank_line_added": [
+    "A3 statements"
+   ],
+   "imbalanced:missing_cell_feature": [
+    "A3 statements"
+   ],
+   "imbalanced:missing_cell_target": [
+    "A3 statements"
+   ],
+   "imbalanced:feature_renamed": [
+    "A3 statements"
+   ],
+   "imbalanced:feature_renamed_awkward": [
+    "A3 statements"
+   ],
+   "imbalanced:target_renamed": [
+    "A3 statements"
+   ],
+   "imbalanced:target_first": [
+    "A3 statements"
+   ],
+   "imbalanced:target_respelt": [
+    "A3 statements"
+   ],
+   "imbalanced:target_respelt_flipped": [
+    "A3 statements"
+   ],
+   "imbalanced:white_space_cells": [
+    "A3 statements"
+   ],
+   "imbalanced:number_two_sentinels": [
+    "A3 statements"
+   ],
+   "imbalanced:id_added_gaps": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "leak:base": [
+    "A3 statements"
+   ],
+   "leak:number_sentinel_-999": [
+    "A3 statements"
+   ],
+   "leak:number_sentinel_999999": [
+    "A3 statements"
+   ],
+   "leak:number_sentinel_1e308": [
+    "A3 statements"
+   ],
+   "leak:copy_two_valued": [
+    "A3 statements"
+   ],
+   "leak:copy_distinct": [
+    "A3 statements"
+   ],
+   "leak:constant_added": [
+    "A3 statements"
+   ],
+   "leak:id_added_int": [
+    "A3 statements"
+   ],
+   "leak:id_added_text": [
+    "A3 statements"
+   ],
+   "leak:second_date_added": [
+    "A3 statements"
+   ],
+   "leak:noise_added": [
+    "A3 statements"
+   ],
+   "leak:rows_shuffled": [
+    "A3 statements"
+   ],
+   "leak:row_repeated": [
+    "A3 statements"
+   ],
+   "leak:blank_line_added": [
+    "A3 statements"
+   ],
+   "leak:missing_cell_feature": [
+    "A3 statements"
+   ],
+   "leak:missing_cell_target": [
+    "A3 statements"
+   ],
+   "leak:feature_renamed": [
+    "A3 statements"
+   ],
+   "leak:feature_renamed_awkward": [
+    "A3 statements"
+   ],
+   "leak:target_renamed": [
+    "A3 statements"
+   ],
+   "leak:target_first": [
+    "A3 statements"
+   ],
+   "leak:target_respelt": [
+    "A3 statements"
+   ],
+   "leak:target_respelt_flipped": [
+    "A3 statements"
+   ],
+   "leak:white_space_cells": [
+    "A3 statements"
+   ],
+   "leak:number_two_sentinels": [
+    "A3 statements"
+   ],
+   "leak:id_added_gaps": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "leak_reg:base": [
+    "A3 statements"
+   ],
+   "leak_reg:number_sentinel_-999": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "leak_reg:number_sentinel_999999": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "leak_reg:number_sentinel_1e308": [
+    "A3 statements"
+   ],
+   "leak_reg:target_sentinel_-999": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "leak_reg:copy_distinct": [
+    "A3 statements"
+   ],
+   "leak_reg:constant_added": [
+    "A3 statements"
+   ],
+   "leak_reg:id_added_int": [
+    "A3 statements"
+   ],
+   "leak_reg:id_added_text": [
+    "A3 statements"
+   ],
+   "leak_reg:second_date_added": [
+    "A3 statements"
+   ],
+   "leak_reg:noise_added": [
+    "A3 statements"
+   ],
+   "leak_reg:rows_shuffled": [
+    "A3 statements"
+   ],
+   "leak_reg:row_repeated": [
+    "A3 statements"
+   ],
+   "leak_reg:blank_line_added": [
+    "A3 statements"
+   ],
+   "leak_reg:missing_cell_feature": [
+    "A3 statements"
+   ],
+   "leak_reg:missing_cell_target": [
+    "A3 statements"
+   ],
+   "leak_reg:feature_renamed": [
+    "A3 statements"
+   ],
+   "leak_reg:feature_renamed_awkward": [
+    "A3 statements"
+   ],
+   "leak_reg:target_renamed": [
+    "A3 statements"
+   ],
+   "leak_reg:target_first": [
+    "A3 statements"
+   ],
+   "leak_reg:white_space_cells": [
+    "A3 statements"
+   ],
+   "leak_reg:copy_exact": [
+    "A3 statements"
+   ],
+   "leak_reg:copy_negative_scale": [
+    "A3 statements"
+   ],
+   "leak_reg:copy_5_cells_differ": [
+    "A3 statements"
+   ],
+   "leak_reg:copy_one_cell_999999": [
+    "A3 statements"
+   ],
+   "leak_reg:copy_and_target_sentinel": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "leak_reg:target_sentinel_999999": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "leak_reg:target_two_sentinels": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "leak_reg:number_two_sentinels": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "leak_reg:id_added_gaps": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "near_leak:base": [
+    "A3 statements"
+   ],
+   "near_leak:number_sentinel_-999": [
+    "A3 statements"
+   ],
+   "near_leak:number_sentinel_999999": [
+    "A3 statements"
+   ],
+   "near_leak:number_sentinel_1e308": [
+    "A3 statements"
+   ],
+   "near_leak:copy_two_valued": [
+    "A3 statements"
+   ],
+   "near_leak:copy_distinct": [
+    "A3 statements"
+   ],
+   "near_leak:constant_added": [
+    "A3 statements"
+   ],
+   "near_leak:id_added_int": [
+    "A3 statements"
+   ],
+   "near_leak:id_added_text": [
+    "A3 statements"
+   ],
+   "near_leak:second_date_added": [
+    "A3 statements"
+   ],
+   "near_leak:noise_added": [
+    "A3 statements"
+   ],
+   "near_leak:rows_shuffled": [
+    "A3 statements"
+   ],
+   "near_leak:row_repeated": [
+    "A3 statements"
+   ],
+   "near_leak:blank_line_added": [
+    "A3 statements"
+   ],
+   "near_leak:missing_cell_feature": [
+    "A3 statements"
+   ],
+   "near_leak:missing_cell_target": [
+    "A3 statements"
+   ],
+   "near_leak:feature_renamed": [
+    "A3 statements"
+   ],
+   "near_leak:feature_renamed_awkward": [
+    "A3 statements"
+   ],
+   "near_leak:target_renamed": [
+    "A3 statements"
+   ],
+   "near_leak:target_first": [
+    "A3 statements"
+   ],
+   "near_leak:target_respelt": [
+    "A3 statements"
+   ],
+   "near_leak:target_respelt_flipped": [
+    "A3 statements"
+   ],
+   "near_leak:white_space_cells": [
+    "A3 statements"
+   ],
+   "near_leak:number_two_sentinels": [
+    "A3 statements"
+   ],
+   "near_leak:id_added_gaps": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "binary_numeric:base": [
+    "A3 statements"
+   ],
+   "binary_numeric:number_sentinel_-999": [
+    "A3 statements"
+   ],
+   "binary_numeric:number_sentinel_999999": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "binary_numeric:number_sentinel_1e308": [
+    "A3 statements"
+   ],
+   "binary_numeric:copy_two_valued": [
+    "A3 statements"
+   ],
+   "binary_numeric:copy_distinct": [
+    "A3 statements"
+   ],
+   "binary_numeric:constant_added": [
+    "A3 statements"
+   ],
+   "binary_numeric:id_added_int": [
+    "A3 statements"
+   ],
+   "binary_numeric:id_added_text": [
+    "A3 statements"
+   ],
+   "binary_numeric:second_date_added": [
+    "A3 statements"
+   ],
+   "binary_numeric:noise_added": [
+    "A3 statements"
+   ],
+   "binary_numeric:rows_shuffled": [
+    "A3 statements"
+   ],
+   "binary_numeric:row_repeated": [
+    "A3 statements"
+   ],
+   "binary_numeric:blank_line_added": [
+    "A3 statements"
+   ],
+   "binary_numeric:missing_cell_feature": [
+    "A3 statements"
+   ],
+   "binary_numeric:missing_cell_target": [
+    "A3 statements"
+   ],
+   "binary_numeric:feature_renamed": [
+    "A3 statements"
+   ],
+   "binary_numeric:feature_renamed_awkward": [
+    "A3 statements"
+   ],
+   "binary_numeric:target_renamed": [
+    "A3 statements"
+   ],
+   "binary_numeric:target_first": [
+    "A3 statements"
+   ],
+   "binary_numeric:target_respelt": [
+    "A3 statements"
+   ],
+   "binary_numeric:target_respelt_flipped": [
+    "A3 statements"
+   ],
+   "binary_numeric:white_space_cells": [
+    "A3 statements"
+   ],
+   "binary_numeric:float_whole_numbers": [
+    "A3 statements"
+   ],
+   "binary_numeric:number_two_sentinels": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "binary_numeric:id_added_gaps": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "messy:base": [
+    "A3 statements"
+   ],
+   "messy:date_sentinel_9999": [
+    "A3 statements"
+   ],
+   "messy:date_sentinel_1900": [
+    "A3 statements"
+   ],
+   "messy:date_sentinel_zero": [
+    "A3 statements"
+   ],
+   "messy:number_sentinel_-999": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "messy:number_sentinel_999999": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "messy:number_sentinel_1e308": [
+    "A3 statements"
+   ],
+   "messy:copy_two_valued": [
+    "A3 statements"
+   ],
+   "messy:copy_distinct": [
+    "A3 statements"
+   ],
+   "messy:constant_added": [
+    "A3 statements"
+   ],
+   "messy:id_added_int": [
+    "A3 statements"
+   ],
+   "messy:id_added_text": [
+    "A3 statements"
+   ],
+   "messy:second_date_added": [
+    "A3 statements"
+   ],
+   "messy:noise_added": [
+    "A3 statements"
+   ],
+   "messy:rows_shuffled": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "messy:row_repeated": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "messy:blank_line_added": [
+    "A3 statements"
+   ],
+   "messy:missing_cell_feature": [
+    "A3 statements"
+   ],
+   "messy:missing_cell_date": [
+    "A3 statements"
+   ],
+   "messy:missing_cell_target": [
+    "A3 statements"
+   ],
+   "messy:feature_renamed": [
+    "A3 statements"
+   ],
+   "messy:feature_renamed_awkward": [
+    "A3 statements"
+   ],
+   "messy:target_renamed": [
+    "A3 statements"
+   ],
+   "messy:role_column_renamed": [
+    "A3 statements"
+   ],
+   "messy:target_first": [
+    "A3 statements"
+   ],
+   "messy:target_respelt": [
+    "A3 statements"
+   ],
+   "messy:target_respelt_flipped": [
+    "A3 statements"
+   ],
+   "messy:white_space_cells": [
+    "A3 statements"
+   ],
+   "messy:float_whole_numbers": [
+    "A3 statements"
+   ],
+   "messy:number_two_sentinels": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "messy:id_shuffled_and_repeated": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "messy:rows_deleted_shuffled": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "messy:id_floats_shuffled": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "messy:id_steps_by_7": [
+    "A3 statements"
+   ],
+   "messy:id_added_gaps": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "messy:measure_sentinel_-999": [
+    "A3 statements"
+   ],
+   "dup_noise:duplicates_keep": [
+    "A3 statements"
+   ],
+   "dup_noise:duplicates_group": [
+    "A3 statements"
+   ],
+   "dup_noise:id_added_gaps": [
+    "A5 identifier"
+   ],
+   "time_blocks:base": [
+    "A3 statements"
+   ],
+   "time_blocks:date_sentinel_1900": [
+    "A3 statements"
+   ],
+   "time_blocks:number_sentinel_-999": [
+    "A3 statements"
+   ],
+   "time_blocks:number_sentinel_999999": [
+    "A3 statements"
+   ],
+   "time_blocks:number_sentinel_1e308": [
+    "A3 statements"
+   ],
+   "time_blocks:copy_two_valued": [
+    "A3 statements"
+   ],
+   "time_blocks:copy_distinct": [
+    "A3 statements"
+   ],
+   "time_blocks:constant_added": [
+    "A3 statements"
+   ],
+   "time_blocks:id_added_int": [
+    "A3 statements"
+   ],
+   "time_blocks:id_added_text": [
+    "A3 statements"
+   ],
+   "time_blocks:second_date_added": [
+    "A3 statements"
+   ],
+   "time_blocks:noise_added": [
+    "A3 statements"
+   ],
+   "time_blocks:rows_shuffled": [
+    "A3 statements"
+   ],
+   "time_blocks:row_repeated": [
+    "A3 statements"
+   ],
+   "time_blocks:blank_line_added": [
+    "A3 statements"
+   ],
+   "time_blocks:missing_cell_feature": [
+    "A3 statements"
+   ],
+   "time_blocks:missing_cell_date": [
+    "A3 statements"
+   ],
+   "time_blocks:missing_cell_target": [
+    "A3 statements"
+   ],
+   "time_blocks:feature_renamed": [
+    "A3 statements"
+   ],
+   "time_blocks:feature_renamed_awkward": [
+    "A3 statements"
+   ],
+   "time_blocks:target_renamed": [
+    "A3 statements"
+   ],
+   "time_blocks:role_column_renamed": [
+    "A3 statements"
+   ],
+   "time_blocks:target_first": [
+    "A3 statements"
+   ],
+   "time_blocks:target_respelt": [
+    "A3 statements"
+   ],
+   "time_blocks:target_respelt_flipped": [
+    "A3 statements"
+   ],
+   "time_blocks:white_space_cells": [
+    "A3 statements"
+   ],
+   "time_blocks:rows_repeated_1pct": [
+    "A3 statements"
+   ],
+   "time_blocks:rows_repeated_10pct": [
+    "A3 statements"
+   ],
+   "time_blocks:row_repeated_other_target": [
+    "A3 statements"
+   ],
+   "time_blocks:stamp_shared": [
+    "A3 statements"
+   ],
+   "time_blocks:number_two_sentinels": [
+    "A3 statements"
+   ],
+   "time_blocks:id_added_gaps": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "time_blocks_gap:base": [
+    "A3 statements"
+   ],
+   "time_blocks_gap:date_sentinel_1900": [
+    "A3 statements"
+   ],
+   "time_blocks_gap:number_sentinel_-999": [
+    "A3 statements"
+   ],
+   "time_blocks_gap:number_sentinel_999999": [
+    "A3 statements"
+   ],
+   "time_blocks_gap:number_sentinel_1e308": [
+    "A3 statements"
+   ],
+   "time_blocks_gap:copy_two_valued": [
+    "A3 statements"
+   ],
+   "time_blocks_gap:copy_distinct": [
+    "A3 statements"
+   ],
+   "time_blocks_gap:constant_added": [
+    "A3 statements"
+   ],
+   "time_blocks_gap:id_added_int": [
+    "A3 statements"
+   ],
+   "time_blocks_gap:id_added_text": [
+    "A3 statements"
+   ],
+   "time_blocks_gap:second_date_added": [
+    "A3 statements"
+   ],
+   "time_blocks_gap:noise_added": [
+    "A3 statements"
+   ],
+   "time_blocks_gap:rows_shuffled": [
+    "A3 statements"
+   ],
+   "time_blocks_gap:row_repeated": [
+    "A3 statements"
+   ],
+   "time_blocks_gap:blank_line_added": [
+    "A3 statements"
+   ],
+   "time_blocks_gap:missing_cell_feature": [
+    "A3 statements"
+   ],
+   "time_blocks_gap:missing_cell_date": [
+    "A3 statements"
+   ],
+   "time_blocks_gap:missing_cell_target": [
+    "A3 statements"
+   ],
+   "time_blocks_gap:feature_renamed": [
+    "A3 statements"
+   ],
+   "time_blocks_gap:feature_renamed_awkward": [
+    "A3 statements"
+   ],
+   "time_blocks_gap:target_renamed": [
+    "A3 statements"
+   ],
+   "time_blocks_gap:role_column_renamed": [
+    "A3 statements"
+   ],
+   "time_blocks_gap:target_first": [
+    "A3 statements"
+   ],
+   "time_blocks_gap:target_respelt": [
+    "A3 statements"
+   ],
+   "time_blocks_gap:target_respelt_flipped": [
+    "A3 statements"
+   ],
+   "time_blocks_gap:white_space_cells": [
+    "A3 statements"
+   ],
+   "time_blocks_gap:rows_repeated_1pct": [
+    "A3 statements"
+   ],
+   "time_blocks_gap:rows_repeated_10pct": [
+    "A3 statements"
+   ],
+   "time_blocks_gap:row_repeated_other_target": [
+    "A3 statements"
+   ],
+   "time_blocks_gap:stamp_shared": [
+    "A3 statements"
+   ],
+   "time_blocks_gap:number_two_sentinels": [
+    "A3 statements"
+   ],
+   "time_blocks_gap:id_added_gaps": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "time_blocks_undeclared:base": [
+    "A3 statements"
+   ],
+   "time_blocks_undeclared:date_sentinel_9999": [
+    "A3 statements"
+   ],
+   "time_blocks_undeclared:date_sentinel_1900": [
+    "A3 statements"
+   ],
+   "time_blocks_undeclared:date_sentinel_zero": [
+    "A3 statements"
+   ],
+   "time_blocks_undeclared:number_sentinel_-999": [
+    "A3 statements"
+   ],
+   "time_blocks_undeclared:number_sentinel_999999": [
+    "A3 statements"
+   ],
+   "time_blocks_undeclared:number_sentinel_1e308": [
+    "A3 statements"
+   ],
+   "time_blocks_undeclared:copy_two_valued": [
+    "A3 statements"
+   ],
+   "time_blocks_undeclared:copy_distinct": [
+    "A3 statements"
+   ],
+   "time_blocks_undeclared:constant_added": [
+    "A3 statements"
+   ],
+   "time_blocks_undeclared:id_added_int": [
+    "A3 statements"
+   ],
+   "time_blocks_undeclared:id_added_text": [
+    "A3 statements"
+   ],
+   "time_blocks_undeclared:second_date_added": [
+    "A3 statements"
+   ],
+   "time_blocks_undeclared:noise_added": [
+    "A3 statements"
+   ],
+   "time_blocks_undeclared:rows_shuffled": [
+    "A3 statements"
+   ],
+   "time_blocks_undeclared:row_repeated": [
+    "A3 statements"
+   ],
+   "time_blocks_undeclared:blank_line_added": [
+    "A3 statements"
+   ],
+   "time_blocks_undeclared:missing_cell_feature": [
+    "A3 statements"
+   ],
+   "time_blocks_undeclared:missing_cell_date": [
+    "A3 statements"
+   ],
+   "time_blocks_undeclared:missing_cell_target": [
+    "A3 statements"
+   ],
+   "time_blocks_undeclared:feature_renamed": [
+    "A3 statements"
+   ],
+   "time_blocks_undeclared:feature_renamed_awkward": [
+    "A3 statements"
+   ],
+   "time_blocks_undeclared:target_renamed": [
+    "A3 statements"
+   ],
+   "time_blocks_undeclared:role_column_renamed": [
+    "A3 statements"
+   ],
+   "time_blocks_undeclared:target_first": [
+    "A3 statements"
+   ],
+   "time_blocks_undeclared:target_respelt": [
+    "A3 statements"
+   ],
+   "time_blocks_undeclared:target_respelt_flipped": [
+    "A3 statements"
+   ],
+   "time_blocks_undeclared:white_space_cells": [
+    "A3 statements"
+   ],
+   "time_blocks_undeclared:duplicates_group": [
+    "A3 statements"
+   ],
+   "time_blocks_undeclared:number_two_sentinels": [
+    "A3 statements"
+   ],
+   "time_blocks_undeclared:id_added_gaps": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "random_walk:base": [
+    "A3 statements"
+   ],
+   "random_walk:date_sentinel_1900": [
+    "A3 statements"
+   ],
+   "random_walk:number_sentinel_-999": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "random_walk:number_sentinel_999999": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "random_walk:number_sentinel_1e308": [
+    "A3 statements"
+   ],
+   "random_walk:target_sentinel_-999": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "random_walk:copy_distinct": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "random_walk:constant_added": [
+    "A3 statements"
+   ],
+   "random_walk:id_added_int": [
+    "A3 statements"
+   ],
+   "random_walk:id_added_text": [
+    "A3 statements"
+   ],
+   "random_walk:second_date_added": [
+    "A3 statements"
+   ],
+   "random_walk:noise_added": [
+    "A3 statements"
+   ],
+   "random_walk:rows_shuffled": [
+    "A3 statements"
+   ],
+   "random_walk:row_repeated": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "random_walk:blank_line_added": [
+    "A3 statements"
+   ],
+   "random_walk:missing_cell_feature": [
+    "A3 statements"
+   ],
+   "random_walk:missing_cell_date": [
+    "A3 statements"
+   ],
+   "random_walk:missing_cell_target": [
+    "A3 statements"
+   ],
+   "random_walk:feature_renamed": [
+    "A3 statements"
+   ],
+   "random_walk:feature_renamed_awkward": [
+    "A3 statements"
+   ],
+   "random_walk:target_renamed": [
+    "A3 statements"
+   ],
+   "random_walk:role_column_renamed": [
+    "A3 statements"
+   ],
+   "random_walk:target_first": [
+    "A3 statements"
+   ],
+   "random_walk:rows_repeated_1pct": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "random_walk:rows_repeated_10pct": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "random_walk:row_repeated_other_target": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "random_walk:stamp_shared": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "random_walk:gap_2": [
+    "A3 statements"
+   ],
+   "random_walk:gap_2_row_repeated": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "random_walk:copy_exact": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "random_walk:copy_negative_scale": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "random_walk:copy_5_cells_differ": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "random_walk:copy_one_cell_999999": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "random_walk:copy_and_target_sentinel": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "random_walk:target_sentinel_999999": [
+    "A3 statements"
+   ],
+   "random_walk:target_two_sentinels": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "random_walk:number_two_sentinels": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "random_walk:feature_999999_latest_row": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "random_walk:feature_999999_early_row": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "random_walk:target_-999_latest_row": [
+    "A3 statements"
+   ],
+   "random_walk:target_-999_early_row": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "random_walk:id_added_gaps": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "random_walk:copy_2pct_cells_altered": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "random_walk:copy_curve": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "random_walk:copy_noise_1pct": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "int_stamps:base": [
+    "A3 statements"
+   ],
+   "int_stamps:int_time_sentinel_0": [
+    "A3 statements"
+   ],
+   "int_stamps:int_time_sentinel_99991231": [
+    "A3 statements"
+   ],
+   "int_stamps:number_sentinel_-999": [
+    "A3 statements"
+   ],
+   "int_stamps:number_sentinel_999999": [
+    "A3 statements"
+   ],
+   "int_stamps:number_sentinel_1e308": [
+    "A3 statements"
+   ],
+   "int_stamps:target_sentinel_-999": [
+    "A3 statements"
+   ],
+   "int_stamps:copy_distinct": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "int_stamps:constant_added": [
+    "A3 statements"
+   ],
+   "int_stamps:id_added_int": [
+    "A3 statements"
+   ],
+   "int_stamps:id_added_text": [
+    "A3 statements"
+   ],
+   "int_stamps:second_date_added": [
+    "A3 statements"
+   ],
+   "int_stamps:noise_added": [
+    "A3 statements"
+   ],
+   "int_stamps:rows_shuffled": [
+    "A3 statements"
+   ],
+   "int_stamps:row_repeated": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "int_stamps:blank_line_added": [
+    "A3 statements"
+   ],
+   "int_stamps:missing_cell_feature": [
+    "A3 statements"
+   ],
+   "int_stamps:missing_cell_target": [
+    "A3 statements"
+   ],
+   "int_stamps:feature_renamed": [
+    "A3 statements"
+   ],
+   "int_stamps:feature_renamed_awkward": [
+    "A3 statements"
+   ],
+   "int_stamps:target_renamed": [
+    "A3 statements"
+   ],
+   "int_stamps:role_column_renamed": [
+    "A3 statements"
+   ],
+   "int_stamps:target_first": [
+    "A3 statements"
+   ],
+   "int_stamps:rows_repeated_1pct": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "int_stamps:rows_repeated_10pct": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "int_stamps:row_repeated_other_target": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "int_stamps:stamp_shared": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "int_stamps:gap_2": [
+    "A3 statements"
+   ],
+   "int_stamps:gap_2_row_repeated": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "int_stamps:copy_exact": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "int_stamps:copy_negative_scale": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "int_stamps:copy_5_cells_differ": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "int_stamps:copy_one_cell_999999": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "int_stamps:copy_and_target_sentinel": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "int_stamps:target_sentinel_999999": [
+    "A3 statements"
+   ],
+   "int_stamps:target_two_sentinels": [
+    "A3 statements"
+   ],
+   "int_stamps:number_two_sentinels": [
+    "A3 statements"
+   ],
+   "int_stamps:feature_999999_latest_row": [
+    "A3 statements"
+   ],
+   "int_stamps:feature_999999_early_row": [
+    "A3 statements"
+   ],
+   "int_stamps:target_-999_latest_row": [
+    "A3 statements"
+   ],
+   "int_stamps:target_-999_early_row": [
+    "A3 statements"
+   ],
+   "int_stamps:id_added_gaps": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "int_stamps:copy_2pct_cells_altered": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "int_stamps:copy_curve": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "int_stamps:copy_noise_1pct": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "flat_tail:base": [
+    "A3 statements"
+   ],
+   "flat_tail:date_sentinel_1900": [
+    "A3 statements"
+   ],
+   "flat_tail:number_sentinel_-999": [
+    "A3 statements"
+   ],
+   "flat_tail:number_sentinel_999999": [
+    "A3 statements"
+   ],
+   "flat_tail:number_sentinel_1e308": [
+    "A3 statements"
+   ],
+   "flat_tail:target_sentinel_-999": [
+    "A3 statements"
+   ],
+   "flat_tail:copy_distinct": [
+    "A3 statements"
+   ],
+   "flat_tail:constant_added": [
+    "A3 statements"
+   ],
+   "flat_tail:id_added_int": [
+    "A3 statements"
+   ],
+   "flat_tail:id_added_text": [
+    "A3 statements"
+   ],
+   "flat_tail:second_date_added": [
+    "A3 statements"
+   ],
+   "flat_tail:noise_added": [
+    "A3 statements"
+   ],
+   "flat_tail:rows_shuffled": [
+    "A3 statements"
+   ],
+   "flat_tail:row_repeated": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "flat_tail:blank_line_added": [
+    "A3 statements"
+   ],
+   "flat_tail:missing_cell_feature": [
+    "A3 statements"
+   ],
+   "flat_tail:missing_cell_date": [
+    "A3 statements"
+   ],
+   "flat_tail:missing_cell_target": [
+    "A3 statements"
+   ],
+   "flat_tail:feature_renamed": [
+    "A3 statements"
+   ],
+   "flat_tail:feature_renamed_awkward": [
+    "A3 statements"
+   ],
+   "flat_tail:target_renamed": [
+    "A3 statements"
+   ],
+   "flat_tail:role_column_renamed": [
+    "A3 statements"
+   ],
+   "flat_tail:target_first": [
+    "A3 statements"
+   ],
+   "flat_tail:rows_repeated_1pct": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "flat_tail:rows_repeated_10pct": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "flat_tail:row_repeated_other_target": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "flat_tail:stamp_shared": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "flat_tail:gap_2": [
+    "A3 statements"
+   ],
+   "flat_tail:gap_2_row_repeated": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "flat_tail:copy_exact": [
+    "A3 statements"
+   ],
+   "flat_tail:copy_negative_scale": [
+    "A3 statements"
+   ],
+   "flat_tail:copy_5_cells_differ": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "flat_tail:copy_one_cell_999999": [
+    "A3 statements"
+   ],
+   "flat_tail:copy_and_target_sentinel": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "flat_tail:target_sentinel_999999": [
+    "A3 statements"
+   ],
+   "flat_tail:target_two_sentinels": [
+    "A3 statements"
+   ],
+   "flat_tail:number_two_sentinels": [
+    "A3 statements"
+   ],
+   "flat_tail:feature_999999_latest_row": [
+    "A3 statements"
+   ],
+   "flat_tail:feature_999999_early_row": [
+    "A3 statements"
+   ],
+   "flat_tail:target_-999_latest_row": [
+    "A3 statements"
+   ],
+   "flat_tail:target_-999_early_row": [
+    "A3 statements"
+   ],
+   "flat_tail:id_added_gaps": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "flat_tail:copy_2pct_cells_altered": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "flat_tail:copy_curve": [
+    "A3 statements"
+   ],
+   "flat_tail:copy_noise_1pct": [
+    "A3 statements"
+   ],
+   "entities:base": [
+    "A3 statements"
+   ],
+   "entities:number_sentinel_-999": [
+    "A3 statements"
+   ],
+   "entities:number_sentinel_999999": [
+    "A3 statements"
+   ],
+   "entities:number_sentinel_1e308": [
+    "A3 statements"
+   ],
+   "entities:copy_two_valued": [
+    "A3 statements"
+   ],
+   "entities:copy_distinct": [
+    "A3 statements"
+   ],
+   "entities:constant_added": [
+    "A3 statements"
+   ],
+   "entities:id_added_int": [
+    "A3 statements"
+   ],
+   "entities:id_added_text": [
+    "A3 statements"
+   ],
+   "entities:second_date_added": [
+    "A3 statements"
+   ],
+   "entities:noise_added": [
+    "A3 statements"
+   ],
+   "entities:rows_shuffled": [
+    "A3 statements"
+   ],
+   "entities:row_repeated": [
+    "A3 statements"
+   ],
+   "entities:blank_line_added": [
+    "A3 statements"
+   ],
+   "entities:missing_cell_feature": [
+    "A3 statements"
+   ],
+   "entities:missing_cell_target": [
+    "A3 statements"
+   ],
+   "entities:feature_renamed": [
+    "A3 statements"
+   ],
+   "entities:feature_renamed_awkward": [
+    "A3 statements"
+   ],
+   "entities:target_renamed": [
+    "A3 statements"
+   ],
+   "entities:role_column_renamed": [
+    "A3 statements"
+   ],
+   "entities:target_first": [
+    "A3 statements"
+   ],
+   "entities:target_respelt": [
+    "A3 statements"
+   ],
+   "entities:target_respelt_flipped": [
+    "A3 statements"
+   ],
+   "entities:white_space_cells": [
+    "A3 statements"
+   ],
+   "entities:number_two_sentinels": [
+    "A3 statements"
+   ],
+   "entities:id_added_gaps": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "entities:entities_merged_45pct": [
+    "A3 statements"
+   ],
+   "panel:base": [
+    "A3 statements"
+   ],
+   "panel:date_sentinel_1900": [
+    "A3 statements"
+   ],
+   "panel:number_sentinel_-999": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "panel:number_sentinel_999999": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "panel:number_sentinel_1e308": [
+    "A3 statements"
+   ],
+   "panel:target_sentinel_-999": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "panel:copy_distinct": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "panel:constant_added": [
+    "A3 statements"
+   ],
+   "panel:id_added_int": [
+    "A3 statements"
+   ],
+   "panel:id_added_text": [
+    "A3 statements"
+   ],
+   "panel:second_date_added": [
+    "A3 statements"
+   ],
+   "panel:noise_added": [
+    "A3 statements"
+   ],
+   "panel:rows_shuffled": [
+    "A3 statements"
+   ],
+   "panel:blank_line_added": [
+    "A3 statements"
+   ],
+   "panel:missing_cell_feature": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "panel:missing_cell_date": [
+    "A3 statements"
+   ],
+   "panel:missing_cell_target": [
+    "A3 statements"
+   ],
+   "panel:feature_renamed": [
+    "A3 statements"
+   ],
+   "panel:feature_renamed_awkward": [
+    "A3 statements"
+   ],
+   "panel:target_renamed": [
+    "A3 statements"
+   ],
+   "panel:role_column_renamed": [
+    "A3 statements"
+   ],
+   "panel:target_first": [
+    "A3 statements"
+   ],
+   "panel:white_space_cells": [
+    "A3 statements"
+   ],
+   "panel:copy_exact": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "panel:copy_negative_scale": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "panel:copy_5_cells_differ": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "panel:copy_one_cell_999999": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "panel:copy_and_target_sentinel": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "panel:target_sentinel_999999": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "panel:target_two_sentinels": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "panel:number_two_sentinels": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "panel:feature_999999_latest_row": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "panel:feature_999999_early_row": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "panel:target_-999_latest_row": [
+    "A3 statements"
+   ],
+   "panel:target_-999_early_row": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "panel:id_added_gaps": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "panel:copy_2pct_cells_altered": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "panel:copy_curve": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "panel:copy_noise_1pct": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "few_valued:base": [
+    "A3 statements"
+   ],
+   "few_valued:constant_added": [
+    "A3 statements"
+   ],
+   "few_valued:id_added_int": [
+    "A3 statements"
+   ],
+   "few_valued:id_added_text": [
+    "A3 statements"
+   ],
+   "few_valued:second_date_added": [
+    "A3 statements"
+   ],
+   "few_valued:noise_added": [
+    "A3 statements"
+   ],
+   "few_valued:rows_shuffled": [
+    "A3 statements"
+   ],
+   "few_valued:row_repeated": [
+    "A3 statements"
+   ],
+   "few_valued:blank_line_added": [
+    "A3 statements"
+   ],
+   "few_valued:missing_cell_feature": [
+    "A3 statements"
+   ],
+   "few_valued:missing_cell_target": [
+    "A3 statements"
+   ],
+   "few_valued:feature_renamed": [
+    "A3 statements"
+   ],
+   "few_valued:feature_renamed_awkward": [
+    "A3 statements"
+   ],
+   "few_valued:target_renamed": [
+    "A3 statements"
+   ],
+   "few_valued:target_first": [
+    "A3 statements"
+   ],
+   "few_valued:target_respelt": [
+    "A3 statements"
+   ],
+   "few_valued:target_respelt_flipped": [
+    "A3 statements"
+   ],
+   "few_valued:white_space_cells": [
+    "A3 statements"
+   ],
+   "few_valued:duplicates_keep": [
+    "A3 statements"
+   ],
+   "few_valued:id_added_gaps": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "dominant_entity:base": [
+    "A3 statements",
+    "A6 no choice"
+   ],
+   "dominant_entity:number_sentinel_-999": [
+    "A3 extreme value",
+    "A3 statements",
+    "A6 no choice"
+   ],
+   "dominant_entity:number_sentinel_999999": [
+    "A3 extreme value",
+    "A3 statements",
+    "A6 no choice"
+   ],
+   "dominant_entity:number_sentinel_1e308": [
+    "A3 statements",
+    "A6 no choice"
+   ],
+   "dominant_entity:target_sentinel_-999": [
+    "A3 statements",
+    "A6 no choice"
+   ],
+   "dominant_entity:copy_distinct": [
+    "A2/A3b screen and order reading",
+    "A3 statements",
+    "A6 no choice"
+   ],
+   "dominant_entity:constant_added": [
+    "A3 statements",
+    "A6 no choice"
+   ],
+   "dominant_entity:id_added_int": [
+    "A3 statements",
+    "A6 no choice"
+   ],
+   "dominant_entity:id_added_text": [
+    "A3 statements",
+    "A6 no choice"
+   ],
+   "dominant_entity:second_date_added": [
+    "A3 statements",
+    "A6 no choice"
+   ],
+   "dominant_entity:noise_added": [
+    "A3 statements",
+    "A6 no choice"
+   ],
+   "dominant_entity:rows_shuffled": [
+    "A3 statements",
+    "A6 no choice"
+   ],
+   "dominant_entity:row_repeated": [
+    "A3 statements",
+    "A6 no choice"
+   ],
+   "dominant_entity:blank_line_added": [
+    "A3 statements",
+    "A6 no choice"
+   ],
+   "dominant_entity:missing_cell_feature": [
+    "A3 extreme value",
+    "A3 statements",
+    "A6 no choice"
+   ],
+   "dominant_entity:missing_cell_target": [
+    "A3 statements",
+    "A6 no choice"
+   ],
+   "dominant_entity:feature_renamed": [
+    "A3 statements",
+    "A6 no choice"
+   ],
+   "dominant_entity:feature_renamed_awkward": [
+    "A3 statements",
+    "A6 no choice"
+   ],
+   "dominant_entity:target_renamed": [
+    "A3 statements",
+    "A6 no choice"
+   ],
+   "dominant_entity:role_column_renamed": [
+    "A3 statements",
+    "A6 no choice"
+   ],
+   "dominant_entity:target_first": [
+    "A3 statements",
+    "A6 no choice"
+   ],
+   "dominant_entity:white_space_cells": [
+    "A3 statements",
+    "A6 no choice"
+   ],
+   "dominant_entity:copy_exact": [
+    "A2/A3b screen and order reading",
+    "A3 statements",
+    "A6 no choice"
+   ],
+   "dominant_entity:copy_negative_scale": [
+    "A2/A3b screen and order reading",
+    "A3 statements",
+    "A6 no choice"
+   ],
+   "dominant_entity:copy_5_cells_differ": [
+    "A2/A3b screen and order reading",
+    "A3 statements",
+    "A6 no choice"
+   ],
+   "dominant_entity:copy_one_cell_999999": [
+    "A2/A3b screen and order reading",
+    "A3 statements",
+    "A6 no choice"
+   ],
+   "dominant_entity:copy_and_target_sentinel": [
+    "A2/A3b screen and order reading",
+    "A3 statements",
+    "A6 no choice"
+   ],
+   "dominant_entity:target_sentinel_999999": [
+    "A3 extreme value",
+    "A3 statements",
+    "A6 no choice"
+   ],
+   "dominant_entity:target_two_sentinels": [
+    "A3 statements",
+    "A6 no choice"
+   ],
+   "dominant_entity:number_two_sentinels": [
+    "A3 extreme value",
+    "A3 statements",
+    "A6 no choice"
+   ],
+   "dominant_entity:id_added_gaps": [
+    "A3 statements",
+    "A5 identifier",
+    "A6 no choice"
+   ],
+   "day_numbers:base": [
+    "A3 statements"
+   ],
+   "day_numbers:ymd_sentinel_99991231": [
+    "A3 statements"
+   ],
+   "day_numbers:ymd_sentinel_0": [
+    "A3 statements"
+   ],
+   "day_numbers:ymd_sentinel_20240230": [
+    "A3 statements"
+   ],
+   "day_numbers:ymd_sentinel_in_dropped_row": [
+    "A3 statements"
+   ],
+   "day_numbers:number_sentinel_-999": [
+    "A3 statements"
+   ],
+   "day_numbers:number_sentinel_999999": [
+    "A3 statements"
+   ],
+   "day_numbers:number_sentinel_1e308": [
+    "A3 statements"
+   ],
+   "day_numbers:copy_two_valued": [
+    "A3 statements"
+   ],
+   "day_numbers:copy_distinct": [
+    "A3 statements"
+   ],
+   "day_numbers:constant_added": [
+    "A3 statements"
+   ],
+   "day_numbers:id_added_int": [
+    "A3 statements"
+   ],
+   "day_numbers:id_added_text": [
+    "A3 statements"
+   ],
+   "day_numbers:second_date_added": [
+    "A3 statements"
+   ],
+   "day_numbers:noise_added": [
+    "A3 statements"
+   ],
+   "day_numbers:rows_shuffled": [
+    "A3 statements"
+   ],
+   "day_numbers:row_repeated": [
+    "A3 statements"
+   ],
+   "day_numbers:blank_line_added": [
+    "A3 statements"
+   ],
+   "day_numbers:missing_cell_feature": [
+    "A3 statements"
+   ],
+   "day_numbers:missing_cell_date": [
+    "A3 statements"
+   ],
+   "day_numbers:missing_cell_target": [
+    "A3 statements"
+   ],
+   "day_numbers:feature_renamed": [
+    "A3 statements"
+   ],
+   "day_numbers:feature_renamed_awkward": [
+    "A3 statements"
+   ],
+   "day_numbers:target_renamed": [
+    "A3 statements"
+   ],
+   "day_numbers:role_column_renamed": [
+    "A3 statements"
+   ],
+   "day_numbers:target_first": [
+    "A3 statements"
+   ],
+   "day_numbers:target_respelt": [
+    "A3 statements"
+   ],
+   "day_numbers:target_respelt_flipped": [
+    "A3 statements"
+   ],
+   "day_numbers:white_space_cells": [
+    "A3 statements"
+   ],
+   "day_numbers:float_whole_numbers": [
+    "A3 statements"
+   ],
+   "day_numbers:number_two_sentinels": [
+    "A3 statements"
+   ],
+   "day_numbers:id_added_gaps": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "day_sentinel:base": [
+    "A3 statements"
+   ],
+   "day_sentinel:ymd_sentinel_99991231": [
+    "A3 statements"
+   ],
+   "day_sentinel:ymd_sentinel_0": [
+    "A3 statements"
+   ],
+   "day_sentinel:ymd_sentinel_20240230": [
+    "A3 statements"
+   ],
+   "day_sentinel:ymd_sentinel_in_dropped_row": [
+    "A3 statements"
+   ],
+   "day_sentinel:number_sentinel_-999": [
+    "A3 statements"
+   ],
+   "day_sentinel:number_sentinel_999999": [
+    "A3 statements"
+   ],
+   "day_sentinel:number_sentinel_1e308": [
+    "A3 statements"
+   ],
+   "day_sentinel:copy_two_valued": [
+    "A3 statements"
+   ],
+   "day_sentinel:copy_distinct": [
+    "A3 statements"
+   ],
+   "day_sentinel:constant_added": [
+    "A3 statements"
+   ],
+   "day_sentinel:id_added_int": [
+    "A3 statements"
+   ],
+   "day_sentinel:id_added_text": [
+    "A3 statements"
+   ],
+   "day_sentinel:second_date_added": [
+    "A3 statements"
+   ],
+   "day_sentinel:noise_added": [
+    "A3 statements"
+   ],
+   "day_sentinel:rows_shuffled": [
+    "A3 statements"
+   ],
+   "day_sentinel:row_repeated": [
+    "A3 statements"
+   ],
+   "day_sentinel:blank_line_added": [
+    "A3 statements"
+   ],
+   "day_sentinel:missing_cell_feature": [
+    "A3 statements"
+   ],
+   "day_sentinel:missing_cell_date": [
+    "A3 statements"
+   ],
+   "day_sentinel:missing_cell_target": [
+    "A3 statements"
+   ],
+   "day_sentinel:feature_renamed": [
+    "A3 statements"
+   ],
+   "day_sentinel:feature_renamed_awkward": [
+    "A3 statements"
+   ],
+   "day_sentinel:target_renamed": [
+    "A3 statements"
+   ],
+   "day_sentinel:role_column_renamed": [
+    "A3 statements"
+   ],
+   "day_sentinel:target_first": [
+    "A3 statements"
+   ],
+   "day_sentinel:target_respelt": [
+    "A3 statements"
+   ],
+   "day_sentinel:target_respelt_flipped": [
+    "A3 statements"
+   ],
+   "day_sentinel:white_space_cells": [
+    "A3 statements"
+   ],
+   "day_sentinel:float_whole_numbers": [
+    "A3 statements"
+   ],
+   "day_sentinel:number_two_sentinels": [
+    "A3 statements"
+   ],
+   "day_sentinel:id_added_gaps": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "few_valued_leak:duplicates_keep": [
+    "A3 statements"
+   ],
+   "few_valued_leak:id_added_gaps": [
+    "A5 identifier"
+   ],
+   "quarter_entity:base": [
+    "A3 statements"
+   ],
+   "quarter_entity:number_sentinel_-999": [
+    "A3 statements"
+   ],
+   "quarter_entity:number_sentinel_999999": [
+    "A3 statements"
+   ],
+   "quarter_entity:number_sentinel_1e308": [
+    "A3 statements"
+   ],
+   "quarter_entity:target_sentinel_-999": [
+    "A3 statements"
+   ],
+   "quarter_entity:copy_distinct": [
+    "A3 statements"
+   ],
+   "quarter_entity:constant_added": [
+    "A3 statements"
+   ],
+   "quarter_entity:id_added_int": [
+    "A3 statements"
+   ],
+   "quarter_entity:id_added_text": [
+    "A3 statements"
+   ],
+   "quarter_entity:second_date_added": [
+    "A3 statements"
+   ],
+   "quarter_entity:noise_added": [
+    "A3 statements"
+   ],
+   "quarter_entity:rows_shuffled": [
+    "A3 statements"
+   ],
+   "quarter_entity:row_repeated": [
+    "A3 statements"
+   ],
+   "quarter_entity:blank_line_added": [
+    "A3 statements"
+   ],
+   "quarter_entity:missing_cell_feature": [
+    "A3 statements"
+   ],
+   "quarter_entity:missing_cell_target": [
+    "A3 statements"
+   ],
+   "quarter_entity:feature_renamed": [
+    "A3 statements"
+   ],
+   "quarter_entity:feature_renamed_awkward": [
+    "A3 statements"
+   ],
+   "quarter_entity:target_renamed": [
+    "A3 statements"
+   ],
+   "quarter_entity:role_column_renamed": [
+    "A3 statements"
+   ],
+   "quarter_entity:target_first": [
+    "A3 statements"
+   ],
+   "quarter_entity:white_space_cells": [
+    "A3 statements"
+   ],
+   "quarter_entity:copy_exact": [
+    "A3 statements"
+   ],
+   "quarter_entity:copy_negative_scale": [
+    "A3 statements"
+   ],
+   "quarter_entity:copy_5_cells_differ": [
+    "A3 statements"
+   ],
+   "quarter_entity:copy_one_cell_999999": [
+    "A3 statements"
+   ],
+   "quarter_entity:copy_and_target_sentinel": [
+    "A3 statements"
+   ],
+   "quarter_entity:target_sentinel_999999": [
+    "A3 statements"
+   ],
+   "quarter_entity:target_two_sentinels": [
+    "A3 statements"
+   ],
+   "quarter_entity:number_two_sentinels": [
+    "A3 statements"
+   ],
+   "quarter_entity:id_added_gaps": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "walk_repeated:base": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "walk_repeated:date_sentinel_1900": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "walk_repeated:number_sentinel_-999": [
+    "A1 baseline",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_repeated:number_sentinel_999999": [
+    "A1 baseline",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_repeated:number_sentinel_1e308": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "walk_repeated:target_sentinel_-999": [
+    "A1 baseline",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_repeated:copy_distinct": [
+    "A1 baseline",
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "walk_repeated:constant_added": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "walk_repeated:id_added_int": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "walk_repeated:id_added_text": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "walk_repeated:second_date_added": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "walk_repeated:noise_added": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "walk_repeated:rows_shuffled": [
+    "A1 baseline",
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "walk_repeated:row_repeated": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "walk_repeated:blank_line_added": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "walk_repeated:missing_cell_feature": [
+    "A1 baseline",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_repeated:missing_cell_date": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "walk_repeated:missing_cell_target": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "walk_repeated:feature_renamed": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "walk_repeated:feature_renamed_awkward": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "walk_repeated:target_renamed": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "walk_repeated:role_column_renamed": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "walk_repeated:target_first": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "walk_repeated:rows_repeated_1pct": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "walk_repeated:rows_repeated_10pct": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "walk_repeated:row_repeated_other_target": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "walk_repeated:stamp_shared": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "walk_repeated:copy_exact": [
+    "A1 baseline",
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "walk_repeated:copy_negative_scale": [
+    "A1 baseline",
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "walk_repeated:copy_5_cells_differ": [
+    "A1 baseline",
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "walk_repeated:copy_one_cell_999999": [
+    "A1 baseline",
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "walk_repeated:copy_and_target_sentinel": [
+    "A1 baseline",
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_repeated:target_sentinel_999999": [
+    "A1 baseline",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_repeated:target_two_sentinels": [
+    "A1 baseline",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_repeated:number_two_sentinels": [
+    "A1 baseline",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_repeated:feature_999999_latest_row": [
+    "A1 baseline",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_repeated:feature_999999_early_row": [
+    "A1 baseline",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_repeated:target_-999_latest_row": [
+    "A1 baseline",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_repeated:target_-999_early_row": [
+    "A1 baseline",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_repeated:id_added_gaps": [
+    "A1 baseline",
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "walk_repeated:copy_2pct_cells_altered": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "walk_repeated:copy_curve": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "walk_repeated:copy_noise_1pct": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "walk_copy:base": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "walk_copy:date_sentinel_1900": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "walk_copy:number_sentinel_-999": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy:number_sentinel_999999": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy:number_sentinel_1e308": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "walk_copy:target_sentinel_-999": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy:copy_distinct": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "walk_copy:constant_added": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "walk_copy:id_added_int": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "walk_copy:id_added_text": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "walk_copy:second_date_added": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "walk_copy:noise_added": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "walk_copy:rows_shuffled": [
+    "A2/A3b screen and order reading",
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "walk_copy:row_repeated": [
+    "A1 baseline",
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "walk_copy:blank_line_added": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "walk_copy:missing_cell_feature": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy:missing_cell_date": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "walk_copy:missing_cell_target": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "walk_copy:feature_renamed": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "walk_copy:feature_renamed_awkward": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "walk_copy:target_renamed": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "walk_copy:role_column_renamed": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "walk_copy:target_first": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "walk_copy:rows_repeated_1pct": [
+    "A1 baseline",
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "walk_copy:rows_repeated_10pct": [
+    "A1 baseline",
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "walk_copy:row_repeated_other_target": [
+    "A1 baseline",
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "walk_copy:stamp_shared": [
+    "A1 baseline",
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "walk_copy:copy_exact": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "walk_copy:copy_negative_scale": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "walk_copy:copy_5_cells_differ": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "walk_copy:copy_one_cell_999999": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "walk_copy:copy_and_target_sentinel": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy:target_sentinel_999999": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "walk_copy:target_two_sentinels": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy:number_two_sentinels": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy:feature_999999_latest_row": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy:feature_999999_early_row": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy:target_-999_latest_row": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "walk_copy:target_-999_early_row": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy:id_added_gaps": [
+    "A2/A3b screen and order reading",
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "walk_copy:copy_2pct_cells_altered": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "walk_copy:copy_curve": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "walk_copy:copy_noise_1pct": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "walk_copy_cell:base": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy_cell:date_sentinel_1900": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy_cell:number_sentinel_-999": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy_cell:number_sentinel_999999": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy_cell:number_sentinel_1e308": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy_cell:target_sentinel_-999": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy_cell:copy_distinct": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy_cell:constant_added": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy_cell:id_added_int": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy_cell:id_added_text": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy_cell:second_date_added": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy_cell:noise_added": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy_cell:rows_shuffled": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy_cell:row_repeated": [
+    "A1 baseline",
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy_cell:blank_line_added": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy_cell:missing_cell_feature": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy_cell:missing_cell_date": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy_cell:missing_cell_target": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy_cell:feature_renamed": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy_cell:feature_renamed_awkward": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy_cell:target_renamed": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy_cell:role_column_renamed": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy_cell:target_first": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy_cell:rows_repeated_1pct": [
+    "A1 baseline",
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy_cell:rows_repeated_10pct": [
+    "A1 baseline",
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy_cell:row_repeated_other_target": [
+    "A1 baseline",
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy_cell:stamp_shared": [
+    "A1 baseline",
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy_cell:copy_exact": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy_cell:copy_negative_scale": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy_cell:copy_5_cells_differ": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy_cell:copy_one_cell_999999": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy_cell:copy_and_target_sentinel": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy_cell:target_sentinel_999999": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy_cell:target_two_sentinels": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy_cell:number_two_sentinels": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy_cell:feature_999999_latest_row": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy_cell:feature_999999_early_row": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy_cell:target_-999_latest_row": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy_cell:target_-999_early_row": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy_cell:id_added_gaps": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "walk_copy_cell:copy_2pct_cells_altered": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_copy_cell:copy_curve": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_late_cell:base": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_late_cell:date_sentinel_1900": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_late_cell:number_sentinel_-999": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_late_cell:number_sentinel_999999": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_late_cell:number_sentinel_1e308": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_late_cell:target_sentinel_-999": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_late_cell:copy_distinct": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_late_cell:constant_added": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_late_cell:id_added_int": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_late_cell:id_added_text": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_late_cell:second_date_added": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_late_cell:noise_added": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_late_cell:rows_shuffled": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_late_cell:row_repeated": [
+    "A1 baseline",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_late_cell:blank_line_added": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_late_cell:missing_cell_feature": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_late_cell:missing_cell_date": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_late_cell:missing_cell_target": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_late_cell:feature_renamed": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_late_cell:feature_renamed_awkward": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_late_cell:target_renamed": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_late_cell:role_column_renamed": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_late_cell:target_first": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_late_cell:rows_repeated_1pct": [
+    "A1 baseline",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_late_cell:rows_repeated_10pct": [
+    "A1 baseline",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_late_cell:row_repeated_other_target": [
+    "A1 baseline",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_late_cell:stamp_shared": [
+    "A1 baseline",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_late_cell:copy_exact": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_late_cell:copy_negative_scale": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_late_cell:copy_5_cells_differ": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_late_cell:copy_one_cell_999999": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_late_cell:copy_and_target_sentinel": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_late_cell:target_sentinel_999999": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_late_cell:target_two_sentinels": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_late_cell:number_two_sentinels": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_late_cell:feature_999999_latest_row": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_late_cell:feature_999999_early_row": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_late_cell:target_-999_latest_row": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_late_cell:target_-999_early_row": [
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_late_cell:id_added_gaps": [
+    "A3 extreme value",
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "walk_late_cell:copy_2pct_cells_altered": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_late_cell:copy_curve": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "walk_late_cell:copy_noise_1pct": [
+    "A2/A3b screen and order reading",
+    "A3 extreme value",
+    "A3 statements"
+   ],
+   "messy_shuffled:base": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "messy_shuffled:date_sentinel_9999": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "messy_shuffled:date_sentinel_1900": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "messy_shuffled:date_sentinel_zero": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "messy_shuffled:number_sentinel_-999": [
+    "A3 extreme value",
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "messy_shuffled:number_sentinel_999999": [
+    "A3 extreme value",
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "messy_shuffled:number_sentinel_1e308": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "messy_shuffled:copy_two_valued": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "messy_shuffled:copy_distinct": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "messy_shuffled:constant_added": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "messy_shuffled:id_added_int": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "messy_shuffled:id_added_text": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "messy_shuffled:second_date_added": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "messy_shuffled:noise_added": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "messy_shuffled:rows_shuffled": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "messy_shuffled:row_repeated": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "messy_shuffled:blank_line_added": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "messy_shuffled:missing_cell_feature": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "messy_shuffled:missing_cell_date": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "messy_shuffled:missing_cell_target": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "messy_shuffled:feature_renamed": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "messy_shuffled:feature_renamed_awkward": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "messy_shuffled:target_renamed": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "messy_shuffled:role_column_renamed": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "messy_shuffled:target_first": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "messy_shuffled:target_respelt": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "messy_shuffled:target_respelt_flipped": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "messy_shuffled:white_space_cells": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "messy_shuffled:number_two_sentinels": [
+    "A3 extreme value",
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "messy_shuffled:id_added_gaps": [
+    "A3 statements",
+    "A5 identifier"
+   ]
+  },
+  "by_rule": {
+   "A1 baseline": [
+    "random_walk:row_repeated",
+    "random_walk:rows_repeated_1pct",
+    "random_walk:rows_repeated_10pct",
+    "random_walk:row_repeated_other_target",
+    "random_walk:stamp_shared",
+    "random_walk:gap_2_row_repeated",
+    "int_stamps:row_repeated",
+    "int_stamps:rows_repeated_1pct",
+    "int_stamps:rows_repeated_10pct",
+    "int_stamps:row_repeated_other_target",
+    "int_stamps:stamp_shared",
+    "int_stamps:gap_2_row_repeated",
+    "flat_tail:row_repeated",
+    "flat_tail:rows_repeated_1pct",
+    "flat_tail:rows_repeated_10pct",
+    "flat_tail:row_repeated_other_target",
+    "flat_tail:stamp_shared",
+    "flat_tail:gap_2_row_repeated",
+    "walk_repeated:base",
+    "walk_repeated:date_sentinel_1900",
+    "walk_repeated:number_sentinel_-999",
+    "walk_repeated:number_sentinel_999999",
+    "walk_repeated:number_sentinel_1e308",
+    "walk_repeated:target_sentinel_-999",
+    "walk_repeated:copy_distinct",
+    "walk_repeated:constant_added",
+    "walk_repeated:id_added_int",
+    "walk_repeated:id_added_text",
+    "walk_repeated:second_date_added",
+    "walk_repeated:noise_added",
+    "walk_repeated:rows_shuffled",
+    "walk_repeated:row_repeated",
+    "walk_repeated:blank_line_added",
+    "walk_repeated:missing_cell_feature",
+    "walk_repeated:missing_cell_date",
+    "walk_repeated:missing_cell_target",
+    "walk_repeated:feature_renamed",
+    "walk_repeated:feature_renamed_awkward",
+    "walk_repeated:target_renamed",
+    "walk_repeated:role_column_renamed",
+    "walk_repeated:target_first",
+    "walk_repeated:rows_repeated_1pct",
+    "walk_repeated:rows_repeated_10pct",
+    "walk_repeated:row_repeated_other_target",
+    "walk_repeated:stamp_shared",
+    "walk_repeated:copy_exact",
+    "walk_repeated:copy_negative_scale",
+    "walk_repeated:copy_5_cells_differ",
+    "walk_repeated:copy_one_cell_999999",
+    "walk_repeated:copy_and_target_sentinel",
+    "walk_repeated:target_sentinel_999999",
+    "walk_repeated:target_two_sentinels",
+    "walk_repeated:number_two_sentinels",
+    "walk_repeated:feature_999999_latest_row",
+    "walk_repeated:feature_999999_early_row",
+    "walk_repeated:target_-999_latest_row",
+    "walk_repeated:target_-999_early_row",
+    "walk_repeated:id_added_gaps",
+    "walk_copy:row_repeated",
+    "walk_copy:rows_repeated_1pct",
+    "walk_copy:rows_repeated_10pct",
+    "walk_copy:row_repeated_other_target",
+    "walk_copy:stamp_shared",
+    "walk_copy_cell:row_repeated",
+    "walk_copy_cell:rows_repeated_1pct",
+    "walk_copy_cell:rows_repeated_10pct",
+    "walk_copy_cell:row_repeated_other_target",
+    "walk_copy_cell:stamp_shared",
+    "walk_late_cell:row_repeated",
+    "walk_late_cell:rows_repeated_1pct",
+    "walk_late_cell:rows_repeated_10pct",
+    "walk_late_cell:row_repeated_other_target",
+    "walk_late_cell:stamp_shared"
+   ],
+   "A2/A3b screen and order reading": [
+    "signal_reg:copy_and_target_sentinel",
+    "noise_reg:copy_and_target_sentinel",
+    "leak_reg:target_sentinel_-999",
+    "leak_reg:target_sentinel_999999",
+    "leak_reg:target_two_sentinels",
+    "random_walk:copy_distinct",
+    "random_walk:copy_exact",
+    "random_walk:copy_negative_scale",
+    "random_walk:copy_5_cells_differ",
+    "random_walk:copy_one_cell_999999",
+    "random_walk:copy_and_target_sentinel",
+    "random_walk:copy_2pct_cells_altered",
+    "random_walk:copy_curve",
+    "random_walk:copy_noise_1pct",
+    "int_stamps:copy_distinct",
+    "int_stamps:copy_exact",
+    "int_stamps:copy_negative_scale",
+    "int_stamps:copy_5_cells_differ",
+    "int_stamps:copy_one_cell_999999",
+    "int_stamps:copy_and_target_sentinel",
+    "int_stamps:copy_2pct_cells_altered",
+    "int_stamps:copy_curve",
+    "int_stamps:copy_noise_1pct",
+    "flat_tail:copy_5_cells_differ",
+    "flat_tail:copy_and_target_sentinel",
+    "flat_tail:copy_2pct_cells_altered",
+    "panel:copy_distinct",
+    "panel:copy_exact",
+    "panel:copy_negative_scale",
+    "panel:copy_5_cells_differ",
+    "panel:copy_one_cell_999999",
+    "panel:copy_and_target_sentinel",
+    "panel:copy_2pct_cells_altered",
+    "panel:copy_curve",
+    "panel:copy_noise_1pct",
+    "dominant_entity:copy_distinct",
+    "dominant_entity:copy_exact",
+    "dominant_entity:copy_negative_scale",
+    "dominant_entity:copy_5_cells_differ",
+    "dominant_entity:copy_one_cell_999999",
+    "dominant_entity:copy_and_target_sentinel",
+    "walk_repeated:copy_distinct",
+    "walk_repeated:copy_exact",
+    "walk_repeated:copy_negative_scale",
+    "walk_repeated:copy_5_cells_differ",
+    "walk_repeated:copy_one_cell_999999",
+    "walk_repeated:copy_and_target_sentinel",
+    "walk_repeated:copy_2pct_cells_altered",
+    "walk_repeated:copy_curve",
+    "walk_repeated:copy_noise_1pct",
+    "walk_copy:base",
+    "walk_copy:date_sentinel_1900",
+    "walk_copy:number_sentinel_-999",
+    "walk_copy:number_sentinel_999999",
+    "walk_copy:number_sentinel_1e308",
+    "walk_copy:target_sentinel_-999",
+    "walk_copy:copy_distinct",
+    "walk_copy:constant_added",
+    "walk_copy:id_added_int",
+    "walk_copy:id_added_text",
+    "walk_copy:second_date_added",
+    "walk_copy:noise_added",
+    "walk_copy:rows_shuffled",
+    "walk_copy:row_repeated",
+    "walk_copy:blank_line_added",
+    "walk_copy:missing_cell_feature",
+    "walk_copy:missing_cell_date",
+    "walk_copy:missing_cell_target",
+    "walk_copy:feature_renamed",
+    "walk_copy:feature_renamed_awkward",
+    "walk_copy:target_renamed",
+    "walk_copy:role_column_renamed",
+    "walk_copy:target_first",
+    "walk_copy:rows_repeated_1pct",
+    "walk_copy:rows_repeated_10pct",
+    "walk_copy:row_repeated_other_target",
+    "walk_copy:stamp_shared",
+    "walk_copy:copy_exact",
+    "walk_copy:copy_negative_scale",
+    "walk_copy:copy_5_cells_differ",
+    "walk_copy:copy_one_cell_999999",
+    "walk_copy:copy_and_target_sentinel",
+    "walk_copy:target_sentinel_999999",
+    "walk_copy:target_two_sentinels",
+    "walk_copy:number_two_sentinels",
+    "walk_copy:feature_999999_latest_row",
+    "walk_copy:feature_999999_early_row",
+    "walk_copy:target_-999_latest_row",
+    "walk_copy:target_-999_early_row",
+    "walk_copy:id_added_gaps",
+    "walk_copy:copy_2pct_cells_altered",
+    "walk_copy:copy_curve",
+    "walk_copy:copy_noise_1pct",
+    "walk_copy_cell:base",
+    "walk_copy_cell:date_sentinel_1900",
+    "walk_copy_cell:number_sentinel_-999",
+    "walk_copy_cell:number_sentinel_999999",
+    "walk_copy_cell:number_sentinel_1e308",
+    "walk_copy_cell:target_sentinel_-999",
+    "walk_copy_cell:copy_distinct",
+    "walk_copy_cell:constant_added",
+    "walk_copy_cell:id_added_int",
+    "walk_copy_cell:id_added_text",
+    "walk_copy_cell:second_date_added",
+    "walk_copy_cell:noise_added",
+    "walk_copy_cell:rows_shuffled",
+    "walk_copy_cell:row_repeated",
+    "walk_copy_cell:blank_line_added",
+    "walk_copy_cell:missing_cell_feature",
+    "walk_copy_cell:missing_cell_date",
+    "walk_copy_cell:missing_cell_target",
+    "walk_copy_cell:feature_renamed",
+    "walk_copy_cell:feature_renamed_awkward",
+    "walk_copy_cell:target_renamed",
+    "walk_copy_cell:role_column_renamed",
+    "walk_copy_cell:target_first",
+    "walk_copy_cell:rows_repeated_1pct",
+    "walk_copy_cell:rows_repeated_10pct",
+    "walk_copy_cell:row_repeated_other_target",
+    "walk_copy_cell:stamp_shared",
+    "walk_copy_cell:copy_exact",
+    "walk_copy_cell:copy_negative_scale",
+    "walk_copy_cell:copy_5_cells_differ",
+    "walk_copy_cell:copy_one_cell_999999",
+    "walk_copy_cell:copy_and_target_sentinel",
+    "walk_copy_cell:target_sentinel_999999",
+    "walk_copy_cell:target_two_sentinels",
+    "walk_copy_cell:number_two_sentinels",
+    "walk_copy_cell:feature_999999_latest_row",
+    "walk_copy_cell:feature_999999_early_row",
+    "walk_copy_cell:target_-999_latest_row",
+    "walk_copy_cell:target_-999_early_row",
+    "walk_copy_cell:id_added_gaps",
+    "walk_copy_cell:copy_2pct_cells_altered",
+    "walk_copy_cell:copy_curve",
+    "walk_late_cell:copy_distinct",
+    "walk_late_cell:copy_exact",
+    "walk_late_cell:copy_negative_scale",
+    "walk_late_cell:copy_5_cells_differ",
+    "walk_late_cell:copy_one_cell_999999",
+    "walk_late_cell:copy_and_target_sentinel",
+    "walk_late_cell:copy_2pct_cells_altered",
+    "walk_late_cell:copy_curve",
+    "walk_late_cell:copy_noise_1pct"
+   ],
+   "A3 extreme value": [
+    "signal_clf:number_sentinel_-999",
+    "signal_clf:number_sentinel_999999",
+    "signal_clf:number_two_sentinels",
+    "signal_reg:number_sentinel_-999",
+    "signal_reg:number_sentinel_999999",
+    "signal_reg:target_sentinel_-999",
+    "signal_reg:copy_and_target_sentinel",
+    "signal_reg:target_sentinel_999999",
+    "signal_reg:target_two_sentinels",
+    "signal_reg:number_two_sentinels",
+    "noise_reg:number_sentinel_999999",
+    "noise_reg:copy_and_target_sentinel",
+    "noise_reg:target_sentinel_999999",
+    "noise_reg:target_two_sentinels",
+    "noise_reg:number_two_sentinels",
+    "leak_reg:number_sentinel_-999",
+    "leak_reg:number_sentinel_999999",
+    "leak_reg:target_sentinel_-999",
+    "leak_reg:copy_and_target_sentinel",
+    "leak_reg:target_sentinel_999999",
+    "leak_reg:target_two_sentinels",
+    "leak_reg:number_two_sentinels",
+    "binary_numeric:number_sentinel_999999",
+    "binary_numeric:number_two_sentinels",
+    "messy:number_sentinel_-999",
+    "messy:number_sentinel_999999",
+    "messy:number_two_sentinels",
+    "random_walk:number_sentinel_-999",
+    "random_walk:number_sentinel_999999",
+    "random_walk:target_sentinel_-999",
+    "random_walk:copy_and_target_sentinel",
+    "random_walk:target_two_sentinels",
+    "random_walk:number_two_sentinels",
+    "random_walk:feature_999999_latest_row",
+    "random_walk:feature_999999_early_row",
+    "random_walk:target_-999_early_row",
+    "panel:number_sentinel_-999",
+    "panel:number_sentinel_999999",
+    "panel:target_sentinel_-999",
+    "panel:missing_cell_feature",
+    "panel:copy_and_target_sentinel",
+    "panel:target_sentinel_999999",
+    "panel:target_two_sentinels",
+    "panel:number_two_sentinels",
+    "panel:feature_999999_latest_row",
+    "panel:feature_999999_early_row",
+    "panel:target_-999_early_row",
+    "dominant_entity:number_sentinel_-999",
+    "dominant_entity:number_sentinel_999999",
+    "dominant_entity:missing_cell_feature",
+    "dominant_entity:target_sentinel_999999",
+    "dominant_entity:number_two_sentinels",
+    "walk_repeated:number_sentinel_-999",
+    "walk_repeated:number_sentinel_999999",
+    "walk_repeated:target_sentinel_-999",
+    "walk_repeated:missing_cell_feature",
+    "walk_repeated:copy_and_target_sentinel",
+    "walk_repeated:target_sentinel_999999",
+    "walk_repeated:target_two_sentinels",
+    "walk_repeated:number_two_sentinels",
+    "walk_repeated:feature_999999_latest_row",
+    "walk_repeated:feature_999999_early_row",
+    "walk_repeated:target_-999_latest_row",
+    "walk_repeated:target_-999_early_row",
+    "walk_copy:number_sentinel_-999",
+    "walk_copy:number_sentinel_999999",
+    "walk_copy:target_sentinel_-999",
+    "walk_copy:missing_cell_feature",
+    "walk_copy:copy_and_target_sentinel",
+    "walk_copy:target_two_sentinels",
+    "walk_copy:number_two_sentinels",
+    "walk_copy:feature_999999_latest_row",
+    "walk_copy:feature_999999_early_row",
+    "walk_copy:target_-999_early_row",
+    "walk_copy_cell:base",
+    "walk_copy_cell:date_sentinel_1900",
+    "walk_copy_cell:number_sentinel_-999",
+    "walk_copy_cell:number_sentinel_999999",
+    "walk_copy_cell:number_sentinel_1e308",
+    "walk_copy_cell:target_sentinel_-999",
+    "walk_copy_cell:copy_distinct",
+    "walk_copy_cell:constant_added",
+    "walk_copy_cell:id_added_int",
+    "walk_copy_cell:id_added_text",
+    "walk_copy_cell:second_date_added",
+    "walk_copy_cell:noise_added",
+    "walk_copy_cell:rows_shuffled",
+    "walk_copy_cell:row_repeated",
+    "walk_copy_cell:blank_line_added",
+    "walk_copy_cell:missing_cell_feature",
+    "walk_copy_cell:missing_cell_date",
+    "walk_copy_cell:missing_cell_target",
+    "walk_copy_cell:feature_renamed",
+    "walk_copy_cell:feature_renamed_awkward",
+    "walk_copy_cell:target_renamed",
+    "walk_copy_cell:role_column_renamed",
+    "walk_copy_cell:target_first",
+    "walk_copy_cell:rows_repeated_1pct",
+    "walk_copy_cell:rows_repeated_10pct",
+    "walk_copy_cell:row_repeated_other_target",
+    "walk_copy_cell:stamp_shared",
+    "walk_copy_cell:copy_exact",
+    "walk_copy_cell:copy_negative_scale",
+    "walk_copy_cell:copy_5_cells_differ",
+    "walk_copy_cell:copy_one_cell_999999",
+    "walk_copy_cell:copy_and_target_sentinel",
+    "walk_copy_cell:target_sentinel_999999",
+    "walk_copy_cell:target_two_sentinels",
+    "walk_copy_cell:number_two_sentinels",
+    "walk_copy_cell:feature_999999_latest_row",
+    "walk_copy_cell:feature_999999_early_row",
+    "walk_copy_cell:target_-999_latest_row",
+    "walk_copy_cell:target_-999_early_row",
+    "walk_copy_cell:id_added_gaps",
+    "walk_copy_cell:copy_2pct_cells_altered",
+    "walk_copy_cell:copy_curve",
+    "walk_late_cell:base",
+    "walk_late_cell:date_sentinel_1900",
+    "walk_late_cell:number_sentinel_-999",
+    "walk_late_cell:number_sentinel_999999",
+    "walk_late_cell:number_sentinel_1e308",
+    "walk_late_cell:target_sentinel_-999",
+    "walk_late_cell:copy_distinct",
+    "walk_late_cell:constant_added",
+    "walk_late_cell:id_added_int",
+    "walk_late_cell:id_added_text",
+    "walk_late_cell:second_date_added",
+    "walk_late_cell:noise_added",
+    "walk_late_cell:rows_shuffled",
+    "walk_late_cell:row_repeated",
+    "walk_late_cell:blank_line_added",
+    "walk_late_cell:missing_cell_feature",
+    "walk_late_cell:missing_cell_date",
+    "walk_late_cell:missing_cell_target",
+    "walk_late_cell:feature_renamed",
+    "walk_late_cell:feature_renamed_awkward",
+    "walk_late_cell:target_renamed",
+    "walk_late_cell:role_column_renamed",
+    "walk_late_cell:target_first",
+    "walk_late_cell:rows_repeated_1pct",
+    "walk_late_cell:rows_repeated_10pct",
+    "walk_late_cell:row_repeated_other_target",
+    "walk_late_cell:stamp_shared",
+    "walk_late_cell:copy_exact",
+    "walk_late_cell:copy_negative_scale",
+    "walk_late_cell:copy_5_cells_differ",
+    "walk_late_cell:copy_one_cell_999999",
+    "walk_late_cell:copy_and_target_sentinel",
+    "walk_late_cell:target_sentinel_999999",
+    "walk_late_cell:target_two_sentinels",
+    "walk_late_cell:number_two_sentinels",
+    "walk_late_cell:feature_999999_latest_row",
+    "walk_late_cell:feature_999999_early_row",
+    "walk_late_cell:target_-999_latest_row",
+    "walk_late_cell:target_-999_early_row",
+    "walk_late_cell:id_added_gaps",
+    "walk_late_cell:copy_2pct_cells_altered",
+    "walk_late_cell:copy_curve",
+    "walk_late_cell:copy_noise_1pct",
+    "messy_shuffled:number_sentinel_-999",
+    "messy_shuffled:number_sentinel_999999",
+    "messy_shuffled:number_two_sentinels"
+   ],
+   "A3 statements": [
+    "signal_clf:base",
+    "signal_clf:number_sentinel_-999",
+    "signal_clf:number_sentinel_999999",
+    "signal_clf:number_sentinel_1e308",
+    "signal_clf:copy_two_valued",
+    "signal_clf:copy_distinct",
+    "signal_clf:constant_added",
+    "signal_clf:id_added_int",
+    "signal_clf:id_added_text",
+    "signal_clf:second_date_added",
+    "signal_clf:noise_added",
+    "signal_clf:rows_shuffled",
+    "signal_clf:row_repeated",
+    "signal_clf:blank_line_added",
+    "signal_clf:missing_cell_feature",
+    "signal_clf:missing_cell_target",
+    "signal_clf:feature_renamed",
+    "signal_clf:feature_renamed_awkward",
+    "signal_clf:target_renamed",
+    "signal_clf:target_first",
+    "signal_clf:target_respelt",
+    "signal_clf:target_respelt_flipped",
+    "signal_clf:white_space_cells",
+    "signal_clf:number_two_sentinels",
+    "signal_clf:id_added_gaps",
+    "signal_reg:base",
+    "signal_reg:number_sentinel_-999",
+    "signal_reg:number_sentinel_999999",
+    "signal_reg:number_sentinel_1e308",
+    "signal_reg:target_sentinel_-999",
+    "signal_reg:copy_distinct",
+    "signal_reg:constant_added",
+    "signal_reg:id_added_int",
+    "signal_reg:id_added_text",
+    "signal_reg:second_date_added",
+    "signal_reg:noise_added",
+    "signal_reg:rows_shuffled",
+    "signal_reg:row_repeated",
+    "signal_reg:blank_line_added",
+    "signal_reg:missing_cell_feature",
+    "signal_reg:missing_cell_target",
+    "signal_reg:feature_renamed",
+    "signal_reg:feature_renamed_awkward",
+    "signal_reg:target_renamed",
+    "signal_reg:target_first",
+    "signal_reg:white_space_cells",
+    "signal_reg:copy_exact",
+    "signal_reg:copy_negative_scale",
+    "signal_reg:copy_5_cells_differ",
+    "signal_reg:copy_one_cell_999999",
+    "signal_reg:copy_and_target_sentinel",
+    "signal_reg:target_sentinel_999999",
+    "signal_reg:target_two_sentinels",
+    "signal_reg:number_two_sentinels",
+    "signal_reg:id_added_gaps",
+    "noise_clf:base",
+    "noise_clf:number_sentinel_-999",
+    "noise_clf:number_sentinel_999999",
+    "noise_clf:number_sentinel_1e308",
+    "noise_clf:copy_two_valued",
+    "noise_clf:copy_distinct",
+    "noise_clf:constant_added",
+    "noise_clf:id_added_int",
+    "noise_clf:id_added_text",
+    "noise_clf:second_date_added",
+    "noise_clf:noise_added",
+    "noise_clf:rows_shuffled",
+    "noise_clf:row_repeated",
+    "noise_clf:blank_line_added",
+    "noise_clf:missing_cell_feature",
+    "noise_clf:missing_cell_target",
+    "noise_clf:feature_renamed",
+    "noise_clf:feature_renamed_awkward",
+    "noise_clf:target_renamed",
+    "noise_clf:target_first",
+    "noise_clf:target_respelt",
+    "noise_clf:target_respelt_flipped",
+    "noise_clf:white_space_cells",
+    "noise_clf:number_two_sentinels",
+    "noise_clf:id_added_gaps",
+    "noise_reg:base",
+    "noise_reg:number_sentinel_-999",
+    "noise_reg:number_sentinel_999999",
+    "noise_reg:number_sentinel_1e308",
+    "noise_reg:target_sentinel_-999",
+    "noise_reg:copy_distinct",
+    "noise_reg:constant_added",
+    "noise_reg:id_added_int",
+    "noise_reg:id_added_text",
+    "noise_reg:second_date_added",
+    "noise_reg:noise_added",
+    "noise_reg:rows_shuffled",
+    "noise_reg:row_repeated",
+    "noise_reg:blank_line_added",
+    "noise_reg:missing_cell_feature",
+    "noise_reg:missing_cell_target",
+    "noise_reg:feature_renamed",
+    "noise_reg:feature_renamed_awkward",
+    "noise_reg:target_renamed",
+    "noise_reg:target_first",
+    "noise_reg:copy_exact",
+    "noise_reg:copy_negative_scale",
+    "noise_reg:copy_5_cells_differ",
+    "noise_reg:copy_one_cell_999999",
+    "noise_reg:copy_and_target_sentinel",
+    "noise_reg:target_sentinel_999999",
+    "noise_reg:target_two_sentinels",
+    "noise_reg:number_two_sentinels",
+    "noise_reg:id_added_gaps",
+    "imbalanced:base",
+    "imbalanced:number_sentinel_-999",
+    "imbalanced:number_sentinel_999999",
+    "imbalanced:number_sentinel_1e308",
+    "imbalanced:copy_two_valued",
+    "imbalanced:copy_distinct",
+    "imbalanced:constant_added",
+    "imbalanced:id_added_int",
+    "imbalanced:id_added_text",
+    "imbalanced:second_date_added",
+    "imbalanced:noise_added",
+    "imbalanced:rows_shuffled",
+    "imbalanced:row_repeated",
+    "imbalanced:blank_line_added",
+    "imbalanced:missing_cell_feature",
+    "imbalanced:missing_cell_target",
+    "imbalanced:feature_renamed",
+    "imbalanced:feature_renamed_awkward",
+    "imbalanced:target_renamed",
+    "imbalanced:target_first",
+    "imbalanced:target_respelt",
+    "imbalanced:target_respelt_flipped",
+    "imbalanced:white_space_cells",
+    "imbalanced:number_two_sentinels",
+    "imbalanced:id_added_gaps",
+    "leak:base",
+    "leak:number_sentinel_-999",
+    "leak:number_sentinel_999999",
+    "leak:number_sentinel_1e308",
+    "leak:copy_two_valued",
+    "leak:copy_distinct",
+    "leak:constant_added",
+    "leak:id_added_int",
+    "leak:id_added_text",
+    "leak:second_date_added",
+    "leak:noise_added",
+    "leak:rows_shuffled",
+    "leak:row_repeated",
+    "leak:blank_line_added",
+    "leak:missing_cell_feature",
+    "leak:missing_cell_target",
+    "leak:feature_renamed",
+    "leak:feature_renamed_awkward",
+    "leak:target_renamed",
+    "leak:target_first",
+    "leak:target_respelt",
+    "leak:target_respelt_flipped",
+    "leak:white_space_cells",
+    "leak:number_two_sentinels",
+    "leak:id_added_gaps",
+    "leak_reg:base",
+    "leak_reg:number_sentinel_-999",
+    "leak_reg:number_sentinel_999999",
+    "leak_reg:number_sentinel_1e308",
+    "leak_reg:target_sentinel_-999",
+    "leak_reg:copy_distinct",
+    "leak_reg:constant_added",
+    "leak_reg:id_added_int",
+    "leak_reg:id_added_text",
+    "leak_reg:second_date_added",
+    "leak_reg:noise_added",
+    "leak_reg:rows_shuffled",
+    "leak_reg:row_repeated",
+    "leak_reg:blank_line_added",
+    "leak_reg:missing_cell_feature",
+    "leak_reg:missing_cell_target",
+    "leak_reg:feature_renamed",
+    "leak_reg:feature_renamed_awkward",
+    "leak_reg:target_renamed",
+    "leak_reg:target_first",
+    "leak_reg:white_space_cells",
+    "leak_reg:copy_exact",
+    "leak_reg:copy_negative_scale",
+    "leak_reg:copy_5_cells_differ",
+    "leak_reg:copy_one_cell_999999",
+    "leak_reg:copy_and_target_sentinel",
+    "leak_reg:target_sentinel_999999",
+    "leak_reg:target_two_sentinels",
+    "leak_reg:number_two_sentinels",
+    "leak_reg:id_added_gaps",
+    "near_leak:base",
+    "near_leak:number_sentinel_-999",
+    "near_leak:number_sentinel_999999",
+    "near_leak:number_sentinel_1e308",
+    "near_leak:copy_two_valued",
+    "near_leak:copy_distinct",
+    "near_leak:constant_added",
+    "near_leak:id_added_int",
+    "near_leak:id_added_text",
+    "near_leak:second_date_added",
+    "near_leak:noise_added",
+    "near_leak:rows_shuffled",
+    "near_leak:row_repeated",
+    "near_leak:blank_line_added",
+    "near_leak:missing_cell_feature",
+    "near_leak:missing_cell_target",
+    "near_leak:feature_renamed",
+    "near_leak:feature_renamed_awkward",
+    "near_leak:target_renamed",
+    "near_leak:target_first",
+    "near_leak:target_respelt",
+    "near_leak:target_respelt_flipped",
+    "near_leak:white_space_cells",
+    "near_leak:number_two_sentinels",
+    "near_leak:id_added_gaps",
+    "binary_numeric:base",
+    "binary_numeric:number_sentinel_-999",
+    "binary_numeric:number_sentinel_999999",
+    "binary_numeric:number_sentinel_1e308",
+    "binary_numeric:copy_two_valued",
+    "binary_numeric:copy_distinct",
+    "binary_numeric:constant_added",
+    "binary_numeric:id_added_int",
+    "binary_numeric:id_added_text",
+    "binary_numeric:second_date_added",
+    "binary_numeric:noise_added",
+    "binary_numeric:rows_shuffled",
+    "binary_numeric:row_repeated",
+    "binary_numeric:blank_line_added",
+    "binary_numeric:missing_cell_feature",
+    "binary_numeric:missing_cell_target",
+    "binary_numeric:feature_renamed",
+    "binary_numeric:feature_renamed_awkward",
+    "binary_numeric:target_renamed",
+    "binary_numeric:target_first",
+    "binary_numeric:target_respelt",
+    "binary_numeric:target_respelt_flipped",
+    "binary_numeric:white_space_cells",
+    "binary_numeric:float_whole_numbers",
+    "binary_numeric:number_two_sentinels",
+    "binary_numeric:id_added_gaps",
+    "messy:base",
+    "messy:date_sentinel_9999",
+    "messy:date_sentinel_1900",
+    "messy:date_sentinel_zero",
+    "messy:number_sentinel_-999",
+    "messy:number_sentinel_999999",
+    "messy:number_sentinel_1e308",
+    "messy:copy_two_valued",
+    "messy:copy_distinct",
+    "messy:constant_added",
+    "messy:id_added_int",
+    "messy:id_added_text",
+    "messy:second_date_added",
+    "messy:noise_added",
+    "messy:rows_shuffled",
+    "messy:row_repeated",
+    "messy:blank_line_added",
+    "messy:missing_cell_feature",
+    "messy:missing_cell_date",
+    "messy:missing_cell_target",
+    "messy:feature_renamed",
+    "messy:feature_renamed_awkward",
+    "messy:target_renamed",
+    "messy:role_column_renamed",
+    "messy:target_first",
+    "messy:target_respelt",
+    "messy:target_respelt_flipped",
+    "messy:white_space_cells",
+    "messy:float_whole_numbers",
+    "messy:number_two_sentinels",
+    "messy:id_shuffled_and_repeated",
+    "messy:rows_deleted_shuffled",
+    "messy:id_floats_shuffled",
+    "messy:id_steps_by_7",
+    "messy:id_added_gaps",
+    "messy:measure_sentinel_-999",
+    "dup_noise:duplicates_keep",
+    "dup_noise:duplicates_group",
+    "time_blocks:base",
+    "time_blocks:date_sentinel_1900",
+    "time_blocks:number_sentinel_-999",
+    "time_blocks:number_sentinel_999999",
+    "time_blocks:number_sentinel_1e308",
+    "time_blocks:copy_two_valued",
+    "time_blocks:copy_distinct",
+    "time_blocks:constant_added",
+    "time_blocks:id_added_int",
+    "time_blocks:id_added_text",
+    "time_blocks:second_date_added",
+    "time_blocks:noise_added",
+    "time_blocks:rows_shuffled",
+    "time_blocks:row_repeated",
+    "time_blocks:blank_line_added",
+    "time_blocks:missing_cell_feature",
+    "time_blocks:missing_cell_date",
+    "time_blocks:missing_cell_target",
+    "time_blocks:feature_renamed",
+    "time_blocks:feature_renamed_awkward",
+    "time_blocks:target_renamed",
+    "time_blocks:role_column_renamed",
+    "time_blocks:target_first",
+    "time_blocks:target_respelt",
+    "time_blocks:target_respelt_flipped",
+    "time_blocks:white_space_cells",
+    "time_blocks:rows_repeated_1pct",
+    "time_blocks:rows_repeated_10pct",
+    "time_blocks:row_repeated_other_target",
+    "time_blocks:stamp_shared",
+    "time_blocks:number_two_sentinels",
+    "time_blocks:id_added_gaps",
+    "time_blocks_gap:base",
+    "time_blocks_gap:date_sentinel_1900",
+    "time_blocks_gap:number_sentinel_-999",
+    "time_blocks_gap:number_sentinel_999999",
+    "time_blocks_gap:number_sentinel_1e308",
+    "time_blocks_gap:copy_two_valued",
+    "time_blocks_gap:copy_distinct",
+    "time_blocks_gap:constant_added",
+    "time_blocks_gap:id_added_int",
+    "time_blocks_gap:id_added_text",
+    "time_blocks_gap:second_date_added",
+    "time_blocks_gap:noise_added",
+    "time_blocks_gap:rows_shuffled",
+    "time_blocks_gap:row_repeated",
+    "time_blocks_gap:blank_line_added",
+    "time_blocks_gap:missing_cell_feature",
+    "time_blocks_gap:missing_cell_date",
+    "time_blocks_gap:missing_cell_target",
+    "time_blocks_gap:feature_renamed",
+    "time_blocks_gap:feature_renamed_awkward",
+    "time_blocks_gap:target_renamed",
+    "time_blocks_gap:role_column_renamed",
+    "time_blocks_gap:target_first",
+    "time_blocks_gap:target_respelt",
+    "time_blocks_gap:target_respelt_flipped",
+    "time_blocks_gap:white_space_cells",
+    "time_blocks_gap:rows_repeated_1pct",
+    "time_blocks_gap:rows_repeated_10pct",
+    "time_blocks_gap:row_repeated_other_target",
+    "time_blocks_gap:stamp_shared",
+    "time_blocks_gap:number_two_sentinels",
+    "time_blocks_gap:id_added_gaps",
+    "time_blocks_undeclared:base",
+    "time_blocks_undeclared:date_sentinel_9999",
+    "time_blocks_undeclared:date_sentinel_1900",
+    "time_blocks_undeclared:date_sentinel_zero",
+    "time_blocks_undeclared:number_sentinel_-999",
+    "time_blocks_undeclared:number_sentinel_999999",
+    "time_blocks_undeclared:number_sentinel_1e308",
+    "time_blocks_undeclared:copy_two_valued",
+    "time_blocks_undeclared:copy_distinct",
+    "time_blocks_undeclared:constant_added",
+    "time_blocks_undeclared:id_added_int",
+    "time_blocks_undeclared:id_added_text",
+    "time_blocks_undeclared:second_date_added",
+    "time_blocks_undeclared:noise_added",
+    "time_blocks_undeclared:rows_shuffled",
+    "time_blocks_undeclared:row_repeated",
+    "time_blocks_undeclared:blank_line_added",
+    "time_blocks_undeclared:missing_cell_feature",
+    "time_blocks_undeclared:missing_cell_date",
+    "time_blocks_undeclared:missing_cell_target",
+    "time_blocks_undeclared:feature_renamed",
+    "time_blocks_undeclared:feature_renamed_awkward",
+    "time_blocks_undeclared:target_renamed",
+    "time_blocks_undeclared:role_column_renamed",
+    "time_blocks_undeclared:target_first",
+    "time_blocks_undeclared:target_respelt",
+    "time_blocks_undeclared:target_respelt_flipped",
+    "time_blocks_undeclared:white_space_cells",
+    "time_blocks_undeclared:duplicates_group",
+    "time_blocks_undeclared:number_two_sentinels",
+    "time_blocks_undeclared:id_added_gaps",
+    "random_walk:base",
+    "random_walk:date_sentinel_1900",
+    "random_walk:number_sentinel_-999",
+    "random_walk:number_sentinel_999999",
+    "random_walk:number_sentinel_1e308",
+    "random_walk:target_sentinel_-999",
+    "random_walk:copy_distinct",
+    "random_walk:constant_added",
+    "random_walk:id_added_int",
+    "random_walk:id_added_text",
+    "random_walk:second_date_added",
+    "random_walk:noise_added",
+    "random_walk:rows_shuffled",
+    "random_walk:row_repeated",
+    "random_walk:blank_line_added",
+    "random_walk:missing_cell_feature",
+    "random_walk:missing_cell_date",
+    "random_walk:missing_cell_target",
+    "random_walk:feature_renamed",
+    "random_walk:feature_renamed_awkward",
+    "random_walk:target_renamed",
+    "random_walk:role_column_renamed",
+    "random_walk:target_first",
+    "random_walk:rows_repeated_1pct",
+    "random_walk:rows_repeated_10pct",
+    "random_walk:row_repeated_other_target",
+    "random_walk:stamp_shared",
+    "random_walk:gap_2",
+    "random_walk:gap_2_row_repeated",
+    "random_walk:copy_exact",
+    "random_walk:copy_negative_scale",
+    "random_walk:copy_5_cells_differ",
+    "random_walk:copy_one_cell_999999",
+    "random_walk:copy_and_target_sentinel",
+    "random_walk:target_sentinel_999999",
+    "random_walk:target_two_sentinels",
+    "random_walk:number_two_sentinels",
+    "random_walk:feature_999999_latest_row",
+    "random_walk:feature_999999_early_row",
+    "random_walk:target_-999_latest_row",
+    "random_walk:target_-999_early_row",
+    "random_walk:id_added_gaps",
+    "random_walk:copy_2pct_cells_altered",
+    "random_walk:copy_curve",
+    "random_walk:copy_noise_1pct",
+    "int_stamps:base",
+    "int_stamps:int_time_sentinel_0",
+    "int_stamps:int_time_sentinel_99991231",
+    "int_stamps:number_sentinel_-999",
+    "int_stamps:number_sentinel_999999",
+    "int_stamps:number_sentinel_1e308",
+    "int_stamps:target_sentinel_-999",
+    "int_stamps:copy_distinct",
+    "int_stamps:constant_added",
+    "int_stamps:id_added_int",
+    "int_stamps:id_added_text",
+    "int_stamps:second_date_added",
+    "int_stamps:noise_added",
+    "int_stamps:rows_shuffled",
+    "int_stamps:row_repeated",
+    "int_stamps:blank_line_added",
+    "int_stamps:missing_cell_feature",
+    "int_stamps:missing_cell_target",
+    "int_stamps:feature_renamed",
+    "int_stamps:feature_renamed_awkward",
+    "int_stamps:target_renamed",
+    "int_stamps:role_column_renamed",
+    "int_stamps:target_first",
+    "int_stamps:rows_repeated_1pct",
+    "int_stamps:rows_repeated_10pct",
+    "int_stamps:row_repeated_other_target",
+    "int_stamps:stamp_shared",
+    "int_stamps:gap_2",
+    "int_stamps:gap_2_row_repeated",
+    "int_stamps:copy_exact",
+    "int_stamps:copy_negative_scale",
+    "int_stamps:copy_5_cells_differ",
+    "int_stamps:copy_one_cell_999999",
+    "int_stamps:copy_and_target_sentinel",
+    "int_stamps:target_sentinel_999999",
+    "int_stamps:target_two_sentinels",
+    "int_stamps:number_two_sentinels",
+    "int_stamps:feature_999999_latest_row",
+    "int_stamps:feature_999999_early_row",
+    "int_stamps:target_-999_latest_row",
+    "int_stamps:target_-999_early_row",
+    "int_stamps:id_added_gaps",
+    "int_stamps:copy_2pct_cells_altered",
+    "int_stamps:copy_curve",
+    "int_stamps:copy_noise_1pct",
+    "flat_tail:base",
+    "flat_tail:date_sentinel_1900",
+    "flat_tail:number_sentinel_-999",
+    "flat_tail:number_sentinel_999999",
+    "flat_tail:number_sentinel_1e308",
+    "flat_tail:target_sentinel_-999",
+    "flat_tail:copy_distinct",
+    "flat_tail:constant_added",
+    "flat_tail:id_added_int",
+    "flat_tail:id_added_text",
+    "flat_tail:second_date_added",
+    "flat_tail:noise_added",
+    "flat_tail:rows_shuffled",
+    "flat_tail:row_repeated",
+    "flat_tail:blank_line_added",
+    "flat_tail:missing_cell_feature",
+    "flat_tail:missing_cell_date",
+    "flat_tail:missing_cell_target",
+    "flat_tail:feature_renamed",
+    "flat_tail:feature_renamed_awkward",
+    "flat_tail:target_renamed",
+    "flat_tail:role_column_renamed",
+    "flat_tail:target_first",
+    "flat_tail:rows_repeated_1pct",
+    "flat_tail:rows_repeated_10pct",
+    "flat_tail:row_repeated_other_target",
+    "flat_tail:stamp_shared",
+    "flat_tail:gap_2",
+    "flat_tail:gap_2_row_repeated",
+    "flat_tail:copy_exact",
+    "flat_tail:copy_negative_scale",
+    "flat_tail:copy_5_cells_differ",
+    "flat_tail:copy_one_cell_999999",
+    "flat_tail:copy_and_target_sentinel",
+    "flat_tail:target_sentinel_999999",
+    "flat_tail:target_two_sentinels",
+    "flat_tail:number_two_sentinels",
+    "flat_tail:feature_999999_latest_row",
+    "flat_tail:feature_999999_early_row",
+    "flat_tail:target_-999_latest_row",
+    "flat_tail:target_-999_early_row",
+    "flat_tail:id_added_gaps",
+    "flat_tail:copy_2pct_cells_altered",
+    "flat_tail:copy_curve",
+    "flat_tail:copy_noise_1pct",
+    "entities:base",
+    "entities:number_sentinel_-999",
+    "entities:number_sentinel_999999",
+    "entities:number_sentinel_1e308",
+    "entities:copy_two_valued",
+    "entities:copy_distinct",
+    "entities:constant_added",
+    "entities:id_added_int",
+    "entities:id_added_text",
+    "entities:second_date_added",
+    "entities:noise_added",
+    "entities:rows_shuffled",
+    "entities:row_repeated",
+    "entities:blank_line_added",
+    "entities:missing_cell_feature",
+    "entities:missing_cell_target",
+    "entities:feature_renamed",
+    "entities:feature_renamed_awkward",
+    "entities:target_renamed",
+    "entities:role_column_renamed",
+    "entities:target_first",
+    "entities:target_respelt",
+    "entities:target_respelt_flipped",
+    "entities:white_space_cells",
+    "entities:number_two_sentinels",
+    "entities:id_added_gaps",
+    "entities:entities_merged_45pct",
+    "panel:base",
+    "panel:date_sentinel_1900",
+    "panel:number_sentinel_-999",
+    "panel:number_sentinel_999999",
+    "panel:number_sentinel_1e308",
+    "panel:target_sentinel_-999",
+    "panel:copy_distinct",
+    "panel:constant_added",
+    "panel:id_added_int",
+    "panel:id_added_text",
+    "panel:second_date_added",
+    "panel:noise_added",
+    "panel:rows_shuffled",
+    "panel:blank_line_added",
+    "panel:missing_cell_feature",
+    "panel:missing_cell_date",
+    "panel:missing_cell_target",
+    "panel:feature_renamed",
+    "panel:feature_renamed_awkward",
+    "panel:target_renamed",
+    "panel:role_column_renamed",
+    "panel:target_first",
+    "panel:white_space_cells",
+    "panel:copy_exact",
+    "panel:copy_negative_scale",
+    "panel:copy_5_cells_differ",
+    "panel:copy_one_cell_999999",
+    "panel:copy_and_target_sentinel",
+    "panel:target_sentinel_999999",
+    "panel:target_two_sentinels",
+    "panel:number_two_sentinels",
+    "panel:feature_999999_latest_row",
+    "panel:feature_999999_early_row",
+    "panel:target_-999_latest_row",
+    "panel:target_-999_early_row",
+    "panel:id_added_gaps",
+    "panel:copy_2pct_cells_altered",
+    "panel:copy_curve",
+    "panel:copy_noise_1pct",
+    "few_valued:base",
+    "few_valued:constant_added",
+    "few_valued:id_added_int",
+    "few_valued:id_added_text",
+    "few_valued:second_date_added",
+    "few_valued:noise_added",
+    "few_valued:rows_shuffled",
+    "few_valued:row_repeated",
+    "few_valued:blank_line_added",
+    "few_valued:missing_cell_feature",
+    "few_valued:missing_cell_target",
+    "few_valued:feature_renamed",
+    "few_valued:feature_renamed_awkward",
+    "few_valued:target_renamed",
+    "few_valued:target_first",
+    "few_valued:target_respelt",
+    "few_valued:target_respelt_flipped",
+    "few_valued:white_space_cells",
+    "few_valued:duplicates_keep",
+    "few_valued:id_added_gaps",
+    "dominant_entity:base",
+    "dominant_entity:number_sentinel_-999",
+    "dominant_entity:number_sentinel_999999",
+    "dominant_entity:number_sentinel_1e308",
+    "dominant_entity:target_sentinel_-999",
+    "dominant_entity:copy_distinct",
+    "dominant_entity:constant_added",
+    "dominant_entity:id_added_int",
+    "dominant_entity:id_added_text",
+    "dominant_entity:second_date_added",
+    "dominant_entity:noise_added",
+    "dominant_entity:rows_shuffled",
+    "dominant_entity:row_repeated",
+    "dominant_entity:blank_line_added",
+    "dominant_entity:missing_cell_feature",
+    "dominant_entity:missing_cell_target",
+    "dominant_entity:feature_renamed",
+    "dominant_entity:feature_renamed_awkward",
+    "dominant_entity:target_renamed",
+    "dominant_entity:role_column_renamed",
+    "dominant_entity:target_first",
+    "dominant_entity:white_space_cells",
+    "dominant_entity:copy_exact",
+    "dominant_entity:copy_negative_scale",
+    "dominant_entity:copy_5_cells_differ",
+    "dominant_entity:copy_one_cell_999999",
+    "dominant_entity:copy_and_target_sentinel",
+    "dominant_entity:target_sentinel_999999",
+    "dominant_entity:target_two_sentinels",
+    "dominant_entity:number_two_sentinels",
+    "dominant_entity:id_added_gaps",
+    "day_numbers:base",
+    "day_numbers:ymd_sentinel_99991231",
+    "day_numbers:ymd_sentinel_0",
+    "day_numbers:ymd_sentinel_20240230",
+    "day_numbers:ymd_sentinel_in_dropped_row",
+    "day_numbers:number_sentinel_-999",
+    "day_numbers:number_sentinel_999999",
+    "day_numbers:number_sentinel_1e308",
+    "day_numbers:copy_two_valued",
+    "day_numbers:copy_distinct",
+    "day_numbers:constant_added",
+    "day_numbers:id_added_int",
+    "day_numbers:id_added_text",
+    "day_numbers:second_date_added",
+    "day_numbers:noise_added",
+    "day_numbers:rows_shuffled",
+    "day_numbers:row_repeated",
+    "day_numbers:blank_line_added",
+    "day_numbers:missing_cell_feature",
+    "day_numbers:missing_cell_date",
+    "day_numbers:missing_cell_target",
+    "day_numbers:feature_renamed",
+    "day_numbers:feature_renamed_awkward",
+    "day_numbers:target_renamed",
+    "day_numbers:role_column_renamed",
+    "day_numbers:target_first",
+    "day_numbers:target_respelt",
+    "day_numbers:target_respelt_flipped",
+    "day_numbers:white_space_cells",
+    "day_numbers:float_whole_numbers",
+    "day_numbers:number_two_sentinels",
+    "day_numbers:id_added_gaps",
+    "day_sentinel:base",
+    "day_sentinel:ymd_sentinel_99991231",
+    "day_sentinel:ymd_sentinel_0",
+    "day_sentinel:ymd_sentinel_20240230",
+    "day_sentinel:ymd_sentinel_in_dropped_row",
+    "day_sentinel:number_sentinel_-999",
+    "day_sentinel:number_sentinel_999999",
+    "day_sentinel:number_sentinel_1e308",
+    "day_sentinel:copy_two_valued",
+    "day_sentinel:copy_distinct",
+    "day_sentinel:constant_added",
+    "day_sentinel:id_added_int",
+    "day_sentinel:id_added_text",
+    "day_sentinel:second_date_added",
+    "day_sentinel:noise_added",
+    "day_sentinel:rows_shuffled",
+    "day_sentinel:row_repeated",
+    "day_sentinel:blank_line_added",
+    "day_sentinel:missing_cell_feature",
+    "day_sentinel:missing_cell_date",
+    "day_sentinel:missing_cell_target",
+    "day_sentinel:feature_renamed",
+    "day_sentinel:feature_renamed_awkward",
+    "day_sentinel:target_renamed",
+    "day_sentinel:role_column_renamed",
+    "day_sentinel:target_first",
+    "day_sentinel:target_respelt",
+    "day_sentinel:target_respelt_flipped",
+    "day_sentinel:white_space_cells",
+    "day_sentinel:float_whole_numbers",
+    "day_sentinel:number_two_sentinels",
+    "day_sentinel:id_added_gaps",
+    "few_valued_leak:duplicates_keep",
+    "quarter_entity:base",
+    "quarter_entity:number_sentinel_-999",
+    "quarter_entity:number_sentinel_999999",
+    "quarter_entity:number_sentinel_1e308",
+    "quarter_entity:target_sentinel_-999",
+    "quarter_entity:copy_distinct",
+    "quarter_entity:constant_added",
+    "quarter_entity:id_added_int",
+    "quarter_entity:id_added_text",
+    "quarter_entity:second_date_added",
+    "quarter_entity:noise_added",
+    "quarter_entity:rows_shuffled",
+    "quarter_entity:row_repeated",
+    "quarter_entity:blank_line_added",
+    "quarter_entity:missing_cell_feature",
+    "quarter_entity:missing_cell_target",
+    "quarter_entity:feature_renamed",
+    "quarter_entity:feature_renamed_awkward",
+    "quarter_entity:target_renamed",
+    "quarter_entity:role_column_renamed",
+    "quarter_entity:target_first",
+    "quarter_entity:white_space_cells",
+    "quarter_entity:copy_exact",
+    "quarter_entity:copy_negative_scale",
+    "quarter_entity:copy_5_cells_differ",
+    "quarter_entity:copy_one_cell_999999",
+    "quarter_entity:copy_and_target_sentinel",
+    "quarter_entity:target_sentinel_999999",
+    "quarter_entity:target_two_sentinels",
+    "quarter_entity:number_two_sentinels",
+    "quarter_entity:id_added_gaps",
+    "walk_repeated:base",
+    "walk_repeated:date_sentinel_1900",
+    "walk_repeated:number_sentinel_-999",
+    "walk_repeated:number_sentinel_999999",
+    "walk_repeated:number_sentinel_1e308",
+    "walk_repeated:target_sentinel_-999",
+    "walk_repeated:copy_distinct",
+    "walk_repeated:constant_added",
+    "walk_repeated:id_added_int",
+    "walk_repeated:id_added_text",
+    "walk_repeated:second_date_added",
+    "walk_repeated:noise_added",
+    "walk_repeated:rows_shuffled",
+    "walk_repeated:row_repeated",
+    "walk_repeated:blank_line_added",
+    "walk_repeated:missing_cell_feature",
+    "walk_repeated:missing_cell_date",
+    "walk_repeated:missing_cell_target",
+    "walk_repeated:feature_renamed",
+    "walk_repeated:feature_renamed_awkward",
+    "walk_repeated:target_renamed",
+    "walk_repeated:role_column_renamed",
+    "walk_repeated:target_first",
+    "walk_repeated:rows_repeated_1pct",
+    "walk_repeated:rows_repeated_10pct",
+    "walk_repeated:row_repeated_other_target",
+    "walk_repeated:stamp_shared",
+    "walk_repeated:copy_exact",
+    "walk_repeated:copy_negative_scale",
+    "walk_repeated:copy_5_cells_differ",
+    "walk_repeated:copy_one_cell_999999",
+    "walk_repeated:copy_and_target_sentinel",
+    "walk_repeated:target_sentinel_999999",
+    "walk_repeated:target_two_sentinels",
+    "walk_repeated:number_two_sentinels",
+    "walk_repeated:feature_999999_latest_row",
+    "walk_repeated:feature_999999_early_row",
+    "walk_repeated:target_-999_latest_row",
+    "walk_repeated:target_-999_early_row",
+    "walk_repeated:id_added_gaps",
+    "walk_repeated:copy_2pct_cells_altered",
+    "walk_repeated:copy_curve",
+    "walk_repeated:copy_noise_1pct",
+    "walk_copy:base",
+    "walk_copy:date_sentinel_1900",
+    "walk_copy:number_sentinel_-999",
+    "walk_copy:number_sentinel_999999",
+    "walk_copy:number_sentinel_1e308",
+    "walk_copy:target_sentinel_-999",
+    "walk_copy:copy_distinct",
+    "walk_copy:constant_added",
+    "walk_copy:id_added_int",
+    "walk_copy:id_added_text",
+    "walk_copy:second_date_added",
+    "walk_copy:noise_added",
+    "walk_copy:rows_shuffled",
+    "walk_copy:row_repeated",
+    "walk_copy:blank_line_added",
+    "walk_copy:missing_cell_feature",
+    "walk_copy:missing_cell_date",
+    "walk_copy:missing_cell_target",
+    "walk_copy:feature_renamed",
+    "walk_copy:feature_renamed_awkward",
+    "walk_copy:target_renamed",
+    "walk_copy:role_column_renamed",
+    "walk_copy:target_first",
+    "walk_copy:rows_repeated_1pct",
+    "walk_copy:rows_repeated_10pct",
+    "walk_copy:row_repeated_other_target",
+    "walk_copy:stamp_shared",
+    "walk_copy:copy_exact",
+    "walk_copy:copy_negative_scale",
+    "walk_copy:copy_5_cells_differ",
+    "walk_copy:copy_one_cell_999999",
+    "walk_copy:copy_and_target_sentinel",
+    "walk_copy:target_sentinel_999999",
+    "walk_copy:target_two_sentinels",
+    "walk_copy:number_two_sentinels",
+    "walk_copy:feature_999999_latest_row",
+    "walk_copy:feature_999999_early_row",
+    "walk_copy:target_-999_latest_row",
+    "walk_copy:target_-999_early_row",
+    "walk_copy:id_added_gaps",
+    "walk_copy:copy_2pct_cells_altered",
+    "walk_copy:copy_curve",
+    "walk_copy:copy_noise_1pct",
+    "walk_copy_cell:base",
+    "walk_copy_cell:date_sentinel_1900",
+    "walk_copy_cell:number_sentinel_-999",
+    "walk_copy_cell:number_sentinel_999999",
+    "walk_copy_cell:number_sentinel_1e308",
+    "walk_copy_cell:target_sentinel_-999",
+    "walk_copy_cell:copy_distinct",
+    "walk_copy_cell:constant_added",
+    "walk_copy_cell:id_added_int",
+    "walk_copy_cell:id_added_text",
+    "walk_copy_cell:second_date_added",
+    "walk_copy_cell:noise_added",
+    "walk_copy_cell:rows_shuffled",
+    "walk_copy_cell:row_repeated",
+    "walk_copy_cell:blank_line_added",
+    "walk_copy_cell:missing_cell_feature",
+    "walk_copy_cell:missing_cell_date",
+    "walk_copy_cell:missing_cell_target",
+    "walk_copy_cell:feature_renamed",
+    "walk_copy_cell:feature_renamed_awkward",
+    "walk_copy_cell:target_renamed",
+    "walk_copy_cell:role_column_renamed",
+    "walk_copy_cell:target_first",
+    "walk_copy_cell:rows_repeated_1pct",
+    "walk_copy_cell:rows_repeated_10pct",
+    "walk_copy_cell:row_repeated_other_target",
+    "walk_copy_cell:stamp_shared",
+    "walk_copy_cell:copy_exact",
+    "walk_copy_cell:copy_negative_scale",
+    "walk_copy_cell:copy_5_cells_differ",
+    "walk_copy_cell:copy_one_cell_999999",
+    "walk_copy_cell:copy_and_target_sentinel",
+    "walk_copy_cell:target_sentinel_999999",
+    "walk_copy_cell:target_two_sentinels",
+    "walk_copy_cell:number_two_sentinels",
+    "walk_copy_cell:feature_999999_latest_row",
+    "walk_copy_cell:feature_999999_early_row",
+    "walk_copy_cell:target_-999_latest_row",
+    "walk_copy_cell:target_-999_early_row",
+    "walk_copy_cell:id_added_gaps",
+    "walk_copy_cell:copy_2pct_cells_altered",
+    "walk_copy_cell:copy_curve",
+    "walk_late_cell:base",
+    "walk_late_cell:date_sentinel_1900",
+    "walk_late_cell:number_sentinel_-999",
+    "walk_late_cell:number_sentinel_999999",
+    "walk_late_cell:number_sentinel_1e308",
+    "walk_late_cell:target_sentinel_-999",
+    "walk_late_cell:copy_distinct",
+    "walk_late_cell:constant_added",
+    "walk_late_cell:id_added_int",
+    "walk_late_cell:id_added_text",
+    "walk_late_cell:second_date_added",
+    "walk_late_cell:noise_added",
+    "walk_late_cell:rows_shuffled",
+    "walk_late_cell:row_repeated",
+    "walk_late_cell:blank_line_added",
+    "walk_late_cell:missing_cell_feature",
+    "walk_late_cell:missing_cell_date",
+    "walk_late_cell:missing_cell_target",
+    "walk_late_cell:feature_renamed",
+    "walk_late_cell:feature_renamed_awkward",
+    "walk_late_cell:target_renamed",
+    "walk_late_cell:role_column_renamed",
+    "walk_late_cell:target_first",
+    "walk_late_cell:rows_repeated_1pct",
+    "walk_late_cell:rows_repeated_10pct",
+    "walk_late_cell:row_repeated_other_target",
+    "walk_late_cell:stamp_shared",
+    "walk_late_cell:copy_exact",
+    "walk_late_cell:copy_negative_scale",
+    "walk_late_cell:copy_5_cells_differ",
+    "walk_late_cell:copy_one_cell_999999",
+    "walk_late_cell:copy_and_target_sentinel",
+    "walk_late_cell:target_sentinel_999999",
+    "walk_late_cell:target_two_sentinels",
+    "walk_late_cell:number_two_sentinels",
+    "walk_late_cell:feature_999999_latest_row",
+    "walk_late_cell:feature_999999_early_row",
+    "walk_late_cell:target_-999_latest_row",
+    "walk_late_cell:target_-999_early_row",
+    "walk_late_cell:id_added_gaps",
+    "walk_late_cell:copy_2pct_cells_altered",
+    "walk_late_cell:copy_curve",
+    "walk_late_cell:copy_noise_1pct",
+    "messy_shuffled:base",
+    "messy_shuffled:date_sentinel_9999",
+    "messy_shuffled:date_sentinel_1900",
+    "messy_shuffled:date_sentinel_zero",
+    "messy_shuffled:number_sentinel_-999",
+    "messy_shuffled:number_sentinel_999999",
+    "messy_shuffled:number_sentinel_1e308",
+    "messy_shuffled:copy_two_valued",
+    "messy_shuffled:copy_distinct",
+    "messy_shuffled:constant_added",
+    "messy_shuffled:id_added_int",
+    "messy_shuffled:id_added_text",
+    "messy_shuffled:second_date_added",
+    "messy_shuffled:noise_added",
+    "messy_shuffled:rows_shuffled",
+    "messy_shuffled:row_repeated",
+    "messy_shuffled:blank_line_added",
+    "messy_shuffled:missing_cell_feature",
+    "messy_shuffled:missing_cell_date",
+    "messy_shuffled:missing_cell_target",
+    "messy_shuffled:feature_renamed",
+    "messy_shuffled:feature_renamed_awkward",
+    "messy_shuffled:target_renamed",
+    "messy_shuffled:role_column_renamed",
+    "messy_shuffled:target_first",
+    "messy_shuffled:target_respelt",
+    "messy_shuffled:target_respelt_flipped",
+    "messy_shuffled:white_space_cells",
+    "messy_shuffled:number_two_sentinels",
+    "messy_shuffled:id_added_gaps"
+   ],
+   "A5 identifier": [
+    "signal_clf:id_added_gaps",
+    "signal_reg:id_added_gaps",
+    "noise_clf:id_added_gaps",
+    "noise_reg:id_added_gaps",
+    "imbalanced:id_added_gaps",
+    "leak:id_added_gaps",
+    "leak_reg:id_added_gaps",
+    "near_leak:id_added_gaps",
+    "binary_numeric:id_added_gaps",
+    "messy:rows_shuffled",
+    "messy:row_repeated",
+    "messy:id_shuffled_and_repeated",
+    "messy:rows_deleted_shuffled",
+    "messy:id_floats_shuffled",
+    "messy:id_added_gaps",
+    "dup_noise:id_added_gaps",
+    "time_blocks:id_added_gaps",
+    "time_blocks_gap:id_added_gaps",
+    "time_blocks_undeclared:id_added_gaps",
+    "random_walk:id_added_gaps",
+    "int_stamps:id_added_gaps",
+    "flat_tail:id_added_gaps",
+    "entities:id_added_gaps",
+    "panel:id_added_gaps",
+    "few_valued:id_added_gaps",
+    "dominant_entity:id_added_gaps",
+    "day_numbers:id_added_gaps",
+    "day_sentinel:id_added_gaps",
+    "few_valued_leak:id_added_gaps",
+    "quarter_entity:id_added_gaps",
+    "walk_repeated:rows_shuffled",
+    "walk_repeated:id_added_gaps",
+    "walk_copy:rows_shuffled",
+    "walk_copy:id_added_gaps",
+    "walk_copy_cell:id_added_gaps",
+    "walk_late_cell:id_added_gaps",
+    "messy_shuffled:base",
+    "messy_shuffled:date_sentinel_9999",
+    "messy_shuffled:date_sentinel_1900",
+    "messy_shuffled:date_sentinel_zero",
+    "messy_shuffled:number_sentinel_-999",
+    "messy_shuffled:number_sentinel_999999",
+    "messy_shuffled:number_sentinel_1e308",
+    "messy_shuffled:copy_two_valued",
+    "messy_shuffled:copy_distinct",
+    "messy_shuffled:constant_added",
+    "messy_shuffled:id_added_int",
+    "messy_shuffled:id_added_text",
+    "messy_shuffled:second_date_added",
+    "messy_shuffled:noise_added",
+    "messy_shuffled:rows_shuffled",
+    "messy_shuffled:row_repeated",
+    "messy_shuffled:blank_line_added",
+    "messy_shuffled:missing_cell_feature",
+    "messy_shuffled:missing_cell_date",
+    "messy_shuffled:missing_cell_target",
+    "messy_shuffled:feature_renamed",
+    "messy_shuffled:feature_renamed_awkward",
+    "messy_shuffled:target_renamed",
+    "messy_shuffled:role_column_renamed",
+    "messy_shuffled:target_first",
+    "messy_shuffled:target_respelt",
+    "messy_shuffled:target_respelt_flipped",
+    "messy_shuffled:white_space_cells",
+    "messy_shuffled:number_two_sentinels",
+    "messy_shuffled:id_added_gaps"
+   ],
+   "A6 no choice": [
+    "dominant_entity:base",
+    "dominant_entity:number_sentinel_-999",
+    "dominant_entity:number_sentinel_999999",
+    "dominant_entity:number_sentinel_1e308",
+    "dominant_entity:target_sentinel_-999",
+    "dominant_entity:copy_distinct",
+    "dominant_entity:constant_added",
+    "dominant_entity:id_added_int",
+    "dominant_entity:id_added_text",
+    "dominant_entity:second_date_added",
+    "dominant_entity:noise_added",
+    "dominant_entity:rows_shuffled",
+    "dominant_entity:row_repeated",
+    "dominant_entity:blank_line_added",
+    "dominant_entity:missing_cell_feature",
+    "dominant_entity:missing_cell_target",
+    "dominant_entity:feature_renamed",
+    "dominant_entity:feature_renamed_awkward",
+    "dominant_entity:target_renamed",
+    "dominant_entity:role_column_renamed",
+    "dominant_entity:target_first",
+    "dominant_entity:white_space_cells",
+    "dominant_entity:copy_exact",
+    "dominant_entity:copy_negative_scale",
+    "dominant_entity:copy_5_cells_differ",
+    "dominant_entity:copy_one_cell_999999",
+    "dominant_entity:copy_and_target_sentinel",
+    "dominant_entity:target_sentinel_999999",
+    "dominant_entity:target_two_sentinels",
+    "dominant_entity:number_two_sentinels",
+    "dominant_entity:id_added_gaps"
+   ]
+  }
+ },
+ "generated_tables": {
+  "command": "python verify/generated_tables.py mlprofessor --json FILE",
+  "seed": 20261122,
+  "tables_run": 1000,
+  "counts": {
+   "agrees": 415,
+   "stated limit": 0,
+   "open": 0,
+   "fails": 585,
+   "harness": 0
+  },
+  "tables": {
+   "0": [
+    "A3 statements"
+   ],
+   "1": [
+    "A3 statements"
+   ],
+   "2": [
+    "A1 baseline",
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "5": [
+    "A3 statements"
+   ],
+   "6": [
+    "A3 statements"
+   ],
+   "8": [
+    "A3 statements"
+   ],
+   "11": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "13": [
+    "A3 statements"
+   ],
+   "14": [
+    "A3 statements"
+   ],
+   "18": [
+    "A3 statements"
+   ],
+   "21": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "25": [
+    "A3 statements"
+   ],
+   "29": [
+    "A3 statements"
+   ],
+   "31": [
+    "A3 statements"
+   ],
+   "32": [
+    "A3 statements"
+   ],
+   "33": [
+    "A3 statements"
+   ],
+   "34": [
+    "A3 statements"
+   ],
+   "36": [
+    "A3 statements"
+   ],
+   "38": [
+    "A3 statements"
+   ],
+   "39": [
+    "A3 statements"
+   ],
+   "41": [
+    "A3 statements"
+   ],
+   "42": [
+    "A3 statements"
+   ],
+   "47": [
+    "A3 statements"
+   ],
+   "49": [
+    "A3 statements"
+   ],
+   "50": [
+    "A3 statements"
+   ],
+   "51": [
+    "A3 statements"
+   ],
+   "52": [
+    "A3 statements"
+   ],
+   "53": [
+    "A3 statements"
+   ],
+   "54": [
+    "A3 statements"
+   ],
+   "55": [
+    "A3 statements"
+   ],
+   "56": [
+    "A3 statements"
+   ],
+   "58": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "63": [
+    "A3 statements"
+   ],
+   "64": [
+    "A3 statements"
+   ],
+   "66": [
+    "A3 statements"
+   ],
+   "67": [
+    "A3 statements"
+   ],
+   "69": [
+    "A3 statements"
+   ],
+   "70": [
+    "A3 statements"
+   ],
+   "72": [
+    "A3 statements"
+   ],
+   "74": [
+    "A3 statements"
+   ],
+   "75": [
+    "A3 statements"
+   ],
+   "76": [
+    "A3 statements"
+   ],
+   "77": [
+    "A3 statements"
+   ],
+   "78": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "79": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "80": [
+    "A3 statements"
+   ],
+   "81": [
+    "A2/A3b screen and order reading",
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "83": [
+    "A3 statements"
+   ],
+   "84": [
+    "A3 statements"
+   ],
+   "87": [
+    "A3 statements"
+   ],
+   "91": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "93": [
+    "A3 statements"
+   ],
+   "95": [
+    "A3 statements"
+   ],
+   "96": [
+    "A3 statements"
+   ],
+   "97": [
+    "A3 statements"
+   ],
+   "100": [
+    "A3 statements"
+   ],
+   "101": [
+    "A3 statements"
+   ],
+   "102": [
+    "A3 statements"
+   ],
+   "103": [
+    "A3 statements"
+   ],
+   "105": [
+    "A3 statements"
+   ],
+   "106": [
+    "A3 statements"
+   ],
+   "108": [
+    "A3 statements"
+   ],
+   "110": [
+    "A3 statements"
+   ],
+   "111": [
+    "A3 statements"
+   ],
+   "112": [
+    "A3 statements"
+   ],
+   "113": [
+    "A3 statements"
+   ],
+   "114": [
+    "A3 statements"
+   ],
+   "116": [
+    "A3 statements"
+   ],
+   "119": [
+    "A3 statements"
+   ],
+   "120": [
+    "A3 statements"
+   ],
+   "122": [
+    "A3 statements"
+   ],
+   "128": [
+    "A3 statements"
+   ],
+   "130": [
+    "A3 statements"
+   ],
+   "132": [
+    "A3 statements"
+   ],
+   "134": [
+    "A3 statements"
+   ],
+   "135": [
+    "A3 statements"
+   ],
+   "136": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "138": [
+    "A3 statements"
+   ],
+   "141": [
+    "A3 statements"
+   ],
+   "143": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "151": [
+    "A3 statements"
+   ],
+   "153": [
+    "A3 statements"
+   ],
+   "155": [
+    "A3 statements"
+   ],
+   "156": [
+    "A3 statements"
+   ],
+   "159": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "164": [
+    "A3 statements"
+   ],
+   "165": [
+    "A3 statements"
+   ],
+   "166": [
+    "A3 statements"
+   ],
+   "167": [
+    "A3 statements"
+   ],
+   "168": [
+    "A3 statements"
+   ],
+   "169": [
+    "A3 statements"
+   ],
+   "170": [
+    "A3 statements"
+   ],
+   "171": [
+    "A3 statements"
+   ],
+   "172": [
+    "A3 statements"
+   ],
+   "173": [
+    "A3 statements"
+   ],
+   "174": [
+    "A3 statements"
+   ],
+   "175": [
+    "A3 statements"
+   ],
+   "176": [
+    "A3 statements"
+   ],
+   "179": [
+    "A3 statements"
+   ],
+   "180": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "182": [
+    "A3 statements"
+   ],
+   "183": [
+    "A3 statements"
+   ],
+   "185": [
+    "A3 statements"
+   ],
+   "186": [
+    "A3 statements"
+   ],
+   "187": [
+    "A3 statements"
+   ],
+   "189": [
+    "A3 statements"
+   ],
+   "190": [
+    "A3 statements"
+   ],
+   "191": [
+    "A3 statements"
+   ],
+   "196": [
+    "A3 statements"
+   ],
+   "197": [
+    "A3 statements"
+   ],
+   "198": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "199": [
+    "A3 statements"
+   ],
+   "201": [
+    "A3 statements"
+   ],
+   "206": [
+    "A3 statements"
+   ],
+   "210": [
+    "A3 statements"
+   ],
+   "211": [
+    "A3 statements"
+   ],
+   "212": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "213": [
+    "A3 statements"
+   ],
+   "214": [
+    "A3 statements"
+   ],
+   "216": [
+    "A3 statements"
+   ],
+   "217": [
+    "A3 statements"
+   ],
+   "220": [
+    "A3 statements"
+   ],
+   "221": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "223": [
+    "A3 statements"
+   ],
+   "226": [
+    "A3 statements"
+   ],
+   "227": [
+    "A3 statements"
+   ],
+   "228": [
+    "A3 statements"
+   ],
+   "231": [
+    "A3 statements"
+   ],
+   "232": [
+    "A3 statements"
+   ],
+   "234": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "235": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "238": [
+    "A3 statements"
+   ],
+   "239": [
+    "A3 statements"
+   ],
+   "240": [
+    "A3 statements"
+   ],
+   "241": [
+    "A3 statements"
+   ],
+   "242": [
+    "A3 statements"
+   ],
+   "247": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "249": [
+    "A3 statements"
+   ],
+   "251": [
+    "A3 statements"
+   ],
+   "252": [
+    "A3 statements"
+   ],
+   "253": [
+    "A3 statements"
+   ],
+   "254": [
+    "A3 statements"
+   ],
+   "255": [
+    "A3 statements"
+   ],
+   "256": [
+    "A3 statements"
+   ],
+   "259": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "261": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "262": [
+    "A3 statements"
+   ],
+   "269": [
+    "A3 statements"
+   ],
+   "271": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "272": [
+    "A3 statements"
+   ],
+   "276": [
+    "A3 statements"
+   ],
+   "277": [
+    "A3 statements"
+   ],
+   "278": [
+    "A3 statements"
+   ],
+   "279": [
+    "A3 statements"
+   ],
+   "281": [
+    "A3 statements"
+   ],
+   "282": [
+    "A3 statements"
+   ],
+   "284": [
+    "A3 statements"
+   ],
+   "285": [
+    "A3 statements"
+   ],
+   "286": [
+    "A3 statements"
+   ],
+   "288": [
+    "A3 statements"
+   ],
+   "289": [
+    "A3 statements"
+   ],
+   "291": [
+    "A3 statements"
+   ],
+   "294": [
+    "A3 statements"
+   ],
+   "296": [
+    "A1 baseline",
+    "A3 statements",
+    "A4 order of rows"
+   ],
+   "297": [
+    "A3 statements"
+   ],
+   "298": [
+    "A3 statements"
+   ],
+   "300": [
+    "A3 statements"
+   ],
+   "301": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "303": [
+    "A3 statements"
+   ],
+   "304": [
+    "A3 statements"
+   ],
+   "306": [
+    "A3 statements"
+   ],
+   "310": [
+    "A3 statements"
+   ],
+   "311": [
+    "A3 statements"
+   ],
+   "312": [
+    "A3 statements"
+   ],
+   "313": [
+    "A3 statements"
+   ],
+   "314": [
+    "A3 statements"
+   ],
+   "315": [
+    "A3 statements"
+   ],
+   "316": [
+    "A3 statements"
+   ],
+   "319": [
+    "A1 baseline",
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "321": [
+    "A3 statements"
+   ],
+   "322": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "323": [
+    "A3 statements"
+   ],
+   "324": [
+    "A3 statements"
+   ],
+   "326": [
+    "A3 statements"
+   ],
+   "327": [
+    "A3 statements"
+   ],
+   "328": [
+    "A3 statements"
+   ],
+   "329": [
+    "A3 statements"
+   ],
+   "330": [
+    "A3 statements"
+   ],
+   "332": [
+    "A3 statements",
+    "A4 order of rows"
+   ],
+   "335": [
+    "A3 statements"
+   ],
+   "337": [
+    "A3 statements"
+   ],
+   "339": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "340": [
+    "A3 statements"
+   ],
+   "341": [
+    "A3 statements"
+   ],
+   "342": [
+    "A3 statements"
+   ],
+   "345": [
+    "A3 statements"
+   ],
+   "346": [
+    "A3 statements"
+   ],
+   "347": [
+    "A3 statements"
+   ],
+   "349": [
+    "A3 statements"
+   ],
+   "350": [
+    "A3 statements"
+   ],
+   "351": [
+    "A3 statements"
+   ],
+   "353": [
+    "A3 statements"
+   ],
+   "354": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "356": [
+    "A3 statements"
+   ],
+   "360": [
+    "A3 statements"
+   ],
+   "361": [
+    "A3 statements"
+   ],
+   "362": [
+    "A3 statements"
+   ],
+   "365": [
+    "A3 statements"
+   ],
+   "366": [
+    "A3 statements"
+   ],
+   "368": [
+    "A3 statements"
+   ],
+   "372": [
+    "A3 statements"
+   ],
+   "375": [
+    "A3 statements"
+   ],
+   "376": [
+    "A3 statements"
+   ],
+   "377": [
+    "A3 statements"
+   ],
+   "378": [
+    "A3 statements"
+   ],
+   "379": [
+    "A3 statements"
+   ],
+   "381": [
+    "A3 statements"
+   ],
+   "382": [
+    "A3 statements"
+   ],
+   "383": [
+    "A3 statements"
+   ],
+   "385": [
+    "A3 statements"
+   ],
+   "388": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "393": [
+    "A3 statements"
+   ],
+   "394": [
+    "A3 statements"
+   ],
+   "396": [
+    "A3 statements"
+   ],
+   "397": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "398": [
+    "A3 statements"
+   ],
+   "402": [
+    "A3 statements"
+   ],
+   "403": [
+    "A3 statements"
+   ],
+   "405": [
+    "A3 statements"
+   ],
+   "406": [
+    "A3 statements"
+   ],
+   "407": [
+    "A3 statements"
+   ],
+   "409": [
+    "A3 statements"
+   ],
+   "410": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "411": [
+    "A3 statements"
+   ],
+   "412": [
+    "A3 statements"
+   ],
+   "413": [
+    "A3 statements"
+   ],
+   "416": [
+    "A3 statements"
+   ],
+   "417": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "418": [
+    "A3 statements"
+   ],
+   "419": [
+    "A3 statements"
+   ],
+   "421": [
+    "A3 statements"
+   ],
+   "422": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "423": [
+    "A3 statements"
+   ],
+   "424": [
+    "A3 statements"
+   ],
+   "427": [
+    "A3 statements"
+   ],
+   "429": [
+    "A3 statements"
+   ],
+   "430": [
+    "A3 statements"
+   ],
+   "431": [
+    "A3 statements"
+   ],
+   "432": [
+    "A3 statements"
+   ],
+   "433": [
+    "A3 statements"
+   ],
+   "435": [
+    "A3 statements"
+   ],
+   "437": [
+    "A3 statements"
+   ],
+   "438": [
+    "A3 statements"
+   ],
+   "439": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "441": [
+    "A3 statements"
+   ],
+   "442": [
+    "A3 statements"
+   ],
+   "443": [
+    "A3 statements"
+   ],
+   "444": [
+    "A3 statements"
+   ],
+   "445": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "447": [
+    "A3 statements"
+   ],
+   "450": [
+    "A1 baseline",
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "451": [
+    "A3 statements"
+   ],
+   "452": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "453": [
+    "A3 statements"
+   ],
+   "454": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "457": [
+    "A3 statements"
+   ],
+   "458": [
+    "A3 statements"
+   ],
+   "459": [
+    "A3 statements"
+   ],
+   "461": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "462": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "463": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "465": [
+    "A3 statements"
+   ],
+   "466": [
+    "A3 statements"
+   ],
+   "467": [
+    "A3 statements"
+   ],
+   "469": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "471": [
+    "A3 statements"
+   ],
+   "472": [
+    "A3 statements"
+   ],
+   "478": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "480": [
+    "A3 statements"
+   ],
+   "481": [
+    "A3 statements"
+   ],
+   "482": [
+    "A3 statements"
+   ],
+   "484": [
+    "A3 statements"
+   ],
+   "485": [
+    "A3 statements"
+   ],
+   "489": [
+    "A3 statements"
+   ],
+   "490": [
+    "A3 statements"
+   ],
+   "491": [
+    "A3 statements"
+   ],
+   "492": [
+    "A3 statements"
+   ],
+   "494": [
+    "A3 statements"
+   ],
+   "498": [
+    "A3 statements"
+   ],
+   "500": [
+    "A3 statements"
+   ],
+   "504": [
+    "A3 statements"
+   ],
+   "508": [
+    "A3 statements"
+   ],
+   "510": [
+    "A3 statements"
+   ],
+   "511": [
+    "A3 statements"
+   ],
+   "515": [
+    "A3 statements"
+   ],
+   "517": [
+    "A3 statements"
+   ],
+   "518": [
+    "A3 statements"
+   ],
+   "519": [
+    "A3 statements"
+   ],
+   "520": [
+    "A3 statements"
+   ],
+   "523": [
+    "A3 statements"
+   ],
+   "524": [
+    "A1 baseline",
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "525": [
+    "A3 statements"
+   ],
+   "526": [
+    "A3 statements"
+   ],
+   "527": [
+    "A3 statements"
+   ],
+   "528": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "529": [
+    "A3 statements"
+   ],
+   "533": [
+    "A3 statements"
+   ],
+   "534": [
+    "A3 statements"
+   ],
+   "536": [
+    "A3 statements"
+   ],
+   "538": [
+    "A3 statements"
+   ],
+   "540": [
+    "A3 statements"
+   ],
+   "542": [
+    "A3 statements"
+   ],
+   "546": [
+    "A3 statements"
+   ],
+   "547": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "548": [
+    "A3 statements"
+   ],
+   "549": [
+    "A3 statements"
+   ],
+   "550": [
+    "A3 statements"
+   ],
+   "551": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "553": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "555": [
+    "A3 statements"
+   ],
+   "556": [
+    "A3 statements"
+   ],
+   "557": [
+    "A3 statements"
+   ],
+   "564": [
+    "A3 statements"
+   ],
+   "567": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "570": [
+    "A3 statements"
+   ],
+   "571": [
+    "A3 statements"
+   ],
+   "572": [
+    "A3 statements"
+   ],
+   "573": [
+    "A3 statements"
+   ],
+   "574": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "575": [
+    "A3 statements"
+   ],
+   "576": [
+    "A3 statements"
+   ],
+   "577": [
+    "A3 statements"
+   ],
+   "578": [
+    "A3 statements"
+   ],
+   "579": [
+    "A3 statements"
+   ],
+   "580": [
+    "A3 statements"
+   ],
+   "581": [
+    "A3 statements"
+   ],
+   "585": [
+    "A3 statements"
+   ],
+   "586": [
+    "A3 statements"
+   ],
+   "587": [
+    "A3 statements"
+   ],
+   "590": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "591": [
+    "A3 statements"
+   ],
+   "597": [
+    "A3 statements"
+   ],
+   "600": [
+    "A3 statements"
+   ],
+   "601": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "605": [
+    "A3 statements",
+    "A4 order of rows"
+   ],
+   "606": [
+    "A3 statements"
+   ],
+   "607": [
+    "A3 statements"
+   ],
+   "608": [
+    "A3 statements"
+   ],
+   "609": [
+    "A3 statements"
+   ],
+   "610": [
+    "A3 statements"
+   ],
+   "611": [
+    "A3 statements"
+   ],
+   "612": [
+    "A3 statements"
+   ],
+   "615": [
+    "A3 statements"
+   ],
+   "616": [
+    "A3 statements"
+   ],
+   "619": [
+    "A3 statements"
+   ],
+   "624": [
+    "A3 statements"
+   ],
+   "626": [
+    "A3 statements",
+    "A4 order of rows"
+   ],
+   "628": [
+    "A3 statements"
+   ],
+   "630": [
+    "A3 statements"
+   ],
+   "632": [
+    "A3 statements"
+   ],
+   "633": [
+    "A3 statements"
+   ],
+   "634": [
+    "A3 statements",
+    "A6 no choice"
+   ],
+   "635": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "636": [
+    "A3 statements"
+   ],
+   "639": [
+    "A3 statements"
+   ],
+   "642": [
+    "A3 statements"
+   ],
+   "644": [
+    "A1 baseline",
+    "A3 statements",
+    "A4 order of rows"
+   ],
+   "645": [
+    "A3 statements"
+   ],
+   "647": [
+    "A3 statements"
+   ],
+   "648": [
+    "A3 statements"
+   ],
+   "649": [
+    "A3 statements"
+   ],
+   "650": [
+    "A3 statements"
+   ],
+   "651": [
+    "A3 statements"
+   ],
+   "653": [
+    "A3 statements"
+   ],
+   "654": [
+    "A3 statements"
+   ],
+   "655": [
+    "A3 statements"
+   ],
+   "656": [
+    "A3 statements"
+   ],
+   "658": [
+    "A3 statements"
+   ],
+   "659": [
+    "A3 statements"
+   ],
+   "661": [
+    "A3 statements"
+   ],
+   "662": [
+    "A3 statements"
+   ],
+   "663": [
+    "A3 statements"
+   ],
+   "666": [
+    "A3 statements"
+   ],
+   "667": [
+    "A3 statements"
+   ],
+   "669": [
+    "A3 statements"
+   ],
+   "670": [
+    "A3 statements"
+   ],
+   "674": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "675": [
+    "A3 statements"
+   ],
+   "676": [
+    "A3 statements"
+   ],
+   "677": [
+    "A3 statements"
+   ],
+   "678": [
+    "A3 statements"
+   ],
+   "679": [
+    "A3 statements"
+   ],
+   "680": [
+    "A3 statements"
+   ],
+   "682": [
+    "A3 statements"
+   ],
+   "684": [
+    "A3 statements"
+   ],
+   "686": [
+    "A3 statements"
+   ],
+   "689": [
+    "A3 statements"
+   ],
+   "690": [
+    "A3 statements"
+   ],
+   "692": [
+    "A3 statements"
+   ],
+   "693": [
+    "A3 statements"
+   ],
+   "694": [
+    "A3 statements"
+   ],
+   "695": [
+    "A3 statements"
+   ],
+   "696": [
+    "A3 statements"
+   ],
+   "697": [
+    "A3 statements"
+   ],
+   "699": [
+    "A3 statements"
+   ],
+   "700": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "701": [
+    "A3 statements"
+   ],
+   "702": [
+    "A3 statements"
+   ],
+   "704": [
+    "A1 baseline",
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "706": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "708": [
+    "A3 statements"
+   ],
+   "709": [
+    "A3 statements"
+   ],
+   "710": [
+    "A3 statements"
+   ],
+   "712": [
+    "A3 statements"
+   ],
+   "713": [
+    "A3 statements"
+   ],
+   "716": [
+    "A3 statements"
+   ],
+   "717": [
+    "A3 statements"
+   ],
+   "718": [
+    "A3 statements"
+   ],
+   "719": [
+    "A3 statements"
+   ],
+   "720": [
+    "A3 statements"
+   ],
+   "721": [
+    "A3 statements"
+   ],
+   "725": [
+    "A3 statements"
+   ],
+   "726": [
+    "A3 statements"
+   ],
+   "727": [
+    "A3 statements"
+   ],
+   "729": [
+    "A3 statements"
+   ],
+   "730": [
+    "A3 statements"
+   ],
+   "731": [
+    "A3 statements"
+   ],
+   "732": [
+    "A3 statements"
+   ],
+   "734": [
+    "A3 statements"
+   ],
+   "736": [
+    "A3 statements"
+   ],
+   "737": [
+    "A3 statements"
+   ],
+   "738": [
+    "A3 statements"
+   ],
+   "739": [
+    "A3 statements"
+   ],
+   "742": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "745": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "747": [
+    "A3 statements"
+   ],
+   "748": [
+    "A3 statements"
+   ],
+   "750": [
+    "A3 statements"
+   ],
+   "751": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "752": [
+    "A3 statements"
+   ],
+   "753": [
+    "A3 statements"
+   ],
+   "754": [
+    "A3 statements"
+   ],
+   "755": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "758": [
+    "A3 statements"
+   ],
+   "760": [
+    "A3 statements"
+   ],
+   "762": [
+    "A3 statements"
+   ],
+   "764": [
+    "A3 statements"
+   ],
+   "765": [
+    "A3 statements"
+   ],
+   "768": [
+    "A3 statements"
+   ],
+   "769": [
+    "A3 statements"
+   ],
+   "772": [
+    "A3 statements"
+   ],
+   "774": [
+    "A3 statements"
+   ],
+   "775": [
+    "A1 baseline",
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "776": [
+    "A3 statements"
+   ],
+   "778": [
+    "A3 statements",
+    "A6 no choice"
+   ],
+   "779": [
+    "A3 statements"
+   ],
+   "781": [
+    "A3 statements"
+   ],
+   "783": [
+    "A3 statements"
+   ],
+   "785": [
+    "A3 statements"
+   ],
+   "786": [
+    "A3 statements"
+   ],
+   "788": [
+    "A3 statements"
+   ],
+   "789": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "791": [
+    "A3 statements"
+   ],
+   "794": [
+    "A3 statements"
+   ],
+   "795": [
+    "A3 statements"
+   ],
+   "796": [
+    "A3 statements"
+   ],
+   "798": [
+    "A3 statements"
+   ],
+   "800": [
+    "A3 statements"
+   ],
+   "802": [
+    "A3 statements"
+   ],
+   "804": [
+    "A3 statements"
+   ],
+   "805": [
+    "A3 statements"
+   ],
+   "806": [
+    "A3 statements"
+   ],
+   "808": [
+    "A3 statements"
+   ],
+   "809": [
+    "A1 baseline",
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "810": [
+    "A3 statements"
+   ],
+   "812": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "815": [
+    "A3 statements"
+   ],
+   "816": [
+    "A3 statements",
+    "A4 order of rows"
+   ],
+   "819": [
+    "A3 statements"
+   ],
+   "820": [
+    "A3 statements"
+   ],
+   "821": [
+    "A3 statements"
+   ],
+   "822": [
+    "A3 statements"
+   ],
+   "824": [
+    "A3 statements"
+   ],
+   "825": [
+    "A3 statements"
+   ],
+   "828": [
+    "A3 statements"
+   ],
+   "829": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "830": [
+    "A3 statements"
+   ],
+   "832": [
+    "A3 statements"
+   ],
+   "834": [
+    "A3 statements"
+   ],
+   "835": [
+    "A3 statements"
+   ],
+   "836": [
+    "A3 statements",
+    "A4 order of rows"
+   ],
+   "837": [
+    "A3 statements"
+   ],
+   "839": [
+    "A3 statements"
+   ],
+   "840": [
+    "A3 statements"
+   ],
+   "841": [
+    "A3 statements"
+   ],
+   "846": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "847": [
+    "A3 statements"
+   ],
+   "853": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "854": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "856": [
+    "A3 statements"
+   ],
+   "857": [
+    "A3 statements"
+   ],
+   "859": [
+    "A3 statements"
+   ],
+   "861": [
+    "A3 statements"
+   ],
+   "863": [
+    "A3 statements"
+   ],
+   "865": [
+    "A3 statements"
+   ],
+   "866": [
+    "A3 statements"
+   ],
+   "867": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "870": [
+    "A3 statements"
+   ],
+   "871": [
+    "A3 statements"
+   ],
+   "873": [
+    "A3 statements"
+   ],
+   "874": [
+    "A3 statements"
+   ],
+   "876": [
+    "A3 statements"
+   ],
+   "878": [
+    "A3 statements"
+   ],
+   "880": [
+    "A3 statements"
+   ],
+   "881": [
+    "A3 statements"
+   ],
+   "882": [
+    "A3 statements"
+   ],
+   "883": [
+    "A3 statements"
+   ],
+   "884": [
+    "A3 statements"
+   ],
+   "888": [
+    "A3 statements"
+   ],
+   "890": [
+    "A3 statements"
+   ],
+   "893": [
+    "A3 statements"
+   ],
+   "895": [
+    "A3 statements"
+   ],
+   "896": [
+    "A3 statements"
+   ],
+   "899": [
+    "A3 statements"
+   ],
+   "900": [
+    "A3 statements"
+   ],
+   "901": [
+    "A3 statements"
+   ],
+   "904": [
+    "A3 statements"
+   ],
+   "907": [
+    "A3 statements"
+   ],
+   "909": [
+    "A3 statements"
+   ],
+   "911": [
+    "A3 statements"
+   ],
+   "912": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "914": [
+    "A3 statements"
+   ],
+   "915": [
+    "A3 statements"
+   ],
+   "916": [
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "917": [
+    "A3 statements"
+   ],
+   "918": [
+    "A2/A3b screen and order reading",
+    "A3 statements",
+    "A3 warnings"
+   ],
+   "923": [
+    "A3 statements",
+    "A6 no choice"
+   ],
+   "924": [
+    "A3 statements"
+   ],
+   "925": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "927": [
+    "A3 statements"
+   ],
+   "929": [
+    "A3 statements"
+   ],
+   "930": [
+    "A3 statements"
+   ],
+   "931": [
+    "A3 statements"
+   ],
+   "932": [
+    "A3 statements"
+   ],
+   "934": [
+    "A3 statements"
+   ],
+   "935": [
+    "A3 statements"
+   ],
+   "936": [
+    "A3 statements"
+   ],
+   "937": [
+    "A3 statements"
+   ],
+   "938": [
+    "A3 statements"
+   ],
+   "939": [
+    "A3 statements"
+   ],
+   "941": [
+    "A3 statements"
+   ],
+   "942": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "946": [
+    "A3 statements"
+   ],
+   "948": [
+    "A1 baseline",
+    "A2/A3b screen and order reading",
+    "A3 statements"
+   ],
+   "949": [
+    "A3 statements"
+   ],
+   "950": [
+    "A3 statements"
+   ],
+   "953": [
+    "A3 statements"
+   ],
+   "955": [
+    "A3 statements"
+   ],
+   "959": [
+    "A3 statements"
+   ],
+   "961": [
+    "A3 statements"
+   ],
+   "962": [
+    "A3 statements"
+   ],
+   "963": [
+    "A3 statements"
+   ],
+   "964": [
+    "A3 statements"
+   ],
+   "965": [
+    "A3 statements"
+   ],
+   "966": [
+    "A3 statements"
+   ],
+   "967": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "968": [
+    "A3 statements"
+   ],
+   "969": [
+    "A3 statements"
+   ],
+   "971": [
+    "A3 statements"
+   ],
+   "972": [
+    "A3 statements"
+   ],
+   "973": [
+    "A3 statements"
+   ],
+   "974": [
+    "A3 statements",
+    "A4 order of rows"
+   ],
+   "975": [
+    "A3 statements"
+   ],
+   "978": [
+    "A3 statements"
+   ],
+   "979": [
+    "A1 baseline",
+    "A3 statements"
+   ],
+   "980": [
+    "A3 statements"
+   ],
+   "982": [
+    "A3 statements"
+   ],
+   "984": [
+    "A3 statements"
+   ],
+   "985": [
+    "A3 statements"
+   ],
+   "987": [
+    "A3 statements"
+   ],
+   "988": [
+    "A3 statements"
+   ],
+   "992": [
+    "A3 statements",
+    "A5 identifier"
+   ],
+   "996": [
+    "A3 statements"
+   ],
+   "997": [
+    "A3 statements"
+   ],
+   "998": [
+    "A3 statements"
+   ]
+  },
+  "by_rule": {
+   "A1 baseline": [
+    "2",
+    "11",
+    "58",
+    "79",
+    "91",
+    "136",
+    "143",
+    "180",
+    "198",
+    "235",
+    "259",
+    "261",
+    "271",
+    "296",
+    "319",
+    "322",
+    "354",
+    "388",
+    "410",
+    "422",
+    "439",
+    "450",
+    "454",
+    "462",
+    "469",
+    "524",
+    "547",
+    "551",
+    "553",
+    "567",
+    "574",
+    "590",
+    "601",
+    "644",
+    "674",
+    "700",
+    "704",
+    "706",
+    "751",
+    "775",
+    "809",
+    "829",
+    "846",
+    "925",
+    "948",
+    "967",
+    "979"
+   ],
+   "A2/A3b screen and order reading": [
+    "2",
+    "21",
+    "81",
+    "159",
+    "212",
+    "221",
+    "247",
+    "301",
+    "319",
+    "339",
+    "397",
+    "445",
+    "450",
+    "461",
+    "463",
+    "478",
+    "524",
+    "635",
+    "704",
+    "742",
+    "755",
+    "775",
+    "812",
+    "912",
+    "916",
+    "918",
+    "948"
+   ],
+   "A3 statements": [
+    "0",
+    "1",
+    "2",
+    "5",
+    "6",
+    "8",
+    "11",
+    "13",
+    "14",
+    "18",
+    "21",
+    "25",
+    "29",
+    "31",
+    "32",
+    "33",
+    "34",
+    "36",
+    "38",
+    "39",
+    "41",
+    "42",
+    "47",
+    "49",
+    "50",
+    "51",
+    "52",
+    "53",
+    "54",
+    "55",
+    "56",
+    "58",
+    "63",
+    "64",
+    "66",
+    "67",
+    "69",
+    "70",
+    "72",
+    "74",
+    "75",
+    "76",
+    "77",
+    "78",
+    "79",
+    "80",
+    "81",
+    "83",
+    "84",
+    "87",
+    "91",
+    "93",
+    "95",
+    "96",
+    "97",
+    "100",
+    "101",
+    "102",
+    "103",
+    "105",
+    "106",
+    "108",
+    "110",
+    "111",
+    "112",
+    "113",
+    "114",
+    "116",
+    "119",
+    "120",
+    "122",
+    "128",
+    "130",
+    "132",
+    "134",
+    "135",
+    "136",
+    "138",
+    "141",
+    "143",
+    "151",
+    "153",
+    "155",
+    "156",
+    "159",
+    "164",
+    "165",
+    "166",
+    "167",
+    "168",
+    "169",
+    "170",
+    "171",
+    "172",
+    "173",
+    "174",
+    "175",
+    "176",
+    "179",
+    "180",
+    "182",
+    "183",
+    "185",
+    "186",
+    "187",
+    "189",
+    "190",
+    "191",
+    "196",
+    "197",
+    "198",
+    "199",
+    "201",
+    "206",
+    "210",
+    "211",
+    "212",
+    "213",
+    "214",
+    "216",
+    "217",
+    "220",
+    "221",
+    "223",
+    "226",
+    "227",
+    "228",
+    "231",
+    "232",
+    "234",
+    "235",
+    "238",
+    "239",
+    "240",
+    "241",
+    "242",
+    "247",
+    "249",
+    "251",
+    "252",
+    "253",
+    "254",
+    "255",
+    "256",
+    "259",
+    "261",
+    "262",
+    "269",
+    "271",
+    "272",
+    "276",
+    "277",
+    "278",
+    "279",
+    "281",
+    "282",
+    "284",
+    "285",
+    "286",
+    "288",
+    "289",
+    "291",
+    "294",
+    "296",
+    "297",
+    "298",
+    "300",
+    "301",
+    "303",
+    "304",
+    "306",
+    "310",
+    "311",
+    "312",
+    "313",
+    "314",
+    "315",
+    "316",
+    "319",
+    "321",
+    "322",
+    "323",
+    "324",
+    "326",
+    "327",
+    "328",
+    "329",
+    "330",
+    "332",
+    "335",
+    "337",
+    "339",
+    "340",
+    "341",
+    "342",
+    "345",
+    "346",
+    "347",
+    "349",
+    "350",
+    "351",
+    "353",
+    "354",
+    "356",
+    "360",
+    "361",
+    "362",
+    "365",
+    "366",
+    "368",
+    "372",
+    "375",
+    "376",
+    "377",
+    "378",
+    "379",
+    "381",
+    "382",
+    "383",
+    "385",
+    "388",
+    "393",
+    "394",
+    "396",
+    "397",
+    "398",
+    "402",
+    "403",
+    "405",
+    "406",
+    "407",
+    "409",
+    "410",
+    "411",
+    "412",
+    "413",
+    "416",
+    "417",
+    "418",
+    "419",
+    "421",
+    "422",
+    "423",
+    "424",
+    "427",
+    "429",
+    "430",
+    "431",
+    "432",
+    "433",
+    "435",
+    "437",
+    "438",
+    "439",
+    "441",
+    "442",
+    "443",
+    "444",
+    "445",
+    "447",
+    "450",
+    "451",
+    "452",
+    "453",
+    "454",
+    "457",
+    "458",
+    "459",
+    "461",
+    "462",
+    "463",
+    "465",
+    "466",
+    "467",
+    "469",
+    "471",
+    "472",
+    "478",
+    "480",
+    "481",
+    "482",
+    "484",
+    "485",
+    "489",
+    "490",
+    "491",
+    "492",
+    "494",
+    "498",
+    "500",
+    "504",
+    "508",
+    "510",
+    "511",
+    "515",
+    "517",
+    "518",
+    "519",
+    "520",
+    "523",
+    "524",
+    "525",
+    "526",
+    "527",
+    "528",
+    "529",
+    "533",
+    "534",
+    "536",
+    "538",
+    "540",
+    "542",
+    "546",
+    "547",
+    "548",
+    "549",
+    "550",
+    "551",
+    "553",
+    "555",
+    "556",
+    "557",
+    "564",
+    "567",
+    "570",
+    "571",
+    "572",
+    "573",
+    "574",
+    "575",
+    "576",
+    "577",
+    "578",
+    "579",
+    "580",
+    "581",
+    "585",
+    "586",
+    "587",
+    "590",
+    "591",
+    "597",
+    "600",
+    "601",
+    "605",
+    "606",
+    "607",
+    "608",
+    "609",
+    "610",
+    "611",
+    "612",
+    "615",
+    "616",
+    "619",
+    "624",
+    "626",
+    "628",
+    "630",
+    "632",
+    "633",
+    "634",
+    "635",
+    "636",
+    "639",
+    "642",
+    "644",
+    "645",
+    "647",
+    "648",
+    "649",
+    "650",
+    "651",
+    "653",
+    "654",
+    "655",
+    "656",
+    "658",
+    "659",
+    "661",
+    "662",
+    "663",
+    "666",
+    "667",
+    "669",
+    "670",
+    "674",
+    "675",
+    "676",
+    "677",
+    "678",
+    "679",
+    "680",
+    "682",
+    "684",
+    "686",
+    "689",
+    "690",
+    "692",
+    "693",
+    "694",
+    "695",
+    "696",
+    "697",
+    "699",
+    "700",
+    "701",
+    "702",
+    "704",
+    "706",
+    "708",
+    "709",
+    "710",
+    "712",
+    "713",
+    "716",
+    "717",
+    "718",
+    "719",
+    "720",
+    "721",
+    "725",
+    "726",
+    "727",
+    "729",
+    "730",
+    "731",
+    "732",
+    "734",
+    "736",
+    "737",
+    "738",
+    "739",
+    "742",
+    "745",
+    "747",
+    "748",
+    "750",
+    "751",
+    "752",
+    "753",
+    "754",
+    "755",
+    "758",
+    "760",
+    "762",
+    "764",
+    "765",
+    "768",
+    "769",
+    "772",
+    "774",
+    "775",
+    "776",
+    "778",
+    "779",
+    "781",
+    "783",
+    "785",
+    "786",
+    "788",
+    "789",
+    "791",
+    "794",
+    "795",
+    "796",
+    "798",
+    "800",
+    "802",
+    "804",
+    "805",
+    "806",
+    "808",
+    "809",
+    "810",
+    "812",
+    "815",
+    "816",
+    "819",
+    "820",
+    "821",
+    "822",
+    "824",
+    "825",
+    "828",
+    "829",
+    "830",
+    "832",
+    "834",
+    "835",
+    "836",
+    "837",
+    "839",
+    "840",
+    "841",
+    "846",
+    "847",
+    "853",
+    "854",
+    "856",
+    "857",
+    "859",
+    "861",
+    "863",
+    "865",
+    "866",
+    "867",
+    "870",
+    "871",
+    "873",
+    "874",
+    "876",
+    "878",
+    "880",
+    "881",
+    "882",
+    "883",
+    "884",
+    "888",
+    "890",
+    "893",
+    "895",
+    "896",
+    "899",
+    "900",
+    "901",
+    "904",
+    "907",
+    "909",
+    "911",
+    "912",
+    "914",
+    "915",
+    "916",
+    "917",
+    "918",
+    "923",
+    "924",
+    "925",
+    "927",
+    "929",
+    "930",
+    "931",
+    "932",
+    "934",
+    "935",
+    "936",
+    "937",
+    "938",
+    "939",
+    "941",
+    "942",
+    "946",
+    "948",
+    "949",
+    "950",
+    "953",
+    "955",
+    "959",
+    "961",
+    "962",
+    "963",
+    "964",
+    "965",
+    "966",
+    "967",
+    "968",
+    "969",
+    "971",
+    "972",
+    "973",
+    "974",
+    "975",
+    "978",
+    "979",
+    "980",
+    "982",
+    "984",
+    "985",
+    "987",
+    "988",
+    "992",
+    "996",
+    "997",
+    "998"
+   ],
+   "A3 warnings": [
+    "918"
+   ],
+   "A4 order of rows": [
+    "296",
+    "332",
+    "605",
+    "626",
+    "644",
+    "816",
+    "836",
+    "974"
+   ],
+   "A5 identifier": [
+    "78",
+    "81",
+    "234",
+    "417",
+    "452",
+    "528",
+    "745",
+    "789",
+    "809",
+    "853",
+    "854",
+    "867",
+    "942",
+    "992"
+   ],
+   "A6 no choice": [
+    "634",
+    "778",
+    "923"
+   ]
+  }
+ }
+}

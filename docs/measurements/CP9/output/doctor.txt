@@ -1,0 +1,19 @@
+Loop doctor
+  ok   interpreter E:\CODE\ml-professor\mlprof_env\Scripts\python.exe (3.12.13)
+  ok   hooks registered with an absolute interpreter path
+  ok   Claude Code 2.1.332 (Claude Code)
+       harness   -> fable   effort=xhigh  turns<=-, $-/run
+       tests     -> opus    effort=high   turns<=150, $15/run
+       review    -> fable   effort=high   turns<=80, $10/run
+       diagnose  -> fable   effort=high   turns<=40, $5/run
+       support   -> haiku   effort=medium turns<=60, $2/run
+       routine   -> sonnet  effort=medium turns<=100, $6/run
+       complex   -> opus    effort=high   turns<=200, $20/run
+       total budget $250, permission mode 'auto'
+  ok   pytest importable
+  ok   gate lists 53 check(s)
+  ok   gate self-test: SELFTEST: PASS (good fixture passes twice with identical results; 37 failure mode(s) each caught by a check that names it; temp and project dirs agree)
+  ok   gate timing: 12.8s per edit, 17.4s in full
+  ok   plan valid: 68 task(s) (49 complex, 10 routine, 9 support)
+  WARN 12 uncommitted change(s) in the harness; commit before an unattended run
+Doctor: OK, 1 warning(s)

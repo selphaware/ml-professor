@@ -1,0 +1,7 @@
+16 side by side: 16 side by side, 1296 s; 1229 pairs; {'holds': 1223, 'stated limit': 6, 'open': 0, 'fails': 0}; pairs that needed a second attempt: 0; second calls by the judge: 143
+32 side by side, first run: 32 side by side, 296 s; 1229 pairs; {'holds': 1223, 'stated limit': 6, 'open': 0, 'fails': 0}; pairs that needed a second attempt: 0; second calls by the judge: 143
+32 side by side, second run: 32 side by side, 274 s; 1229 pairs; {'holds': 1223, 'stated limit': 6, 'open': 0, 'fails': 0}; pairs that needed a second attempt: 0; second calls by the judge: 143
+32 side by side, first run against 16 side by side: the same pairs: True; pairs whose class differs: 0; pairs whose verdict differs in any claim: 0
+32 side by side, second run against 16 side by side: the same pairs: True; pairs whose class differs: 0; pairs whose verdict differs in any claim: 0
+the same stated limits in every run: True
+the same second calls in every run: True

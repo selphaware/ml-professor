@@ -1,0 +1,54 @@
+STATED LIMIT (D31): messy:sorted_by_measure [band]
+     the change: the table is sorted by the whole-number measure `visits`
+     must hold: the run's own conclusion (its band, its roles, its counts): the table is sorted by the whole-number measure `visits`: a measure is a feature whatever the order of the rows. A stated limit (D31): every value is distinct and in the order of the file, so the first clause of the id-like rule (D19) excludes it
+     messy_roles: `visits` has role 'excluded', reason 'id_like'; expected 'feature', None
+     seen: rc=0, error=None, skill=0.7122, scheme=random, baseline=chance, model=linear-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'record_id': 'excluded/id_like'}
+     table: <scratch>\out\final\bat32b\work\data\messy__sorted_by_measure.csv
+     output: <scratch>\out\final\bat32b\work\runs\reference\messy__sorted_by_measure
+     again: python verify/battery.py verify/reference/mlprofessor --only messy:sorted_by_measure
+STATED LIMIT (D60): dup_noise:noise_added [stop-or-band]
+     the change: a column `noise_added` of normal noise is added
+     must hold: the stop `holdout_copies_in_training`, or no skill (the band of `noise_clf`, borrowed): every row is still present twice and the target is noise. By spec step 8a the rows are no longer copies and the run goes ahead: a copy that differs in one feature is not detected (D60)
+     band:noise_clf: skill is 0.6742, expected between -0.27 and 0.27 (the band of `noise_clf`)
+     seen: rc=0, error=None, skill=0.6742, scheme=random, baseline=chance, model=tree-0, holdout=375, copies=0, cap=0, share=None, base_share=None, folds=None, roles={'noise_added': 'feature/None'}
+     table: <scratch>\out\final\bat32b\work\data\dup_noise__noise_added.csv
+     output: <scratch>\out\final\bat32b\work\runs\reference\dup_noise__noise_added
+     again: python verify/battery.py verify/reference/mlprofessor --only dup_noise:noise_added
+STATED LIMIT (D76): random_walk:copy_noise_5pct [structure]
+     the change: a column `target_copy` is added: the target rescaled, with noise of 5% of the target's spread
+     must hold: the added column `target_copy` is excluded as a suspected leak, or at least named by a `strong_single_column` warning: a rescaled copy of the target with noise of 5% of the target's spread added. A stated limit (D76 point 2): above 1% such a column cannot be told from a strong feature measured at the same moment, and whether it is known before the outcome is the caller's to say
+     copy_told:target_copy: the added column `target_copy` is a feature (role 'feature', reason None) and no `strong_single_column` warning names it; skill 0.4896780229461525 against 'previous_value', model linear-0
+     seen: rc=0, error=None, skill=0.4897, scheme=time_ordered, baseline=previous_value, model=linear-0, holdout=375, copies=None, cap=0, share=0.0286, base_share=0.0417, folds=None, roles={'target_copy': 'feature/None'}
+     table: <scratch>\out\final\bat32b\work\data\random_walk__copy_noise_5pct.csv
+     output: <scratch>\out\final\bat32b\work\runs\reference\random_walk__copy_noise_5pct
+     again: python verify/battery.py verify/reference/mlprofessor --only random_walk:copy_noise_5pct
+STATED LIMIT (D55): int_stamps:missing_cell_date [structure]
+     the change: one cell of the time column, or of a date column, is emptied
+     must hold: the run's own conclusion (its band, its roles, its counts): a row with no time value is dropped and counted in `dropped_missing_time` (step 2)
+     u_largest_row: `headline.baseline_largest_row_share` is 0.025040227109897645; the judge computes 0.03031797829538831 for the headline baseline (row 760)
+     time_split: the holdout is 377 rows; the judge expects the 375 latest (2 unexpected, 0 missing)
+     walk_baselines: the training_mean baseline scores 209.50897449007985; the judge computes 208.75221214027528
+     int_keys: training and holdout timestamps, unique, form: (439, 148, False, 'numeric'); the judge counts (1124, 375, True, 'numeric')
+     seen: rc=0, error=None, skill=0.5384, scheme=time_ordered, baseline=previous_value, model=linear-0, holdout=377, copies=None, cap=0, share=0.0318, base_share=0.025, folds=None, roles={}
+     table: <scratch>\out\final\bat32b\work\data\int_stamps__missing_cell_date.csv
+     output: <scratch>\out\final\bat32b\work\runs\reference\int_stamps__missing_cell_date
+     again: python verify/battery.py verify/reference/mlprofessor --only int_stamps:missing_cell_date
+STATED LIMIT (D76): int_stamps:copy_noise_5pct [structure]
+     the change: a column `target_copy` is added: the target rescaled, with noise of 5% of the target's spread
+     must hold: the added column `target_copy` is excluded as a suspected leak, or at least named by a `strong_single_column` warning: a rescaled copy of the target with noise of 5% of the target's spread added. A stated limit (D76 point 2): above 1% such a column cannot be told from a strong feature measured at the same moment, and whether it is known before the outcome is the caller's to say
+     copy_told:target_copy: the added column `target_copy` is a feature (role 'feature', reason None) and no `strong_single_column` warning names it; skill 0.8018094664408543 against 'previous_value', model linear-0
+     seen: rc=0, error=None, skill=0.8018, scheme=time_ordered, baseline=previous_value, model=linear-0, holdout=375, copies=None, cap=0, share=0.0331, base_share=0.0304, folds=None, roles={'target_copy': 'feature/None'}
+     table: <scratch>\out\final\bat32b\work\data\int_stamps__copy_noise_5pct.csv
+     output: <scratch>\out\final\bat32b\work\runs\reference\int_stamps__copy_noise_5pct
+     again: python verify/battery.py verify/reference/mlprofessor --only int_stamps:copy_noise_5pct
+STATED LIMIT (D76): panel:copy_noise_5pct [structure]
+     the change: a column `target_copy` is added: the target rescaled, with noise of 5% of the target's spread
+     must hold: the added column `target_copy` is excluded as a suspected leak, or at least named by a `strong_single_column` warning: a rescaled copy of the target with noise of 5% of the target's spread added. A stated limit (D76 point 2): above 1% such a column cannot be told from a strong feature measured at the same moment, and whether it is known before the outcome is the caller's to say
+     copy_told:target_copy: the added column `target_copy` is a feature (role 'feature', reason None) and no `strong_single_column` warning names it; skill 0.4276190101071946 against 'previous_value', model linear-0
+     seen: rc=0, error=None, skill=0.4276, scheme=time_ordered, baseline=previous_value, model=linear-0, holdout=384, copies=None, cap=0, share=0.0309, base_share=0.0261, folds=None, roles={'target_copy': 'feature/None'}
+     table: <scratch>\out\final\bat32b\work\data\panel__copy_noise_5pct.csv
+     output: <scratch>\out\final\bat32b\work\runs\reference\panel__copy_noise_5pct
+     again: python verify/battery.py verify/reference/mlprofessor --only panel:copy_noise_5pct
+1229 tool runs, and 143 second calls by the judge, in 274 s at 32 side by side (7869 s of tool time): 37 gate runs as they are and 1192 pairs; 1398 pairs left out (--list says why)
+holds 1223; stated limit 6 of 6 listed; open 0 of 0 listed; on neither list and failing 0
+BATTERY: PASS (holds 1223, stated limit 6, open 0)

@@ -1,0 +1,14 @@
+| small-entity rows left among the training rows | folds | tree chosen, of 30 | skill when the linear model is chosen | when the tree is |
+|---|---|---|---|---|
+| 10 | every fold scored | 2 | -0.014 to +0.020 | -1.112 to -0.983 |
+| 20 | every fold scored | 0 | -0.017 to +0.020 |  |
+| 30 | every fold scored | 0 | -0.012 to +0.016 |  |
+| 50 | every fold scored | 0 | -0.016 to +0.011 |  |
+| 100 | every fold scored | 0 | -0.013 to +0.015 |  |
+| 200 | every fold scored | 0 | -0.022 to +0.009 |  |
+| 10 | the fold that trains on them not scored | 2 | -0.014 to +0.020 | -1.272 to -1.112 |
+| 20 | the fold that trains on them not scored | 0 | -0.017 to +0.020 |  |
+| 30 | the fold that trains on them not scored | 1 | -0.012 to +0.016 | -1.314 to -1.314 |
+| 50 | the fold that trains on them not scored | 0 | -0.016 to +0.011 |  |
+| 100 | the fold that trains on them not scored | 0 | -0.013 to +0.015 |  |
+| 200 | the fold that trains on them not scored | 0 | -0.022 to +0.009 |  |

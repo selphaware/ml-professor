@@ -1,11 +1,11 @@
 """Does the test suite catch what it is there to catch? (D39)
 
 The gate's self-test proves the gate against the reference implementation
-broken in thirty-one ways (F1 to F22, and the other forms F6b, F6c, F6d, F7b,
+broken in thirty-seven ways (F1 to F28, and the other forms F6b, F6c, F6d, F7b,
 F7c, F7d, F8b, F12b and F14b: D46, D49, D50, D57, D58, D62 to D66, D69 to
-D72). This script proves the test suite the same way, against those thirty-one
-and against thirty-nine smaller faults no gate check is relied on to catch (M1
-to M39; verify/reference/mlprofessor/_variant.py lists them all).
+D76). This script proves the test suite the same way, against those thirty-seven
+and against fifty-one smaller faults no gate check is relied on to catch (M1
+to M51; verify/reference/mlprofessor/_variant.py lists them all).
 
 For the known-good reference and for each variant it builds a throwaway
 project outside the repo and runs the whole suite there:
@@ -77,11 +77,13 @@ GATE_FILE = HERE / "smoke_test.py"
 GATE_DATA = "verify/artifacts/data/"
 CASES = (["good"] + [f"F{i}" for i in range(1, 10)] + ["F6b", "F6c", "F6d", "F7b", "F7c"]
          + ["F10", "F7d", "F8b"] + [f"F{i}" for i in range(11, 15)]
-         + ["F12b", "F14b"] + [f"F{i}" for i in range(15, 23)]
-         + [f"M{i}" for i in range(1, 40)])
+         + ["F12b", "F14b"] + [f"F{i}" for i in range(15, 29)]
+         + [f"M{i}" for i in range(1, 52)])
 PROBE = "test_mutation_check_probe.py"
 # Run by the loop against the application, never against a variant (see the docstring).
 NOT_RUN_HERE = "tests/test_judge_tools.py"
+# The strict form of the same, owned by the last task of the eighth pass (D74 point 7).
+NOT_RUN_HERE_EITHER = "tests/test_judge_tools_pass8.py"
 README_TESTS = re.compile(r"^test_readme\w*\.py::")
 RUN_SECONDS = 1800
 EXIT_OK, EXIT_FAIL, EXIT_HARNESS = 0, 1, 3
@@ -186,7 +188,7 @@ def run_suite(project, case):
     env.update(PYTHONDONTWRITEBYTECODE="1", PYTHONIOENCODING="utf-8")
     cmd = [sys.executable, "-m", "pytest", "-c", "tests/pytest.ini", "--rootdir", ".",
            "--confcutdir", "tests", "-p", "no:cacheprovider", "-q", "--junitxml", str(report),
-           "--ignore", NOT_RUN_HERE, "tests"]
+           "--ignore", NOT_RUN_HERE, "--ignore", NOT_RUN_HERE_EITHER, "tests"]
     try:
         proc = subprocess.run(cmd, cwd=str(project), env=env, capture_output=True, text=True,
                               encoding="utf-8", errors="replace", timeout=RUN_SECONDS)
@@ -281,8 +283,8 @@ def main(argv=None):
     if (REPO / NOT_RUN_HERE).is_file() or (args.overlay is not None
                                            and (Path(args.overlay) / Path(NOT_RUN_HERE).name)
                                            .is_file()):
-        print(f"  note: {NOT_RUN_HERE} is not run here: it runs the judge's other tools on "
-              "the application")
+        print(f"  note: {NOT_RUN_HERE} and {NOT_RUN_HERE_EITHER} are not run here: they run "
+              "the judge's other tools on the application")
     if problems:
         for problem in problems:
             print(f"HARNESS ERROR - this says nothing about the suite: {problem}")

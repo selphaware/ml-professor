@@ -1,0 +1,268 @@
+package E:\CODE\ml-professor\mlprofessor
+1229 runs; counts {'holds': 299, 'stated limit': 6, 'open': 0, 'fails': 924}; wall 1056.7 s at 16 side by side, 16148.7 s of tool time
+
+924 pairs fail and are on neither list (930 of the 1229 runs finished)
+
+pairs by rule (a pair is counted under every rule one of its failing claims has):
+  A1 baseline: 73
+  A2/A3b screen and order reading: 144
+  A3 statements: 922
+  A3 extreme value: 162
+  A5 identifier: 66
+  A6 no choice: 31
+  none: 0
+
+pairs by the set of rules they fail for:
+    570  A3 statements
+     68  A3 extreme value + A3 statements
+     62  A2/A3b screen and order reading + A3 extreme value + A3 statements
+     57  A2/A3b screen and order reading + A3 statements
+     54  A3 statements + A5 identifier
+     39  A1 baseline + A3 statements
+     19  A3 statements + A6 no choice
+     16  A1 baseline + A3 extreme value + A3 statements
+     10  A1 baseline + A2/A3b screen and order reading + A3 statements
+      6  A2/A3b screen and order reading + A3 statements + A6 no choice
+      6  A1 baseline + A2/A3b screen and order reading + A3 extreme value + A3 statements
+      5  A3 extreme value + A3 statements + A6 no choice
+      4  A3 extreme value + A3 statements + A5 identifier
+      2  A5 identifier
+      2  A1 baseline + A3 statements + A5 identifier
+      2  A2/A3b screen and order reading + A3 statements + A5 identifier
+      1  A3 statements + A5 identifier + A6 no choice
+      1  A2/A3b screen and order reading + A3 extreme value + A3 statements + A5 identifier
+
+failing claims by rule and claim:
+  A1 baseline | band: 31
+  A1 baseline | flat: 6
+  A1 baseline | walk_baselines: 67
+  A2/A3b screen and order reading | added: 52
+  A2/A3b screen and order reading | band: 36
+  A2/A3b screen and order reading | copy_told: 21
+  A2/A3b screen and order reading | leak_reg_roles: 3
+  A2/A3b screen and order reading | roles_as_base: 3
+  A2/A3b screen and order reading | same_as_base: 41
+  A2/A3b screen and order reading | walk_copy_roles: 85
+  A3 extreme value | band_or_named: 155
+  A3 extreme value | named: 85
+  A3 statements | u_largest_row: 922
+  A5 identifier | added: 28
+  A5 identifier | band: 4
+  A5 identifier | messy_roles: 35
+  A5 identifier | same_as_base: 28
+  A5 identifier | stop: 2
+  A6 no choice | band: 20
+  A6 no choice | fold_rule: 31
+
+pairs by rule, in full (the statements of A3 aside: every finished run lacks them):
+
+  A1 baseline: 73 pairs
+    base (1): walk_repeated
+    blank_line_added (1): walk_repeated
+    constant_added (1): walk_repeated
+    copy_5_cells_differ (1): walk_repeated
+    copy_and_target_sentinel (1): walk_repeated
+    copy_distinct (1): walk_repeated
+    copy_exact (1): walk_repeated
+    copy_negative_scale (1): walk_repeated
+    copy_one_cell_999999 (1): walk_repeated
+    date_sentinel_1900 (1): walk_repeated
+    feature_999999_early_row (1): walk_repeated
+    feature_999999_latest_row (1): walk_repeated
+    feature_renamed (1): walk_repeated
+    feature_renamed_awkward (1): walk_repeated
+    gap_2_row_repeated (3): random_walk, int_stamps, flat_tail
+    id_added_gaps (1): walk_repeated
+    id_added_int (1): walk_repeated
+    id_added_text (1): walk_repeated
+    missing_cell_date (1): walk_repeated
+    missing_cell_feature (1): walk_repeated
+    missing_cell_target (1): walk_repeated
+    noise_added (1): walk_repeated
+    number_sentinel_-999 (1): walk_repeated
+    number_sentinel_1e308 (1): walk_repeated
+    number_sentinel_999999 (1): walk_repeated
+    number_two_sentinels (1): walk_repeated
+    role_column_renamed (1): walk_repeated
+    row_repeated (7): random_walk, int_stamps, flat_tail, walk_repeated, walk_copy, walk_copy_cell, walk_late_cell
+    row_repeated_other_target (7): random_walk, int_stamps, flat_tail, walk_repeated, walk_copy, walk_copy_cell, walk_late_cell
+    rows_repeated_10pct (7): random_walk, int_stamps, flat_tail, walk_repeated, walk_copy, walk_copy_cell, walk_late_cell
+    rows_repeated_1pct (7): random_walk, int_stamps, flat_tail, walk_repeated, walk_copy, walk_copy_cell, walk_late_cell
+    rows_shuffled (1): walk_repeated
+    second_date_added (1): walk_repeated
+    stamp_shared (7): random_walk, int_stamps, flat_tail, walk_repeated, walk_copy, walk_copy_cell, walk_late_cell
+    target_-999_early_row (1): walk_repeated
+    target_-999_latest_row (1): walk_repeated
+    target_first (1): walk_repeated
+    target_renamed (1): walk_repeated
+    target_sentinel_-999 (1): walk_repeated
+    target_sentinel_999999 (1): walk_repeated
+    target_two_sentinels (1): walk_repeated
+
+  A2/A3b screen and order reading: 144 pairs
+    base (2): walk_copy, walk_copy_cell
+    blank_line_added (2): walk_copy, walk_copy_cell
+    constant_added (2): walk_copy, walk_copy_cell
+    copy_2pct_cells_altered (8): random_walk, int_stamps, flat_tail, panel, walk_repeated, walk_copy, walk_copy_cell, walk_late_cell
+    copy_5_cells_differ (9): random_walk, int_stamps, flat_tail, panel, dominant_entity, walk_repeated, walk_copy, walk_copy_cell, walk_late_cell
+    copy_and_target_sentinel (11): signal_reg, noise_reg, random_walk, int_stamps, flat_tail, panel, dominant_entity, walk_repeated, walk_copy, walk_copy_cell, walk_late_cell
+    copy_curve (7): random_walk, int_stamps, panel, walk_repeated, walk_copy, walk_copy_cell, walk_late_cell
+    copy_distinct (8): random_walk, int_stamps, panel, dominant_entity, walk_repeated, walk_copy, walk_copy_cell, walk_late_cell
+    copy_exact (8): random_walk, int_stamps, panel, dominant_entity, walk_repeated, walk_copy, walk_copy_cell, walk_late_cell
+    copy_negative_scale (8): random_walk, int_stamps, panel, dominant_entity, walk_repeated, walk_copy, walk_copy_cell, walk_late_cell
+    copy_noise_1pct (6): random_walk, int_stamps, panel, walk_repeated, walk_copy, walk_late_cell
+    copy_one_cell_999999 (8): random_walk, int_stamps, panel, dominant_entity, walk_repeated, walk_copy, walk_copy_cell, walk_late_cell
+    date_sentinel_1900 (2): walk_copy, walk_copy_cell
+    feature_999999_early_row (2): walk_copy, walk_copy_cell
+    feature_999999_latest_row (2): walk_copy, walk_copy_cell
+    feature_renamed (2): walk_copy, walk_copy_cell
+    feature_renamed_awkward (2): walk_copy, walk_copy_cell
+    id_added_gaps (2): walk_copy, walk_copy_cell
+    id_added_int (2): walk_copy, walk_copy_cell
+    id_added_text (2): walk_copy, walk_copy_cell
+    missing_cell_date (2): walk_copy, walk_copy_cell
+    missing_cell_feature (2): walk_copy, walk_copy_cell
+    missing_cell_target (2): walk_copy, walk_copy_cell
+    noise_added (2): walk_copy, walk_copy_cell
+    number_sentinel_-999 (2): walk_copy, walk_copy_cell
+    number_sentinel_1e308 (2): walk_copy, walk_copy_cell
+    number_sentinel_999999 (2): walk_copy, walk_copy_cell
+    number_two_sentinels (2): walk_copy, walk_copy_cell
+    role_column_renamed (2): walk_copy, walk_copy_cell
+    row_repeated (2): walk_copy, walk_copy_cell
+    row_repeated_other_target (2): walk_copy, walk_copy_cell
+    rows_repeated_10pct (2): walk_copy, walk_copy_cell
+    rows_repeated_1pct (2): walk_copy, walk_copy_cell
+    rows_shuffled (2): walk_copy, walk_copy_cell
+    second_date_added (2): walk_copy, walk_copy_cell
+    stamp_shared (2): walk_copy, walk_copy_cell
+    target_-999_early_row (2): walk_copy, walk_copy_cell
+    target_-999_latest_row (2): walk_copy, walk_copy_cell
+    target_first (2): walk_copy, walk_copy_cell
+    target_renamed (2): walk_copy, walk_copy_cell
+    target_sentinel_-999 (3): leak_reg, walk_copy, walk_copy_cell
+    target_sentinel_999999 (3): leak_reg, walk_copy, walk_copy_cell
+    target_two_sentinels (3): leak_reg, walk_copy, walk_copy_cell
+
+  A3 extreme value: 162 pairs
+    base (2): walk_copy_cell, walk_late_cell
+    blank_line_added (2): walk_copy_cell, walk_late_cell
+    constant_added (2): walk_copy_cell, walk_late_cell
+    copy_2pct_cells_altered (2): walk_copy_cell, walk_late_cell
+    copy_5_cells_differ (2): walk_copy_cell, walk_late_cell
+    copy_and_target_sentinel (9): signal_reg, noise_reg, leak_reg, random_walk, panel, walk_repeated, walk_copy, walk_copy_cell, walk_late_cell
+    copy_curve (2): walk_copy_cell, walk_late_cell
+    copy_distinct (2): walk_copy_cell, walk_late_cell
+    copy_exact (2): walk_copy_cell, walk_late_cell
+    copy_negative_scale (2): walk_copy_cell, walk_late_cell
+    copy_noise_1pct (1): walk_late_cell
+    copy_one_cell_999999 (2): walk_copy_cell, walk_late_cell
+    date_sentinel_1900 (2): walk_copy_cell, walk_late_cell
+    feature_999999_early_row (6): random_walk, panel, walk_repeated, walk_copy, walk_copy_cell, walk_late_cell
+    feature_999999_latest_row (6): random_walk, panel, walk_repeated, walk_copy, walk_copy_cell, walk_late_cell
+    feature_renamed (2): walk_copy_cell, walk_late_cell
+    feature_renamed_awkward (2): walk_copy_cell, walk_late_cell
+    id_added_gaps (2): walk_copy_cell, walk_late_cell
+    id_added_int (2): walk_copy_cell, walk_late_cell
+    id_added_text (2): walk_copy_cell, walk_late_cell
+    missing_cell_date (2): walk_copy_cell, walk_late_cell
+    missing_cell_feature (6): panel, dominant_entity, walk_repeated, walk_copy, walk_copy_cell, walk_late_cell
+    missing_cell_target (2): walk_copy_cell, walk_late_cell
+    noise_added (2): walk_copy_cell, walk_late_cell
+    number_sentinel_-999 (12): signal_clf, signal_reg, leak_reg, messy, random_walk, panel, dominant_entity, walk_repeated, walk_copy, walk_copy_cell, walk_late_cell, messy_shuffled
+    number_sentinel_1e308 (2): walk_copy_cell, walk_late_cell
+    number_sentinel_999999 (14): signal_clf, signal_reg, noise_reg, leak_reg, binary_numeric, messy, random_walk, panel, dominant_entity, walk_repeated, walk_copy, walk_copy_cell, walk_late_cell, messy_shuffled
+    number_two_sentinels (14): signal_clf, signal_reg, noise_reg, leak_reg, binary_numeric, messy, random_walk, panel, dominant_entity, walk_repeated, walk_copy, walk_copy_cell, walk_late_cell, messy_shuffled
+    role_column_renamed (2): walk_copy_cell, walk_late_cell
+    row_repeated (2): walk_copy_cell, walk_late_cell
+    row_repeated_other_target (2): walk_copy_cell, walk_late_cell
+    rows_repeated_10pct (2): walk_copy_cell, walk_late_cell
+    rows_repeated_1pct (2): walk_copy_cell, walk_late_cell
+    rows_shuffled (2): walk_copy_cell, walk_late_cell
+    second_date_added (2): walk_copy_cell, walk_late_cell
+    stamp_shared (2): walk_copy_cell, walk_late_cell
+    target_-999_early_row (6): random_walk, panel, walk_repeated, walk_copy, walk_copy_cell, walk_late_cell
+    target_-999_latest_row (3): walk_repeated, walk_copy_cell, walk_late_cell
+    target_first (2): walk_copy_cell, walk_late_cell
+    target_renamed (2): walk_copy_cell, walk_late_cell
+    target_sentinel_-999 (8): signal_reg, leak_reg, random_walk, panel, walk_repeated, walk_copy, walk_copy_cell, walk_late_cell
+    target_sentinel_999999 (8): signal_reg, noise_reg, leak_reg, panel, dominant_entity, walk_repeated, walk_copy_cell, walk_late_cell
+    target_two_sentinels (9): signal_reg, noise_reg, leak_reg, random_walk, panel, walk_repeated, walk_copy, walk_copy_cell, walk_late_cell
+
+  A5 identifier: 66 pairs
+    base (1): messy_shuffled
+    blank_line_added (1): messy_shuffled
+    constant_added (1): messy_shuffled
+    copy_distinct (1): messy_shuffled
+    copy_two_valued (1): messy_shuffled
+    date_sentinel_1900 (1): messy_shuffled
+    date_sentinel_9999 (1): messy_shuffled
+    date_sentinel_zero (1): messy_shuffled
+    feature_renamed (1): messy_shuffled
+    feature_renamed_awkward (1): messy_shuffled
+    id_added_gaps (30): signal_clf, signal_reg, noise_clf, noise_reg, imbalanced, leak, leak_reg, near_leak, binary_numeric, messy, dup_noise, time_blocks, time_blocks_gap, time_blocks_undeclared, random_walk, int_stamps, flat_tail, entities, panel, few_valued, dominant_entity, day_numbers, day_sentinel, few_valued_leak, quarter_entity, walk_repeated, walk_copy, walk_copy_cell, walk_late_cell, messy_shuffled
+    id_added_int (1): messy_shuffled
+    id_added_text (1): messy_shuffled
+    id_floats_shuffled (1): messy
+    id_shuffled_and_repeated (1): messy
+    missing_cell_date (1): messy_shuffled
+    missing_cell_feature (1): messy_shuffled
+    missing_cell_target (1): messy_shuffled
+    noise_added (1): messy_shuffled
+    number_sentinel_-999 (1): messy_shuffled
+    number_sentinel_1e308 (1): messy_shuffled
+    number_sentinel_999999 (1): messy_shuffled
+    number_two_sentinels (1): messy_shuffled
+    role_column_renamed (1): messy_shuffled
+    row_repeated (2): messy, messy_shuffled
+    rows_deleted_shuffled (1): messy
+    rows_shuffled (4): messy, walk_repeated, walk_copy, messy_shuffled
+    second_date_added (1): messy_shuffled
+    target_first (1): messy_shuffled
+    target_renamed (1): messy_shuffled
+    target_respelt (1): messy_shuffled
+    target_respelt_flipped (1): messy_shuffled
+    white_space_cells (1): messy_shuffled
+
+  A6 no choice: 31 pairs
+    base (1): dominant_entity
+    blank_line_added (1): dominant_entity
+    constant_added (1): dominant_entity
+    copy_5_cells_differ (1): dominant_entity
+    copy_and_target_sentinel (1): dominant_entity
+    copy_distinct (1): dominant_entity
+    copy_exact (1): dominant_entity
+    copy_negative_scale (1): dominant_entity
+    copy_one_cell_999999 (1): dominant_entity
+    feature_renamed (1): dominant_entity
+    feature_renamed_awkward (1): dominant_entity
+    id_added_gaps (1): dominant_entity
+    id_added_int (1): dominant_entity
+    id_added_text (1): dominant_entity
+    missing_cell_feature (1): dominant_entity
+    missing_cell_target (1): dominant_entity
+    noise_added (1): dominant_entity
+    number_sentinel_-999 (1): dominant_entity
+    number_sentinel_1e308 (1): dominant_entity
+    number_sentinel_999999 (1): dominant_entity
+    number_two_sentinels (1): dominant_entity
+    role_column_renamed (1): dominant_entity
+    row_repeated (1): dominant_entity
+    rows_shuffled (1): dominant_entity
+    second_date_added (1): dominant_entity
+    target_first (1): dominant_entity
+    target_renamed (1): dominant_entity
+    target_sentinel_-999 (1): dominant_entity
+    target_sentinel_999999 (1): dominant_entity
+    target_two_sentinels (1): dominant_entity
+    white_space_cells (1): dominant_entity
+
+  none: 0 pairs
+
+failing claims that fit no rule, in full: 0
+
+stated limit: 6: messy:sorted_by_measure (stated limit: D31); dup_noise:noise_added (stated limit: D60); random_walk:copy_noise_5pct (stated limit: D76); int_stamps:missing_cell_date (stated limit: D55); int_stamps:copy_noise_5pct (stated limit: D76); panel:copy_noise_5pct (stated limit: D76)
+
+open: 0: 
+
+listed and holds here: 0: 

@@ -1,0 +1,186 @@
+
+## Measures: none is an identifier
+
+| column | rows | old | dense50 | dense25 | dense10 | d50+ord |
+|---|---|---|---|---|---|---|
+| salary, rounded to the pound | 200 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| salary, rounded to the pound, the table sorted by it | 200 | 18 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 18 of 30 |
+| price in pence | 200 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| price in pence, the table sorted by it | 200 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| traded volume | 200 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| traded volume, the table sorted by it | 200 | 30 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 30 of 30 |
+| age in years | 200 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| age in years, the table sorted by it | 200 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| a count (Poisson, mean 40) | 200 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| a count (Poisson, mean 40), the table sorted by it | 200 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| a score from 0 to n | 200 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| a score from 0 to n, the table sorted by it | 200 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| a distinct measure, 10% of its range | 200 | 0 of 30 | 0 of 30 | 0 of 30 | 30 of 30 | 0 of 30 |
+| a distinct measure, 10% of its range, the table sorted by it | 200 | 30 of 30 | 0 of 30 | 0 of 30 | 30 of 30 | 30 of 30 |
+| a distinct measure, 33% of its range | 200 | 0 of 30 | 0 of 30 | 30 of 30 | 30 of 30 | 0 of 30 |
+| a distinct measure, 33% of its range, the table sorted by it | 200 | 30 of 30 | 0 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| salary, rounded to the pound | 2,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| salary, rounded to the pound, the table sorted by it | 2,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| price in pence | 2,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| price in pence, the table sorted by it | 2,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| traded volume | 2,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| traded volume, the table sorted by it | 2,000 | 10 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 10 of 30 |
+| age in years | 2,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| age in years, the table sorted by it | 2,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| a count (Poisson, mean 40) | 2,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| a count (Poisson, mean 40), the table sorted by it | 2,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| a score from 0 to n | 2,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| a score from 0 to n, the table sorted by it | 2,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| a distinct measure, 10% of its range | 2,000 | 0 of 30 | 0 of 30 | 0 of 30 | 30 of 30 | 0 of 30 |
+| a distinct measure, 10% of its range, the table sorted by it | 2,000 | 30 of 30 | 0 of 30 | 0 of 30 | 30 of 30 | 30 of 30 |
+| a distinct measure, 33% of its range | 2,000 | 0 of 30 | 0 of 30 | 30 of 30 | 30 of 30 | 0 of 30 |
+| a distinct measure, 33% of its range, the table sorted by it | 2,000 | 30 of 30 | 0 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| salary, rounded to the pound | 20,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| salary, rounded to the pound, the table sorted by it | 20,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| price in pence | 20,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| price in pence, the table sorted by it | 20,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| traded volume | 20,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| traded volume, the table sorted by it | 20,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| age in years | 20,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| age in years, the table sorted by it | 20,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| a count (Poisson, mean 40) | 20,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| a count (Poisson, mean 40), the table sorted by it | 20,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| a score from 0 to n | 20,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| a score from 0 to n, the table sorted by it | 20,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| a distinct measure, 10% of its range | 20,000 | 0 of 30 | 0 of 30 | 0 of 30 | 30 of 30 | 0 of 30 |
+| a distinct measure, 10% of its range, the table sorted by it | 20,000 | 30 of 30 | 0 of 30 | 0 of 30 | 30 of 30 | 30 of 30 |
+| a distinct measure, 33% of its range | 20,000 | 0 of 30 | 0 of 30 | 30 of 30 | 30 of 30 | 0 of 30 |
+| a distinct measure, 33% of its range, the table sorted by it | 20,000 | 30 of 30 | 0 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| salary, rounded to the pound | 100,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| salary, rounded to the pound, the table sorted by it | 100,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| price in pence | 100,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| price in pence, the table sorted by it | 100,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| traded volume | 100,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| traded volume, the table sorted by it | 100,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| age in years | 100,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| age in years, the table sorted by it | 100,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| a count (Poisson, mean 40) | 100,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| a count (Poisson, mean 40), the table sorted by it | 100,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| a score from 0 to n | 100,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| a score from 0 to n, the table sorted by it | 100,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| a distinct measure, 10% of its range | 100,000 | 0 of 30 | 0 of 30 | 0 of 30 | 30 of 30 | 0 of 30 |
+| a distinct measure, 10% of its range, the table sorted by it | 100,000 | 30 of 30 | 0 of 30 | 0 of 30 | 30 of 30 | 30 of 30 |
+| a distinct measure, 33% of its range | 100,000 | 0 of 30 | 0 of 30 | 30 of 30 | 30 of 30 | 0 of 30 |
+| a distinct measure, 33% of its range, the table sorted by it | 100,000 | 30 of 30 | 0 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+
+## Identifiers
+
+| column | rows | old | dense50 | dense25 | dense10 | d50+ord |
+|---|---|---|---|---|---|---|
+| consecutive, in file order | 200 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| consecutive, in order, 1% blank | 200 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| consecutive, shuffled | 200 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| consecutive, shuffled, 1% blank | 200 | 0 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| 3% of the rows deleted, in order | 200 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| 3% of the rows deleted, shuffled | 200 | 0 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| consecutive, one row repeated, in order | 200 | 0 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| consecutive, one row repeated, shuffled | 200 | 0 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| consecutive, 1% of the rows repeated, in order | 200 | 0 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| consecutive, 1% of the rows repeated, shuffled | 200 | 0 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| consecutive, 5% of the rows repeated, in order | 200 | 0 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| consecutive, 5% of the rows repeated, shuffled | 200 | 0 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| consecutive, 10% of the rows repeated, in order | 200 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| consecutive, 10% of the rows repeated, shuffled | 200 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| every row present twice, shuffled | 200 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| 30% of the records gone, in order | 200 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| 30% of the records gone, shuffled | 200 | 0 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| 60% of the records gone, in order | 200 | 30 of 30 | 0 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| 60% of the records gone, shuffled | 200 | 0 of 30 | 0 of 30 | 30 of 30 | 30 of 30 | 0 of 30 |
+| increasing, gaps of 1 to 3, in order | 200 | 30 of 30 | 15 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| increasing, gaps of 1 to 3, shuffled | 200 | 0 of 30 | 15 of 30 | 30 of 30 | 30 of 30 | 15 of 30 |
+| increasing, gaps of 1 to 10, in order | 200 | 30 of 30 | 0 of 30 | 0 of 30 | 30 of 30 | 30 of 30 |
+| increasing, gaps of 1 to 10, shuffled | 200 | 0 of 30 | 0 of 30 | 0 of 30 | 30 of 30 | 0 of 30 |
+| increasing, steps of 7, in order | 200 | 30 of 30 | 0 of 30 | 0 of 30 | 30 of 30 | 30 of 30 |
+| increasing, steps of 7, shuffled | 200 | 0 of 30 | 0 of 30 | 0 of 30 | 30 of 30 | 0 of 30 |
+| increasing, steps of 1,000, in order | 200 | 30 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 30 of 30 |
+| increasing, steps of 1,000, shuffled | 200 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| random, unordered (nine digits) | 200 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| consecutive, in file order | 2,000 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| consecutive, in order, 1% blank | 2,000 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| consecutive, shuffled | 2,000 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| consecutive, shuffled, 1% blank | 2,000 | 0 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| 3% of the rows deleted, in order | 2,000 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| 3% of the rows deleted, shuffled | 2,000 | 0 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| consecutive, one row repeated, in order | 2,000 | 0 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| consecutive, one row repeated, shuffled | 2,000 | 0 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| consecutive, 1% of the rows repeated, in order | 2,000 | 0 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| consecutive, 1% of the rows repeated, shuffled | 2,000 | 0 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| consecutive, 5% of the rows repeated, in order | 2,000 | 0 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| consecutive, 5% of the rows repeated, shuffled | 2,000 | 0 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| consecutive, 10% of the rows repeated, in order | 2,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| consecutive, 10% of the rows repeated, shuffled | 2,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| every row present twice, shuffled | 2,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| 30% of the records gone, in order | 2,000 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| 30% of the records gone, shuffled | 2,000 | 0 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| 60% of the records gone, in order | 2,000 | 30 of 30 | 0 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| 60% of the records gone, shuffled | 2,000 | 0 of 30 | 0 of 30 | 30 of 30 | 30 of 30 | 0 of 30 |
+| increasing, gaps of 1 to 3, in order | 2,000 | 30 of 30 | 15 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| increasing, gaps of 1 to 3, shuffled | 2,000 | 0 of 30 | 15 of 30 | 30 of 30 | 30 of 30 | 15 of 30 |
+| increasing, gaps of 1 to 10, in order | 2,000 | 30 of 30 | 0 of 30 | 0 of 30 | 30 of 30 | 30 of 30 |
+| increasing, gaps of 1 to 10, shuffled | 2,000 | 0 of 30 | 0 of 30 | 0 of 30 | 30 of 30 | 0 of 30 |
+| increasing, steps of 7, in order | 2,000 | 30 of 30 | 0 of 30 | 0 of 30 | 30 of 30 | 30 of 30 |
+| increasing, steps of 7, shuffled | 2,000 | 0 of 30 | 0 of 30 | 0 of 30 | 30 of 30 | 0 of 30 |
+| increasing, steps of 1,000, in order | 2,000 | 30 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 30 of 30 |
+| increasing, steps of 1,000, shuffled | 2,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| random, unordered (nine digits) | 2,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| consecutive, in file order | 20,000 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| consecutive, in order, 1% blank | 20,000 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| consecutive, shuffled | 20,000 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| consecutive, shuffled, 1% blank | 20,000 | 0 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| 3% of the rows deleted, in order | 20,000 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| 3% of the rows deleted, shuffled | 20,000 | 0 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| consecutive, one row repeated, in order | 20,000 | 0 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| consecutive, one row repeated, shuffled | 20,000 | 0 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| consecutive, 1% of the rows repeated, in order | 20,000 | 0 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| consecutive, 1% of the rows repeated, shuffled | 20,000 | 0 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| consecutive, 5% of the rows repeated, in order | 20,000 | 0 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| consecutive, 5% of the rows repeated, shuffled | 20,000 | 0 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| consecutive, 10% of the rows repeated, in order | 20,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| consecutive, 10% of the rows repeated, shuffled | 20,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| every row present twice, shuffled | 20,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| 30% of the records gone, in order | 20,000 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| 30% of the records gone, shuffled | 20,000 | 0 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| 60% of the records gone, in order | 20,000 | 30 of 30 | 0 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| 60% of the records gone, shuffled | 20,000 | 0 of 30 | 0 of 30 | 30 of 30 | 30 of 30 | 0 of 30 |
+| increasing, gaps of 1 to 3, in order | 20,000 | 30 of 30 | 15 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| increasing, gaps of 1 to 3, shuffled | 20,000 | 0 of 30 | 15 of 30 | 30 of 30 | 30 of 30 | 15 of 30 |
+| increasing, gaps of 1 to 10, in order | 20,000 | 30 of 30 | 0 of 30 | 0 of 30 | 30 of 30 | 30 of 30 |
+| increasing, gaps of 1 to 10, shuffled | 20,000 | 0 of 30 | 0 of 30 | 0 of 30 | 30 of 30 | 0 of 30 |
+| increasing, steps of 7, in order | 20,000 | 30 of 30 | 0 of 30 | 0 of 30 | 30 of 30 | 30 of 30 |
+| increasing, steps of 7, shuffled | 20,000 | 0 of 30 | 0 of 30 | 0 of 30 | 30 of 30 | 0 of 30 |
+| increasing, steps of 1,000, in order | 20,000 | 30 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 30 of 30 |
+| increasing, steps of 1,000, shuffled | 20,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| random, unordered (nine digits) | 20,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| consecutive, in file order | 100,000 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| consecutive, in order, 1% blank | 100,000 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| consecutive, shuffled | 100,000 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| consecutive, shuffled, 1% blank | 100,000 | 0 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| 3% of the rows deleted, in order | 100,000 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| 3% of the rows deleted, shuffled | 100,000 | 0 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| consecutive, one row repeated, in order | 100,000 | 0 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| consecutive, one row repeated, shuffled | 100,000 | 0 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| consecutive, 1% of the rows repeated, in order | 100,000 | 0 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| consecutive, 1% of the rows repeated, shuffled | 100,000 | 0 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| consecutive, 5% of the rows repeated, in order | 100,000 | 0 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| consecutive, 5% of the rows repeated, shuffled | 100,000 | 0 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| consecutive, 10% of the rows repeated, in order | 100,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| consecutive, 10% of the rows repeated, shuffled | 100,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| every row present twice, shuffled | 100,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| 30% of the records gone, in order | 100,000 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| 30% of the records gone, shuffled | 100,000 | 0 of 30 | 30 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| 60% of the records gone, in order | 100,000 | 30 of 30 | 0 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| 60% of the records gone, shuffled | 100,000 | 0 of 30 | 0 of 30 | 30 of 30 | 30 of 30 | 0 of 30 |
+| increasing, gaps of 1 to 3, in order | 100,000 | 30 of 30 | 17 of 30 | 30 of 30 | 30 of 30 | 30 of 30 |
+| increasing, gaps of 1 to 3, shuffled | 100,000 | 0 of 30 | 17 of 30 | 30 of 30 | 30 of 30 | 17 of 30 |
+| increasing, gaps of 1 to 10, in order | 100,000 | 30 of 30 | 0 of 30 | 0 of 30 | 30 of 30 | 30 of 30 |
+| increasing, gaps of 1 to 10, shuffled | 100,000 | 0 of 30 | 0 of 30 | 0 of 30 | 30 of 30 | 0 of 30 |
+| increasing, steps of 7, in order | 100,000 | 30 of 30 | 0 of 30 | 0 of 30 | 30 of 30 | 30 of 30 |
+| increasing, steps of 7, shuffled | 100,000 | 0 of 30 | 0 of 30 | 0 of 30 | 30 of 30 | 0 of 30 |
+| increasing, steps of 1,000, in order | 100,000 | 30 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 30 of 30 |
+| increasing, steps of 1,000, shuffled | 100,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |
+| random, unordered (nine digits) | 100,000 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 | 0 of 30 |

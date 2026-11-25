@@ -1,0 +1,10 @@
+datasets 30 -> 35 | runs 38 -> 43 | fast runs 33 -> 38 | checks 47 -> 53 | failure modes 31 -> 37
+order of the datasets and of the runs kept: True
+every dataset seed kept: True
+every table byte for byte: True
+every run kept: True
+every band kept: True | new bands: {'dominant_entity': (-0.03, 0.02)}
+the runs of every check kept: True
+new datasets and their seeds: {'walk_repeated': 1145, 'walk_copy': 1146, 'walk_copy_cell': 1147, 'walk_late_cell': 1148, 'messy_shuffled': 1149}
+new runs: {'walk_repeated': ('walk_repeated', ['--time-col', 'date', '--no-entities']), 'walk_copy': ('walk_copy', ['--time-col', 'date', '--no-entities']), 'walk_copy_cell': ('walk_copy_cell', ['--time-col', 'date', '--no-entities']), 'walk_late_cell': ('walk_late_cell', ['--time-col', 'date', '--no-entities']), 'messy_shuffled': ('messy_shuffled', ['--no-time-order', '--no-entities'])}
+new checks: {'time.previous_value_at_repeats': (['walk_repeated'], ['F23']), 'leak.copy_excluded_under_time': (['walk_copy'], ['F24']), 'leak.excluded_despite_extreme_target': (['walk_copy_cell'], ['F25']), 'result.largest_row_reported': (['walk_late_cell'], ['F26']), 'data.identifier_survives_shuffle': (['messy_shuffled'], ['F27']), 'groups.choice_not_made': (['dominant_entity'], ['F28'])}

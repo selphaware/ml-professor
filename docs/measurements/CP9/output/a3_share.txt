@@ -1,0 +1,17 @@
+| rows | holdout rows | errors | model: largest row's share | baseline: largest row's share | either above 0.5 | either above 0.25 |
+|---|---|---|---|---|---|---|
+| 100 | 25 | normal | 0.129 to 0.381 (mean 0.219) | 0.127 to 0.365 (mean 0.213) | 0 of 30 | 11 of 30 |
+| 100 | 25 | t3 | 0.164 to 0.565 (mean 0.315) | 0.136 to 0.371 (mean 0.223) | 2 of 30 | 23 of 30 |
+| 100 | 25 | lognormal | 0.162 to 0.977 (mean 0.456) | 0.102 to 0.980 (mean 0.499) | 14 of 30 | 25 of 30 |
+| 200 | 50 | normal | 0.076 to 0.306 (mean 0.136) | 0.078 to 0.265 (mean 0.141) | 0 of 30 | 2 of 30 |
+| 200 | 50 | t3 | 0.106 to 0.784 (mean 0.256) | 0.063 to 0.550 (mean 0.169) | 4 of 30 | 9 of 30 |
+| 200 | 50 | lognormal | 0.076 to 0.987 (mean 0.453) | 0.067 to 0.984 (mean 0.484) | 14 of 30 | 26 of 30 |
+| 400 | 100 | normal | 0.051 to 0.132 (mean 0.081) | 0.044 to 0.129 (mean 0.078) | 0 of 30 | 0 of 30 |
+| 400 | 100 | t3 | 0.091 to 0.826 (mean 0.244) | 0.048 to 0.464 (mean 0.125) | 3 of 30 | 8 of 30 |
+| 400 | 100 | lognormal | 0.108 to 0.943 (mean 0.426) | 0.100 to 0.937 (mean 0.422) | 9 of 30 | 24 of 30 |
+| 1,000 | 250 | normal | 0.026 to 0.066 (mean 0.036) | 0.023 to 0.056 (mean 0.035) | 0 of 30 | 0 of 30 |
+| 1,000 | 250 | t3 | 0.034 to 0.968 (mean 0.156) | 0.029 to 0.906 (mean 0.088) | 1 of 30 | 3 of 30 |
+| 1,000 | 250 | lognormal | 0.092 to 0.886 (mean 0.329) | 0.093 to 0.872 (mean 0.317) | 8 of 30 | 16 of 30 |
+| 4,000 | 1000 | normal | 0.014 to 0.032 (mean 0.021) | 0.014 to 0.030 (mean 0.021) | 0 of 30 | 0 of 30 |
+| 4,000 | 1000 | t3 | 0.037 to 0.527 (mean 0.130) | 0.019 to 0.290 (mean 0.054) | 1 of 30 | 2 of 30 |
+| 4,000 | 1000 | lognormal | 0.078 to 0.657 (mean 0.272) | 0.069 to 0.621 (mean 0.257) | 3 of 30 | 16 of 30 |

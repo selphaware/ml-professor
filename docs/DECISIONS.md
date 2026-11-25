@@ -1160,3 +1160,97 @@ pass 7 (rejected: each changes a pinned rule and needs its own
 measurement, and pass 7 is already large).
 Consequence: one more pass than D71 planned. D56's closing rule gains a
 condition: the battery lists nothing as open.
+
+## D74 — 2026-11-24 — Rulings on the plan of pass 8 (CP9) (completes D73; amends D10, D11, D19, D24 and D71)
+Decision: (1) The previous-value baseline at repeated timestamps is
+approved as measured; the panel warning names the baseline the run used.
+(2) The leak screen's repair is approved as measured and counts as a repair
+under D71: extreme training targets set aside from the screen, a robust
+straight line beside the tree, the worst 1% of rows left unscored for the
+exclusion cut-off only, and for classification the column read directly.
+Under time order a copy of the target with more than 1% of its cells
+altered, a copy with small noise, and a curve of the target must each at
+least be warned about; if the repaired screen cannot, each column is also
+read with the chosen model, for the warning only. (3) Extreme values: the
+share of the squared error that the largest row carries is reported for the
+holdout and over the selection folds, for the model and the baseline, with
+a warning above 0.5. A second warning names a numeric column or the target
+when it holds a value far outside all its other values. That warning is an
+exception to D71's bar on new rules, made on the measurement below; it
+changes no number, and is built only if the harness measures it quiet on
+heavy-tailed columns. (4) Rows are handed to a fit in time order, ties in
+file order. (5) The id-like rule keeps D19's clause (every value distinct,
+and consecutive or ordered in file order) and gains a second: more than 95%
+of the values distinct and filling at least half of their range, whatever
+the row order. (6) Under the grouped scheme, when the folds are too small
+to choose between configurations, as the harness measured it, no choice is
+made: every fold stays scored, the first configuration is used, and a
+warning says so. (7) `tests/test_judge_tools.py` is loosened under D59 to
+accept exactly the failures the plan lists, and a strict new test is owned
+by the pass's last task. (8) The names the harness proposed are approved.
+Alternatives considered: for (3), the holdout statement alone, as CP9
+asked (rejected on measurement: it named the row in 475 of 482 cases where
+the cell was in the holdout and in 57 of 1,530 where it was among the
+training rows; one target cell of 999999 in training gave skill 1.0000 on
+noise with no warning); a cut-off of 0.25 (rejected: it fired on 11 of 30
+clean tables of 100 rows). For (5), the new clause in place of D19's
+(rejected: an identifier that steps by 3 or more would no longer be
+caught). For (6), leaving a fold with too few training rows unscored, as
+CP9 started from (rejected on measurement: it changed the choice on 0 of 30
+tables; the fault is four folds that validate on two to four rows).
+Consequence: a whole-number measure in a table sorted by it is still
+wrongly excluded, as D31 accepted. Both open lists are empty after this
+pass, or the pass does not go ahead.
+
+## D75 — 2026-11-24 — The caller sets the iteration cap (amends D25; adds to D67)
+Decision: `profile()` gains an argument `max_iter`, default 1,000, and the
+command line `--max-iter`. It is a positive whole number; any other value
+is an input error. It is the iteration cap of every model that iterates
+until it converges: logistic regression (fixed at 1,000 until now), ridge
+regression where its solver iterates, and the neural network family when it
+is added. It does not replace the number of trees of gradient boosting,
+which scikit-learn also calls `max_iter`: that stays on the pinned grid of
+D25, and the output says so. Trees and forests have no such setting. The
+value used is recorded in the output. When a configuration stops at the cap
+without converging, a warning names it. It is built with the change that
+adds the neural network family, after the hardening passes close.
+Alternatives considered: the value also replacing boosting's tree count
+(the owner chose against it: at the default it would change every
+full-profile result, take boosting 3 to 10 times longer, and with early
+stopping off overfit more); leaving the cap fixed, as D25 had it.
+Consequence: a twelfth parameter. At the default every result is identical
+to today's. The harness stage of that change first reports what the tool
+does today when the cap is hit.
+
+## D76 — 2026-11-24 — Second rulings on the plan of pass 8 (CP9) (amends D74 points 2 and 3, D30 and D67)
+Decision: (1) The warning tier of D30 gains a second reading, in place of
+the chosen-model reading of D74: with the training rows put in a column's
+order, when the target moves the other way between at most 10% of
+neighbouring rows, and the column does not follow the previous value as
+closely, the existing `strong_single_column` warning names the column. It
+is a warning only and excludes nothing. (2) Under time order a copy of the
+target with noise of up to 1% of the target's spread must be excluded or
+warned about. Larger noise is a stated limit: such a column cannot be told
+from a strong feature measured at the same moment, and whether it is known
+before the outcome is the caller's to say (the fixed limitation on
+look-ahead). (3) The extreme-value warning, code `extreme_value`, need not
+name a value that is not far outside its column and moves no number; the
+harness re-places its cut-off with margin on both sides of the measured gap
+and reports it. (4) A lag excluded as a suspected leak under
+`time_col=False` is the rule applied as written, and stays a stated limit
+(D31). (5) A caller's override of column roles is built with the changes
+that follow the hardening passes, beside the package and the neural
+network family. (6) The battery's stated-limit list holds exactly four,
+each with its decision: a copy that differs by an added column (D60); a
+whole-number time column with an empty cell (D55); a distinct whole-number
+measure in a table sorted by it (D31); a copy of the target with noise
+above 1% under time order (this decision). A pair that asserts an outcome
+known to be wrong is never counted as holding.
+Alternatives considered: for (1), reading each column with the chosen
+model, as D74 had it (rejected on measurement: silent on 29 of 30 altered
+copies and on 27 to 30 of 30 curves). For (2), a rule that warns on noisy
+copies (rejected: the harness found none that would not warn on every
+strong legitimate feature under time order).
+Consequence: with a sharper screen more legitimate columns that predict
+98% or more of the target are excluded, which is why the override moves
+forward.

@@ -188,6 +188,48 @@ loosened by the tests stage so that it passes before and after (D59:
     generated-table test on the build. Fix what fails on neither of their
     lists; leave what they list as open or as a stated limit.
 
+### Eighth pass, after the judge's two other tools (tasks T61 to T68)
+
+The two tools found, on their first run, faults that no review had (D73). This
+pass builds each as D74 and D76 rule, and nothing is left open. Seven earlier
+cases were loosened by the tests stage (D59): they pinned the previous value
+as it was at repeated timestamps. `tests/test_judge_tools.py` accepts exactly
+the failures the plan lists until the pass is built; the strict test of the
+two tools belongs to the last task. `plan/tasks.json` has the order and which
+task owns which check. The rules, in the order of the spec:
+
+43. **A whole-number identifier in any row order.** Rule 8b of step 5 keeps
+    D19's clause and gains a second: more than 95% of the values distinct, and
+    the distinct values filling at least half of their range. Count the range
+    in whole numbers of any size.
+44. **The leak screen's second readers.** Beside the tree: a line through the
+    median of paired slopes for a numeric column of a regression, and the
+    column read directly, with no minimum leaf, in a classification. The
+    better reader counts; against every baseline, the lower.
+45. **Rows set aside, rows left unscored.** A training row whose target is
+    more than 10 median deviations from the median, or 10 median steps from
+    its previous value, leaves the whole screen when such rows are at most 1%
+    of the training rows. Then two readings of one measurement: 0.98 with the
+    worst 1% unscored, 0.90 with every row.
+46. **The order reading.** For a numeric column of a regression whose skill
+    has a value below 0.90: two conditions, at least 20 pairs, a warning only.
+47. **No choice where the folds cannot choose.** Under the grouped scheme,
+    count the folds' training and validation rows; rank in configuration
+    order; one `selection_not_made` warning. The fallback of step 10 follows
+    the same order.
+48. **The order of the rows of a fit.** Time order under time order, the rows
+    of one timestamp in file order; otherwise file order.
+49. **The previous value at repeated timestamps.** With no entity column, the
+    mean target of the timestamp `gap + 1` distinct timestamps before, for
+    the headline and the screen alike. Write the panel warning last: it names
+    the baseline the run used.
+50. **The largest row and the extreme value.** The share of each squared
+    error that its largest row carries, in `headline`, `cv` and every record
+    of `models`; one warning for each statement above 0.5; one `extreme_value`
+    warning for each value far outside its column. No number changes.
+51. **The README, then the judge's two other tools.** Both must end with
+    nothing failing and nothing open.
+
 ## Rules that keep the number honest
 
 - The holdout rows are chosen before anything is fitted, and nothing fitted
@@ -212,7 +254,9 @@ loosened by the tests stage so that it passes before and after (D59:
   receives, the matrix. A header cell is blank only when it is empty; one that
   holds white space is a name like any other.
 - The holdout never chooses. If the chosen configuration raises on the final
-  fit or on the holdout, the next best by `cv_mean` takes its place; a holdout
+  fit or on the holdout, the next in the ranking takes its place (the next
+  best by `cv_mean`; the next in configuration order where step 9 made no
+  choice, D74); a holdout
   score is never a reason to pass one over, and a failed one keeps the fold
   scores it earned.
 - Every feature listed in the output reaches the models under a name of its
@@ -297,6 +341,29 @@ loosened by the tests stage so that it passes before and after (D59:
   more, and it is used wherever the previous value is: the headline baseline
   and the leak screen. Forget it in the screen and the lag of a persistent
   panel is thrown out as a leak.
+- With no entity column the previous value is the mean target of the
+  timestamp before (D74). One row per timestamp is the case of one row. Never
+  drop the baseline because timestamps repeat: one row written twice then
+  turns a random walk into skill 0.99, or throws its lag out as a leak.
+- A tree is not enough to read a column (D74). It cannot predict beyond the
+  targets it was fitted on, it sees no split in a column whose values lie
+  within 1e-7 of each other, and a leaf of five rows cannot hold a class of
+  fewer than five. So a second reader stands beside it, and the better one
+  counts.
+- One row can be most of a squared error, and a mean is no defence against
+  it. In the screen, find such rows with medians, and take a row that is set
+  aside out of every fold's training rows as well as out of the sums: left in
+  a fold's mean it makes every column look like a leak. In the result, say
+  which row carries the error and which value lies far outside its column,
+  and leave both in every number (D74, D76).
+- The warning tier reads every row; only the cut-off that excludes leaves the
+  worst 1% unscored. The order reading warns and never excludes, and it is
+  not taken of a column whose skill has no value (D36, D76).
+- Where the folds cannot choose, do not choose (D74). A fold of ten training
+  rows that the other four validate on decides nothing: score every fold,
+  report it, and use the first configuration.
+- Hand a fit its rows in one fixed order (D74). A forest draws its rows by
+  position, so the same rows in another order are another model.
 - A copy is an exact copy (D49, D60): the same value in every feature and
   the same target. That is what step 8a counts, and it did not change. A copy
   that differs in any column is not detected in this version, and the README
@@ -333,8 +400,9 @@ loosened by the tests stage so that it passes before and after (D59:
   the application and the reference disagreeing, the spec says which is
   wrong. If it says neither, stop and report the table: do not copy the
   reference's behaviour.
-- What the judge's tools list as open is owned by another pass (D73). Do not
-  fix it on the way past: each needs a decision that changes a pinned rule.
+- Nothing is open since the eighth pass (D73, D74). What the judge's tools
+  list as a stated limit is accepted by a decision: do not add a rule for it
+  on the way past. A failure on neither list is yours.
 - Read a column once. What an object column is, is decided over all its loaded
   rows; a second reading over the usable rows only lets a cell that should
   stop the run slip out with its row.
@@ -361,16 +429,16 @@ loosened by the tests stage so that it passes before and after (D59:
 | A bare `UnicodeDecodeError`, or the wrong line taken as the header | The header line is read outside the handler that turns a decode error into `input_error`; or leading lines were skipped with `str.strip()`, which also removes a form feed and a no-break space, where pandas skips only spaces and tabs. | The loader's own reading of the header line. |
 | Fold scores look better than the holdout score, by a lot | Preprocessing was fitted once on all training rows and reused inside the folds, so each validation block leaked into its own training statistics. | The fold loop: `fit` must be called on the fold's training rows. |
 | `leak.excluded` fails with skill near 1 | The leak screen is missing, runs after the model, or screens on rows that include the holdout (F2). | Step 8 of the spec: the screen runs first, on training rows, with the selection folds. |
-| Every strong feature is flagged as a leak under time order | The screen uses random folds, or measures skill against the training mean only. Under time order it uses the expanding folds, and for regression with unique timestamps the previous-value baseline. | The screen's folds and baseline. |
+| Every strong feature is flagged as a leak under time order | The screen uses random folds, or measures skill against the training mean only. Under time order it uses the expanding folds, and for regression the previous-value baseline, with unique timestamps and with repeated ones (D74). | The screen's folds and baselines. |
 | An id column is among the features and skill is odd | The id-like rule was applied after the row cap, or by dtype: one blank cell turns an integer id into `float64`. | Roles are decided before the cap, by value. |
-| A real integer measure (price, volume) is excluded as id-like | The 95%-distinct rule was applied to a number column. It applies to text only (D19). | The whole-number rule: distinct, and consecutive or strictly ordered. |
+| A real integer measure (price, volume) is excluded as id-like | The 95%-distinct rule was applied to a number column on its own. For whole numbers it is half of a clause: the distinct values must also fill at least half of their range (D74). | Rule 8b: distinct, and consecutive or strictly ordered; or more than 95% distinct and filling half of the range. A distinct measure in a table sorted by it is still caught: a stated limit (D31). |
 | `task.binary_numeric` fails: 0/1 target treated as regression | The task was read from the dtype. With a blank cell a 0/1 column loads as `float64` (F5). | Count distinct values; ignore the type. |
 | `data.rows_reconcile` fails by a few rows | `dropna()` somewhere, or blank lines counted as rows, or rows dropped before `loaded` was counted (F6). | The first line that changes the number of rows. |
 | `spend`-like column is all missing or became categories | Coercion was done with `astype(float)`, or not at all. Use `to_numeric(errors="coerce")`, count what failed, warn (F6). | Column typing. |
 | `time.no_skill_on_blocks` fails with skill near 1 | The split is shuffled although a time column was declared, or the file order was used instead of the time column (F7). | The split under time order; the sort. |
 | `time.gap_applied` fails on the folds | The gap was removed before the holdout but not before each validation block (F7). | `validation.folds[].gap_rows`. |
 | A day-first date column runs and gives a result | The time column went through pandas' lenient parser. Text must match ISO 8601 with the year first, or the run stops (F7). | Time column validation. |
-| `time.persistence_baseline` fails with skill near 1 | The regression baseline is the training mean only (F8). | Baselines under time order with unique timestamps. |
+| `time.persistence_baseline` fails with skill near 1 | The regression baseline is the training mean only (F8). | Baselines under time order (step 11). |
 | `model.headline_recomputed` fails | The headline is a cross-validation score (F3), or accuracy (F4), or was computed from other predictions than the ones written. | The variable assigned to `headline.score`. |
 | `model.signal_reg` fails with skill near -1 | The worst configuration was chosen: squared error is lower-is-better. | The comparison in selection. |
 | `output.deterministic` fails | A clock value outside `meta.timing`, an unseeded generator, a set written in iteration order, or a library thread pool left at its default. | Diff the two files. |
@@ -391,7 +459,7 @@ loosened by the tests stage so that it passes before and after (D59:
 | Skill near 0.9 on a table that should have none, with a `duplicate_rows` warning; or `data.holdout_copies_stop` fails with exit 0 | Rows are present more than once, so holdout rows have copies among the training rows and a tree recalls them (F9). | Spec step 8a: count the copies after the leak screen, before any fit, and stop with `holdout_copies_in_training` when the rule is met. |
 | `time.undeclared_warns` fails with exit 2 and "unrecognized arguments: --duplicates keep" | The command line does not take `--duplicates` yet. That run passes `keep` because every one of its holdout rows has a copy once the date column is excluded (D53). | The command line and `profile()`: the tenth parameter, `duplicates`. |
 | `holdout_copies_in_training` on a table with a date column and no repeated rows | The date was not declared, so it is excluded, and rows that differ only in their date are copies. The message names the column. | Not a fault: the caller declares `time_col`, or passes `duplicates="keep"`. |
-| `time.integer_keys_distinct` fails with 439 and 148 timestamps where the gate counts 1,125 and 375; or a random walk scores skill near 1 with no `previous_value` baseline | Whole-number time keys went through float64, which holds only every 256th whole number at 1.7e18 (F7c). | Where the time column becomes keys: integers above 2**53 stay `int64` or `uint64`, through the cap, the split, the previous value and the bootstrap blocks. |
+| `time.integer_keys_distinct` fails with 439 and 148 timestamps where the gate counts 1,125 and 375 | Whole-number time keys went through float64, which holds only every 256th whole number at 1.7e18 (F7c). | Where the time column becomes keys: integers above 2**53 stay `int64` or `uint64`, through the cap, the split, the previous value and the bootstrap blocks. |
 | A column of large distinct whole numbers is reported `constant`, or an id column above 2**53 is a feature | Distinct values were counted on floats (D50). | Rules 8, 8a and 8b of step 5, on the integers of an integer-typed column. |
 | A raw `TypeError` naming `isinf`, or any raw error on a CSV with a 26-digit number | pandas loads a whole number beyond 64 bits as a Python integer in an `object` column, and numpy's functions refuse it (D50). | Where object cells are first looked at: such a column is `unsupported_type` with a warning, `task_unsupported` as the target, `time_column_invalid` as the time column. |
 | A table read from a database scores no skill, and its number columns are `excluded` / `unsupported_type` | The driver returned `Decimal`, or booleans and whole numbers with `None`: object columns (D51). | Spec step 1a: type such a column once, before any step. |
@@ -431,7 +499,20 @@ loosened by the tests stage so that it passes before and after (D59:
 | The interpreter ends with exit code 3221225477 and nothing on standard error, on a time column with one date such as `9999-12-31` | pandas was asked to turn a column that holds a date beyond the nanosecond range into nanoseconds, and did not raise. No `except` catches that. | Ask the range before converting: compare with `pandas.Timestamp.min` and `.max`, and raise `time_column_invalid`. |
 | `verify/battery.py` fails a pair of the kind `same` | A change that cannot move a number moved one: a constant, an identifier or a renamed column reached a model, or changed the split. | The message names the run, the change and the first number that moved; open the two output folders it names. |
 | `verify/generated_tables.py` reports a disagreement | The application and the reference differ on one generated table. Agreement proves neither right. | Make the table again with `--only i --describe`, read the spec for that case, and fix the application only where the spec says it is wrong. Otherwise stop and report. |
-| Either tool lists a failure as `open` or as a `stated limit` | It is known, and owned by another pass or accepted by a decision (D73; spec 8.2). | Leave it. It does not fail the tool. |
+| Either tool lists a pair as a `stated limit` | It is known, and accepted by a decision (spec 8.2: four kinds for the battery, none for the generated tables). Nothing is open since the eighth pass. | Leave it. It does not fail the tool. A failure on neither list does. |
+| `time.previous_value_at_repeats` fails: `baselines` lists only `training_mean`; or a walk with one repeated row stops with `no_features` | The previous value was computed only while the timestamps were unique (F23). | Step 11: the mean target of the timestamp `gap + 1` distinct timestamps before, for the headline and for the leak screen. |
+| `leak.copy_excluded_under_time` fails: `level_scaled` is a feature and skill is 0.9 or more | The screen reads with its tree alone, and a tree cannot follow a trending target beyond the range it was fitted on (F24). | Step 8: the line beside the tree; the better reader counts. |
+| `leak.excluded_despite_extreme_target` fails: the copy is a feature beside one target cell of -999 | No row was set aside, or every row was scored for the cut-off that excludes (F25). | Step 8: rows set aside by medians; the worst 1% unscored for 0.98 only. |
+| Every column is excluded as a leak on a table with one huge target cell | The row was left out of the screen's sums and is still in each fold's training mean (M42). | Step 8: a row set aside is in no fold's training rows and in no fold's validation rows. |
+| A copy of a two-valued target stays a feature where a class is rare | The screen's tree needs five rows in a leaf (M47). | Step 8: the direct reading, with no minimum leaf. |
+| A `strong_single_column` warning on the lag of a series that only rises | The order reading was taken without its second condition (M43). | Step 8: the same share for the previous value must be above 0.10. |
+| A column is excluded as `suspected_leak` for its order alone | The order reading excluded it (M44). It warns and nothing more. | Step 8. |
+| `result.largest_row_reported` fails on a share | The share was taken of absolute errors (F26), or of other rows than the gate counts. | Step 11: the largest squared error over the sum; the first row among equals. |
+| An `extreme_value` warning on a long-tailed column, or none on a sentinel | The gap was compared with the whole range of the column, or with the wrong ten values (M46). | Step 11: the three outermost distinct values at each end; the gap against the spread of the ten distinct values after the next one inward; more than 30 times. |
+| `data.identifier_survives_shuffle` fails: `record_id` is a `feature` | D19's clause alone was applied: shuffled, the values are neither consecutive nor ordered (F27). | Rule 8b's second clause. |
+| `groups.choice_not_made` fails: no `selection_not_made` warning, or `tree-0` chosen | The choice was made on folds that validate on a few rows (F28). | Step 9: count each fold's training and validation rows; rank in configuration order. |
+| A forest's fold scores differ from the reference's under time order while the linear model's agree | The rows of a fit were handed over in file order (M49). | Step 9: time order, the rows of one timestamp in file order. |
+| `verify/battery.py` fails a pair of the kind `band-or-named` | One extreme cell moved skill out of its band, and the result names neither the row nor the value; or it is still out of band without the named rows. | The two statements of step 11: the largest row's share, and `extreme_value`. |
 
 ## How to debug a gate failure
 
@@ -463,9 +544,13 @@ E:\CODE\ml-professor\mlprof_env\Scripts\python.exe verify/generated_tables.py ml
   and `--describe` prints what it holds; its files are under
   `verify/artifacts/generated/`.
 - Both end with a line of three counts. Only a failure outside their two fixed
-  lists fails the tool; that failure is yours.
-- `tests/test_judge_tools.py` runs both, so the full suite takes about five
-  minutes longer once that file exists (the battery three to four minutes,
-  the generated tables a little over a minute and a half, measured with
-  nothing else on the machine). While working on one task, run that task's
-  own test files.
+  lists fails the tool; that failure is yours. Since the eighth pass nothing
+  is listed as open; the battery lists four kinds of stated limit, and the
+  generated tables none (spec 8.2).
+- `tests/test_judge_tools.py` runs both, so the full suite takes about seven
+  minutes longer once that file exists (the battery about five minutes at
+  its default of 32 runs side by side, the generated tables about two,
+  measured on 2026-11-25 with nothing else on the machine and the pairs of
+  the eighth pass). For the eighth pass that file accepts exactly the failures the plan
+  lists, and the strict test of both tools belongs to the pass's last task.
+  While working on one task, run that task's own test files.

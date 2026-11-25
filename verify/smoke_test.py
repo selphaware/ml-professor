@@ -49,6 +49,21 @@ had never been seen to fail (D64, D71), each the fault its own message names:
   F18 a date column gets no warning             F22 the resamples depend on the cores
   F19 the result object is not the file
 
+The eighth pass added six (D73, D74, D76): what the judge's two other tools found on
+their first run, each with a run of its own, a check that names it and a broken copy:
+  F23 under time order with no entity column the previous value is a baseline only
+      while every timestamp is unique: one repeated row leaves the training mean alone
+  F24 the leak screen reads a column with its tree alone: under time order a rescaled
+      copy of a wandering target stays a feature
+  F25 no row is set aside from the leak screen: one extreme target cell switches it
+      off, and a copy of the target stays a feature
+  F26 the largest row's share is taken of the absolute errors, not of the squared
+      errors: the number reported is not the share of the score
+  F27 the id-like rule for whole numbers is D19's clause alone: an identifier is a
+      feature once the rows are shuffled
+  F28 under the grouped scheme the choice between configurations is made however few
+      rows the folds beside one large entity train on
+
 The self-test proves more than gatekit asks. gatekit accepts a failure mode as
 soon as one check that names it fails on its fixture. Here every check that
 names a mode must fail on that mode's own fixture, and the self-test prints
@@ -239,6 +254,12 @@ PARALLEL = 16                # tool runs side by side, each single-threaded (D72
 # seconds on each edit and 22.6 in full. Measured on 2026-11-22, three gate runs for
 # each setting, every verdict the same (docs/measurements/CP8): at 0.25 seconds and 16
 # side by side, 10.5 and 13.1 seconds. That is the setting now (D72).
+# The eighth pass added five fast runs: 38 of the 43 runs are started on each edit,
+# where 33 of 38 were. That is five more starts, 1.25 seconds at this spacing. Measured
+# on 2026-11-25 in turn with the gate as it was, on an idle machine, one run each: 14.6
+# seconds on each edit against 13.7, and 20.7 in full against 17.8. Every other round
+# was taken with the judge at work on the machine (15 to 66 seconds for either gate)
+# and says nothing of the gate (docs/measurements/CP9).
 START_SPACING = 0.25
 FAST_CAP = 2000              # spec.md: the fast profile's row cap
 SEED = 1115                  # base seed of every dataset the gate uses
@@ -279,7 +300,9 @@ BANDS = {
     # `revenue` and `fee` were added and three text cells of `spend` were reworded:
     # 0.670..0.826 (mean 0.746, sd 0.035), identical seed by seed before and after,
     # since neither new column reaches a model and `spend` parses as it did. Band
-    # unchanged (docs/measurements/CP1).
+    # unchanged (docs/measurements/CP1). `messy_shuffled`, the same rows in another
+    # order (CP9): good 0.660..0.820 (mean 0.739, sd 0.040). F27 (`record_id` a
+    # feature) lands inside this band (0.660..0.820); it is caught by the role.
     "messy": (0.55, 0.91),
     # good -0.099..+0.141 (mean +0.010, sd 0.058). F1 (refit on all rows):
     # 0.389..0.559 when the linear model is chosen, 1.0000 when the tree is.
@@ -296,7 +319,12 @@ BANDS = {
     # good -0.167..+0.270 (mean +0.012, sd 0.104). F7 (shuffled split): 0.994..1.000.
     "time_blocks": (-0.48, 0.48),
     # good -0.118..+0.009 (mean -0.008, sd 0.024, skewed down). F8 (training mean
-    # only): 0.881..1.000.
+    # only): 0.881..1.000. `walk_repeated`, one row written twice (CP9): good
+    # -0.037..+0.008 (mean -0.003, sd 0.010); F23 (the previous value lost at a repeated
+    # timestamp) stops with `no_features` on 29 seeds of 30 and gives 0.978 on the
+    # other; the reference as it was 0.961..1.000. `walk_copy` with the copy excluded
+    # (CP9): good -0.194..+0.007 (mean -0.014, sd 0.039, skewed down, one seed below
+    # -0.07); F24 (the copy a feature): 0.890..0.999.
     "random_walk": (-0.30, 0.05),
     # 300 entities of 5 rows, a label per entity, `--group-col customer` (CP6):
     # good -0.260..+0.168 (mean -0.027, sd 0.119). F10 (the split ignores the entity column): +0.760..+0.882.
@@ -309,6 +337,13 @@ BANDS = {
     # `--duplicates group` (CP7): good -0.121..+0.084 (mean -0.000, sd 0.044). F12 (the
     # sets formed with the target): -1.000..-0.648 (mean -0.906, sd 0.094).
     "few_valued": (-0.20, 0.20),
+    # one entity of 1,490 rows beside 255 of two, the target noise, `--group-col
+    # customer` (CP9). No choice between configurations is made on folds that train on
+    # a few rows: they are taken in configuration order (D74). Good -0.0117..+0.0030
+    # (mean -0.0037, sd 0.0040), the linear model on 30 of 30 seeds. F28 (the choice
+    # made all the same): the tree on 2 seeds of 30, -0.872 and -0.806, and inside the
+    # band on the other 28, where the missing warning is what fails.
+    "dominant_entity": (-0.03, 0.02),
 }
 # The fast profile's p-value takes the values k/201. On noise_clf: good 0.0100..0.965
 # (never at the floor in 30 seeds); F1 exactly 1/201 = 0.004975 on all 30. The cut-off
@@ -826,6 +861,103 @@ def make_quarter_entity(seed, small=300, per=5, features=4):
     return ["customer"] + [f"n{i + 1}" for i in range(features)] + ["amount"], rows, ()
 
 
+def make_walk_repeated(seed):
+    """`random_walk`, with one row written twice: 1,501 rows (D74).
+
+    Which row, and where its second copy is written, come from a stream of their
+    own. One date then holds two rows, so the timestamps are no longer unique.
+    Until D74 the previous value was a baseline only while they were: this table
+    was scored against the training mean alone, and a random walk looked almost
+    perfectly predictable (measured on the reference as it was, 30 data seeds:
+    skill 0.961 to 1.000). The previous value of a row is now the mean target of
+    the timestamp before its own, so both baselines are scored, and nothing beats
+    the previous value.
+    """
+    header, rows, blank_after = make_random_walk(seed)
+    rng = random.Random(f"walk_repeated.row.{seed}")
+    again = list(rows[rng.randrange(len(rows))])
+    rows.insert(rng.randrange(len(rows) + 1), again)
+    return header, rows, blank_after
+
+
+COPY_SCALE, COPY_SHIFT = 1.07, 3.0
+
+
+def make_walk_copy(seed):
+    """`random_walk`, with a column that is the target on another scale: `level_scaled`
+    is 1.07 x level + 3, exactly, written to six places (D74).
+
+    Under time order the baseline is the previous value, which is strong on a walk,
+    and a tree fitted on the earlier rows cannot follow a target that wanders
+    beyond the range it was fitted on. Read with its tree alone, the copy does not
+    reach the cut-off against that baseline, and it stays a feature (measured on
+    the reference as it was: on 30 of 30 data seeds, skill 0.890 to 0.999). The
+    screen now reads a numeric column with a robust line as well, and the copy is
+    excluded: what is left is `random_walk`.
+    """
+    header, rows, blank_after = make_random_walk(seed)
+    rows = [row[:-1] + [_f(COPY_SCALE * float(row[-1]) + COPY_SHIFT, 6), row[-1]]
+            for row in rows]
+    return header[:-1] + ["level_scaled", header[-1]], rows, blank_after
+
+
+EXTREME_TARGET = "-999"         # one cell of the target, in a training row
+
+
+def make_walk_copy_cell(seed, at=0.40):
+    """`walk_copy`, with one cell of the target set to -999 (D74).
+
+    The cell is on the date 40% of the way through: a training row, and one that a
+    selection fold validates. `level_scaled` is still the level that was there, so
+    the copy differs from the target in that one row. With every row scored, the
+    squared error of that one row is nearly all of the screen's sum for the column,
+    and that row and the one after it, whose previous value is the cell, are nearly
+    all of the baseline's: the column's skill comes out at one half or less, and the
+    copy stays a feature (measured on the reference as it was: on 30 of 30 data
+    seeds). The screen now sets such a row aside, and a warning names the value.
+    """
+    header, rows, blank_after = make_walk_copy(seed)
+    by_date = sorted(range(len(rows)), key=lambda i: rows[i][0])
+    rows[by_date[round(at * len(rows))]][-1] = EXTREME_TARGET
+    return header, rows, blank_after
+
+
+LATE_CELL = "999999"            # one cell of the feature, in a holdout row
+
+
+def make_walk_late_cell(seed, at=0.90):
+    """`random_walk`, with one cell of `level_prev` set to 999999 (D74).
+
+    The cell is on the date 90% of the way through: a holdout row. No training row
+    holds a value like it, so the model is chosen and fitted as on `random_walk`, a
+    line through yesterday's level, and it follows the line out to 999999: that one
+    row carries all of the model's squared error on the holdout but a few parts in
+    ten thousand million, and skill is about minus three thousand million (measured,
+    30 data seeds: the linear model on every seed, share 1.0000, skill -3.4e9 to
+    -2.4e9). The score is reported as measured; the result says which row rules it.
+    """
+    header, rows, blank_after = make_random_walk(seed)
+    by_date = sorted(range(len(rows)), key=lambda i: rows[i][0])
+    rows[by_date[round(at * len(rows))]][1] = LATE_CELL
+    return header, rows, blank_after
+
+
+def make_messy_shuffled(seed):
+    """`messy`, with its rows in an order drawn from a stream of its own (D74).
+
+    Nothing else differs: the same cells, the same 40 rows with no target, blank
+    lines after the same positions. `record_id` runs from 100001 to 101540 in the
+    order the rows were made; among the 1,500 rows with a target its values are all
+    distinct but not consecutive, and after the shuffle they are in no order. By
+    D19's clause alone it is then no identifier (measured on the reference as it
+    was: a numeric feature on 30 of 30 data seeds). `visits`, 1,540 distinct whole
+    numbers drawn from 1,000 to 99,999, must stay the measure it is.
+    """
+    header, rows, blank_after = make_messy(seed)
+    random.Random(f"messy_shuffled.order.{seed}").shuffle(rows)
+    return header, rows, blank_after
+
+
 # name -> (builder, target column). Seeds are SEED + position.
 DATASETS = {
     "signal_clf": (lambda s: make_signal_clf(s), "outcome"),
@@ -865,6 +997,12 @@ DATASETS = {
     "few_valued_leak": (lambda s: make_few_valued_leak(s), "outcome"),
     "large_entity": (lambda s: make_large_entity(s), "amount"),
     "quarter_entity": (lambda s: make_quarter_entity(s), "amount"),
+    # Added last again (CP9), for the same reason.
+    "walk_repeated": (lambda s: make_walk_repeated(s), "level"),
+    "walk_copy": (lambda s: make_walk_copy(s), "level"),
+    "walk_copy_cell": (lambda s: make_walk_copy_cell(s), "level"),
+    "walk_late_cell": (lambda s: make_walk_late_cell(s), "level"),
+    "messy_shuffled": (lambda s: make_messy_shuffled(s), "outcome"),
 }
 
 
@@ -1104,6 +1242,12 @@ RUNS = {
     "few_valued_leak": ("few_valued_leak", ["--duplicates", "group"] + NEITHER, "fast", 1),
     "large_entity": ("large_entity", ["--group-col", "customer"] + NO_TIME, "fast", 1),
     "quarter_entity": ("quarter_entity", ["--group-col", "customer"] + NO_TIME, "fast", 1),
+    # Added with the eighth pass (D73, D74, D76), last, so the order above stays.
+    "walk_repeated": ("walk_repeated", ["--time-col", "date"] + NO_ENTITIES, "fast", 1),
+    "walk_copy": ("walk_copy", ["--time-col", "date"] + NO_ENTITIES, "fast", 1),
+    "walk_copy_cell": ("walk_copy_cell", ["--time-col", "date"] + NO_ENTITIES, "fast", 1),
+    "walk_late_cell": ("walk_late_cell", ["--time-col", "date"] + NO_ENTITIES, "fast", 1),
+    "messy_shuffled": ("messy_shuffled", NEITHER, "fast", 1),
 }
 # Time limits per run. Measured on the reference: a fast run 3 to 6 seconds, a full
 # run 9 to 17 alone and about 20 when eight run side by side. Two waves of hung fast
@@ -1160,6 +1304,12 @@ CHECK_RUNS = {
     "duplicates.group_leak_stops": ["few_valued_leak"],
     "fast.large_entity_stops": ["large_entity"],
     "fast.large_entity_kept": ["quarter_entity"],
+    "time.previous_value_at_repeats": ["walk_repeated"],
+    "leak.copy_excluded_under_time": ["walk_copy"],
+    "leak.excluded_despite_extreme_target": ["walk_copy_cell"],
+    "result.largest_row_reported": ["walk_late_cell"],
+    "data.identifier_survives_shuffle": ["messy_shuffled"],
+    "groups.choice_not_made": ["dominant_entity"],
 }
 SLOW_CHECKS = {"model.selection_full", "output.same_at_any_n_jobs"}
 
@@ -1400,7 +1550,7 @@ def _runs_dir(ctx):
 
     A gate run on a build writes to verify/artifacts/runs, the folder a failure
     message and CLAUDE.md send the builder to. The self-test runs the reference
-    and thirty-one broken copies of it through the same checks; it writes to a folder
+    and thirty-seven broken copies of it through the same checks; it writes to a folder
     per fixture under verify/artifacts/selftest_runs, so that after it `runs/`
     still holds the last gate run on the build and not a broken fixture's output
     (D46; second review, finding 6).
@@ -2732,6 +2882,404 @@ def fast_large_entity_kept(ctx):
                 "does not test it (D66; spec.md step 7)")
 
 
+# The six checks of the eighth pass (D73, D74, D76). Each reads a run of its own, but
+# for the last, which reads `dominant_entity`.
+
+WALK_HINT = "This run passes `--time-col date --no-entities` (spec.md 2.1; D63)."
+
+
+def _walk_by_hand(result, held, in_holdout):
+    """Both baselines of a walk under time order, by the gate's own arithmetic.
+
+    The previous value of a row is the mean target of the timestamp one before its
+    own (D10, D74): with unique timestamps, the target of the row before. Returns
+    the holdout targets and, for each baseline, its guess for every holdout row, in
+    the order of predictions.csv (None where a row is on the first date).
+    """
+    header, source = result["header"], result["source"]
+    time_at, target = header.index("date"), header.index("level")
+    level = [float(row[target]) for row in source]
+    rows_on = {}
+    for i, row in enumerate(source):
+        rows_on.setdefault(row[time_at], []).append(i)
+    dates = sorted(rows_on)                             # ISO 8601: text order is time order
+    of_date = [mean([level[i] for i in rows_on[d]]) for d in dates]
+    previous = dict(zip(dates[1:], of_date))
+    training_mean = mean([v for i, v in enumerate(level) if i not in in_holdout])
+    return [level[p] for p in held], {
+        "training_mean": [training_mean] * len(held),
+        "previous_value": [previous.get(source[p][time_at]) for p in held]}
+
+
+@gate.check("time.previous_value_at_repeats", catches=["F23"],
+            doc="a random walk with one row written twice: both baselines are scored, the "
+                "previous value as the mean target of the timestamp before, and skill is "
+                "about zero")
+def time_previous_value_at_repeats(ctx):
+    result = _with_hint(
+        ctx, "walk_repeated",
+        WALK_HINT + " One row of the walk is written twice, so one date holds two rows. A "
+        "run that stops here with `no_features`, naming `level_prev` as a suspected leak, "
+        "has measured yesterday's level against the training mean alone: with no entity "
+        "column the previous value, the mean target of the timestamp before, is a baseline "
+        "of the leak screen and of the headline whether or not the timestamps are unique "
+        "(D74; spec.md steps 8 and 11)")
+    held, in_holdout = _all_rows_split(ctx, result, "walk_repeated")
+    time_at = result["header"].index("date")
+    on_date = {}
+    for row in result["source"]:
+        on_date[row[time_at]] = on_date.get(row[time_at], 0) + 1
+    if sorted(on_date.values())[-2:] != [1, 2]:
+        ctx.harness_error("the dataset `walk_repeated` is not what the gate built it to be: "
+                          f"{len(result['source'])} rows on {len(on_date)} dates, at most "
+                          f"{max(on_date.values())} on one")
+    twice = max(on_date, key=on_date.get)
+    truth, guesses = _walk_by_hand(result, held, in_holdout)
+    ctx.require(None not in guesses["previous_value"],
+                "a holdout row of `walk_repeated` is on the first date of the table: the "
+                "holdout must be the latest dates (spec.md step 7)")
+    want = {name: mse(truth, guess) for name, guess in guesses.items()}
+    mine = mse(truth, [guess for _, _, guess in result["predictions"]])
+    baselines = {b["name"]: b for b in records(result, "baselines", ["name", "score", "used"])}
+    ctx.record("walk_repeated baseline", at(result, "headline.baseline"))
+    ctx.require({"training_mean", "previous_value"} <= set(baselines),
+                f"baselines on `walk_repeated` lists {sorted(baselines)}. One row of this "
+                f"random walk is written twice, so the date {twice} holds two rows and the "
+                "timestamps are not unique. With no entity column the previous value of a row "
+                "is the mean target of the timestamp one before its own, so both training_mean "
+                "and previous_value are scored and reported (D74; spec.md step 11). A baseline "
+                "that is there only while every timestamp is unique is lost to one repeated "
+                "row, and against the training mean a random walk looks almost perfectly "
+                "predictable")
+    for name in ("training_mean", "previous_value"):
+        ctx.require(isinstance(baselines[name]["score"], (int, float))
+                    and close(baselines[name]["score"], want[name], 1e-7),
+                    f"the {name} baseline on `walk_repeated` scores "
+                    f"{baselines[name]['score']!r}; recomputed by the gate from the source it "
+                    f"is {want[name]:.6g}. The previous value of a row is the mean target of "
+                    f"the timestamp one before its own: after {twice}, the mean of the two "
+                    "rows on that date (D74)")
+    skill = at(result, "headline.skill", "number")
+    ctx.require(at(result, "headline.baseline") == "previous_value",
+                f"the headline baseline on `walk_repeated` is "
+                f"{at(result, 'headline.baseline')!r}, giving skill {skill:.4f}. The previous "
+                f"value has the lower error ({want['previous_value']:.4g} against "
+                f"{want['training_mean']:.4g} for the training mean), so it is the baseline "
+                "(D10, D74)")
+    ctx.require(close(skill, 1 - mine / want["previous_value"], 1e-7),
+                f"headline.skill on `walk_repeated` is {skill:.6g}; 1 - error / previous-value "
+                f"error, recomputed by the gate, is {1 - mine / want['previous_value']:.6g}")
+    band(ctx, skill, "random_walk", "skill on walk_repeated",
+         "tomorrow's level is today's plus noise, so nothing beats the previous value; one "
+         "row written twice changes nothing about that")
+
+
+def _copy_excluded(ctx, result, label, why):
+    """`level_scaled` is excluded as a suspected leak and `level_prev` is a feature."""
+    columns = {c["name"]: c for c in records(result, "columns", ["name", "role", "reason",
+                                                                 "leak_rule"])}
+    copy, lag = columns.get("level_scaled", {}), columns.get("level_prev", {})
+    ctx.record(f"{label} level_scaled",
+               f"{copy.get('role')}/{copy.get('reason')}/{copy.get('leak_rule')}")
+    ctx.record(f"{label} level_prev", f"{lag.get('role')}/{lag.get('reason')}")
+    ctx.require((copy.get("role"), copy.get("reason"), copy.get("leak_rule")) ==
+                ("excluded", "suspected_leak", "predicts_target"),
+                f"`level_scaled` on `{label}` has role {copy.get('role')!r}, reason "
+                f"{copy.get('reason')!r}, leak_rule {copy.get('leak_rule')!r}; skill is "
+                f"{at(result, 'headline.skill')!r} against the baseline "
+                f"{at(result, 'headline.baseline')!r}. The column is the target on another "
+                f"scale, {COPY_SCALE} x level + {COPY_SHIFT:g}, and must be excluded as a "
+                f"suspected leak with the rule `predicts_target`. {why}")
+    ctx.require(any(w["column"] == "level_scaled" for w in warnings_of(result, "suspected_leak")),
+                f"no warning with code `suspected_leak` names `level_scaled` on `{label}`")
+    ctx.require((lag.get("role"), lag.get("reason")) == ("feature", None),
+                f"`level_prev` on `{label}` has role {lag.get('role')!r} and reason "
+                f"{lag.get('reason')!r}. It is yesterday's level, known before today's, and "
+                "the baseline of this run is the previous value, which it does not beat: it "
+                "must stay a feature. A screen that excludes it measures a column against the "
+                "training mean, or against sums that one row rules (D24, D74; spec.md step 8)")
+
+
+@gate.check("leak.copy_excluded_under_time", catches=["F24"],
+            doc="under time order a rescaled copy of a random walk's target is excluded, the "
+                "lag stays a feature, and skill is about zero")
+def leak_copy_excluded_under_time(ctx):
+    result = _with_hint(ctx, "walk_copy", WALK_HINT)
+    _copy_excluded(
+        ctx, result, "walk_copy",
+        "Under time order the screen's baseline is the previous value, and a tree fitted on "
+        "the earlier rows cannot follow a target that wanders beyond the range it was fitted "
+        "on: read with its tree alone, this column does not reach the cut-off. The screen "
+        "reads a numeric column with a robust line as well as with its tree, and excludes it "
+        "on the better of the two (D74; spec.md step 8)")
+    band(ctx, at(result, "headline.skill", "number"), "random_walk", "skill on walk_copy",
+         "with the copy excluded this is the skill of `random_walk`; near 1 means the copy is "
+         "still a feature")
+
+
+@gate.check("leak.excluded_despite_extreme_target", catches=["F25"],
+            doc="one target cell of -999 in a training row: the rescaled copy of the target "
+                "is still excluded, and a warning names the value")
+def leak_excluded_despite_extreme_target(ctx):
+    # No score is asserted here. The pass reports the cell, it does not change the
+    # metric: the row is a training row, every model is fitted with it, the headline is
+    # the squared error it always was, and how far one such row moves a fit is not
+    # pinned. Measured, 30 data seeds: skill -39.5 to -0.15 (mean -2.8), the copy
+    # excluded and the value named on every seed. F25: the copy a feature on 30 of 30.
+    result = _with_hint(ctx, "walk_copy_cell", WALK_HINT)
+    held = set(holdout_check(ctx, result, "walk_copy_cell"))
+    target = result["header"].index("level")
+    cells = [i for i, row in enumerate(result["source"]) if row[target] == EXTREME_TARGET]
+    if len(cells) != 1:
+        ctx.harness_error("the dataset `walk_copy_cell` is not what the gate built it to be: "
+                          f"{len(cells)} cells of the target hold {EXTREME_TARGET}")
+    ctx.require(cells[0] not in held,
+                f"source row {cells[0]} of `walk_copy_cell`, the one whose target is "
+                f"{EXTREME_TARGET}, is in the holdout. It is on the date 40% of the way "
+                "through, and the holdout is the latest quarter of the dates (spec.md step 7)")
+    _copy_excluded(
+        ctx, result, "walk_copy_cell",
+        f"One cell of the target is {EXTREME_TARGET}, in a training row (source row "
+        f"{cells[0]}); in every other row the column is the target on another scale. With "
+        "every row scored, the squared error of that one row is nearly all of the screen's "
+        "sum for the column, and that row and the one after it, whose previous value is the "
+        "cell, are nearly all of the baseline's: the column's skill comes out at one half or "
+        "less, far below the cut-off. "
+        "A training row whose target lies more than ten median deviations from the median "
+        "target, or ten median steps from its previous value, is set aside from the whole "
+        "screen, and the rows a column misses by most are not scored for exclusion (D74; "
+        "spec.md step 8)")
+    named = sorted({str(w["column"]) for w in warnings_of(result, "extreme_value")})
+    ctx.record("walk_copy_cell extreme_value", ",".join(named))
+    ctx.require("level" in named,
+                f"`extreme_value` warnings on `walk_copy_cell` name {named or 'no column'}. "
+                f"The target `level` holds {EXTREME_TARGET} in one row, far outside all its "
+                "other values, which are the levels of a random walk: a warning with the code "
+                "`extreme_value` names the column, so the caller looks at the cell (D74, D76; "
+                "spec.md 2.5). Nothing is left out of any number of the run for it")
+
+
+LARGEST_ROW_KEYS = ["largest_row_share", "largest_row", "baseline_largest_row_share",
+                    "baseline_largest_row"]
+
+
+@gate.check("result.largest_row_reported", catches=["F26"],
+            doc="one holdout cell of the feature set to 999999: the share of the squared "
+                "error that its largest row carries is as the gate recomputes it, for the "
+                "model and the baseline, with one warning for each share above one half")
+def result_largest_row_reported(ctx):
+    # No score is asserted here: the headline is the squared error it always was, with
+    # the row in it. Measured, 30 data seeds: skill -3.4e9 to -2.4e9; the model's share
+    # 1.0000 on every seed (F26, the share of the absolute errors: 0.9997) and the
+    # baseline's 0.020 to 0.038 (F26: 0.009 to 0.012), each as the gate recomputes it,
+    # and one `largest_row_dominates` warning, for the model on the holdout.
+    result = _with_hint(ctx, "walk_late_cell", WALK_HINT)
+    held, in_holdout = _all_rows_split(ctx, result, "walk_late_cell")
+    feature = result["header"].index("level_prev")
+    cells = [i for i, row in enumerate(result["source"]) if row[feature] == LATE_CELL]
+    if len(cells) != 1:
+        ctx.harness_error("the dataset `walk_late_cell` is not what the gate built it to be: "
+                          f"{len(cells)} cells of `level_prev` hold {LATE_CELL}")
+    ctx.require(cells[0] in in_holdout,
+                f"source row {cells[0]} of `walk_late_cell`, the one whose `level_prev` is "
+                f"{LATE_CELL}, is not in the holdout. It is on the date 90% of the way "
+                "through, and the holdout is the latest quarter of the dates (spec.md step 7)")
+    truth, guesses = _walk_by_hand(result, held, in_holdout)
+    ctx.require(None not in guesses["previous_value"],
+                "a holdout row of `walk_late_cell` is on the first date of the table: the "
+                "holdout must be the latest dates (spec.md step 7)")
+    baseline = at(result, "headline.baseline")
+    ctx.require(baseline in guesses,
+                f"the headline baseline on `walk_late_cell` is {baseline!r}; under time order "
+                "with unique timestamps it is training_mean or previous_value (D10)")
+    guesses["model"] = [guess for _, _, guess in result["predictions"]]
+    absent = [f"{part}.{key}" for part in ("headline", "cv") for key in LARGEST_ROW_KEYS
+              if key not in at(result, part, dict)]
+    models = records(result, "models", ["config", "status", "cv_mean"])
+    absent += [f"models[{m['config']}].{key}" for m in models for key in LARGEST_ROW_KEYS[:2]
+               if key not in m]
+    ctx.require(not absent,
+                f"profile.json on `walk_late_cell` has no key {', '.join(absent[:6])}"
+                + (f" and {len(absent) - 6} more" if len(absent) > 6 else "") + ". A regression "
+                "run says what share of a squared error its single largest row carries, and "
+                "which row that is: on the holdout, for the model and for the headline "
+                "baseline (`headline`), and over the selection folds, for the chosen "
+                "configuration and that baseline (`cv`) and for every configuration "
+                "(`models`) (D74; spec.md 5.2)")
+    over_half = 0
+    for prefix, name, what in (("", "model", "the chosen model"),
+                               ("baseline_", baseline, f"the baseline {baseline}")):
+        errors = [(t - g) ** 2 for t, g in zip(truth, guesses[name])]
+        want = max(errors) / math.fsum(errors)
+        absolute = max(abs(t - g) for t, g in zip(truth, guesses[name])) / math.fsum(
+            abs(t - g) for t, g in zip(truth, guesses[name]))
+        share = at(result, f"headline.{prefix}largest_row_share", "number")
+        row = at(result, f"headline.{prefix}largest_row", int)
+        ctx.record(f"walk_late_cell {prefix}largest_row_share", share)
+        ctx.record(f"walk_late_cell {prefix}largest_row", row)
+        ctx.require(close(share, want, 1e-7),
+                    f"headline.{prefix}largest_row_share on `walk_late_cell` is {share!r}. The "
+                    f"largest squared error of {what} on a holdout row, over the sum of them, "
+                    "recomputed by the gate from predictions.csv and the source, is "
+                    f"{want!r}. The share is of the squared errors, the terms of the score "
+                    f"(D74; spec.md 5.2); of the absolute errors it would be {absolute!r}")
+        ctx.require(type(row) is int and row in in_holdout
+                    and close(errors[held.index(row)], max(errors), 1e-7),
+                    f"headline.{prefix}largest_row on `walk_late_cell` is {row!r}. The holdout "
+                    f"row with the largest squared error of {what}, by the gate's own "
+                    f"arithmetic, is source row {held[errors.index(max(errors))]}: `row` as in "
+                    "predictions.csv, the zero-based position in the loaded source (D74)")
+        over_half += want > 0.5
+    cv = at(result, "cv", dict)
+    chosen = [m for m in models if m["config"] == cv.get("chosen")]
+    ctx.require(len(chosen) == 1 and type(cv["largest_row_share"]) in (int, float)
+                and type(chosen[0]["largest_row_share"]) in (int, float)
+                and close(cv["largest_row_share"], chosen[0]["largest_row_share"])
+                and cv["largest_row"] == chosen[0]["largest_row"],
+                f"cv.largest_row_share and cv.largest_row on `walk_late_cell` are "
+                f"{cv['largest_row_share']!r} and {cv['largest_row']!r}; they are those of the "
+                f"chosen configuration {cv.get('chosen')!r} in `models`"
+                + (f", {chosen[0]['largest_row_share']!r} and {chosen[0]['largest_row']!r}"
+                   if len(chosen) == 1 else "") + " (D74; spec.md 5.2)")
+    stated = [(f"models[{m['config']}]", m["largest_row_share"], m["largest_row"])
+              for m in models if isinstance(m["cv_mean"], (int, float))]
+    stated.append(("cv.baseline", cv["baseline_largest_row_share"], cv["baseline_largest_row"]))
+    for label, share, row in stated:
+        ctx.require(type(share) in (int, float) and 0 < share <= 1 and type(row) is int
+                    and 0 <= row < len(result["source"])
+                    and row not in in_holdout,
+                    f"over the selection folds, {label} on `walk_late_cell` states the share "
+                    f"{share!r} at row {row!r}. For a configuration with a cross-validation "
+                    "mean, and for the headline baseline, the share is above 0 and at most 1 "
+                    "and the row is a training row: the folds are inside the training rows, "
+                    "and no holdout row takes part in them (D74; spec.md step 9)")
+    ruled = [m["config"] for m in models if type(m["largest_row_share"]) in (int, float)
+             and m["largest_row_share"] > 0.5]
+    over_half += bool(ruled) + (cv["baseline_largest_row_share"] > 0.5)
+    warned = warnings_of(result, "largest_row_dominates")
+    ctx.record("walk_late_cell largest_row_dominates", len(warned))
+    ctx.require(len(warned) == over_half,
+                f"{len(warned)} warning(s) with the code `largest_row_dominates` on "
+                f"`walk_late_cell`; the gate counts {over_half} statement(s) above one half. "
+                "One warning for each: the model on the holdout, the baseline on the holdout "
+                "(both recomputed by the gate), the configurations over the selection folds "
+                f"(one warning when any is above one half: here {ruled or 'none'}), and the "
+                "baseline over the selection folds (D74; spec.md 2.5)")
+    named = sorted({str(w["column"]) for w in warnings_of(result, "extreme_value")})
+    ctx.record("walk_late_cell extreme_value", ",".join(named))
+    ctx.require("level_prev" in named,
+                f"`extreme_value` warnings on `walk_late_cell` name {named or 'no column'}. "
+                f"The feature `level_prev` holds {LATE_CELL} in one row, far outside all its "
+                "other values, which are the levels of a random walk: a warning with the code "
+                "`extreme_value` names the column (D74, D76; spec.md 2.5). The value is "
+                "looked for among all the rows that are split, the holdout rows too: it is a "
+                "statement about the table, and no number is changed for it")
+
+
+@gate.check("data.identifier_survives_shuffle", catches=["F27"],
+            doc="`messy` with its rows shuffled: the identifier is still excluded as id-like, "
+                "the whole-number measure is still a feature, and the signal is still there")
+def data_identifier_survives_shuffle(ctx):
+    result = _with_hint(
+        ctx, "messy_shuffled",
+        "This run passes `--no-time-order --no-entities` (spec.md 2.1; D63).")
+    header, source = result["header"], result["source"]
+    target = header.index("outcome")
+    usable = [row for row in source if not is_missing(row[target])]
+    counts = {}
+    for name in ("record_id", "visits"):
+        values = [int(row[header.index(name)]) for row in usable]
+        ordered = sorted(values) in (values, values[::-1])
+        counts[name] = (len(values), len(set(values)), max(values) - min(values) + 1, ordered)
+    n, distinct, span, ordered = counts["record_id"]
+    if ordered or distinct != n or span == n or 2 * distinct < span \
+            or 2 * counts["visits"][1] >= counts["visits"][2]:
+        ctx.harness_error("the dataset `messy_shuffled` is not what the gate built it to be: "
+                          f"(values, distinct, range, in order) is {counts}")
+    columns = {c["name"]: c for c in records(result, "columns", ["name", "role", "reason",
+                                                                 "kind"])}
+    ident, measure = columns.get("record_id", {}), columns.get("visits", {})
+    ctx.record("messy_shuffled role record_id", f"{ident.get('role')}/{ident.get('reason')}")
+    ctx.record("messy_shuffled role visits", f"{measure.get('role')}/{measure.get('reason')}")
+    ctx.require((ident.get("role"), ident.get("reason")) == ("excluded", "id_like"),
+                f"`record_id` on `messy_shuffled` has role {ident.get('role')!r} and reason "
+                f"{ident.get('reason')!r}. In the {n} rows with a target it holds {distinct} "
+                f"distinct whole numbers that fill {distinct / span:.0%} of the range from the "
+                "smallest to the largest. A whole-number column in which more than 95% of the "
+                "values are distinct and the distinct values fill at least half of their range "
+                "is an identifier, whatever the order of the rows (D74; spec.md step 5). By "
+                "D19's clause alone, all distinct and consecutive or in file order, it is one "
+                "in `messy` and a numeric feature here, where the same rows are shuffled")
+    n, distinct, span, _ = counts["visits"]
+    ctx.require((measure.get("role"), measure.get("reason"), measure.get("kind")) ==
+                ("feature", None, "numeric"),
+                f"`visits` on `messy_shuffled` has role {measure.get('role')!r}, reason "
+                f"{measure.get('reason')!r} and kind {measure.get('kind')!r}. Its {distinct} "
+                f"distinct whole numbers fill {distinct / span:.1%} of the range from the "
+                "smallest to the largest, far less than half, and are in no order: a measure, "
+                "not an identifier, and a numeric feature (D19, D74)")
+    band(ctx, at(result, "headline.skill", "number"), "messy", "skill on messy_shuffled",
+         "the rows of `messy` in another order: the signal is still there under the mess; a "
+         "wrong column role or lost rows remove it")
+
+
+@gate.check("groups.choice_not_made", catches=["F28"],
+            doc="one entity of three quarters of the rows: no choice between configurations "
+                "is made on folds that train on a few rows, the one chosen is the first that "
+                "has a mean, a warning says so, and skill is about zero")
+def groups_choice_not_made(ctx):
+    result = _with_hint(
+        ctx, "dominant_entity",
+        "This run passes `--group-col customer --no-time-order` (spec.md 2.1; D57, D63).")
+    held, in_holdout = _all_rows_split(ctx, result, "dominant_entity")
+    entity_at = result["header"].index("customer")
+    entity = [row[entity_at] for row in result["source"]]
+    size = {}
+    for name in entity:
+        size[name] = size.get(name, 0) + 1
+    large = max(size, key=size.get)
+    beside = len(entity) - len(held) - size[large]      # training rows of the small entities
+    ctx.require(not any(entity[p] == large for p in held) and 0 < beside < 50,
+                f"on `dominant_entity` the entity {large}, {size[large]} of the "
+                f"{len(entity)} rows, must be among the training rows, with the few rows of "
+                f"small entities that the holdout can spare: {len(held)} holdout rows leave "
+                f"{beside} beside it. The holdout is not the one `groups.holdout_bounded` "
+                "asks for (D64, D66; spec.md step 7)")
+    why = (f"The training rows are the entity {large}, {size[large]} rows, and {beside} rows "
+           "of small entities. An entity is in one fold, so the fold that validates on the "
+           f"large one trains on at most {beside} rows, fewer than 50 and fewer than it "
+           f"validates on, and each other fold validates on some of those same {beside} rows. "
+           "No choice between configurations is made on so few: every fold stays scored and "
+           "reported, the configurations are taken in configuration order, so the one chosen "
+           "is the first that has a cross-validation mean, and one `selection_not_made` "
+           "warning says so (D74; spec.md step 9)")
+    folds = records(result, "validation.folds", ["training_rows", "validation_rows", "scored"])
+    ctx.require(folds and all(f["scored"] is True for f in folds)
+                and at(result, "cv.n_scored_folds") == len(folds),
+                f"validation.folds on `dominant_entity` reports scored = "
+                f"{[f['scored'] for f in folds]} and cv.n_scored_folds "
+                f"{at(result, 'cv.n_scored_folds')!r}. {why}")
+    warned = warnings_of(result, "selection_not_made")
+    ctx.record("dominant_entity selection_not_made", len(warned))
+    models = records(result, "models", ["config", "cv_mean", "chosen"])
+    ranked = [m["config"] for m in models if isinstance(m["cv_mean"], (int, float))]
+    ctx.require(ranked, "no configuration on `dominant_entity` has a cross-validation mean")
+    chosen, used = at(result, "cv.chosen"), at(result, "headline.model")
+    ctx.record("dominant_entity model", used)
+    skill = at(result, "headline.skill", "number")
+    ctx.require(len(warned) == 1,
+                f"{len(warned)} warning(s) with the code `selection_not_made` on "
+                f"`dominant_entity`; cv.chosen is {chosen!r} and skill {skill:.4f}. {why}")
+    ctx.require(chosen == used == ranked[0],
+                f"cv.chosen is {chosen!r} and headline.model {used!r} on `dominant_entity`; "
+                f"the first configuration that has a cross-validation mean is {ranked[0]!r}. "
+                f"{why}")
+    band(ctx, skill, "dominant_entity", "skill on dominant_entity",
+         "the target is noise, so honest skill is about zero, a little below for the first "
+         "configuration, a linear model. Far below: a configuration was chosen on folds that "
+         "validate on a few rows, and a tree that fits the noise was taken")
+
+
 @gate.check("time.flat_holdout_reported",
             why="a baseline that scores exactly zero is where skill, 1 - error / baseline "
                 "error, has no value. The first build died there with a ZeroDivisionError and "
@@ -3297,6 +3845,47 @@ def broken_clock_value(tmp):
 @gate.failure_mode("F22", "the resamples depend on the number of cores")
 def broken_depends_on_cores(tmp):
     return _fixture(tmp, "F22")
+
+
+# The six of the eighth pass (D73, D74, D76): what the perturbation battery and the
+# generated-table test found on their first run. Each is the reference with one rule of
+# that pass taken out, and each fails the check that names it.
+
+@gate.failure_mode("F23", "under time order with no entity column the previous value is a "
+                          "baseline only while every timestamp is unique: one repeated row "
+                          "leaves the training mean alone")
+def broken_previous_value_lost(tmp):
+    return _fixture(tmp, "F23")
+
+
+@gate.failure_mode("F24", "the leak screen reads a column with its tree alone: under time "
+                          "order a rescaled copy of the target stays a feature")
+def broken_screen_tree_alone(tmp):
+    return _fixture(tmp, "F24")
+
+
+@gate.failure_mode("F25", "no row is set aside from the leak screen: one extreme target cell "
+                          "switches it off, and a copy of the target stays a feature")
+def broken_screen_every_row(tmp):
+    return _fixture(tmp, "F25")
+
+
+@gate.failure_mode("F26", "the largest row's share is taken of the absolute errors, not of "
+                          "the squared errors")
+def broken_share_of_absolute_errors(tmp):
+    return _fixture(tmp, "F26")
+
+
+@gate.failure_mode("F27", "the id-like rule for whole numbers is D19's clause alone: an "
+                          "identifier is a feature once the rows are shuffled")
+def broken_identifier_needs_order(tmp):
+    return _fixture(tmp, "F27")
+
+
+@gate.failure_mode("F28", "under the grouped scheme the choice between configurations is made "
+                          "however few rows the folds beside one large entity train on")
+def broken_choice_on_few_rows(tmp):
+    return _fixture(tmp, "F28")
 
 
 if __name__ == "__main__":

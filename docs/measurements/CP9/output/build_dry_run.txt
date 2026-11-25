@@ -1,0 +1,70 @@
+[09:50:03] Dry run. Nothing will be executed.
+[09:50:03]   T1     support  haiku x2 -> sonnet x2 -> opus x3   gate=0 tests=1  Package skeleton, command-line stub, requirements.txt
+[09:50:03]   T2     complex  opus x3                            gate=0 tests=1  Load one table; count usable rows
+[09:50:03]   T3     complex  opus x3                            gate=0 tests=1  Column roles that need no target
+[09:50:03]   T4     complex  opus x3                            gate=0 tests=1  Task decision
+[09:50:03]   T5     complex  opus x3                            gate=0 tests=1  Random holdout and folds
+[09:50:03]   T6     complex  opus x3                            gate=0 tests=1  Time column, time-ordered holdout, expanding folds, gap
+[09:50:03]   T7     complex  opus x3                            gate=0 tests=1  Metrics, skill and the previous-value baseline
+[09:50:03]   T8     complex  opus x3                            gate=0 tests=1  Preprocessing fitted on the rows it is given
+[09:50:03]   T9     complex  opus x3                            gate=0 tests=1  Fit, select, score once: the run in memory, random scheme, fast profile
+[09:50:03]   T10    complex  opus x3                            gate=12 tests=1  profile.json, predictions.csv and the command line: the first run the gate can judge
+[09:50:03]   T11    complex  opus x3                            gate=5 tests=1  Time-ordered scheme wired into the run, with its baselines
+[09:50:03]   T12    complex  opus x3                            gate=4 tests=1  Leak screen
+[09:50:03]   T13    complex  opus x3                            gate=2 tests=1  Interval and p-value, row and block forms
+[09:50:03]   T14    routine  sonnet x2 -> opus x3               gate=0 tests=1  Random forest and histogram gradient boosting behind the existing family interface
+[09:50:03]   T15    complex  opus x3                            gate=2 tests=1  The full profile's grids, and the same result at any n_jobs
+[09:50:03]   T16    routine  sonnet x2 -> opus x3               gate=1 tests=1  Edges, limitations statement, console summary
+[09:50:03]   T17    support  haiku x2 -> sonnet x2 -> opus x3   gate=0 tests=1  README with run instructions
+[09:50:03]   T18    complex  opus x3                            gate=0 tests=4  Guards for the first review's test holes, and two CSV edges: no code change expected
+[09:50:03]   T19    complex  opus x3                            gate=1 tests=1  Skill when a baseline's error is zero
+[09:50:03]   T20    routine  sonnet x2 -> opus x3               gate=0 tests=1  Colliding feature names stop the run
+[09:50:03]   T21    complex  opus x3                            gate=0 tests=1  A configuration that fails after it is chosen
+[09:50:03]   T22    routine  sonnet x2 -> opus x3               gate=0 tests=2  Small defects: the output folder, process settings, the no-features message, the console summary
+[09:50:03]   T23    support  haiku x2 -> sonnet x2 -> opus x3   gate=0 tests=1  The README's commands use a table kept in the repo
+[09:50:03]   T24    complex  opus x3                            gate=0 tests=1  Guard of the third pass: a line pandas reads as the header. No code change expected
+[09:50:03]   T25    complex  opus x3                            gate=0 tests=1  No number that is not finite is reported, or turned into null
+[09:50:03]   T26    complex  opus x3                            gate=0 tests=1  White space round a target value; a target cell of only white space
+[09:50:03]   T27    routine  sonnet x2 -> opus x3               gate=0 tests=1  The seed's range
+[09:50:03]   T28    routine  sonnet x2 -> opus x3               gate=0 tests=1  The fast profile's error only when the full profile would run
+[09:50:03]   T29    routine  sonnet x2 -> opus x3               gate=0 tests=1  The console summary prints four significant digits
+[09:50:03]   T30    support  haiku x2 -> sonnet x2 -> opus x3   gate=0 tests=1  The README: which rows the fast profile keeps, and what this pass changed
+[09:50:03]   T31    complex  opus x3                            gate=0 tests=1  Guards of the fourth pass: six pinned behaviours the third review could break unseen. No code change expected
+[09:50:03]   T32    complex  opus x3                            gate=1 tests=1  Copies of a holdout row among the training rows stop the run; the `duplicates` argument
+[09:50:03]   T33    complex  opus x3                            gate=1 tests=1  Whole numbers are compared exactly: integer time keys, distinct values, and whole numbers too large for 64 bits
+[09:50:03]   T34    complex  opus x3                            gate=0 tests=1  Number columns as a database driver returns them; a warning for every unsupported column
+[09:50:03]   T35    complex  opus x3                            gate=0 tests=1  The type matrix: every kind of column, in every role, ends in a result or a named error
+[09:50:03]   T36    routine  sonnet x2 -> opus x3               gate=0 tests=1  One to nine digits in a fraction of a second; a refusal that says what is wrong
+[09:50:03]   T37    routine  sonnet x2 -> opus x3               gate=0 tests=1  The fast profile's cap leaving too few rows: its own error when the full profile would run
+[09:50:03]   T38    support  haiku x2 -> sonnet x2 -> opus x3   gate=0 tests=1  The README: copies of holdout rows, and what this pass changed
+[09:50:03]   T39    complex  opus x3                            gate=0 tests=1  Guards of the fifth pass: what the fourth review pinned and the application already does. No code change expected
+[09:50:03]   T40    complex  opus x3                            gate=0 tests=1  Each object column is read once, over all loaded rows (the fourth review, finding 1)
+[09:50:03]   T41    complex  opus x3                            gate=0 tests=1  No part of the output can hold a number that is not finite; the boundary of a failed configuration; the three-class message (the fourth review, findings 4 and 5)
+[09:50:03]   T42    complex  opus x3                            gate=5 tests=1  A date column with nothing said about time order stops the run; `time_col=False` and `--no-time-order`; the README's commands
+[09:50:03]   T43    complex  opus x3                            gate=2 tests=1  A declared entity column under the random scheme: `group_col`, the grouped split, the cap, the interval
+[09:50:03]   T44    complex  opus x3                            gate=1 tests=2  Entities under time order: each entity's own previous value, the leak screen's baseline, and the stop for a panel with no entity declared
+[09:50:03]   T45    complex  opus x3                            gate=0 tests=1  `duplicates="group"`: each set of copies on one side of the split and of every fold
+[09:50:03]   T46    complex  opus x3                            gate=0 tests=1  The type matrix gains a role: every kind of column as the entity column
+[09:50:03]   T47    support  haiku x2 -> sonnet x2 -> opus x3   gate=0 tests=1  The README: entities, the two statements, `duplicates="group"`, and what is not detected
+[09:50:03]   T48    complex  opus x3                            gate=0 tests=1  Guards of the sixth pass: the cut-off of the panel warning, and what a copy is. No code change expected
+[09:50:03]   T49    complex  opus x3                            gate=2 tests=1  Both statements on every call: `time_col` and `group_col` left unsaid stop the run, whatever the table holds
+[09:50:03]   T50    complex  opus x3                            gate=2 tests=1  `duplicates="group"` keeps together the rows that agree in every feature column; the count and the warning renamed; the copies stop says when each answer fits
+[09:50:03]   T51    complex  opus x3                            gate=1 tests=1  The grouped holdout holds a quarter and no more than it must; a unit of a quarter or more is named
+[09:50:03]   T52    complex  opus x3                            gate=1 tests=1  Dates written as whole numbers (YYYYMMDD) are a date form: excluded as a date, named, and accepted as the time column
+[09:50:03]   T53    support  haiku x2 -> sonnet x2 -> opus x3   gate=0 tests=1  The README: both statements in every command and example, what `group` means, the two warnings for a large entity, dates as whole numbers, and the limits
+[09:50:03]   T54    complex  opus x3                            gate=0 tests=1  Guards of the seventh pass: a second test for eleven thin spots, a date beyond the nanosecond range, and two readings D72 pins. No code change expected
+[09:50:03]   T55    complex  opus x3                            gate=1 tests=1  A column of dates written YYYYMMDD stays a date column when it holds a sentinel; as the time column, a value that is no date stops the run
+[09:50:03]   T56    complex  opus x3                            gate=1 tests=1  `duplicates="group"` and a column the leak screen removes: one combination of the features that are left on both sides stops the run; the grouped warning says what `group` measures
+[09:50:03]   T57    complex  opus x3                            gate=2 tests=1  The fast profile's cap with an entity column: an entity of a quarter or more of the rows is always kept, and the run stops with `fast_profile_group_too_large` when the cap cannot do that
+[09:50:03]   T58    routine  sonnet x2 -> opus x3               gate=0 tests=1  Two small things of the sixth review: the `date_column_undeclared` warning carries the caveat of its scheme, and a number that is not finite is never mapped to null
+[09:50:03]   T59    support  haiku x2 -> sonnet x2 -> opus x3   gate=0 tests=1  The README: a date column with a sentinel, the stop under `group` after a removed leak and what `group` measures, the fast profile with a large entity, and the limits
+[09:50:03]   T60    complex  opus x3                            gate=0 tests=1  The judge's two other tools are clean on the build: the perturbation battery and the generated-table test
+[09:50:03]   T61    complex  opus x3                            gate=1 tests=1  A whole-number identifier stays id-like when the rows are shuffled: the second clause of the id-like rule
+[09:50:03]   T62    complex  opus x3                            gate=1 tests=1  The previous value at repeated timestamps: both baselines scored, `stages.previous_value`, and the passage of the panel warning
+[09:50:03]   T63    complex  opus x3                            gate=2 tests=3  The leak screen: rows set aside, a line beside the tree, the direct reading of a class, and the order reading of the `strong_single_column` warning
+[09:50:03]   T64    complex  opus x3                            gate=1 tests=2  The largest row's share of a squared error, on the holdout and over the selection folds, and the `extreme_value` warning
+[09:50:03]   T65    complex  opus x3                            gate=0 tests=1  Under time order the rows of a fit are handed over in time order
+[09:50:03]   T66    complex  opus x3                            gate=1 tests=1  No choice between configurations where the folds cannot choose: the `selection_not_made` rule of the grouped scheme
+[09:50:03]   T67    support  haiku x2 -> sonnet x2 -> opus x3   gate=0 tests=1  The README: the baseline at repeated timestamps, the largest row's share and the extreme-value warning, no choice on too few rows, and the limits
+[09:50:03]   T68    complex  opus x3                            gate=0 tests=2  The judge's two other tools are clean on the build, with nothing listed as open; and five guards
+[09:50:03] Then: full gate (53 checks) + full suite, on failure an integration task at tier 'complex'.

@@ -5,17 +5,13 @@ build loop: each item becomes work only through a decision in
 `docs/DECISIONS.md` and a change prompt. Phase 2 starts by reading this file
 (D47).
 
-**Status under D56, D71 and D73 (2026-11-22).** Nothing known to be wrong
-is carried into phase 2. Passes 5 and 6 are built. Pass 7 (CP8): the sixth
-review under D69 and D72, the fast cap under D70, the perturbation battery,
-the generated-table test, a broken copy for each check never seen failing.
-Pass 8: everything the two tools still list as open (D73): the
-previous-value baseline at repeated timestamps, the leak screen and an
-exact copy of the target, the row that carries most of the error, the
-identifier under shuffled rows, row order within a fit, and selection folds
-beside a dominant entity. No review until both tools are clean. Then the
-broader repeat screen under D60, or the ruling that replaces it, and every
-remaining weakness here. No new detection rule during hardening (D71).
+**Status under D56, D71, D73, D74 and D76 (2026-11-25).** Nothing known to
+be wrong is carried into phase 2. Passes 5, 6 and 7 are built. Pass 8
+(CP9): the judge is written; both of its tools list nothing as open and
+four kinds of stated limit (D60, D55, D31, D76). After pass 8's build: a
+review. Then the broader repeat screen under D60, or the ruling that
+replaces it, and every remaining weakness here. No new detection rule
+during hardening (D71), with the one exception D74 records.
 
 ## After pass 8: the broader repeat screen (D60)
 
@@ -36,11 +32,12 @@ remaining weakness here. No new detection rule during hardening (D71).
   no count can tell copies from look-alikes; and whether the made-up tables
   in the gate can reproduce the dependence between real columns.
 
-## Roadmap (D67, D68)
+## Roadmap (D67, D68, D75, D76)
 
 1. Library core: closing. Then, as phase 1's last changes, the
-   pip-installable package (D68) and a small scikit-learn neural network
-   family.
+   pip-installable package (D68), a small scikit-learn neural network
+   family together with the caller's `max_iter` (D75), and a caller's
+   override of column roles (D76).
 2. Feature engineering on one table.
 3. Several datasets and joins, with cross-table aggregate features.
 4. Deep learning with Keras or PyTorch, including sequence models.
@@ -56,8 +53,6 @@ remaining weakness here. No new detection rule during hardening (D71).
   100,000 rows (D16). Needs its own rule under time order.
 - **Skill with and without the warned columns:** so a near-leak that is kept
   (D30, D33) cannot quietly be the whole headline.
-- **A caller's override of column roles:** for an identifier the id-like
-  rule misses, or a measure it wrongly excludes (D31).
 - **Walk-forward validation** across the holdout, in place of a single
   cut-off (D7).
 - **Keeping copies of a row on one side of the split** (`duplicates="group"`):
@@ -192,6 +187,25 @@ remaining weakness here. No new detection rule during hardening (D71).
   mutation check with 70 variants no longer fits in a test author's run.
 - **Pass 7's build on real tables:** `docs/measurements/CP8/build-on-real-tables/README.md`.
 
+## Found in the CP9 session (eighth pass, 2026-11-25)
+
+- **Thin guards.** M43 and M48 each rest on one test case, and the new
+  behaviour of `stages.previous_value` at repeated keys has a test but no
+  broken copy.
+- **One gate run is three times slower on the application than on the
+  reference:** `output.same_at_any_n_jobs` took 63 s against 21 s, and timed
+  out under heavy load. Find out why.
+- **A single series with one row written twice** now scores in band but
+  still draws the `autocorrelated_panel_target` warning, on 30 of 30 seeds.
+  The warning is truthful about repeated timestamps and misleading about
+  the cause.
+- **The order reading** warned on 0 of 30 small tables with a legitimately
+  strong feature (R-squared 0.90 to 0.99, 50 to 200 rows); it has not been
+  run on real tables yet.
+- **A noisy copy of a regression target under the random scheme** is
+  excluded up to noise of 12% of the target's spread, warned about from 15%
+  to 30%, and silent from 35% (spec 10.2, re-measured).
+
 ## Notes for the framework (ailoop-engineering), not for this repo
 
 - The tests stage does not lock `tests/`, so on a second pass the existing
@@ -202,6 +216,11 @@ remaining weakness here. No new detection rule during hardening (D71).
 - The self-test accepts a failure mode when any one check that names it
   fails, so a check can sit in the matrix without ever having been seen to
   fail (second review, finding 4).
+- A harness session resumed with `claude --resume` loses the stage label
+  (`LOOP_STAGE`), so the guard treats it as a build session; the driver has
+  no way to resume a harness session with the label set.
+- With several helpers editing at once, the edit hook's gate runs overwrite
+  each other under `verify/artifacts/runs/` and report false failures.
 - When a test the driver has already passed fails, `reverify_done` reopens
   every finished task that has tests, not only the task that owns the
   failing file. Editing one old test for a changed contract can therefore

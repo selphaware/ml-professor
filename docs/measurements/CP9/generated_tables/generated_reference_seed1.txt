@@ -1,0 +1,21 @@
+generated tables: 1000 table(s) from seed 1, 334 worker run(s), 24 at a time, under E:\CODE\ml-professor\verify\artifacts\generated\run-8bx09a2i
+  package:   E:\CODE\ml-professor\verify\reference\mlprofessor
+  reference: E:\CODE\ml-professor\verify\reference\mlprofessor
+
+STATED LIMITS
+  none is known
+
+OPEN: owned, not yet built
+  none is known
+
+NOT COMPARED (no part of the verdict): differences by kind
+      0  the table earns two named errors of steps 1 to 4, and which is raised is open (spec 2.4)
+      0  it depends on which rows a random or a grouped split took, or the fast cap kept (spec 11)
+      0  both sides raise the warning; how many records it has is not pinned (spec 2.5)
+      0  which estimator of the lag-1 autocorrelation the panel warning uses is open (spec 11)
+
+application: 580 result(s) {'grouped': 128, 'random': 207, 'time_ordered': 245}, 420 named error(s) {'column_not_found': 12, 'duplicate_columns': 20, 'entities_undeclared': 30, 'fast_profile_group_too_large': 14, 'fast_profile_too_few_timestamps': 4, 'feature_name_collision': 14, 'gap_too_large': 14, 'group_column_invalid': 19, 'holdout_copies_in_training': 39, 'input_error': 8, 'non_finite_score': 10, 'one_class': 3, 'target_constant': 17, 'task_ambiguous': 29, 'task_unsupported': 27, 'time_column_invalid': 26, 'time_order_undeclared': 55, 'too_few_groups': 25, 'too_few_rows': 54}, 0 other
+reference: 580 result(s) {'grouped': 128, 'random': 207, 'time_ordered': 245}, 420 named error(s) {'column_not_found': 12, 'duplicate_columns': 20, 'entities_undeclared': 30, 'fast_profile_group_too_large': 14, 'fast_profile_too_few_timestamps': 4, 'feature_name_collision': 14, 'gap_too_large': 14, 'group_column_invalid': 19, 'holdout_copies_in_training': 39, 'input_error': 8, 'non_finite_score': 10, 'one_class': 3, 'target_constant': 17, 'task_ambiguous': 29, 'task_unsupported': 27, 'time_column_invalid': 26, 'time_order_undeclared': 55, 'too_few_groups': 25, 'too_few_rows': 54}, 0 other
+time: 281 s wall-clock at 24 worker(s) (12 s making the tables); in the tool: application 388 s, reference 362 s
+GENERATED TABLES: PASS (1000 tables from seed 1: 1000 agree, 0 stated limit, 0 open, 0 fail)
+exit 0

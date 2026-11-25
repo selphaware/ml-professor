@@ -24,9 +24,9 @@
 
   "limits": {
     "total_budget_usd": 250,
-    "run_timeout_min": 120,
+    "run_timeout_min": 240,
     "gate_timeout_sec": 300,
-    "tests_timeout_sec": 1800,
+    "tests_timeout_sec": 3600,
     "hook_gate_timeout_sec": 150,
     "hook_gate_budget_sec": 20
   }

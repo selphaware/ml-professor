@@ -1,7 +1,7 @@
 """Reference implementation of spec.md, in the spec's order of operations.
 
-Judge fixture: the gate measures its bands on this code and breaks it in thirty-one
-named ways; the test suite is proved against those and against thirty-nine smaller
+Judge fixture: the gate measures its bands on this code and breaks it in thirty-seven
+named ways; the test suite is proved against those and against fifty-one smaller
 faults (see _variant.py). One module on purpose, so each step of the
 methodology can be read top to bottom in `_run`.
 """
@@ -70,6 +70,34 @@ COPY_SHARE = 0.01
 COPY_ROWS = 10
 MIN_GROUPS = N_FOLDS + 1    # one entity for the holdout and one for each fold, at the least
 MIN_BOOT_GROUPS = 30        # fewer holdout entities than this: no interval (grouped scheme)
+# D74, D76: the whole-number identifier's second clause. More than this share of the
+# values distinct, and the distinct values filling at least that share of their range.
+ID_DISTINCT_SHARE, ID_RANGE_SHARE = 0.95, 0.5
+# D74: the leak screen. A training row whose target lies more than SCREEN_FAR median
+# deviations from the median target, or SCREEN_FAR median steps from its previous
+# value, is set aside from the screen, when such rows are at most SCREEN_SET_ASIDE of
+# the training rows. For rule 2 the SCREEN_UNSCORED of the pooled validation rows that
+# the column misses by most, and the same share that the baseline misses by most, are
+# not scored.
+SCREEN_FAR = 10
+SCREEN_SET_ASIDE = 0.01
+SCREEN_UNSCORED = 0.01
+# D76: the second reading of the warning tier. With the training rows in a column's
+# order, the target moves the other way between at most this share of neighbouring
+# rows; and at least this many pairs are needed for the share to have a value.
+ORDER_AGAINST = 0.10
+ORDER_PAIRS = 20
+# D74: one row carries more than this share of a squared error: a warning.
+LARGEST_ROW_SHARE = 0.5
+# D74, D76: a value far outside all the other values of its column. Among the
+# EXTREME_OUTERMOST distinct values at each end, the gap to the next value inward is
+# more than EXTREME_GAP times the spread of the EXTREME_SPREAD distinct values after it.
+EXTREME_GAP = 30
+EXTREME_SPREAD = 10
+EXTREME_OUTERMOST = 3
+# D74: under the grouped scheme, a fold that trains on fewer rows than this and on
+# fewer rows than it validates on: no choice between configurations is made.
+SELECTION_FLOOR = 50
 
 LINEAR_C = [1.0, 0.001, 0.01, 0.1, 10.0, 100.0]
 LINEAR_ALPHA = [1.0, 0.01, 0.1, 10.0, 100.0, 1000.0]
@@ -129,6 +157,11 @@ GROUP_MEASURES = ("With duplicates='group' the headline measures whether a combi
                   "feature values that the model has not seen can be predicted. On a table of "
                   "few-valued columns that can give negative skill where duplicates='keep' "
                   "finds signal.")
+# D74 (1): what the panel warning says of the baseline. A fixed text.
+PANEL_BASELINE = ("With no entity column the previous value of a row is the mean target of "
+                  "the timestamp before, over every series at once: if the rows are several "
+                  "series, declare group_col, and each series is measured against its own "
+                  "previous value.")
 RANDOM_CAVEAT = ("Random split: this number is optimistic if the rows are ordered in time "
                  "or one entity appears on many rows.")
 GROUPED_CAVEAT = ("Random split of whole entities: this number is optimistic if the rows are "
@@ -188,7 +221,7 @@ class ProfileResult:
 COLUMN_KEYS = ["name", "position", "dtype", "role", "kind", "reason", "leak_rule",
                "n_missing", "n_coerced", "n_infinite", "n_imputed"]
 MODEL_KEYS = ["config", "family", "params", "status", "error", "fold_scores",
-              "cv_mean", "cv_std", "chosen"]
+              "cv_mean", "cv_std", "chosen", "largest_row_share", "largest_row"]
 
 
 def summary(result):
@@ -761,19 +794,33 @@ def _classes(values):
 
 
 def _whole_number_id(x):
-    """D19: every value distinct, and consecutive or strictly ordered in file order.
+    """Rule 8b (D19, D74): a whole-number column is an identifier when
+
+    - every value is distinct, and the values are consecutive or strictly ordered
+      in file order (D19); or
+    - more than 95% of the values are distinct, and the distinct values fill at
+      least half of the range from the smallest to the largest, whatever the
+      order of the rows (D74): so an identifier stays one when the rows are
+      shuffled, some are missing, or a few are repeated.
 
     `x` holds the present values in file order: floats, or the exact integers of
     an integer-typed column (D50). Neighbours are compared, never subtracted, and
     the range is taken in Python integers, so nothing here can overflow.
+    F27: D19's clause alone, as it was. M50: the second clause asks for every
+    value to be distinct, so one repeated row makes the identifier a feature.
     """
-    if len(x) < 2 or len(np.unique(x)) != len(x):
+    if len(x) < 2:
         return False
     if x.dtype.kind == "f" and not np.all(x == np.floor(x)):
         return False
-    if np.all(x[1:] > x[:-1]) or np.all(x[1:] < x[:-1]):
-        return True
-    return int(x.max()) - int(x.min()) + 1 == len(x)
+    distinct = np.unique(x)
+    span = int(distinct.max()) - int(distinct.min()) + 1
+    if len(distinct) == len(x):
+        if np.all(x[1:] > x[:-1]) or np.all(x[1:] < x[:-1]) or span == len(x):
+            return True
+    if BROKEN == "F27" or (BROKEN == "M50" and len(distinct) != len(x)):
+        return False
+    return len(distinct) > ID_DISTINCT_SHARE * len(x) and len(distinct) >= ID_RANGE_SHARE * span
 
 
 def _reads_as_date(values):
@@ -1634,21 +1681,188 @@ def _previous_of(prev, rows, where):
     return before
 
 
-def _screen_column(values, numeric, y, folds, classification, seed, prev, also_fit=None,
-                   by_entity=False):
-    """D11: one column's cross-validated skill over the selection folds.
+def _screen_baselines(y, folds, prev, by_entity):
+    """The screen's baselines over the pooled validation rows of the scored folds.
 
-    None when it cannot be computed: the baseline's error over the pooled
-    validation rows is zero (D36). A baseline's error, or the column's own, that
-    is not finite stops the run (D44). `also_fit` exists only for the broken
-    variant M3: rows added to every fold's training rows for the tree.
-    `by_entity`: the previous value is each entity's own, and a row whose entity
-    has no earlier row is given its fold's training mean in its place (D57).
+    Returns (rows, [(name, predictions)]): `rows` are positions among the rows
+    split, fold after fold. The training mean is each fold's own; the previous
+    value is each row's, and with an entity column a row whose entity has no
+    earlier row is given its fold's training mean in its place (D57).
+    """
+    rows, means = [], []
+    for fold in folds:
+        if not fold["scored"] or not len(fold["train"]) or not len(fold["valid"]):
+            continue
+        rows.append(fold["valid"])
+        means.append(np.full(len(fold["valid"]), _mean(y[fold["train"]])))
+    rows, mean_pred = np.concatenate(rows), np.concatenate(means)
+    base_preds = [("training_mean", mean_pred)]
+    if prev is not None and by_entity:
+        before = prev[rows]
+        base_preds.append(("previous_value", np.where(np.isnan(before), mean_pred, before)))
+    elif prev is not None:
+        base_preds.append(("previous_value", _previous_of(prev, rows, "a validation block")))
+    return rows, base_preds
+
+
+def _screen_folds(y, train, folds, prev, by_entity, classification):
+    """Step 8 (D74): the folds the screen is measured on, in a regression.
+
+    A training row whose target is wildly off is set aside from the whole screen:
+    it is in no fold's training rows and in no fold's validation rows, so in no
+    mean, no tree, no line and no sum. Two readings of "wildly off", one for each
+    baseline, both robust, so that the row cannot hide behind what it does to a
+    mean:
+
+      - its target lies more than `SCREEN_FAR` median deviations from the median
+        target of the training rows;
+      - its target lies more than `SCREEN_FAR` median steps from its previous
+        value, where the previous value is a baseline (among the training rows
+        that have one).
+
+    The rows of both readings together are set aside when they are at most
+    `SCREEN_SET_ASIDE` of the training rows, and never fewer than one row is
+    allowed. More than that is the shape of the target, not a stray row: nothing is
+    set aside, and the screen scores every row, as it did before D74.
+
+    Returns (folds, rows set aside, whether every row is to be scored). F25:
+    nothing is ever set aside and every row is scored. M42: the rows are left out
+    of the validation rows only, and stay among each fold's training rows.
+    """
+    none = np.array([], dtype=int)
+    if classification:
+        return folds, none, False
+    if BROKEN == "F25":
+        return folds, none, True
+    pooled, base_preds = _screen_baselines(y, folds, prev, by_entity)
+    for _, pred in base_preds:
+        if not math.isfinite(_mse(y[pooled], pred)):
+            return folds, none, False       # the run stops where a column is measured (D44)
+    allowed = max(1, int(SCREEN_SET_ASIDE * len(train)))
+    gone = np.zeros(len(y), dtype=bool)
+    with np.errstate(over="ignore", invalid="ignore"):
+        readings = [(train, np.abs(y[train] - np.median(y[train])))]
+        if prev is not None:
+            has = train[~np.isnan(prev[train])]
+            if len(has):
+                readings.append((has, np.abs(y[has] - prev[has])))
+        for rows, miss in readings:
+            scale = float(np.median(miss))
+            if scale > 0 and math.isfinite(scale):
+                gone[rows[miss > SCREEN_FAR * scale]] = True
+    if gone.sum() > allowed:
+        return folds, none, True
+    if not gone.any():
+        return folds, none, False
+    kept = [dict(fold, train=fold["train"] if BROKEN == "M42" else fold["train"][~gone[fold["train"]]],
+                 valid=fold["valid"][~gone[fold["valid"]]]) for fold in folds]
+    return kept, np.flatnonzero(gone), False
+
+
+def _theil_line(x, y):
+    """A straight line that a few rows cannot move (D74): the median of the slopes
+    between paired rows, and the median of what is left.
+
+    The rows are sorted by the column's value, then by the target. With n rows and
+    m = n // 2, the i-th row is paired with row i + (n - m), for i = 0 .. m - 1; a
+    pair whose two values of the column are equal has no slope. The slope is the
+    median of the pairs' slopes, and the level the median of target - slope x
+    value over all the rows. Returns (level, slope), or None when no pair has a
+    slope or the arithmetic gives no finite line.
+    """
+    order = np.lexsort((y, x))
+    xs, ys = x[order], y[order]
+    n = len(xs)
+    m = n // 2
+    if m == 0:
+        return None
+    dx, dy = xs[n - m:] - xs[:m], ys[n - m:] - ys[:m]
+    ok = dx > 0
+    if not ok.any():
+        return None
+    slope = float(np.median(dy[ok] / dx[ok]))
+    level = float(np.median(ys - slope * xs))
+    if not (math.isfinite(slope) and math.isfinite(level)):
+        return None
+    return level, slope
+
+
+def _least_squares_line(x, y):
+    """M41 only: the least-squares line, which one cell far off can turn."""
+    x0, y0 = float(x.mean()), float(y.mean())
+    dx = x - x0
+    if not float(dx @ dx) > 0:
+        return None
+    slope = float(dx @ (y - y0)) / float(dx @ dx)
+    if not math.isfinite(slope):
+        return None
+    return y0 - slope * x0, slope
+
+
+def _line_predict(x_fit, y_fit, x_new, fold_mean):
+    """Step 8 (D74): the line through one numeric column, fitted on the rows of a
+    fold's training part where the column is present. Where the column is missing
+    in a validation row, and where no line can be fitted, it predicts the fold's
+    training mean."""
+    out = np.full(len(x_new), float(fold_mean))
+    have = ~np.isnan(x_fit)
+    x, y = x_fit[have], y_fit[have]
+    if len(x) < 2:
+        return out
+    with np.errstate(over="ignore", invalid="ignore", divide="ignore"):
+        line = _least_squares_line(x, y) if BROKEN == "M41" else _theil_line(x, y)
+        if line is None:
+            return out
+        level, slope = line
+        seen = ~np.isnan(x_new)
+        out[seen] = level + slope * x_new[seen]
+    return out
+
+
+def _scored_rows(own_errors, base_errors):
+    """Step 8 (D74): which pooled validation rows count for rule 2. The
+    `SCREEN_UNSCORED` of the rows that the column misses by most are not scored,
+    and the same share of the rows that the baseline misses by most: k = that
+    share of the rows, rounded up, and at least one, from each. Among equal errors
+    the earlier row goes. With too few rows for that (2k >= n) every row counts."""
+    n = len(own_errors)
+    keep = np.ones(n, dtype=bool)
+    k = max(1, math.ceil(SCREEN_UNSCORED * n))
+    if 2 * k < n:
+        keep[np.argsort(-own_errors, kind="stable")[:k]] = False
+        keep[np.argsort(-base_errors, kind="stable")[:k]] = False
+    return keep
+
+
+def _screen_column(values, numeric, y, folds, classification, seed, prev, also_fit=None,
+                   by_entity=False, every_row=False):
+    """D11, D74: one column's cross-validated skill over the folds of the screen.
+
+    Returns two readings of one measurement, (for rule 2, for rule 3): the skill
+    with the rows of `_scored_rows` left unscored, which decides exclusion at 0.98;
+    and the skill with every row scored, which the warning at 0.90 reads. They are
+    one number for a classification, and when `every_row` is set.
+
+    The column is read by the screen's tree and, beside it (D74): in a regression,
+    for a numeric column, by a straight line that a few rows cannot move; in a
+    classification, directly, with no minimum number of rows in a leaf: one split
+    for a numeric column, and for a categorical column the share of the positive
+    class among the fold's training rows of each level (the fold's own share for a
+    level it has not seen). The column's skill is the better of its readers'; in a
+    regression each is measured against every baseline and the lower counts.
+
+    None when it cannot be computed: a baseline's error over the rows scored is
+    zero (D36). A baseline's error, or the tree's own, that is not finite stops
+    the run (D44). `also_fit` exists only for the broken variant M3: rows added to
+    every fold's training rows. `by_entity`: the previous value is each entity's
+    own (D57). F24: no line. M47: no direct reading.
     """
     cls = DecisionTreeClassifier if classification else DecisionTreeRegressor
-    truth, guess, mean_guess, rows = [], [], [], []
+    use_line = numeric and not classification and BROKEN != "F24"
+    direct = classification and BROKEN != "M47"
+    truth, guess, other, mean_guess, rows = [], [], [], [], []
     for fold in folds:
-        if not fold["scored"]:
+        if not fold["scored"] or not len(fold["train"]) or not len(fold["valid"]):
             continue
         a, b = fold["train"], fold["valid"]
         fold_mean = _mean(y[a])
@@ -1666,19 +1880,38 @@ def _screen_column(values, numeric, y, folds, classification, seed, prev, also_f
         truth.append(y[b])
         mean_guess.append(np.full(len(b), fold_mean))
         rows.append(b)
+        if use_line:
+            other.append(_line_predict(values[a], y[a], values[b], fold_mean))
+        elif direct and numeric:
+            stump = DecisionTreeClassifier(max_depth=1, min_samples_leaf=1,
+                                           random_state=seed).fit(xa, y[a])
+            other.append(stump.predict_proba(xb)[:, 1])
+        elif direct:
+            codes_a, codes_b = xa[:, 0].astype(int), xb[:, 0].astype(int)
+            share = np.bincount(codes_a, weights=y[a], minlength=len(levels)) \
+                / np.maximum(np.bincount(codes_a, minlength=len(levels)), 1)
+            other.append(np.where(codes_b >= 0, share[np.maximum(codes_b, 0)], fold_mean))
     truth, guess = np.concatenate(truth), np.concatenate(guess)
     if classification:
         auc = _auc(truth, guess)
-        return None if auc is None else 2 * auc - 1
-    bases = [("training_mean", _mse(truth, np.concatenate(mean_guess)))]
+        if auc is None:
+            return None, None
+        skill = 2 * auc - 1
+        if other:
+            second = _auc(truth, np.concatenate(other))
+            if second is not None:
+                skill = max(skill, 2 * second - 1)
+        return skill, skill
+    mean_pred = np.concatenate(mean_guess)
+    base_preds = [("training_mean", mean_pred)]
     if prev is not None and by_entity:
         before = prev[np.concatenate(rows)]
-        before = np.where(np.isnan(before), np.concatenate(mean_guess), before)
-        bases.append(("previous_value", _mse(truth, before)))
+        base_preds.append(("previous_value", np.where(np.isnan(before), mean_pred, before)))
     elif prev is not None:
-        before = _previous_of(prev, np.concatenate(rows), "a validation block")
-        bases.append(("previous_value", _mse(truth, before)))
-    for name, error in bases:
+        base_preds.append(("previous_value",
+                           _previous_of(prev, np.concatenate(rows), "a validation block")))
+    for name, pred in base_preds:
+        error = _mse(truth, pred)
         if not math.isfinite(error):
             raise _not_finite(f"In the leak screen, the squared error of the baseline {name} "
                               "over the validation rows of the selection folds", error,
@@ -1687,8 +1920,98 @@ def _screen_column(values, numeric, y, folds, classification, seed, prev, also_f
     if not math.isfinite(own):
         raise _not_finite("In the leak screen, the squared error of a single-column tree over "
                           "the validation rows of the selection folds", own, TARGET_CAUSE)
-    base = min(error for _, error in bases)
-    return 1 - own / base if base > 0 else None
+    readers = [guess]
+    if other:
+        line = np.concatenate(other)
+        if np.isfinite(line).all() and math.isfinite(_mse(truth, line)):
+            readers.append(line)
+    with np.errstate(over="ignore", invalid="ignore"):
+        base_errors = [(truth - pred) ** 2 for _, pred in base_preds]
+
+        def skill_of(reader, unscored):
+            """The lower of the skills against each baseline; None when one has no error."""
+            own_errors = (truth - reader) ** 2
+            lowest = None
+            for base_error in base_errors:
+                keep = _scored_rows(own_errors, base_error) if unscored \
+                    else np.ones(len(truth), dtype=bool)
+                base_sum = float(base_error[keep].sum())
+                if not base_sum > 0:
+                    return None             # a baseline with no error cannot be beaten (D36)
+                value = 1 - float(own_errors[keep].sum()) / base_sum
+                lowest = value if lowest is None else min(lowest, value)
+            return lowest
+
+        def best(unscored):
+            found = [skill_of(reader, unscored) for reader in readers]
+            return None if any(f is None for f in found) else max(found)
+
+        told = best(False)
+        decided = told if every_row else best(True)
+    return decided, told
+
+
+def _against_order(x, y):
+    """D76: the rows are put in the order of the column `x`, ties by the target (rows
+    where either is missing are left out); among the neighbouring pairs whose
+    values of `x` differ, the share in which the target moves the other way: the
+    smaller of the share in which it falls and the share in which it rises. So 0
+    means that the target rises, or falls, with the column without exception.
+    None with fewer than `ORDER_PAIRS` such pairs."""
+    have = ~(np.isnan(x) | np.isnan(y))
+    order = np.lexsort((y[have], x[have]))
+    xs, ys = x[have][order], y[have][order]
+    moved = xs[1:] > xs[:-1]
+    if int(moved.sum()) < ORDER_PAIRS:
+        return None
+    up = float((ys[1:][moved] > ys[:-1][moved]).mean())
+    down = float((ys[1:][moved] < ys[:-1][moved]).mean())
+    return min(up, down)
+
+
+def _far_outside(values):
+    """D74, D76: the distinct values of one numeric column that lie far outside all
+    its other values. Returns [(value, rows that hold it, nearest other value), ...].
+
+    The distinct finite values are put in order. From each end, the
+    `EXTREME_OUTERMOST` outermost are looked at: a value is far outside when the
+    gap between it and the next value inward is more than `EXTREME_GAP` times the
+    spread of the `EXTREME_SPREAD` distinct values after that one (as many as the
+    column has, when fewer; at least one). So are the values beyond it. Judged on
+    distinct values, so a value counts once however many rows hold it, and a
+    column needs three distinct values for one of them to be far from the others.
+    M46: the gap is compared with the whole range of the other values.
+    """
+    values = values[np.isfinite(values)]
+    distinct, counts = np.unique(values, return_counts=True)
+    n, found = len(distinct), []
+    if n < 3:
+        return found
+    for d, held in ((distinct, counts), (distinct[::-1], counts[::-1])):
+        edge = -1
+        for j in range(min(EXTREME_OUTERMOST, n - 2)):
+            m = n - (j + 2) if BROKEN == "M46" else min(EXTREME_SPREAD, n - (j + 2))
+            gap = abs(float(d[j + 1]) - float(d[j]))
+            spread = abs(float(d[j + 1 + m]) - float(d[j + 1]))
+            if spread > 0 and gap > EXTREME_GAP * spread:
+                edge = j
+        found += [(float(d[j]), int(held[j]), float(d[edge + 1])) for j in range(edge + 1)]
+    return found
+
+
+def _largest_row(errors):
+    """D74: the share of a sum of squared errors that its largest row carries, and
+    where that row is (the first of several). (None, None) when every error is
+    zero: there is nothing to have a share of. The errors are divided by the
+    largest before they are added, so the sum cannot overflow while each error is
+    finite; an error that is not finite stops the run (D44)."""
+    at = int(np.argmax(errors))
+    top = float(errors[at])
+    if not math.isfinite(top):
+        raise _not_finite("The largest squared error of one row", top, TARGET_CAUSE)
+    if not top > 0:
+        return None, None
+    return 1.0 / float((errors / top).sum()), at
 
 
 _CORES = [1]            # F22 only: the cores of the run in hand
@@ -2241,9 +2564,10 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs, duplicat
         by_name[name]["n_imputed"] = int(np.isnan(cell).sum()) if cell.dtype != object \
             else int((cell == MISSING_LEVEL).sum())
 
-    # The previous value (D10, D57). One series: the target `gap + 1` timestamps
-    # earlier. With an entity column: each entity's own, from its latest row at least
-    # `gap + 1` timestamps earlier; a row whose entity has no such row has none.
+    # The previous value (D10, D57, D74). With no entity column: the mean target of
+    # the timestamp `gap + 1` distinct timestamps earlier. With one: each entity's
+    # own, from its latest row at least `gap + 1` timestamps earlier; a row whose
+    # entity has no such row has none.
     prev, by_entity, panel_warning = None, False, None
     if time_ordered and not classification:
         if groups is not None:
@@ -2257,11 +2581,23 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs, duplicat
                     "one previous value. Declare a column that names one series (join the "
                     "columns that together do), or pass group_col=False")
             prev, by_entity = _previous_by_group(y, keys, groups, gap), True
-        elif split["unique"]:
-            order = np.argsort(keys, kind="stable")
-            prev = np.full(len(y), np.nan)
-            prev[order[gap + 1:]] = y[order[:len(y) - gap - 1]]
         else:
+            if split["unique"] or BROKEN != "F23":
+                # D10, D74: the mean target of the timestamp `gap + 1` distinct
+                # timestamps before. With unique timestamps that is the target of
+                # the row before. F23: only with unique timestamps, as it was, so
+                # one repeated row leaves the training mean as the only baseline.
+                # M40: the target of the last row of that timestamp, not the mean.
+                _, stamp = np.unique(keys, return_inverse=True)
+                with np.errstate(over="ignore", invalid="ignore"):
+                    of_stamp = np.bincount(stamp, weights=y) / np.bincount(stamp)
+                if BROKEN == "M40":
+                    of_stamp = np.zeros(int(stamp.max()) + 1)
+                    of_stamp[stamp] = y
+                prev = np.full(len(y), np.nan)
+                has = stamp - gap - 1 >= 0
+                prev[has] = of_stamp[stamp[has] - gap - 1]
+        if groups is None and not split["unique"]:
             lag1 = _lag1_of_stamp_means(keys[train], y[train])
             # Means that do not vary have no autocorrelation. One that cannot be
             # computed because a value overflows is not passed over (D44).
@@ -2271,10 +2607,9 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs, duplicat
             # M23: the cut-off the first harness session abandoned, 0.8
             if lag1 is not None and lag1 > (0.8 if BROKEN == "M23" else AUTOCORR):
                 # The caller has said that there are no entities (D63); the tool's doubt
-                # about that statement is a warning, as it was (D10, D58).
-                panel_warning = (f"the per-timestamp mean of the target has lag-1 "
-                                 f"autocorrelation {lag1:.2f}; against the training mean, skill "
-                                 "here may only reflect that one period resembles the last")
+                # about that statement is a warning, as it was (D10, D58). Its text
+                # names the baseline the run used (D74), so it is written at the end.
+                panel_warning = lag1
 
     # The baselines of step 11 need no model, only the target and the split, so they
     # are scored on the holdout here, before the leak screen and before any fit. One
@@ -2321,6 +2656,9 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs, duplicat
         judged = np.arange(len(rows)) if BROKEN == "M3" else train
         # M9, and M16 for a panel: the screen forgets the previous-value baseline
         screen_prev = None if BROKEN == "M9" or (BROKEN == "M16" and by_entity) else prev
+        # D74: rows whose target is wildly off are set aside from the whole screen
+        screen_folds, _, every_row = _screen_folds(y, train, split["folds"], screen_prev,
+                                                   by_entity, classification)
         for name in list(prepared):
             values, numeric = prepared[name][rows], by_name[name]["kind"] == "numeric"
             rule = None
@@ -2329,19 +2667,42 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs, duplicat
                 share = [gone[y[judged] == c].mean() for c in (0, 1)]
                 if max(share) > LEAK_MISSING_HIGH and min(share) < LEAK_MISSING_LOW:
                     rule = "missing_by_class"
-            alone = None
+            alone = told = None
             if rule is None:
                 # None: the skill cannot be computed, so the column is not flagged (D36).
-                alone = _screen_column(values, numeric, y, split["folds"], classification,
-                                       seed, screen_prev,
-                                       holdout if BROKEN == "M3" else None, by_entity)
+                # Two readings of one measurement: `alone` decides rule 2, `told` rule 3.
+                alone, told = _screen_column(values, numeric, y, screen_folds, classification,
+                                             seed, screen_prev,
+                                             holdout if BROKEN == "M3" else None, by_entity,
+                                             every_row)
                 if alone is not None and alone >= LEAK_SKILL:
                     rule = "predicts_target"
-            if rule is None and alone is not None and alone >= STRONG_SKILL:  # kept, told (D30)
+            if rule is None and told is not None and told >= STRONG_SKILL:  # kept, told (D30)
                 _warn(warnings, "strong_single_column",
-                      f"column {name!r} on its own predicts the target with skill {alone:.2f} "
+                      f"column {name!r} on its own predicts the target with skill {told:.2f} "
                       "on the training rows. It is kept as a feature: check that it is known "
                       "before the outcome", name)
+            elif rule is None and told is not None and numeric and not classification:
+                # D76: the second reading of the warning tier. With the training rows
+                # in the column's order the target moves the other way between at most
+                # a tenth of neighbouring rows, and it does not follow the previous
+                # value as closely. A warning only. Like the first reading it is not
+                # taken of a column whose skill cannot be computed (D36). M43: no
+                # second condition. M44: the column is excluded for it.
+                share = _against_order(values[train], y[train])
+                before = None if screen_prev is None else _against_order(screen_prev[train],
+                                                                         y[train])
+                if share is not None and share <= ORDER_AGAINST and (
+                        BROKEN == "M43" or before is None or before > ORDER_AGAINST):
+                    if BROKEN == "M44":
+                        rule = "predicts_target"
+                    else:
+                        _warn(warnings, "strong_single_column",
+                              f"put in the order of column {name!r}, the target moves the "
+                              f"other way between {100 * share:.1f}% of neighbouring training "
+                              "rows: the column follows the target almost without exception. "
+                              "It is kept as a feature: check that it is known before the "
+                              "outcome", name)
             if rule:
                 by_name[name].update(role="excluded", reason="suspected_leak", leak_rule=rule,
                                      n_imputed=0)
@@ -2351,6 +2712,21 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs, duplicat
                        else "on its own it predicts the target almost perfectly")
                 _warn(warnings, "suspected_leak",
                       f"column {name!r} is excluded as a suspected leak: {why}", name)
+    # D74, D76: a numeric feature, or a regression target, that holds a value far
+    # outside all its other values, among the rows that are split. A warning only: no
+    # number is changed and nothing is excluded for it.
+    looked = [(name, values[rows]) for name, values in prepared.items()
+              if by_name[name]["kind"] == "numeric"]
+    if not classification:
+        looked.append((target, y))
+    for name, held in looked:
+        for value, n_held, nearest in _far_outside(np.asarray(held, dtype="float64")):
+            _warn(warnings, "extreme_value",
+                  f"column {name!r} holds the value {value!r} in {n_held} "
+                  f"row{'' if n_held == 1 else 's'}, far outside all its other values (the "
+                  f"nearest is {nearest!r}). It is used as it is: no number of this run "
+                  "leaves it out. If it stands for a missing value, replace it with an empty "
+                  "cell", name)
     if not prepared:
         excluded = "; ".join(f"{r['name']} ({r['reason']})" for r in records
                              if r["role"] == "excluded")
@@ -2435,7 +2811,15 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs, duplicat
                             index=index[part])
 
     def matrices(fit_rows, new_rows, final=False):
-        """Preprocessing fitted on `fit_rows` only, applied to both sets of rows."""
+        """Preprocessing fitted on `fit_rows` only, applied to both sets of rows.
+
+        The rows of a fit are handed over in the order they have here: under time
+        order that is time order, ties in file order (D74 point 4); otherwise file
+        order. M49: file order under time order too, so a model that reads its
+        rows by position (a forest) sees them in another order.
+        """
+        if BROKEN == "M49" and time_ordered:
+            fit_rows = fit_rows[np.argsort(rows[fit_rows], kind="stable")]
         fit_frame, new_frame = feature_frame(fit_rows), feature_frame(new_rows)
         y_fit = pd.Series(y[fit_rows], index=fit_frame.index, name=target)
         for make in step_makers:                    # steps supplied through the seam
@@ -2451,7 +2835,7 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs, duplicat
         names = prep.names()
         frames = (pd.DataFrame(x_fit, index=fit_frame.index, columns=names),
                   pd.DataFrame(x_new, index=new_frame.index, columns=names), y_fit)
-        return x_fit, x_new, frames
+        return x_fit, x_new, frames, y[fit_rows]
 
     def finite(guess, n_rows):
         """One finite number per row, or the configuration fails, as it would by
@@ -2473,8 +2857,10 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs, duplicat
         for position, params in enumerate(family["grid"]):
             record = dict(config=f"{family['name']}-{position}", family=family["name"],
                           params=dict(params), status="fitted", error=None, fold_scores=[],
-                          cv_mean=None, cv_std=None, chosen=False)
+                          cv_mean=None, cv_std=None, chosen=False,
+                          largest_row_share=None, largest_row=None)
             failed = None
+            cv_errors, cv_rows = [], []
             for k, (fold, mats) in enumerate(zip(split["folds"], fold_data), 1):
                 if mats is None:
                     record["fold_scores"].append(None)
@@ -2484,7 +2870,7 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs, duplicat
                 # recorded, never dropped.
                 try:
                     model = family["make"](task, params, seed, n_jobs)
-                    guess = finite(_fit_predict(family, model, mats[0], y[fold["train"]],
+                    guess = finite(_fit_predict(family, model, mats[0], mats[3],
                                                 mats[1], classification, mats[2]),
                                    len(fold["valid"]))
                 except Exception as exc:
@@ -2500,6 +2886,17 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs, duplicat
                     failed = f"ValueError: its score on fold {k} is not finite ({fold_score!r})"
                     break
                 record["fold_scores"].append(fold_score)
+                if not classification:
+                    with np.errstate(over="ignore", invalid="ignore"):
+                        cv_errors.append((fold_truth - guess) ** 2)
+                    cv_rows.append(fold["valid"])
+            if failed is None and cv_errors:
+                # D74: the largest row's share of this configuration's squared error
+                # over the validation rows of the scored folds
+                share, at = _largest_row(np.concatenate(cv_errors))
+                if share is not None:
+                    record["largest_row_share"] = share
+                    record["largest_row"] = int(rows[np.concatenate(cv_rows)][at])
             if failed is not None:
                 record.update(status="failed", error=failed,
                               fold_scores=[None] * len(split["folds"]))
@@ -2519,6 +2916,23 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs, duplicat
     ranked = sorted((i for i, m in enumerate(models) if m["cv_mean"] is not None),
                     key=lambda i: (-models[i]["cv_mean"] if classification or BROKEN == "F17"
                                    else models[i]["cv_mean"], i))
+    # D74 (6): under the grouped scheme, when some fold has fewer than 50 training rows
+    # and fewer training rows than validation rows, the other folds validate on those
+    # same few rows, and no choice is made on so few: every fold stays scored and
+    # reported, the configurations are ranked in configuration order, and a warning
+    # says so. F28: the choice is made all the same. M48: any fold of fewer than 50
+    # training rows is enough.
+    if grouped and BROKEN != "F28":
+        starved = [len(f["train"]) for f in split["folds"] if len(f["train"]) < SELECTION_FLOOR
+                   and (BROKEN == "M48" or len(f["train"]) < len(f["valid"]))]
+        if starved:
+            ranked = sorted(ranked)
+            _warn(warnings, "selection_not_made",
+                  f"one fold trains on {min(starved)} rows, fewer than {SELECTION_FLOOR} and "
+                  "fewer than it validates on: one unit, or the units of one fold, hold nearly "
+                  "all of the training rows, and the other folds validate on those same few "
+                  "rows. No choice between configurations is made on so few: they are "
+                  "taken in configuration order")
 
     def all_failed():
         return E.AllModelsFailedError("every configuration failed: " +
@@ -2532,13 +2946,13 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs, duplicat
     # that depends on the model and the features alone, never on the holdout targets.
     # The holdout plays no part in the choice.
     fit_rows = np.concatenate([train, holdout]) if BROKEN == "F1" else train
-    x_fit, x_holdout, frames = matrices(fit_rows, holdout, final=True)
+    x_fit, x_holdout, frames, y_fit = matrices(fit_rows, holdout, final=True)
     chosen = pred = None
     for i in ranked:
         family, params = makers[i]
         try:
             model = family["make"](task, params, seed, n_jobs)
-            pred = finite(_fit_predict(family, model, x_fit, y[fit_rows], x_holdout,
+            pred = finite(_fit_predict(family, model, x_fit, y_fit, x_holdout,
                                        classification, frames), len(holdout))
         except Exception as exc:            # recorded, never dropped, and never the headline
             models[i].update(status="failed", error=f"{type(exc).__name__}: {exc}")
@@ -2588,6 +3002,60 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs, duplicat
                           "error that their quotient is beyond the largest number a double "
                           "can hold")
 
+    # D74 (3): the share of a squared error that its single largest row carries: on
+    # the holdout and over the selection folds, for the model and for the headline
+    # baseline. A statement about the result: nothing is left out of any number for
+    # it. One warning for each statement above one half. F26: the share is taken of
+    # the absolute errors. M45: over the selection folds only the chosen
+    # configuration keeps its share.
+    largest = {"largest_row_share": None, "largest_row": None,
+               "baseline_largest_row_share": None, "baseline_largest_row": None}
+    cv_largest = dict(largest)
+    if not classification and BROKEN != "F4":
+        if BROKEN == "M45":
+            for m in models:
+                if m is not chosen:
+                    m["largest_row_share"] = m["largest_row"] = None
+        with np.errstate(over="ignore", invalid="ignore"):
+            for key, guess in (("", pred), ("baseline_", base_pred)):
+                errors = np.abs(truth - guess) if BROKEN == "F26" else (truth - guess) ** 2
+                share, at = _largest_row(errors)
+                if share is not None:
+                    largest[key + "largest_row_share"] = share
+                    largest[key + "largest_row"] = int(rows[holdout][at])
+            cv_largest["largest_row_share"] = chosen["largest_row_share"]
+            cv_largest["largest_row"] = chosen["largest_row"]
+            fold_rows, fold_bases = _screen_baselines(y, split["folds"], prev, by_entity)
+            share, at = _largest_row((y[fold_rows] - dict(fold_bases)[baseline["name"]]) ** 2)
+            if share is not None:
+                cv_largest["baseline_largest_row_share"] = share
+                cv_largest["baseline_largest_row"] = int(rows[fold_rows][at])
+        for key, what in (("", f"the chosen model {chosen['config']}"),
+                          ("baseline_", f"the baseline {baseline['name']}")):
+            share = largest[key + "largest_row_share"]
+            if share is not None and share > LARGEST_ROW_SHARE:
+                _warn(warnings, "largest_row_dominates",
+                      f"one holdout row, row {largest[key + 'largest_row']}, carries "
+                      f"{100 * share:.1f}% of the squared error of {what} on the holdout. The "
+                      "score and the skill are reported as measured, with that row in them: "
+                      "they say more about that one row than about the rest. Look at the row")
+        ruled = [m for m in models if m["largest_row_share"] is not None
+                 and m["largest_row_share"] > LARGEST_ROW_SHARE]
+        if ruled:
+            named = sorted({m["largest_row"] for m in ruled})
+            _warn(warnings, "largest_row_dominates",
+                  f"over the selection folds one row carries more than half of the squared "
+                  f"error of {len(ruled)} of the {len(models)} configurations "
+                  f"(row{'s' if len(named) > 1 else ''} {', '.join(map(str, named))}): the "
+                  "choice of model, and the model fitted on the training rows, may rest on "
+                  "it. Look at the row")
+        share = cv_largest["baseline_largest_row_share"]
+        if share is not None and share > LARGEST_ROW_SHARE:
+            _warn(warnings, "largest_row_dominates",
+                  f"over the selection folds one row, row {cv_largest['baseline_largest_row']}, "
+                  f"carries {100 * share:.1f}% of the squared error of the baseline "
+                  f"{baseline['name']}. Look at the row")
+
     # 12. the interval and the p-value, from the holdout predictions alone
     time_groups = entity_groups = None
     if time_ordered:
@@ -2623,8 +3091,14 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs, duplicat
         _warn(warnings, "small_holdout",
               f"the holdout has {rarer} row(s)" + (" of the rarer class" if classification else "")
               + f", fewer than {SMALL_HOLDOUT}: the headline is imprecise")
-    if panel_warning:
-        _warn(warnings, "autocorrelated_panel_target", panel_warning, target)
+    if panel_warning is not None:
+        # M51: it names the training mean, whatever baseline the run used
+        used = "training_mean" if BROKEN == "M51" else baseline["name"]
+        _warn(warnings, "autocorrelated_panel_target",
+              "the timestamps repeat and group_col=False was passed. The per-timestamp mean "
+              f"of the target has lag-1 autocorrelation {panel_warning:.2f}, so the table may "
+              f"hold several series. Skill is measured against the baseline {used}. "
+              + PANEL_BASELINE, target)
 
     # 13. assemble the result
     source_rows = rows[holdout]
@@ -2671,6 +3145,7 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs, duplicat
                 "baseline": baseline["name"], "baseline_score": baseline["score"],
                 "skill": skill}
     headline.update(uncertainty)
+    headline.update(largest)
     doc = {
         "meta": {"tool": "mlprofessor", "schema_version": 1, "profile": profile, "seed": seed,
                  "n_jobs": n_jobs,
@@ -2694,7 +3169,7 @@ def _run(data, target, requested, time_col, gap, profile, seed, n_jobs, duplicat
                "greater_is_better": bool(classification), "n_folds": N_FOLDS,
                "n_scored_folds": N_FOLDS - len(unscored), "n_configurations": len(models),
                "chosen": chosen["config"], "chosen_mean": chosen["cv_mean"],
-               "chosen_std": chosen["cv_std"]},
+               "chosen_std": chosen["cv_std"], **cv_largest},
         # F6c: a family none of whose configurations was chosen is left out of the table
         "models": models if BROKEN != "F6c"
         else [m for m in models if m["family"] == chosen["family"]],

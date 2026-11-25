@@ -4550,3 +4550,1004 @@ stays its guard. A set of rows that agree, however large, under the fast cap
 with `duplicates="group"` and no entity column, beyond the one case of
 `test_fast_cap_groups.py`. The time the gate takes. What the judge's two
 tools find on a variant of the reference: the lead runs them by hand.
+
+## Ground rules of the eighth pass
+
+1. **The application already exists, and this is the eighth pass.**
+   `mlprofessor/` is built and passes all 1,937 cases of the first seven
+   passes. Your role prompt says you write the suite before the application
+   exists and that every test must fail now. In this pass that is not so:
+   most of your tests must fail today, the guards and the controls must pass
+   today, and every existing test must pass today and after the build. Rule 5
+   says which.
+
+2. **The first seven passes are final. Do not edit them, with the six
+   exceptions of rule 3, which D59 allows and which are given there exactly.**
+   That means the 65 existing test files, `tests/conftest.py`,
+   `tests/mlp_helpers.py`, `tests/cp3_helpers.py` to `tests/cp8_helpers.py` and
+   everything under `tests/fixtures/`. New shared helpers go in one new file,
+   `tests/cp9_helpers.py`. The owner's lead reads the diff of every existing
+   file against the committed one afterwards, and any change other than those
+   of rule 3 sends the whole stage back. **`tests/test_skill_undefined.py` is
+   not changed:** its test of a column whose single-column skill cannot be
+   computed (D36) holds after this pass as it does today, because the order
+   reading of D76 is taken only when the first reading has a value.
+
+3. **THE LOOSENINGS (D59). Six existing files; in five of them one
+   replacement and no other change, and one file replaced as a whole.**
+
+   D74 point 1 reverses what seven existing cases hold: under time order with
+   repeated timestamps and `group_col=False` the training mean used to be the
+   only baseline, and `stages.previous_value` used to refuse repeated keys.
+   Each of the five replacements below makes its test accept the application
+   as it stands and as T62 builds it. D74 point 7 does the same for
+   `tests/test_judge_tools.py`: the judge of this pass asserts rules the
+   application does not have yet, and that test is in the loop's ratchet. D65
+   is not needed: no helper changes. Keep each file's line endings as they
+   are. Each text below matches its file exactly once.
+
+   **(a), (b), (c): `tests/test_panel_stop.py`, `tests/test_time_pipeline.py`
+   and `tests/test_whole_numbers.py`**, one line in each
+   (`test_the_statement_lets_the_run_go_ahead_as_before`,
+   `test_panel_uses_training_mean_and_flags_persistence`,
+   `test_missing_and_repeated_integer_stamps`). Before:
+
+   ```python
+       assert [b["name"] for b in doc["baselines"]] == ["training_mean"]
+   ```
+
+   After:
+
+   ```python
+       assert [b["name"] for b in doc["baselines"]] in (
+           ["training_mean"], ["training_mean", "previous_value"])
+   ```
+
+   **(d): `tests/test_guard_review5.py`**, in
+   `test_m23_the_panel_warning_starts_just_above_one_half`. Before:
+
+   ```python
+       assert [b["name"] for b in doc["baselines"]] == ["training_mean"]
+       assert doc["headline"]["baseline"] == "training_mean"
+   ```
+
+   After:
+
+   ```python
+       names = [b["name"] for b in doc["baselines"]]
+       assert names in (["training_mean"], ["training_mean", "previous_value"])
+       assert doc["headline"]["baseline"] in names
+   ```
+
+   **(e): `tests/test_metrics.py`**, in
+   `test_f8_previous_value_refuses_repeated_keys` (the test keeps its name).
+   Before:
+
+   ```python
+       with pytest.raises(ValueError):
+           stages.previous_value(np.arange(5.0), np.array([1.0, 2.0, 2.0, 3.0, 4.0]))
+   ```
+
+   After:
+
+   ```python
+       # Until D74 repeated keys were refused. Since D74 the previous value of a row is
+       # the mean target of the timestamp before. Either is accepted here (D59);
+       # the new behaviour is pinned by tests/test_repeated_stamps.py.
+       try:
+           got = np.asarray(stages.previous_value(
+               np.arange(5.0), np.array([1.0, 2.0, 2.0, 3.0, 4.0])), dtype=float)
+       except ValueError:
+           return
+       assert np.isnan(got[0])
+       assert np.allclose(got[1:], [0.0, 0.0, 1.5, 3.0])
+   ```
+
+   **(f): `tests/test_judge_tools.py`, as a whole.** Until D74 each of its two
+   tests asserted that its tool exits 0. Now each tool is run with
+   `--json FILE`, FILE in a temporary folder of the session, and the test accepts exit
+   0, or exit 1 when every pair (every table) that fails is one the tasks of
+   this pass own; any other exit code fails, and so does a failure that is not
+   on the list. The two fixed lists are `cp9_helpers.BATTERY_OWNED` and
+   `cp9_helpers.TABLES_OWNED` (below). **A tool is run once in a session:**
+   `run_tool` keeps what the run gave. The strict form is the new file
+   `tests/test_judge_tools_pass8.py`, owned by T68, which asks `run_tool` for
+   the same run and asserts exit code 0: the two files together cost one run of
+   each tool. The new text of the file, after its docstring (which says what
+   this paragraph says):
+
+   ```python
+   import json
+   import os
+   import subprocess
+   from pathlib import Path
+
+   import cp9_helpers as q
+   import mlp_helpers as h
+
+   BATTERY = ("verify/battery.py", 3600)
+   TABLES = ("verify/generated_tables.py", 3600)
+   _RUNS = {}
+
+
+   def run_tool(script, timeout, tmp_path_factory):
+       """`(exit code, report, last lines)` of one tool run with `--json`, on the package
+       `mlprofessor`, from the repo root. The report is None when the tool wrote none. The
+       tool is run once in a session, whichever test asks first."""
+       if script not in _RUNS:
+           report = tmp_path_factory.mktemp("judge_tools") / (Path(script).stem + ".json")
+           env = {k: v for k, v in os.environ.items()
+                  if k not in ("PYTHONPATH", "PYTHONSTARTUP", "PYTHONHOME")}
+           env["PYTHONDONTWRITEBYTECODE"] = "1"
+           proc = subprocess.run(
+               [h.PYTHON, "-B", script, "mlprofessor", "--json", str(report)],
+               cwd=str(h.REPO_ROOT), env=env, capture_output=True, text=True, timeout=timeout,
+           )
+           printed = (proc.stdout or "") + (proc.stderr or "")
+           tail = "\n".join(printed.splitlines()[-40:])
+           doc = json.loads(report.read_text(encoding="utf-8")) if report.is_file() else None
+           _RUNS[script] = (proc.returncode, doc, tail)
+       return _RUNS[script]
+
+
+   def _owned_or_clean(script, timeout, tmp_path_factory):
+       """None when the tool exits 0; its report when it exits 1; any other code fails."""
+       code, doc, tail = run_tool(script, timeout, tmp_path_factory)
+       assert code in (0, 1), f"{script} exited {code}; its last lines:\n{tail}"
+       if code == 0:
+           return None
+       assert doc is not None, f"{script} exited 1 and wrote no report; its last lines:\n{tail}"
+       return doc
+
+
+   def test_the_perturbation_battery_holds(tmp_path_factory):
+       doc = _owned_or_clean(*BATTERY, tmp_path_factory)
+       if doc is None:
+           return
+       failing = {f"{pair['run']}:{pair['change']}" for pair in doc["pairs"]
+                  if pair["class"] == "fails"}
+       assert failing, "verify/battery.py exited 1 and its report names no failing pair"
+       other = sorted(failing - q.BATTERY_OWNED)
+       assert not other, (f"{len(other)} pair(s) fail that the eighth pass does not own "
+                          f"(of {len(failing)} failing): {other[:20]}")
+
+
+   def test_the_generated_tables_agree_with_the_reference(tmp_path_factory):
+       doc = _owned_or_clean(*TABLES, tmp_path_factory)
+       if doc is None:
+           return
+       failing = {int(entry["number"]) for entry in doc["tables_with_findings"]
+                  if entry["class"] == "fails"}
+       assert failing, "verify/generated_tables.py exited 1 and its report names no failing table"
+       assert len(failing) == doc["tables_by_class"]["fails"]
+       other = sorted(failing - q.TABLES_OWNED)
+       assert not other, (f"{len(other)} table(s) fail that the eighth pass does not own "
+                          f"(of {len(failing)} failing): {other[:20]}")
+   ```
+
+   | No longer pinned | By | Pinned again by |
+   |---|---|---|
+   | at repeated timestamps under `group_col=False` the training mean is the only baseline | `test_panel_stop.py::test_the_statement_lets_the_run_go_ahead_as_before`, `test_time_pipeline.py::test_panel_uses_training_mean_and_flags_persistence` (two cases), `test_whole_numbers.py::test_missing_and_repeated_integer_stamps`, `test_guard_review5.py::test_m23_the_panel_warning_starts_just_above_one_half` (two cases) | `test_repeated_stamps.py::test_both_baselines_are_scored_at_repeated_timestamps` and `::test_the_training_mean_is_the_headline_baseline_where_its_error_is_lower`, which say what the baselines are |
+   | `stages.previous_value` raises `ValueError` on repeated keys | `test_metrics.py::test_f8_previous_value_refuses_repeated_keys` | `test_repeated_stamps.py::test_the_step_function_gives_the_mean_of_the_timestamp_before` |
+   | each of the judge's two other tools exits 0 on the application | `test_judge_tools.py`, both tests | `test_judge_tools_pass8.py`, both tests (T68) |
+
+   The loosened tests still fail on everything they failed on before: the
+   table of rule 6 gives, for every broken copy the suite caught before this
+   pass, the cases that fail on it before and after. Four gain cases, because
+   the loosened cases pass against the reference of this pass again and fail
+   on those copies as they did: F7 six, and F6, F7c and M23 one each. None
+   loses a case.
+
+   **No existing test is ever edited so that it fails against the library as
+   built:** run the whole suite against the application before you finish and
+   see all 1,937 cases pass.
+
+4. **You write twelve new test files and the helper file, and nothing else.**
+   The files are listed below, each with the tests it must hold, **under the
+   names given**: the lists of rule 5 and the mutation check go by name. Split
+   a named test into parameter cases as the text says, with the case names
+   given. The tables are given by recipe and by seed: keep both, because for a
+   few cases which colour a case has today depends on the rows a seed picks.
+   If you add a test of your own, say so in your final report, with the list
+   of rule 5 it belongs to.
+
+5. **Which tests fail today and which pass today is fixed, by name.** The
+   lists are at the end of this section. A test on the red list fails against
+   the application as it stands, in every one of its parameter cases unless
+   the list says otherwise. A test on the green list passes today in every
+   case. Run the new files before you finish and compare with the lists. **Do
+   not weaken a guard to make it fail, and do not weaken a red test to make
+   it pass.** If a test on the green list fails, or one on the red list
+   passes, and you believe your test is what the spec says, stop and report
+   it with the output.
+
+6. **Every new variant must fail a test, and `verify/mutation_check.py` is how
+   that will be judged.** It runs the whole suite against a copy of the
+   reference implementation and again with the reference broken in one way at
+   a time: thirty-seven forms the gate also catches (F1 to F28, F6b, F6c, F6d,
+   F7b, F7c, F7d, F8b, F12b, F14b) and fifty-one smaller faults (M1 to M51;
+   spec 8 and 8.1). It passes only if the good reference fails none of your
+   tests (the README tests apart) and every variant fails at least one.
+   Eighteen are new, and each has a test of this pass named for it; so does
+   each of the five older variants that one test held alone until now (M13
+   has its second from the judge's two tools, spec 8.2):
+
+   | Variant | The test that must fail on it | Cases that fail on it in the new files |
+   |---|---|---|
+   | F23 | `test_repeated_stamps.py::test_both_baselines_are_scored_at_repeated_timestamps` | 10 |
+   | F24 | `test_screen_line.py::test_a_copy_of_the_target_is_excluded_whatever_its_scale` | 29 |
+   | F25 | `test_screen_set_aside.py::test_one_wild_target_cell_does_not_hide_a_copy` | 14 |
+   | F26 | `test_largest_row.py::test_the_holdout_shares_are_those_of_the_predictions_file` | 3 |
+   | F27 | `test_id_dense.py::test_the_id_like_rule_for_whole_numbers` | 11 |
+   | F28 | `test_no_choice.py::test_one_entity_of_nearly_all_training_rows_and_no_choice_is_made` | 9 |
+   | M40 | `test_repeated_stamps.py::test_both_baselines_are_scored_at_repeated_timestamps` | 7 |
+   | M41 | `test_screen_line.py::test_one_cell_far_off_in_the_copy_does_not_keep_it` | 6 |
+   | M42 | `test_screen_set_aside.py::test_one_wild_target_cell_makes_no_column_a_leak` | 8 |
+   | M43 | `test_order_reading.py::test_the_second_condition_keeps_the_lag_of_a_running_total_quiet` | 1 |
+   | M44 | `test_order_reading.py::test_a_copy_with_some_cells_moved_is_named_under_time_order` | 11 |
+   | M45 | `test_largest_row.py::test_every_configuration_has_its_share_over_the_selection_folds` | 4 |
+   | M46 | `test_extreme_value.py::test_one_cell_far_outside_a_feature_is_named` | 4 |
+   | M47 | `test_screen_line.py::test_a_copy_of_the_class_is_excluded_when_a_fold_holds_few_of_one_class` | 3 |
+   | M48 | `test_no_choice.py::test_a_small_fold_that_trains_on_as_many_rows_as_it_validates_on_is_chosen_on` | 1 |
+   | M49 | `test_fit_order.py::test_every_fit_is_handed_its_rows_in_time_order` | 5 |
+   | M50 | `test_id_dense.py::test_the_id_like_rule_for_whole_numbers` | 3 |
+   | M51 | `test_repeated_stamps.py::test_the_panel_warning_names_the_baseline_the_run_used` | 2 |
+   | F22 | `test_guard_review7.py::test_f22_the_interval_is_the_same_at_any_number_of_cores` | 3 |
+   | M33 | `test_guard_review7.py::test_m33_three_rows_alike_after_a_removed_leak_stop_a_regression` | 1 |
+   | M34 | `test_guard_review7.py::test_m34_the_command_line_gives_the_full_profiles_own_error` | 1 |
+   | M37 | `test_guard_review7.py::test_m37_the_file_says_what_group_measures` | 1 |
+   | M39 | `test_guard_review7.py::test_m39_rows_with_a_dictionary_cell_are_counted_as_repeats` | 2 |
+
+   And for every broken copy the suite caught before this pass, the number of
+   cases that fail on it: in the suite as it was, run against the reference
+   of this pass (where the seven cases of rule 3 fail on the good reference
+   and so count for nothing); in the same files once rule 3 is applied; and
+   with the new files of this pass:
+
+   | Broken copy | Before | After rule 3, in the files that existed | With the new files |
+   |---|---|---|---|
+   | F1 | 29 | 29 | 34 |
+   | F2 | 18 | 18 | 79 |
+   | F3 | 24 | 24 | 28 |
+   | F4 | 14 | 14 | 26 |
+   | F5 | 58 | 58 | 67 |
+   | F6 | 148 | 149 | 160 |
+   | F7 | 212 | 218 | 283 |
+   | F8 | 16 | 16 | 27 |
+   | F9 | 17 | 17 | 17 |
+   | F6b | 50 | 50 | 50 |
+   | F6c | 19 | 19 | 28 |
+   | F6d | 6 | 6 | 6 |
+   | F7b | 34 | 34 | 34 |
+   | F7c | 11 | 12 | 12 |
+   | F10 | 40 | 40 | 52 |
+   | F7d | 7 | 7 | 7 |
+   | F8b | 6 | 6 | 6 |
+   | F11 | 26 | 26 | 26 |
+   | F12 | 6 | 6 | 7 |
+   | F13 | 11 | 11 | 20 |
+   | F14 | 47 | 47 | 47 |
+   | F12b | 4 | 4 | 5 |
+   | F14b | 37 | 37 | 37 |
+   | F15 | 7 | 7 | 7 |
+   | F16 | 13 | 13 | 13 |
+   | F17 | 4 | 4 | 15 |
+   | F18 | 17 | 17 | 17 |
+   | F19 | 27 | 27 | 30 |
+   | F20 | 4 | 4 | 4 |
+   | F21 | 12 | 12 | 15 |
+   | F22 | 1 | 1 | 4 |
+   | M1 | 2 | 2 | 2 |
+   | M2 | 2 | 2 | 2 |
+   | M3 | 2 | 2 | 2 |
+   | M4 | 3 | 3 | 3 |
+   | M5 | 2 | 2 | 2 |
+   | M6 | 2 | 2 | 2 |
+   | M7 | 4 | 4 | 4 |
+   | M8 | 2 | 2 | 2 |
+   | M9 | 14 | 14 | 31 |
+   | M10 | 2 | 2 | 2 |
+   | M11 | 2 | 2 | 2 |
+   | M12 | 3 | 3 | 3 |
+   | M13 | 1 | 1 | 1 |
+   | M14 | 4 | 4 | 4 |
+   | M15 | 4 | 4 | 14 |
+   | M16 | 7 | 7 | 8 |
+   | M17 | 7 | 7 | 7 |
+   | M18 | 6 | 6 | 6 |
+   | M19 | 7 | 7 | 7 |
+   | M20 | 3 | 3 | 3 |
+   | M21 | 2 | 2 | 2 |
+   | M22 | 17 | 17 | 19 |
+   | M23 | 1 | 2 | 2 |
+   | M24 | 2 | 2 | 2 |
+   | M25 | 3 | 3 | 3 |
+   | M26 | 5 | 5 | 5 |
+   | M27 | 3 | 3 | 6 |
+   | M28 | 4 | 4 | 4 |
+   | M29 | 4 | 4 | 4 |
+   | M30 | 2 | 2 | 2 |
+   | M31 | 19 | 19 | 19 |
+   | M32 | 8 | 8 | 8 |
+   | M33 | 1 | 1 | 2 |
+   | M34 | 1 | 1 | 2 |
+   | M35 | 5 | 5 | 5 |
+   | M36 | 2 | 2 | 2 |
+   | M37 | 1 | 1 | 2 |
+   | M38 | 2 | 2 | 2 |
+   | M39 | 1 | 1 | 3 |
+
+   You may run it yourself, from the repo root, with the project interpreter:
+   `E:\CODE\ml-professor\mlprof_env\Scripts\python.exe verify/mutation_check.py --jobs 8`.
+   It writes nothing inside the repo, and takes about an hour and a half on a
+   machine doing nothing else. Do not read the reference implementation to
+   tune a test to it. The README test of this pass goes in a file named
+   `tests/test_readme_pass8.py`: files named `tests/test_readme*.py` are shown
+   on a line of their own and not counted. **Neither
+   `tests/test_judge_tools.py` nor `tests/test_judge_tools_pass8.py` is run by
+   the mutation check:** each runs the judge's two other tools on the
+   application, and a throwaway project has no `verify/`.
+
+7. **A test of this pass says both things in every call, or is about a
+   stop.** As in the last two passes, the new files call through
+   `cp7_helpers.run`, `raised` and `run_cli`, which add no statement, and pass
+   `time_col` and `group_col` in every call that is meant to finish
+   (`**s.SAID` for "no" to both).
+
+8. **Pin what the spec pins about a message, and no other wording.** Spec 5.4
+   has one new fixed passage (the panel warning's) and spec 11 says what each
+   new message holds: the text `holds the value X in N row` of
+   `extreme_value`; for `largest_row_dominates` the word `holdout` or the
+   words `selection folds`, a name, the row as a whole number and the share
+   as a percentage; for `selection_not_made` the training rows of the
+   smallest fold that meets its condition; for the order reading the share as
+   a percentage. `cp9_helpers.holds_share` and `holds_row` read those. Which
+   of the two usual estimators the panel warning's autocorrelation uses is
+   open (spec 11): no test reads that number.
+
+9. **Under the grouped scheme, which units are held out and which fold each
+   is in is open beyond the properties of step 7.** The tests of T66 use
+   tables on which the rule's two conditions hold, or fail, however the units
+   are dealt, and read the counts from `validation.folds`. The order of rows
+   handed over only to be predicted, and the order of the rows of a fit with
+   no time column, are open too (spec 11): `test_fit_order.py` asserts the
+   order of a fit under time order and nothing else about order.
+
+10. **The rules of the earlier passes still hold**: the documented surface
+    only (spec 2.1 to 2.7); recompute, do not trust: every rule of this pass
+    that is a function of a few columns is written a second time in
+    `cp9_helpers`, in plain arithmetic, and a test compares the application
+    with that; assert on values as the application produced them; a share is
+    compared with `math.isclose` or `pytest.approx`, never with `==`, but for
+    the one case built to be exactly one half; **no skipped or
+    expected-to-fail test**; nothing written outside `tmp_path`; the
+    application imported inside test functions; the command line run one
+    process at a time. Tiny tables: the tests of T66 need 2,000 rows, one
+    guard 3,400; nothing else needs more than 700. Use a recording family or
+    a lookup family through the seam wherever a run only has to finish: of
+    the files of this pass only `test_no_choice.py` (three cases),
+    `test_largest_row.py` (two) and the command-line tests fit a built-in
+    model.
+
+## Files of the eighth pass
+
+Each file belongs to exactly one task of `plan/tasks.json`.
+
+| File | Task | About | Today |
+|---|---|---|---|
+| `tests/test_id_dense.py` | T61 | the second clause of the id-like rule for whole numbers (D74 point 5) | red; the controls of D19 green |
+| `tests/test_repeated_stamps.py` | T62 | the previous value at repeated timestamps, both baselines, `stages.previous_value`, the panel warning's passage (D74 point 1) | red, two tests green |
+| `tests/test_screen_line.py` | T63 | the line beside the screen's tree, and the direct reading for a class (D74 point 2) | red under time order and for the new readings; green where the tree already excludes |
+| `tests/test_screen_set_aside.py` | T63 | rows the screen sets aside, the 1% cap and the fall-back to every row (D74 point 2) | red, six cases green |
+| `tests/test_order_reading.py` | T63 | the second reading of `strong_single_column`, its two conditions, and where it is quiet (D76 point 1; D36) | red where a warning is expected; the quiet cases green |
+| `tests/test_largest_row.py` | T64 | the largest row's share on the holdout and over the selection folds, its null pattern, one record for each statement (D74 point 3) | red, one test green |
+| `tests/test_extreme_value.py` | T64 | the `extreme_value` warning: the rule value by value, what its message holds, where it is quiet (D74 point 3, D76 point 3) | red; the quiet cases green |
+| `tests/test_fit_order.py` | T65 | under time order the rows of a fit are in time order (D74 point 4) | red, one control green |
+| `tests/test_no_choice.py` | T66 | no choice between configurations on too few rows (D74 point 6) | red, three controls green |
+| `tests/test_readme_pass8.py` | T67 | the README on this pass | red |
+| `tests/test_judge_tools_pass8.py` | T68 | both tools exit 0 on the application, strictly | red |
+| `tests/test_guard_review7.py` | T68 | a second test, by another route, for F22, M33, M34, M37 and M39 | green |
+| `tests/cp9_helpers.py` | none | shared helpers of the eighth pass; holds no test | |
+| `tests/test_panel_stop.py`, `test_time_pipeline.py`, `test_whole_numbers.py`, `test_guard_review5.py`, `test_metrics.py` | (T44, T11, T33, T48, T7) | one replacement each, as rule 3 says; nothing else | green before and after |
+| `tests/test_judge_tools.py` | (T60) | replaced as rule 3 (f) says | green before and after; red until T55 to T57 were built |
+
+### `tests/cp9_helpers.py`
+
+Import the earlier helper files and build on them; do not copy from them.
+Nothing here makes a statement the call did not make, and nothing imports
+`mlprofessor` at module level. `s` is `cp7_helpers`, `h` is `mlp_helpers`.
+
+- **Pinned values**: `SCREEN_FAR` 10, `SCREEN_SET_ASIDE` 0.01, `ORDER_AGAINST`
+  0.10, `ORDER_PAIRS` 20, `LARGEST_ROW_SHARE` 0.5, `EXTREME_GAP` 30,
+  `EXTREME_SPREAD` 10, `EXTREME_OUTERMOST` 3, `SELECTION_FLOOR` 50 (spec 4.2
+  and 4.3). `HEADLINE_LARGEST`: the four keys `largest_row_share`,
+  `largest_row`, `baseline_largest_row_share`, `baseline_largest_row`;
+  `MODEL_LARGEST`: the first two.
+- **`PANEL_BASELINE`**: the second sentence of the fixed passage of spec 5.4,
+  from `With no entity column` to `its own previous value.`
+  **`panel_passage(baseline)`**: `Skill is measured against the baseline
+  {baseline}. ` followed by `PANEL_BASELINE`.
+- **`holds_share(text, share)`**: some number written in `text` is within 0.1
+  of 100 x `share` (`s.holds_number`). **`holds_row(text, row)`**: `row` is
+  among the whole numbers written in `text` (`cp8_helpers.whole_numbers_in`).
+- **`BATTERY_OWNED`, `TABLES_OWNED`**: two frozen sets, of `"run:change"`
+  texts and of table numbers: the pairs of the battery and the tables of the
+  generated-table test (1,000 tables from its own seed) that fail on the
+  application as the seventh pass left it. **Take them from
+  `docs/measurements/CP9/owned_by_pass8.json`**, the report the lead's own
+  runs of the two tools on the application wrote: the keys of
+  `battery.pairs` and of `generated_tables.tables`. Do not shorten the lists
+  and do not add to them.
+- **Readers**: `column(result, name)`; `is_leak` and `is_feature` (role
+  `feature` and reason null); `leaks(result)`, the sorted names of the
+  columns excluded as `suspected_leak`; `told(result, code, name=None)`, the
+  messages of the warnings with that code (about that column);
+  `training_rows(result, frame)`, the row numbers not in the holdout.
+- **`previous_by_hand(y, keys, gap=0)`**: for each row the mean of `y` over
+  the rows at the timestamp `gap + 1` distinct timestamps before its own, or
+  None; with dictionaries and plain sums.
+- **`against_order(x, y)`**: the pairs `(x, y)` with neither missing, sorted
+  (by `x`, then `y`); among neighbours whose `x` differ, the smaller of the
+  share in which `y` falls and the share in which it rises; None with fewer
+  than 20 such neighbours.
+- **`far_outside(values)`**: the rule of `extreme_value` as spec step 11
+  states it, value by value, over the distinct finite values: a list of
+  `(value, rows that hold it, nearest value that is not far outside)`.
+- **`largest_row(rows, truth, guess)`**: `(share, row)` from squared errors
+  added with `math.fsum`; `(None, None)` when the sum is zero.
+- **`walk(n=600, seed=0, per=1, noise=0.0, shuffle=False)`**: from
+  `numpy.random.default_rng(seed)`, in this order: `level`, the cumulative
+  sum of `n` normal draws; `n1` and `n2`, `n * per` normal draws each; `y`,
+  `level` repeated `per` times plus `noise` times `n * per` normal draws.
+  Columns `t` (0 to n - 1 as int64, each `per` times), `n1`, `n2`, `y`. With
+  `shuffle`, the rows in the order of `rng.permutation`.
+- **`with_column(frame, name, values, target="y")`**: a copy with the column
+  put just before the target. **`rotated(values, share, seed=0, rows=None)`**:
+  a float copy in which `max(2, round(share x len(rows)))` cells, drawn from
+  `default_rng(seed).choice` among `rows` (all rows when None) without
+  replacement, are moved round among themselves with `numpy.roll(.., 1)`.
+- **`SCHEMES`** `("time", "time_repeated", "time_entities", "random",
+  "grouped")` and **`scheme_table(scheme, seed)`**, a regression table with a
+  noise column `n1` and no column that follows the target, with the
+  statements of its call: `time`: `walk(n=600, seed=seed)`, `time_col="t"`,
+  `group_col=False`; `time_repeated`: `walk(n=200, seed=seed, per=3,
+  noise=0.5)`, the same statements; `time_entities`:
+  `cp6_helpers.walks(n_series=6, n_times=100, seed=seed)` without its column
+  `prev`, with `n1` (normal draws from `default_rng(seed)`) inserted as the
+  third column, `time_col="t"`, `group_col="who"`; `random`:
+  `h.reg_frame(n=600, seed=seed)` with `z1` renamed `n1`, `**s.SAID`;
+  `grouped`: `s.sized_entities([5] * 120, seed=seed)` with `m1` renamed `n1`,
+  `time_col=False`, `group_col="who"`.
+- **`screened(frame, statements, **kw)`**: `s.run` with one recording family
+  (`s.rec()`): what the screen and the warnings do is all such a test reads.
+- **`dominant_entity(large=1490, small=255, per=2, seed=0)`**: `who` is
+  `C0000` for `large` rows and `C0001`, ... for `small` entities of `per`
+  rows; `n1` to `n4` and `y` are normal draws from `default_rng(seed)`, in
+  that order; then the rows in the order of `rng.permutation`.
+
+## A: the identifier (task T61)
+
+### `tests/test_id_dense.py`
+
+Spec: step 5 (rule 8b), 4.3, 7, 11. Roles are read with
+`cp8_helpers.roles(frame)`, on a table of 300 rows with the column `code`,
+a noise column and a noise target.
+
+- `test_the_id_like_rule_for_whole_numbers`, eighteen cases. **F27, and M50**
+  for the three cases with a repeat. Each case is a column of 300 cells and
+  whether it is id-like (role `excluded`, reason `id_like`) or a numeric
+  feature. *The first clause (D19), green today:* `in_file_order` (1 to 300);
+  `consecutive_in_no_order` (the same, permuted); `rising_with_gaps` and
+  `falling_with_gaps` (cumulative sums of whole steps of 1 to 49, up from
+  1,000 and down from 90,000): all id-like. `a_measure_in_no_order` (such a
+  rising column, permuted), `few_values` (whole numbers 0 to 10),
+  `fractions` (halves, permuted): features. *The second clause:*
+  `no_order_some_rows_gone` (300 of the 400 numbers from 100001, drawn
+  without replacement), the same `_as_floats`, `no_order_beyond_2_to_the_53`
+  (the same from 2**60, int64), `no_order_empty_cells` (the same as floats
+  with ten empty cells), `no_order_one_row_repeated` (299 consecutive numbers
+  and one of them again, permuted), `file_order_one_row_repeated` (the same,
+  sorted), `286_distinct_of_300`: id-like. `285_distinct_of_300`: a feature
+  (exactly 95% is not more than 95%). `fills_just_over_half_its_range` (the
+  even numbers 2 to 598 and 600, permuted: 300 values in a range of 599) and
+  `fills_half_its_range` (the same with 601: a range of 600): id-like;
+  `fills_just_under_half_its_range` (with 602: a range of 601): a feature.
+- `test_the_cases_are_what_their_names_say`: counts, from the columns alone,
+  the shares the case names state.
+- `test_the_rule_reads_the_rows_that_have_a_target`, cases `file_order` and
+  `no_order`. **F27** on the second. An identifier 100001 to 100340 over 340
+  rows of which 40 have no target; in file order and with the rows permuted;
+  a run through `q.screened`: 40 rows dropped, the identifier `id_like`, the
+  two noise columns features.
+- `test_a_shuffled_identifier_reaches_no_model`. **F27.** A classification
+  with such an identifier, a recording family and a recording step: no event
+  names the column.
+- `test_the_time_column_and_the_entity_column_keep_their_roles`: a dense
+  whole-number time column and entity column have the roles `time` and
+  `group`.
+
+## B: the previous value at repeated timestamps (task T62)
+
+### `tests/test_repeated_stamps.py`
+
+Spec: 2.7, steps 8 and 11, 5.2, 5.4, 7, 11. Runs use a recording family and
+`task="regression"`. `_sides(result, frame, gap, time)` gives the training
+and the holdout rows from the holdout rows of the result and the timestamps
+of the table; `_assert_both(result, frame, gap, time)` asserts: `baselines`
+names exactly `training_mean` then `previous_value`; each score equals the
+test's own (the training rows' mean; `q.previous_by_hand`) within 1e-9; the
+one used is the lower, `headline.baseline` and `baseline_score` follow;
+`headline.skill` is 1 - score / baseline score; `timestamps_unique` is
+false. It returns the name of the baseline used.
+
+- `test_the_step_function_gives_the_mean_of_the_timestamp_before`, gaps 0, 1
+  and 2: twelve timestamps with 1 to 4 rows each, in permuted order:
+  `stages.previous_value(y, keys, gap=gap)` equals `q.previous_by_hand` row
+  for row, not-a-number where there is none.
+- `test_the_step_function_is_unchanged_at_unique_keys`: six unique keys in
+  no order, by hand, with `gap=0` and `gap=1`. Green today.
+- `test_both_baselines_are_scored_at_repeated_timestamps`, cases
+  `three_a_timestamp` (`q.walk(n=200, seed=8211, per=3, noise=0.5)`),
+  `rows_shuffled` (the same with `shuffle=True`), `uneven` (the first with
+  about 30% of its rows removed, so that timestamps hold one, two or three
+  rows and some none) and `gap_2`. **F23, M40.** `_assert_both`, and the
+  baseline used is `previous_value`.
+- `test_one_repeated_row_leaves_the_previous_value_in_use`. **F23.**
+  `q.walk(n=400, seed=8221)` with row 99 present twice: `_assert_both`, the
+  previous value used, its score within 5% of the table's without the
+  repeat, and the `duplicate_rows` warning.
+- `test_the_training_mean_is_the_headline_baseline_where_its_error_is_lower`:
+  `h.panel_frame(n_times=80, per_time=4, seed=8231, persistent=False)`:
+  `_assert_both` gives `training_mean`; no panel warning.
+- `test_unique_timestamps_are_scored_as_before`: `q.walk(n=300, seed=8241)`:
+  the previous-value score by hand from the row before. Green today.
+- `test_the_leak_screen_measures_a_lag_against_the_timestamp_before`.
+  **F23.** `q.walk(n=400, seed=8251, per=3, noise=0.1)` with a column `lag`,
+  the mean target of the timestamp before: a feature, with no
+  `suspected_leak` and no `strong_single_column`.
+- `test_the_panel_warning_names_the_baseline_the_run_used`, cases
+  `persistent` (`h.panel_frame(n_times=80, per_time=4, seed=8261,
+  persistent=True)`; the previous value is used) and `late_noise` (120
+  timestamps of four rows: a walk for the first 90, then levels drawn afresh
+  round the walk's mean with a spread of 2; the training mean is used).
+  **M51** on the first. Exactly one `autocorrelated_panel_target` warning,
+  about the target; its message holds `q.panel_passage(baseline)` and does
+  not hold the passage with the other baseline's name.
+- `test_the_command_line_reports_both_baselines`: the first table through
+  the command line: both baselines in `profile.json`, one used, and the
+  panel warning's passage.
+
+## C: the leak screen (task T63)
+
+### `tests/test_screen_line.py`
+
+Spec: step 8, 4.3, 7. Every run is `q.screened`. `_assert_copy_is_out`: the
+column has role `excluded`, reason `suspected_leak`, leak rule
+`predicts_target`; one `suspected_leak` warning and no
+`strong_single_column` for it; `n1` is a feature; no other column is a leak.
+
+- `test_a_copy_of_the_target_is_excluded_whatever_its_scale`, the five
+  schemes of `q.SCHEMES` times the copies `exact`, `rescaled` (3.7 y + 12),
+  `negative` (-2 y + 5) and `scale_1e-9` (1e-9 y), on
+  `q.scheme_table(scheme, seed=8301)`. **F24** under the three time-ordered
+  schemes and at 1e-9.
+- `test_one_cell_far_off_in_the_copy_does_not_keep_it`, the five schemes
+  times the cells 999999 and -999, seed 8311: the rescaled copy with one
+  cell replaced, in the forty-first training row of the clean run. **M41**
+  under the three time-ordered schemes.
+- `test_a_copy_with_empty_cells_is_excluded`, the five schemes, seed 8321:
+  two cells of the copy empty.
+- `test_columns_that_do_not_follow_the_target_stay_features`, the five
+  schemes, seed 8331: no leak and no `strong_single_column`. Green today.
+- `test_a_driver_known_before_the_outcome_is_kept_under_time_order`: a walk
+  of 400 steps as the feature and the target the walk plus noise of 0.5: a
+  feature, not a leak. Green today.
+- `test_a_copy_of_the_class_is_excluded_when_a_fold_holds_few_of_one_class`,
+  cases `number`, `number_reversed` (5 - 2 y) and `text` (`closed`, `open`).
+  **M47.** 600 unique timestamps and a 0/1 target of which the first 100
+  rows hold two 1s (rows 20 and 60): the copy is out.
+- `test_a_column_that_drives_the_class_is_not_excluded`, cases `random` and
+  `time`: `h.clf_frame(n=600, seed=8361)`: no leak. Green today.
+
+### `tests/test_screen_set_aside.py`
+
+Spec: step 8, 4.3, 7. `_middle(frame, statements, training, n_cells)` picks
+training rows from the middle of the training rows, seven apart (under time
+order the middle in time, at timestamps seven apart, so that each is among
+the validation rows of a fold). `_with_wild_targets(frame, statements, n)`
+adds the column `copy` (3.7 y + 12) and then sets the target of `n` such
+rows to 999999: the copy keeps what the target was.
+
+- `test_one_wild_target_cell_does_not_hide_a_copy`, the five schemes, seed
+  8401. **F25.** The copy is the only leak; `n1` a feature.
+- `test_one_wild_target_cell_makes_no_column_a_leak`, the five schemes, seed
+  8411. **M42** under `random` and `grouped`. No copy in the table: no leak,
+  no `strong_single_column`, every role as in the clean run.
+- `test_a_wild_target_cell_in_the_holdout_changes_nothing_in_the_screen`.
+- `test_at_most_one_percent_of_the_training_rows_is_set_aside`, cases (600
+  rows, 4 cells, out), (600, 5, kept), (120, 1, out), (120, 2, kept), on
+  `h.reg_frame(n=.., seed=8431)`: 450 training rows allow four and 90 allow
+  one. Out: the copy is the only leak. Kept: no leak, the copy a feature,
+  and one `strong_single_column` for it (the order reading). **F25** on the
+  cases that are out, **M44** on those kept.
+- `test_under_time_order_the_row_after_a_wild_cell_counts_too`, cases (2,
+  out) and (3, kept), on `q.walk(n=600, seed=8441)`: each wild cell is in a
+  validation block.
+- `test_a_long_tail_of_the_target_is_scored_as_it_is`: 600 rows of which
+  about 8% have their target multiplied by 500; the test counts that more
+  than 1% of the training rows are far off; the copy is the only leak.
+
+### `tests/test_order_reading.py`
+
+Spec: step 8, 2.5, 4.3, 7, 11. `_shares(result, frame, name)` gives, by hand
+over the training rows of a run at unique timestamps,
+`q.against_order(column, y)` and the same for the row before.
+`_assert_named_and_kept`: a feature, exactly one `strong_single_column`, no
+`suspected_leak`.
+
+- `test_a_copy_with_some_cells_moved_is_named_under_time_order`, seeds 8501
+  to 8503. **M44.** `q.walk(n=600, seed)` with 3.7 y + 12 of which 4% of the
+  first 450 cells are moved (`q.rotated`): the share is above 0 and at most
+  0.10, the previous value's above 0.10; named and kept; the message holds
+  the share as a percentage.
+- `test_a_curve_of_the_target_is_named_under_time_order`, cases
+  `exponential` (exp(y / 4)) and `cube`: the share is 0; the column is
+  excluded, or named and kept (rule 2 may see through a mild curve).
+- `test_the_first_condition_is_a_share_of_at_most_one_tenth`. **M44.** Seven
+  copies with 5% to 16% of their cells moved: none excluded; each is named
+  exactly when its share by hand is at most 0.10; both outcomes occur.
+- `test_the_second_condition_keeps_the_lag_of_a_running_total_quiet`.
+  **M43.** A running total of exponential steps, its own lag and a counter
+  of the rows (0.37 k + 1.3, so no identifier): both shares are 0, for the
+  column and for the previous value; neither is named. Green today.
+- `test_with_no_previous_value_the_second_condition_has_nothing_to_ask`.
+  **M44.** Under the random scheme, the copy with ten training targets set
+  to 999999: named and kept.
+- `test_fewer_than_twenty_pairs_give_no_reading`: three levels of the
+  target. Green today.
+- `test_a_strong_driver_known_before_the_outcome_is_not_named`, 100, 200 and
+  400 rows times a true R-squared of 0.90, 0.95 and 0.99: a walk `x` and
+  `y = x + noise` scaled to that share: the share is above 0.10, `x` is a
+  feature and nothing is a leak; at 0.90 and 0.95 no `strong_single_column`
+  (at 0.99 the first reading may name it). Green today.
+- `test_a_column_warned_for_its_skill_gets_one_record`: under the random
+  scheme, the target with 2.5% of its training cells moved: one record.
+  Green today.
+- `test_a_column_whose_skill_cannot_be_computed_is_named_by_neither_reading`
+  (D36). The table of
+  `test_skill_undefined.py::test_single_column_skill_that_cannot_be_computed_flags_nothing`:
+  the share of `lead` against the order is 0, and it is a feature with no
+  `suspected_leak` and no `strong_single_column`. Green today; no variant
+  fails it (a guard of the reference's own condition).
+- `test_a_classification_has_no_order_reading`, seeds 1 and 2:
+  `h.clf_frame(n=600, seed, signal=5.0)`: the share of `x1` is at most 0.10
+  and nothing is named. Green today.
+- `test_a_categorical_column_has_no_order_reading`: twenty-four bands of the
+  target as text. Green today.
+
+## D: two statements about the result (task T64)
+
+### `tests/test_largest_row.py`
+
+Spec: steps 9 and 11, 2.5, 5.2, 5.3, 11. `_table()` is `h.reg_frame(n=400,
+seed=8701)` with the target of its first six rows empty, so that a row's
+number is not its place among the rows split. `_two_families(a, b)` makes two
+lookup families on one log, `a-0` and `b-0`; `_guesses(frame, seed, spread)`
+is the target plus normal noise. `_folds(log, family, n_train)` gives the
+rows each selection fold was fitted on and predicted.
+
+- `test_the_keys_are_in_every_part`, cases `regression` and
+  `classification`, with the built-in families and an `out_dir`: the four
+  keys in `headline` and in `cv`, the two in every record of `models` and in
+  the columns of `ProfileResult.models`, in the object and in the file; all
+  null for the classification and no warning; all numbers for the
+  regression. **M45** on the regression.
+- `test_the_holdout_shares_are_those_of_the_predictions_file`. **F26.** For
+  the model from `predictions`, for the baseline from the training rows'
+  mean (`q.largest_row`).
+- `test_under_time_order_the_baseline_is_the_one_the_headline_used`.
+  **F26.** `q.walk(n=400, seed=8721)`: against the previous value, on the
+  holdout and over the selection folds (rows 50 to 299).
+- `test_every_configuration_has_its_share_over_the_selection_folds`.
+  **M45.** Each record of `models` by hand from the rows its folds
+  predicted; `cv` holds the chosen one's and the baseline's (each fold's own
+  training mean).
+- `test_a_configuration_that_failed_has_no_share`.
+- `test_a_sum_of_zero_has_no_largest_row`: a model that is exact; and a
+  baseline that is exact on a flat holdout, where skill is null (D36).
+- `test_no_warning_without_a_row_that_dominates`. Green today.
+- `test_one_holdout_row_the_model_misses_is_one_record`. **F26.** One
+  prediction 500 off: one record; its message holds `holdout`, `a-0`, the
+  row and the share.
+- `test_a_wild_holdout_target_is_a_record_for_the_model_and_one_for_the_baseline`.
+- `test_a_wild_training_target_is_one_record_for_the_configurations_and_one_for_the_baseline`.
+  **M45.** Two records, both holding `selection folds` and the row; one
+  holds `training_mean` and its share.
+- `test_exactly_one_half_is_not_above_one_half`: two holdout targets set to
+  1 and 2, predicted 9 and 10, every other row exact: a share of one half
+  and no record.
+- `test_the_statements_leave_nothing_out_of_the_score`.
+
+### `tests/test_extreme_value.py`
+
+Spec: step 11, 2.5, 4.3, 7, 11. `_table()`: 300 rows, `a` about 50 with a
+spread of 10, `b` about 0, a 0/1 flag and a noise target, from seed 8601.
+`_named(result, name)` reads every `extreme_value` record with the pattern
+`holds the value (\S+) in (\d+) row`; `_assert_as_by_hand` compares the
+values named, the rows and the nearest value with `q.far_outside` over the
+rows that have a target, and asserts the text `holds the value {value!r} in
+{rows} row`.
+
+- `test_one_cell_far_outside_a_feature_is_named`, `a` and `b` times -999 and
+  999999. **M46** on `a` with -999.
+- `test_the_target_of_a_regression_is_looked_at`.
+- `test_a_value_counts_once_however_many_rows_hold_it`: four cells. **M46.**
+- `test_the_gap_must_be_more_than_thirty_times_the_spread`, cases 310 (not
+  named; green today) and 311 (named), above a column of the whole numbers 0
+  to 10.
+- `test_the_three_outermost_values_at_each_end_are_looked_at`, cases
+  `two_values`, `three_values` (0, 1, 1000: named), `three_values_near` (0,
+  1, 31: not), `two_beyond` and `three_beyond` (-999, -998 (, -997) below 20
+  to 39: all named), `four_beyond` (none named: the fourth from an end is not
+  looked at), `both_ends`. **M46** on `both_ends`. Green today where nothing
+  is named.
+- `test_only_rows_that_are_split_are_looked_at`: a far value in a row with
+  no target is not named, and such a row is not counted.
+- `test_columns_that_reach_no_model_are_not_looked_at`: an identifier, a
+  column excluded as a leak (with one cell of 999999), a text column, and a
+  classification target of 0 and 999999.
+- `test_an_infinite_cell_is_no_extreme_value`. Green today.
+- `test_a_long_tail_is_not_named`, six shapes (normal, log-normal with
+  sigma 1 and 1.5, a traded volume, exponential, a count) at 200 and 2,000
+  rows, from `default_rng([8641, n, len(shape)])`. Green today.
+- `test_a_clean_table_has_no_such_warning_under_any_scheme`. Green today.
+- `test_the_warning_changes_no_number`: the far value is in the matrix every
+  model is handed, and the split is that of the table without it.
+- `test_the_command_line_writes_the_warning`. **M46.**
+
+## E: the order of the rows of a fit (task T65)
+
+### `tests/test_fit_order.py`
+
+Spec: 2.6, steps 9 and 10, 7, 11.
+
+- `test_every_fit_is_handed_its_rows_in_time_order`, cases
+  `unique_timestamps` (`q.walk(n=300, seed=8801, shuffle=True)`),
+  `repeated_timestamps` (`q.walk(n=100, seed=8802, per=3, noise=0.5,
+  shuffle=True)`) and `entities` (`cp6_helpers.walks(n_series=6, n_times=60,
+  seed=8803)` with its entity column declared). **M49.** A recording family
+  and a recording step: every fit of either is handed its rows by timestamp,
+  rows of one timestamp by their place in the file, with the target in the
+  same order; six model fits.
+- `test_rows_of_one_timestamp_keep_their_file_order`. **M49.**
+- `test_the_order_of_the_file_changes_no_number_under_time_order`. **M49.**
+  A family that is fitted on the first third of the rows it is handed, on a
+  table in time order and on the same rows permuted: the same headline
+  score, the same fold scores, the same prediction for every timestamp.
+- `test_with_no_time_column_the_run_is_as_it_was`. Green today.
+
+## F: no choice on too few rows (task T66)
+
+### `tests/test_no_choice.py`
+
+Spec: step 9, 2.5, 4.2, 5.3, 7, 10.10, 11. `_families(frame, *spreads)` makes
+one lookup family for each spread, `a`, `b`, ..., each predicting the target
+plus noise of that spread; `_starved(result)` reads from `validation.folds`
+the folds with fewer than 50 training rows and fewer than validation rows.
+
+- `test_one_entity_of_nearly_all_training_rows_and_no_choice_is_made`, seeds
+  0 to 2, on `q.dominant_entity(seed)` with spreads 3.0 and 0.1. **F28.** One
+  such fold, validating on at least 1,490 rows; every fold scored and every
+  record with five fold scores; `b-0` has by far the better `cv_mean` and
+  `a-0` is the headline's and `cv.chosen`; one `selection_not_made` warning,
+  whose message holds that fold's training rows.
+- `test_the_first_configuration_that_fits_is_used`. **F28.** `a` raises on
+  the final fit: `b-0` is used, not `c-0` with the best fold scores.
+- `test_a_configuration_with_no_fold_scores_is_not_the_first`. **F28.** A
+  family that fails in every fold comes first: `a-0` is used.
+- `test_rows_that_agree_in_every_feature_are_units_of_the_rule_too`.
+  **F28.** With `duplicates="group"` and 1,490 rows alike in every feature.
+- `test_a_small_fold_that_trains_on_as_many_rows_as_it_validates_on_is_chosen_on`.
+  **M48.** `s.sized_entities([30] + [1] * 74, seed=9021)`: 78 training rows;
+  the fold that validates on the entity of 30 trains on 39 to 48 rows and
+  validates on 30 to 39, however the units are dealt; no warning, and `b-0`
+  is chosen. Green today.
+- `test_an_ordinary_table_of_entities_is_chosen_on_as_before`. Green today.
+- `test_the_rule_is_for_the_grouped_scheme_only`: under time order with 13
+  timestamps of one row and then 77 of five, the first fold trains on fewer
+  rows than it validates on, and the choice is made; and under the random
+  scheme on 104 rows. Green today.
+- `test_the_dominant_shape_is_reported_at_about_zero`, seeds 0 to 2, with the
+  built-in families on `q.dominant_entity(seed=100 + seed)`. **F28.** One
+  warning, the first configuration, and skill inside -0.03 to 0.02.
+
+## The README (task T67)
+
+### `tests/test_readme_pass8.py`
+
+Spec: 1. It judges `README.md`, which the builder owns; do not edit it. It
+imports `test_readme_examples`, as the README tests before it do. Pin no
+wording beyond these.
+
+- `test_the_readme_names_what_the_eighth_pass_added`: the text holds
+  `largest_row_share`, `largest_row_dominates`, `extreme_value` and
+  `selection_not_made`, and names no path under `verify/` or `tests/`.
+- `test_the_readme_says_what_the_baseline_is_at_repeated_timestamps`: with
+  white space joined, it holds `timestamp before` and no longer holds `only
+  when timestamps are unique` or `when timestamps are unique, so`.
+- `test_the_readme_states_the_limits_of_the_eighth_pass`: in lower case it
+  holds `strong_single_column`, `noise` and `sorted`.
+
+The fourteen existing README tests judge the README as it is and stay green
+through T61 to T66, which do not touch it; T67 must keep them green.
+
+## The judge's other tools and the guards (task T68)
+
+### `tests/test_judge_tools_pass8.py`
+
+Spec: 8.2. The strict form of `tests/test_judge_tools.py`. It imports that file
+and holds two tests, `test_the_perturbation_battery_exits_0` and
+`test_the_generated_tables_exit_0`: each asks `test_judge_tools.run_tool` for
+the tool's one run of the session (`BATTERY`, `TABLES`) and asserts exit code
+0, showing the last 40 lines the tool printed otherwise. Not run by the
+mutation check.
+
+Each tool has a time limit of 3,600 seconds, which only keeps a hung script
+from holding the suite for ever. Measured on 2026-11-25: the battery, now
+1,229 pairs, runs 32 side by side by default and takes 274 to 296 seconds on
+a machine doing nothing else (at 16 side by side it took 716 seconds, and
+1,313 to 1,465 beside other runs); the generated tables take about two
+minutes, and
+the rest of the suite with the files of this pass about eight to ten. That
+is why the two files share one run of each tool. The loop's own limit for
+the whole suite is the one that binds, and the suite must run with nothing
+else loading the machine.
+
+### `tests/test_guard_review7.py`
+
+Spec: 8 and 8.1, steps 6, 7, 8a and 12, 2.2, 2.5, 5.4. All green today.
+
+- `test_f22_the_interval_is_the_same_at_any_number_of_cores`, cases
+  `bootstrap_rows` (a classification), `bootstrap_groups` (200 entities of
+  three rows) and `bootstrap_blocks` (a walk of 320 timestamps), each with a
+  lookup family under the fast profile at `n_jobs` 1 and 3: the interval,
+  the interval on skill and the p-value are equal, and the two documents
+  differ in `meta.n_jobs` and the timing only. **F22.**
+- `test_m33_three_rows_alike_after_a_removed_leak_stop_a_regression`. **M33.**
+  400 rows, no entity column, a numeric target and a rescaled copy of it;
+  three holdout rows of `stages.split_random(400, None, 0)` are given the
+  measures of three training rows: under `duplicates="group"` the run stops
+  with `holdout_copies_in_training`, the message names the column and holds
+  3, and no model was handed a row.
+- `test_m34_the_command_line_gives_the_full_profiles_own_error`, cases `fast`
+  and `full`. **M34** on `fast`. Entities of 2,500, 300, 300 and 300 rows
+  through the command line: exit 3 and `too_few_groups`.
+- `test_m37_the_file_says_what_group_measures`. **M37.** Through the command
+  line, the `same_features_grouped` warning in `profile.json` holds
+  `cp8_helpers.GROUP_MEASURES`.
+- `test_m39_rows_with_a_dictionary_cell_are_counted_as_repeats`, cases
+  `dictionary` and `tuple_with_a_list`. **M39.** A regression in which
+  twelve rows repeat: `input.duplicate_rows` is 12.
+
+## What must fail today, and what must pass today
+
+Checked on 2026-11-25 with prototypes of every test of this section and of
+the six loosenings of rule 3, run against the application as it stands,
+against the reference implementation of this pass, against the reference as
+it was (the loosened files), and against the reference carrying each of its
+eighty-eight faults. The prototypes were written outside the repo and are
+not kept in it: they are the proof that the recipes work, not text to copy.
+What they printed is in `docs/measurements/CP9/`.
+
+**Red today.** They fail against the application until the build stage has
+done D74 and D76, and pass against the reference.
+
+| File | Tests |
+|---|---|
+| `test_id_dense.py` | `test_a_shuffled_identifier_reaches_no_model`; `test_the_id_like_rule_for_whole_numbers`: `286_distinct_of_300`, `file_order_one_row_repeated`, `fills_half_its_range`, `fills_just_over_half_its_range`, `no_order_beyond_2_to_the_53`, `no_order_empty_cells`, `no_order_one_row_repeated`, `no_order_some_rows_gone`, `no_order_some_rows_gone_as_floats`; `test_the_rule_reads_the_rows_that_have_a_target`: `no_order`. |
+| `test_repeated_stamps.py` | `test_both_baselines_are_scored_at_repeated_timestamps` (4 cases); `test_one_repeated_row_leaves_the_previous_value_in_use`; `test_the_command_line_reports_both_baselines`; `test_the_leak_screen_measures_a_lag_against_the_timestamp_before`; `test_the_panel_warning_names_the_baseline_the_run_used` (2 cases); `test_the_step_function_gives_the_mean_of_the_timestamp_before` (3 cases); `test_the_training_mean_is_the_headline_baseline_where_its_error_is_lower`. |
+| `test_screen_line.py` | `test_a_copy_of_the_class_is_excluded_when_a_fold_holds_few_of_one_class` (3 cases); `test_a_copy_of_the_target_is_excluded_whatever_its_scale`: `grouped-scale_1e-9`, `random-scale_1e-9`, `time-exact`, `time-negative`, `time-rescaled`, `time-scale_1e-9`, `time_entities-exact`, `time_entities-negative`, `time_entities-rescaled`, `time_entities-scale_1e-9`, `time_repeated-exact`, `time_repeated-negative`, `time_repeated-rescaled`, `time_repeated-scale_1e-9`; `test_a_copy_with_empty_cells_is_excluded`: `time`, `time_entities`, `time_repeated`; `test_one_cell_far_off_in_the_copy_does_not_keep_it`: `grouped--999.0`, `random--999.0`, `time--999.0`, `time-999999.0`, `time_entities--999.0`, `time_entities-999999.0`, `time_repeated--999.0`, `time_repeated-999999.0`. |
+| `test_screen_set_aside.py` | `test_a_long_tail_of_the_target_is_scored_as_it_is`; `test_at_most_one_percent_of_the_training_rows_is_set_aside` (4 cases); `test_one_wild_target_cell_does_not_hide_a_copy` (5 cases); `test_under_time_order_the_row_after_a_wild_cell_counts_too` (2 cases). |
+| `test_order_reading.py` | `test_a_copy_with_some_cells_moved_is_named_under_time_order` (3 cases); `test_a_curve_of_the_target_is_named_under_time_order` (2 cases); `test_the_first_condition_is_a_share_of_at_most_one_tenth`; `test_with_no_previous_value_the_second_condition_has_nothing_to_ask`. |
+| `test_largest_row.py` | `test_a_configuration_that_failed_has_no_share`; `test_a_sum_of_zero_has_no_largest_row`; `test_a_wild_holdout_target_is_a_record_for_the_model_and_one_for_the_baseline`; `test_a_wild_training_target_is_one_record_for_the_configurations_and_one_for_the_baseline`; `test_every_configuration_has_its_share_over_the_selection_folds`; `test_exactly_one_half_is_not_above_one_half`; `test_one_holdout_row_the_model_misses_is_one_record`; `test_the_holdout_shares_are_those_of_the_predictions_file`; `test_the_keys_are_in_every_part` (2 cases); `test_the_statements_leave_nothing_out_of_the_score`; `test_under_time_order_the_baseline_is_the_one_the_headline_used`. |
+| `test_extreme_value.py` | `test_a_value_counts_once_however_many_rows_hold_it`; `test_columns_that_reach_no_model_are_not_looked_at`; `test_one_cell_far_outside_a_feature_is_named` (4 cases); `test_only_rows_that_are_split_are_looked_at`; `test_the_command_line_writes_the_warning`; `test_the_gap_must_be_more_than_thirty_times_the_spread`: `311.0-True`; `test_the_target_of_a_regression_is_looked_at`; `test_the_three_outermost_values_at_each_end_are_looked_at`: `both_ends`, `three_beyond`, `three_values`, `two_beyond`; `test_the_warning_changes_no_number`. |
+| `test_fit_order.py` | `test_every_fit_is_handed_its_rows_in_time_order` (3 cases); `test_rows_of_one_timestamp_keep_their_file_order`; `test_the_order_of_the_file_changes_no_number_under_time_order`. |
+| `test_no_choice.py` | `test_a_configuration_with_no_fold_scores_is_not_the_first`; `test_one_entity_of_nearly_all_training_rows_and_no_choice_is_made` (3 cases); `test_rows_that_agree_in_every_feature_are_units_of_the_rule_too`; `test_the_dominant_shape_is_reported_at_about_zero` (3 cases); `test_the_first_configuration_that_fits_is_used`. |
+| `test_readme_pass8.py` | `test_the_readme_names_what_the_eighth_pass_added`; `test_the_readme_says_what_the_baseline_is_at_repeated_timestamps`; `test_the_readme_states_the_limits_of_the_eighth_pass`. Red against the reference too, until T67 is built: it judges `README.md` |
+| `test_judge_tools_pass8.py` | both tests, until T61 to T66 are built: each tool fails on the application until then. Not run against the reference by the mutation check |
+
+**Green today.** They pass against the application and against the
+reference, and must go on passing through every task of the build.
+
+| File | Test | Fails on |
+|---|---|---|
+| `test_id_dense.py` | `test_the_cases_are_what_their_names_say` |  |
+| `test_id_dense.py` | `test_the_id_like_rule_for_whole_numbers`, 9 of its 18 cases: `285_distinct_of_300`, `a_measure_in_no_order`, `consecutive_in_no_order`, `falling_with_gaps`, `few_values`, `fills_just_under_half_its_range`, `fractions`, `in_file_order`, `rising_with_gaps` |  |
+| `test_id_dense.py` | `test_the_rule_reads_the_rows_that_have_a_target`, 1 of its 2 cases: `file_order` | F6 |
+| `test_id_dense.py` | `test_the_time_column_and_the_entity_column_keep_their_roles` |  |
+| `test_repeated_stamps.py` | `test_the_step_function_is_unchanged_at_unique_keys` |  |
+| `test_repeated_stamps.py` | `test_unique_timestamps_are_scored_as_before` | F7, F8 |
+| `test_screen_line.py` | `test_a_column_that_drives_the_class_is_not_excluded`, 2 cases: `random`, `time` | F4, F5 |
+| `test_screen_line.py` | `test_a_copy_of_the_target_is_excluded_whatever_its_scale`, 6 of its 20 cases: `grouped-exact`, `grouped-negative`, `grouped-rescaled`, `random-exact`, `random-negative`, `random-rescaled` | F2 |
+| `test_screen_line.py` | `test_a_copy_with_empty_cells_is_excluded`, 2 of its 5 cases: `grouped`, `random` | F2 |
+| `test_screen_line.py` | `test_a_driver_known_before_the_outcome_is_kept_under_time_order` | F7, M9 |
+| `test_screen_line.py` | `test_columns_that_do_not_follow_the_target_stay_features`, 5 cases: `grouped`, `random`, `time`, `time_entities`, `time_repeated` | F7 |
+| `test_screen_line.py` | `test_one_cell_far_off_in_the_copy_does_not_keep_it`, 2 of its 10 cases: `grouped-999999.0`, `random-999999.0` | F2, F25 |
+| `test_screen_set_aside.py` | `test_a_wild_target_cell_in_the_holdout_changes_nothing_in_the_screen` | F2 |
+| `test_screen_set_aside.py` | `test_one_wild_target_cell_makes_no_column_a_leak`, 5 cases: `grouped`, `random`, `time`, `time_entities`, `time_repeated` | F7, M42 |
+| `test_order_reading.py` | `test_a_categorical_column_has_no_order_reading` | F7 |
+| `test_order_reading.py` | `test_a_classification_has_no_order_reading`, 2 cases: `1`, `2` | F5 |
+| `test_order_reading.py` | `test_a_column_warned_for_its_skill_gets_one_record` | F2 |
+| `test_order_reading.py` | `test_a_column_whose_skill_cannot_be_computed_is_named_by_neither_reading` | F7, M9 |
+| `test_order_reading.py` | `test_a_strong_driver_known_before_the_outcome_is_not_named`, 9 cases: `100-0.95`, `100-0.99`, `100-0.9`, `200-0.95`, `200-0.99`, `200-0.9`, `400-0.95`, `400-0.99`, `400-0.9` | F7, M9 |
+| `test_order_reading.py` | `test_fewer_than_twenty_pairs_give_no_reading` | F7 |
+| `test_order_reading.py` | `test_the_second_condition_keeps_the_lag_of_a_running_total_quiet` | F6, F7, M9, M43 |
+| `test_largest_row.py` | `test_no_warning_without_a_row_that_dominates` |  |
+| `test_extreme_value.py` | `test_a_clean_table_has_no_such_warning_under_any_scheme` | F7 |
+| `test_extreme_value.py` | `test_a_long_tail_is_not_named`, 12 cases: `count-2000`, `count-200`, `exponential-2000`, `exponential-200`, `log_normal_1-2000`, `log_normal_1-200`, `log_normal_1.5-2000`, `log_normal_1.5-200`, `normal-2000`, `normal-200`, `volume-2000`, `volume-200` |  |
+| `test_extreme_value.py` | `test_an_infinite_cell_is_no_extreme_value` |  |
+| `test_extreme_value.py` | `test_the_gap_must_be_more_than_thirty_times_the_spread`, 1 of its 2 cases: `310.0-False` |  |
+| `test_extreme_value.py` | `test_the_three_outermost_values_at_each_end_are_looked_at`, 3 of its 7 cases: `four_beyond`, `three_values_near`, `two_values` |  |
+| `test_fit_order.py` | `test_with_no_time_column_the_run_is_as_it_was` | F1 |
+| `test_no_choice.py` | `test_a_small_fold_that_trains_on_as_many_rows_as_it_validates_on_is_chosen_on` | F6c, F10, F17, M15, M48 |
+| `test_no_choice.py` | `test_an_ordinary_table_of_entities_is_chosen_on_as_before` | F17 |
+| `test_no_choice.py` | `test_the_rule_is_for_the_grouped_scheme_only` | F7, F17 |
+| `test_guard_review7.py` | `test_f22_the_interval_is_the_same_at_any_number_of_cores`, 3 cases: `bootstrap_blocks`, `bootstrap_groups`, `bootstrap_rows` | F7, F21, F22 |
+| `test_guard_review7.py` | `test_m33_three_rows_alike_after_a_removed_leak_stop_a_regression` | F2, F12b, M33 |
+| `test_guard_review7.py` | `test_m34_the_command_line_gives_the_full_profiles_own_error`, 2 cases: `fast`, `full` | F10, M34 |
+| `test_guard_review7.py` | `test_m37_the_file_says_what_group_measures` | F10, M22, M37 |
+| `test_guard_review7.py` | `test_m39_rows_with_a_dictionary_cell_are_counted_as_repeats`, 2 cases: `dictionary`, `tuple_with_a_list` | M39 |
+| `test_panel_stop.py` | every test, 5 cases, the loosened one too | not a guard where it was loosened: it passes before the change and after it |
+| `test_time_pipeline.py` | every test, 15 cases, the loosened one too | not a guard where it was loosened: it passes before the change and after it |
+| `test_whole_numbers.py` | every test, 19 cases, the loosened one too | not a guard where it was loosened: it passes before the change and after it |
+| `test_guard_review5.py` | every test, 3 cases, the loosened one too | not a guard where it was loosened: it passes before the change and after it |
+| `test_metrics.py` | every test, 15 cases, the loosened one too | not a guard where it was loosened: it passes before the change and after it |
+| `test_judge_tools.py` | both tests, as loosened: each tool fails on the application on the pairs and tables of the fixed lists only | not run by the mutation check |
+
+Measured with the prototypes: 203 cases in the twelve new test files: 23 in
+`test_id_dense.py`, 15 in `test_repeated_stamps.py`, 46 in
+`test_screen_line.py`, 18 in `test_screen_set_aside.py`, 23 in
+`test_order_reading.py`, 13 in `test_largest_row.py`, 33 in
+`test_extreme_value.py`, 6 in `test_fit_order.py`, 12 in `test_no_choice.py`, 9
+in `test_guard_review7.py`, 3 in `test_readme_pass8.py`, and 2 in
+`test_judge_tools_pass8.py`. Against the application as it stands, of the first
+201, 86 pass and 115 fail. Against the reference 198 pass and 3 fail, the
+README's. With the five replacements in place, all 57 cases of the five files
+pass against the application as it stands, against the reference of this pass
+and against the reference as it was.
+
+**What the mutation check must then print**, run after your stage and before
+the build: the good reference fails 0 of 2119 (the 1921 counted today and 198
+of the new files); each of the eighty-eight variants fails at least one test,
+and each of the twenty-three of rule 6 the test named for it; on the README
+line, 3 failing of 17, the tests of `test_readme_pass8.py`; and a note that
+`tests/test_judge_tools.py` and `tests/test_judge_tools_pass8.py` are not run
+there. **Before your stage it ends in `FAIL` for two reasons, both expected:**
+the good reference fails 7 cases, of
+`test_guard_review5.py::test_m23_the_panel_warning_starts_just_above_one_half`,
+`test_metrics.py::test_f8_previous_value_refuses_repeated_keys`,
+`test_panel_stop.py::test_the_statement_lets_the_run_go_ahead_as_before`,
+`test_time_pipeline.py::test_panel_uses_training_mean_and_flags_persistence`,
+`test_whole_numbers.py::test_missing_and_repeated_integer_stamps` (the
+reference has the new baseline and those tests are not yet loosened); and it
+prints `NOT CAUGHT` for 18 of the eighty-eight variants, F23, F24, F25, F26,
+F27, F28, M40, M41, M42, M43, M44, M45, M46, M47, M48, M49, M50, M51, which
+have no test yet. Your stage closes both.
+
+## Not tested in the eighth pass
+
+The wording of any message beyond what spec 5.4 and 11 pin (rule 8), the
+value of the autocorrelation the panel warning writes, and which of its two
+usual estimators is used. Which units a grouped split holds out and which
+fold each is in (rule 9). The order of the rows of a fit with no time
+column, and of rows handed over only to be predicted or transformed. The
+order of the `extreme_value` records of one column, and whether a value that
+both ends of a column name gets one record or two. A copy of the target with
+noise under time order: at 1% of the target's spread it is excluded or
+warned about on the judge's own tables (the battery asserts that), and
+beyond that it is a stated limit (D76; spec 11). A whole-number measure in a
+table sorted by it, which D31 leaves id-like. The column-role override of
+D76 point 5, which is not part of this pass, and D75. A forest under time
+order by its own numbers: the seam test of `test_fit_order.py` holds the
+order, and the battery holds the headline. What the judge's two tools find
+on a variant of the reference: the lead runs them by hand.

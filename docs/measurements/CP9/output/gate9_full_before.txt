@@ -1,0 +1,54 @@
+PASS data.rows_reconcile
+PASS data.columns_accounted
+PASS data.coercion_reported
+PASS data.long_rows_stop
+PASS data.holdout_copies_stop
+PASS models.all_accounted
+PASS task.binary_numeric
+PASS task.ambiguous_stops
+PASS leak.excluded
+PASS leak.control_kept
+PASS leak.regression
+PASS leak.near_leak_warned
+PASS model.signal_clf
+PASS model.signal_reg
+PASS model.noise_clf
+PASS model.noise_p_value
+PASS model.noise_reg
+PASS model.headline_recomputed
+PASS model.metric_clf
+PASS model.selection_full
+PASS time.order_respected
+PASS time.no_skill_on_blocks
+PASS time.gap_applied
+PASS time.dayfirst_stops
+PASS time.persistence_baseline
+PASS time.integer_keys_distinct
+PASS time.undeclared_warns
+PASS time.undeclared_stops
+PASS time.panel_previous_value
+PASS groups.kept_together
+PASS groups.no_skill_on_entities
+PASS statements.time_order_asked
+PASS statements.entities_asked
+PASS duplicates.group_on_features
+PASS duplicates.group_no_skill
+PASS groups.holdout_bounded
+PASS time.date_numbers_seen
+PASS time.date_sentinel_seen
+PASS duplicates.group_leak_stops
+PASS fast.large_entity_stops
+PASS fast.large_entity_kept
+FAIL time.previous_value_at_repeats: baselines on `walk_repeated` lists ['training_mean']. One row of this random walk is written twice, so the date 2021-01-21 holds two rows and the timestamps are not unique. With no entity column the previous value of a row is the mean target of the timestamp one before its own, so both training_mean and previous_value are scored and reported (D74; spec.md step 11). A baseline that is there only while every timestamp is unique is lost to one repeated row, and against the training mean a random walk looks almost perfectly predictable
+FAIL leak.copy_excluded_under_time: `level_scaled` on `walk_copy` has role 'feature', reason None, leak_rule None; skill is 0.9875713998211745 against the baseline 'previous_value'. The column is the target on another scale, 1.07 x level + 3, and must be excluded as a suspected leak with the rule `predicts_target`. Under time order the screen's baseline is the previous value, and a tree fitted on the earlier rows cannot follow a target that wanders beyond the range it was fitted on: read with its tree alone, this column does not reach the cut-off. The screen reads a numeric column with a robust line as well as with its tree, and excludes it on the better of the two (D74; spec.md step 8)
+FAIL leak.excluded_despite_extreme_target: `level_scaled` on `walk_copy_cell` has role 'feature', reason None, leak_rule None; skill is 0.35824851373882205 against the baseline 'previous_value'. The column is the target on another scale, 1.07 x level + 3, and must be excluded as a suspected leak with the rule `predicts_target`. One cell of the target is -999, in a training row (source row 365); in every other row the column is the target on another scale. With every row scored, the squared error of that one row is nearly all of the screen's sum for the column, and that row and the one after it, whose previous value is the cell, are nearly all of the baseline's: the column's skill comes out at one half or less, far below the cut-off. A training row whose target lies more than ten median deviations from the median target, or ten median steps from its previous value, is set aside from the whole screen, and the rows a column misses by most are not scored for exclusion (D74; spec.md step 8)
+FAIL result.largest_row_reported: profile.json on `walk_late_cell` has no key headline.largest_row_share, headline.largest_row, headline.baseline_largest_row_share, headline.baseline_largest_row, cv.largest_row_share, cv.largest_row and 6 more. A regression run says what share of a squared error its single largest row carries, and which row that is: on the holdout, for the model and for the headline baseline (`headline`), and over the selection folds, for the chosen configuration and that baseline (`cv`) and for every configuration (`models`) (D74; spec.md 5.2)
+FAIL data.identifier_survives_shuffle: `record_id` on `messy_shuffled` has role 'feature' and reason None. In the 1500 rows with a target it holds 1500 distinct whole numbers that fill 97% of the range from the smallest to the largest. A whole-number column in which more than 95% of the values are distinct and the distinct values fill at least half of their range is an identifier, whatever the order of the rows (D74; spec.md step 5). By D19's clause alone, all distinct and consecutive or in file order, it is one in `messy` and a numeric feature here, where the same rows are shuffled
+FAIL groups.choice_not_made: 0 warning(s) with the code `selection_not_made` on `dominant_entity`; cv.chosen is 'linear-0' and skill -0.0062. The training rows are the entity C0000, 1490 rows, and 10 rows of small entities. An entity is in one fold, so the fold that validates on the large one trains on at most 10 rows, fewer than 50 and fewer than it validates on, and each other fold validates on some of those same 10 rows. No choice between configurations is made on so few: every fold stays scored and reported, the configurations are taken in configuration order, so the one chosen is the first that has a cross-validation mean, and one `selection_not_made` warning says so (D74; spec.md step 9)
+PASS time.flat_holdout_reported
+PASS uncertainty.reported
+PASS result.matches_json
+PASS output.complete
+PASS output.deterministic
+PASS output.same_at_any_n_jobs
+GATE: FAIL (6 of 53 checks failed)

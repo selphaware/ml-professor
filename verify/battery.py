@@ -15,9 +15,17 @@ the call, and asserts that the conclusion still holds:
     band       the table is another draw of the same kind (rows shuffled, a
                column of noise, one row repeated): the run's band and its
                structural claims
+    band-or-named
+               one cell is set to an extreme value: skill is inside the run's
+               band; or the result names the row (`largest_row_dominates`) or
+               the value (`extreme_value`), and the same call on the table
+               without the named rows is inside the band. The judge makes
+               that second call itself (D74 point 3)
     structure  roles, counts, baselines and splits, recomputed by the judge
 
-and, on every run that finishes, the reconciliation rules of spec 5.3.
+and, on every run that finishes, the reconciliation rules of spec 5.3 and the
+share of the squared error that its largest row carries, as the judge counts
+it from predictions.csv (D74 point 3).
 
     python verify/battery.py <package folder> [--only run[:change],...]
                              [--jobs N] [--list] [--json FILE] [--work FOLDER]
@@ -34,14 +42,25 @@ Every pair is in one of three classes, and the last lines give the count of each
     stated limit   it does not, and a decision says so: the pair is named in
                    STATED_LIMITS below with the decision's number
     open           it does not, and a decision has given the fault an owner:
-                   the pair is named in OPEN below (D73: pass 8)
+                   the pair is named in OPEN below
 
 A pair on a list that fails is reported under its class and does not fail the
 tool. One that holds is counted as holding and named on a line of its own, so
-that the pass which owns it sees what moved. **A pair that fails and is on
-neither list fails the tool.** The two lists are fixed here, by run and by
-change, and change only by a decision in docs/DECISIONS.md: a pair is never
-added to one because a build misses it. A miss is a finding.
+that whoever owns it sees what moved. **A pair that fails and is on neither
+list fails the tool.** The two lists are fixed here, by run and by change, and
+change only by a decision in docs/DECISIONS.md: a pair is never added to one
+because a build misses it. A miss is a finding.
+
+**Nothing is open.** D73 gave every fault of the first run to pass 8, and the
+rules of D74 and D76 make each of those pairs hold: OPEN is empty, and the
+last lines still give its count, 0. The stated limits are four kinds, six
+pairs (D76 point 6): a copy that differs by an added column (D60), a
+whole-number time column with an empty cell (D55), a distinct whole-number
+measure in a table sorted by it (D31), and under time order a copy of the
+target with noise above 1% of the target's spread (D76). **A pair asserts
+what the spec intends, never an outcome known to be wrong:** each of the six
+is asserted as it should come out, fails, and is counted as a stated limit,
+not as holding.
 
 Exit codes
     0  nothing fails outside the two lists
@@ -50,10 +69,14 @@ Exit codes
 
 Four things to know.
 
-- It is not part of the gate, and no gate check runs it: it starts 794
-  processes, which take 190 to 230 seconds at 16 side by side with nothing
-  else on the machine (two runs on 2026-11-22; 270 to 440 at 12 with other
-  work running), where the per-edit gate has 20 seconds. The
+- It is not part of the gate, and no gate check runs it: it starts 1,229
+  processes and, for the pairs whose skill is outside the band, about 140
+  more of the judge's own. On the reference, with nothing else on the
+  machine, that takes 274 to 296 seconds at 32 side by side, the default, and
+  about 8,000 seconds of tool time (two runs on 2026-11-25; at 16 side by
+  side it took 716 seconds, with the same verdict on every pair; until the
+  eighth pass it was 794 processes and 190 to 230 seconds), where the
+  per-edit gate has 20 seconds. The
   loop runs it through tests/test_judge_tools.py once a pass's last task is
   reached, and the lead runs it by hand before a review (D72). A builder runs
   it, or the pairs of one run, when a task changes a rule of steps 1 to 8.
@@ -76,6 +99,7 @@ Four things to know.
 Standard library only.
 """
 import argparse
+import copy
 import datetime
 import importlib.util
 import json
@@ -97,43 +121,34 @@ WORK = HERE / "artifacts" / "battery"       # ignored by the loop's snapshot, li
 EXIT_PASS, EXIT_FAIL, EXIT_HARNESS = 0, 1, 3
 RUN_SECONDS = 180
 TOO_LARGE = 3.4028234663852886e+38
+SELECTION_FLOOR = 50        # training rows of a fold under the grouped scheme (D74 point 6)
 MISSING = object()
 
 # ------------------------------------------------------ the two fixed lists --
 # (run, change) -> the decision that states the limit. The pair is asserted as the
-# spec's intent has it, fails, and is reported as a stated limit.
+# spec's intent has it, fails, and is reported as a stated limit. Exactly four
+# kinds, each with its decision (D76 point 6), and no other.
 STATED_LIMITS = {
-    ("dup_noise", "noise_added"): "D60",            # a copy that differs in one feature
-    ("int_stamps", "missing_cell_date"): "D55",     # a CSV whole-number column with an
-                                                    # empty cell loads as floats
+    # a copy of a row that differs by an added column is not a copy (D60)
+    ("dup_noise", "noise_added"): "D60",
+    # a CSV whole-number column with an empty cell loads as floats, already rounded (D55)
+    ("int_stamps", "missing_cell_date"): "D55",
+    # a distinct whole-number measure in a table sorted by it is called id-like (D31)
+    ("messy", "sorted_by_measure"): "D31",
+    # under time order, a copy of the target with noise above 1% of the target's
+    # spread cannot be told from a strong feature measured at the same moment (D76
+    # point 2); on the three runs where the previous value is the baseline in use
+    ("random_walk", "copy_noise_5pct"): "D76",
+    ("int_stamps", "copy_noise_5pct"): "D76",
+    ("panel", "copy_noise_5pct"): "D76",
 }
-# (run, change) -> the finding. Each is a fault the battery found on its first run,
-# on the reference and the application alike, or on one of them. D73 gives every
-# one of them to pass 8. Exactly these, and no other.
-OPEN_OWNER = "D73, pass 8"
-_OPEN = {
-    "one repeated row under time order with no entities: the timestamps are no longer "
-    "unique and the previous-value baseline is dropped":
-        [("random_walk", "row_repeated"), ("int_stamps", "row_repeated"),
-         ("flat_tail", "row_repeated")],
-    "an exact rescaled copy of a regression target is not excluded by the leak screen":
-        [("random_walk", "copy_distinct"), ("int_stamps", "copy_distinct"),
-         ("panel", "copy_distinct"), ("dominant_entity", "copy_distinct")],
-    "one extreme cell in a numeric feature or a regression target moves skill out of "
-    "its band":
-        [(run, "number_sentinel_-999") for run in
-         ("signal_reg", "noise_reg", "leak_reg", "messy", "random_walk", "panel", "signal_clf")]
-        + [(run, "number_sentinel_999999") for run in
-           ("signal_reg", "noise_reg", "leak_reg", "random_walk", "panel", "signal_clf",
-            "binary_numeric", "messy")]
-        + [(run, "target_sentinel_-999") for run in
-           ("signal_reg", "noise_reg", "leak_reg", "random_walk", "panel")],
-    "one empty cell in the lag of a panel moves skill out of its band":
-        [("panel", "missing_cell_feature")],
-    "an identifier becomes a feature when the rows are shuffled or one row is repeated":
-        [("messy", "rows_shuffled"), ("messy", "row_repeated")],
-}
-OPEN = {pair: finding for finding, pairs in _OPEN.items() for pair in pairs}
+# (run, change) -> (the finding, its owner). Empty, by D73 and D74: the 30 pairs the
+# first run listed here were owned by pass 8, and every one of them must now hold.
+# The class is kept so that the last lines always say how many pairs are open: 0.
+OPEN = {}
+# For the judge's second call (`c_band_or_named`): the package, the work folder, and
+# every call that was made, as (label, seconds).
+_SECOND_CALL = {"made": []}
 
 
 def gate_module():
@@ -151,6 +166,7 @@ def gate_module():
 
 
 g = gate_module()
+BANDS = g.BANDS             # the gate's own; `dominant_entity` has one since D74 point 6
 
 # ------------------------------------------------------------ the runs --
 # run -> what its conclusion is. `stop`: the named error it must end in, and
@@ -160,7 +176,8 @@ g = gate_module()
 # and a categorical feature of the table. `date`: a date column that is not the
 # declared time column. `ymd`: a column of dates written YYYYMMDD. `kept`: for a run
 # under the fast profile's cap, a column and the value of it whose rows the cap is
-# sure to keep.
+# sure to keep. `cell`: the table holds one extreme cell of its own, in the target or
+# in a feature.
 FOUR = ["--time-col", "--no-time-order", "--group-col", "--no-entities"]
 RUNSPEC = {
     "signal_clf": dict(claims=["band:signal_clf", "families_fast"], num="f1", cat="seg"),
@@ -188,13 +205,15 @@ RUNSPEC = {
                         num="level_prev"),
     "int_stamps": dict(claims=["time_split", "walk_baselines", "int_keys"], num="level_prev"),
     "flat_tail": dict(claims=["time_split", "flat"], num="footfall"),
-    "entities": dict(claims=["band:entities", "entities_apart", "grouped_share"], num="m1"),
+    "entities": dict(claims=["band:entities", "entities_apart", "grouped_share",
+                             "fold_rule"], num="m1"),
     "panel": dict(claims=["band:panel", "time_split", "panel_baselines"], num="level_prev"),
     "unsaid_both": dict(stop="time_order_undeclared", flags=FOUR, num="f1", cat="seg"),
     "unsaid_entities": dict(stop="entities_undeclared", flags=["--group-col", "--no-entities"],
                             num="level_prev"),
     "few_valued": dict(claims=["band:few_valued", "combos_apart", "group_units"], cat="branch"),
-    "dominant_entity": dict(claims=["entities_apart", "holdout_bounded", "cap_keeps_large"],
+    "dominant_entity": dict(claims=["band:dominant_entity", "entities_apart",
+                                    "holdout_bounded", "cap_keeps_large", "fold_rule"],
                             num="n1"),
     "day_numbers": dict(claims=["day_role", "undeclared_date:day"], num="n1", ymd="day",
                         date="day"),
@@ -206,8 +225,36 @@ RUNSPEC = {
                             or_claims=["band:few_valued", "combos_apart", "group_units",
                                        "leak_status"]),
     "large_entity": dict(stop="fast_profile_group_too_large", mentions=["full"], num="n1"),
-    "quarter_entity": dict(claims=["entities_apart", "holdout_bounded", "cap_keeps_large"],
+    "quarter_entity": dict(claims=["entities_apart", "holdout_bounded", "cap_keeps_large",
+                                   "fold_rule"],
                            num="n1", kept=("customer", "C0000")),
+    # Added with the eighth pass (D73, D74, D76): the gate's own runs of five changes
+    # that this battery makes too, each on a table of its own.
+    # `random_walk` with one row written twice: both baselines as the judge makes them,
+    # the previous value being the mean target of the timestamp before, and no skill.
+    "walk_repeated": dict(claims=["band:random_walk", "time_split", "walk_baselines"],
+                          num="level_prev"),
+    # `random_walk` with the target on another scale beside it: the copy is excluded as
+    # a leak, the lag stays a feature, and what is left is `random_walk`.
+    "walk_copy": dict(claims=["band:random_walk", "time_split", "walk_baselines",
+                              "walk_copy_roles"], num="level_prev"),
+    # `walk_copy` with one target cell of -999 in a training row: the copy is excluded
+    # all the same, and the value is named. The row is in every fit, so skill is far
+    # below the band (the gate asserts none): it is in band without the named rows.
+    "walk_copy_cell": dict(claims=["band_or_named:random_walk", "time_split",
+                                   "walk_baselines", "walk_copy_roles", "named:level"],
+                           num="level_prev", cell="target"),
+    # `random_walk` with one cell of the lag set to 999999 in a holdout row: that row
+    # carries the model's whole error, the result says so and names the value, and
+    # without the row skill is in band.
+    "walk_late_cell": dict(claims=["band_or_named:random_walk", "time_split",
+                                   "walk_baselines", "named:level_prev"], num="level_prev",
+                           cell="feature"),
+    # `messy` with its rows in another order: the identifier is still one, the measure
+    # still a feature, and the conclusion of `messy` holds.
+    "messy_shuffled": dict(claims=["band:messy", "messy_roles", "messy_coercion",
+                                   "undeclared_date:signup_date"], num="f1", cat="seg",
+                           date="signup_date"),
 }
 # Runs of the gate that are left out, and why.
 LEFT_OUT_RUNS = {
@@ -271,6 +318,8 @@ class Case:
         self.extra = []                         # claims the change adds
         self.alias = {}                         # a column's name in the gate -> its name here
         self.same = False                       # nothing may move against the unperturbed run
+        self.touched = []                       # the rows a change altered, for the report
+        self.rounds = 1                         # calls of its own the judge may make
         self.kind, self.must = "", ""
 
     @property
@@ -280,7 +329,7 @@ class Case:
         if pair in STATED_LIMITS:
             return "stated limit", STATED_LIMITS[pair]
         if pair in OPEN:
-            return "open", OPEN_OWNER
+            return "open", OPEN[pair][1]
         return None
 
     def name(self, original):
@@ -392,8 +441,34 @@ def _holds(case, what):
     elif _stops(case):
         case.kind, case.must = "stop", f"the same stop, `{case.stop}`: {what}"
     else:
-        case.kind = "band" if any(c.startswith("band:") for c in case.claims) else "structure"
+        case.kind = "band" if any(c.startswith("band:") for c in case.claims) \
+            else "band-or-named" if any(c.startswith("band_or_named:") for c in case.claims) \
+            else "structure"
         case.must = f"the run's own conclusion (its band, its roles, its counts): {what}"
+
+
+def _or_named(case):
+    """One cell is set to an extreme value. The tool changes no number for it: it says
+    which row carries most of the squared error, and which value is far outside its
+    column (D74 point 3). So the conclusion of such a pair is not the band alone:
+    `band:X` becomes `band_or_named:X`, and the roles must be those of the
+    unperturbed run."""
+    if _stops(case) or case.stop_ok:
+        return
+    case.claims = ["band_or_named:" + c[5:] if c.startswith("band:") else c
+                   for c in case.claims]
+    case.extra.append(("roles_as_base",))
+    if case.info.get("cell"):
+        # The run holds an extreme cell of its own, so this table holds two: the table
+        # without the rows the result names is one that holds one, and the same claim
+        # is made of it.
+        case.rounds = 2
+    if any(c.startswith("band_or_named:") for c in case.claims):
+        case.kind = "band-or-named"
+        case.must += (". Skill is inside the run's band; or the result names the row "
+                      "(`largest_row_dominates`) or the value (`extreme_value`), and the "
+                      "same call on the table without the named rows is inside the band. "
+                      "The roles are those of the unperturbed run")
 
 
 def _added(case, name, role, reason, rule=None, warned=None):
@@ -546,11 +621,14 @@ def _feature(case):
 
 def ch_missing_cell_feature(case, rng):
     name = _feature(case)
-    case.rows[case.pick(rng)][case.col(name)] = ""
+    k = case.pick(rng)
+    case.rows[k][case.col(name)] = ""
+    case.touched.append(k)
     _holds(case, f"one empty cell in the feature `{name}` is counted in `n_missing` and "
                  "imputed")
     if not _stops(case):
         case.extra.append(("n_missing", name))
+    _or_named(case)
 
 
 def ch_missing_cell_entity(case, rng):
@@ -770,8 +848,12 @@ def _sentinel_number(value):
         name = case.info.get("num")
         if not name:
             return "no numeric feature"
-        case.rows[case.pick(rng)][case.col(name)] = value
+        k = case.pick(rng)
+        case.rows[k][case.col(name)] = value
+        case.touched.append(k)
         _holds(case, f"one cell of the numeric feature `{name}` set to {value}")
+        if abs(float(value)) <= TOO_LARGE:
+            _or_named(case)
         if float(value) > TOO_LARGE and not _stops(case):
             case.extra.append(("too_large", name))
             case.must += ("; a value above 3.4e38 is read as missing, counted in `n_infinite` "
@@ -783,9 +865,12 @@ def _sentinel_number(value):
 def ch_target_sentinel_neg(case, rng):
     if not case.regression():
         return "the target is not a regression target"
-    case.rows[case.pick(rng)][case.header.index(case.target)] = "-999"
+    k = case.pick(rng)
+    case.rows[k][case.header.index(case.target)] = "-999"
+    case.touched.append(k)
     _holds(case, "one target cell set to -999 (the spec has no rule for an outlier in the "
                  "target; docs/BACKLOG.md, 'One extreme value can dominate')")
+    _or_named(case)
     return None
 
 
@@ -893,6 +978,439 @@ CHANGES = {
     "duplicates_keep": _duplicates("keep"),
     "duplicates_group": _duplicates("group"),
 }
+
+
+# --------------------------------------- the changes of the eighth pass --
+# Added with the rules of D73, D74 and D76, each where the next fault in one of them
+# is most likely: repeated rows and shared timestamps under time order, a gap, copies
+# of the target in other forms, extreme cells by where they fall, the identifier and
+# the whole-number measure of `messy`, and one entity of nearly half the rows.
+
+def _usable_rows(case):
+    t = case.header.index(case.target)
+    return [i for i, row in enumerate(case.rows) if not g.is_missing(row[t])]
+
+
+def _repeat_stop(case):
+    """Two rows of one entity at one timestamp, in a regression under time order."""
+    if isinstance(case.time, str) and isinstance(case.group, str) and not _stops(case):
+        case.stop, case.claims, case.extra, case.kind = "group_column_invalid", [], [], "stop"
+        case.mentions = [case.group]
+        case.must = ("the stop `group_column_invalid`, naming the entity column: two rows of "
+                     "one entity at one timestamp, in a regression under time order (spec "
+                     "step 11)")
+
+
+def _rows_repeated(share):
+    def change(case, rng):
+        if not isinstance(case.time, str):
+            return ("the run declares no time column: repeated rows are there the business of "
+                    "the copies rule (step 8a), which has pairs of its own")
+        usable = _usable_rows(case)
+        picks = rng.sample(usable, max(1, round(share * len(usable))))
+        for row in [list(case.rows[i]) for i in picks]:
+            case.rows.insert(rng.randrange(len(case.rows) + 1), row)
+        _holds(case, f"{round(100 * share)}% of the rows written twice, each copy somewhere in "
+                     "the file: under time order with no entities the previous value is the "
+                     "mean target of the timestamp before, so the baselines the judge makes by "
+                     "hand and the band hold (D73)")
+        if not _stops(case):
+            case.extra.append(("duplicate_rows",))
+        _repeat_stop(case)
+        return None
+    return change
+
+
+def ch_row_other_target(case, rng):
+    if not isinstance(case.time, str):
+        return "the run declares no time column"
+    k = case.pick(rng)
+    row, t = list(case.rows[k]), case.header.index(case.target)
+    classes = case.classes()
+    if classes:
+        row[t] = classes[1] if row[t].strip() == classes[0] else classes[0]
+    else:
+        try:
+            row[t] = g._f(float(row[t]) + 1.0)
+        except ValueError:
+            return "the target is neither two-valued nor a number"
+    case.rows.insert(rng.randrange(len(case.rows) + 1), row)
+    _holds(case, "one row written twice, the second time with another target (the other "
+                 "class; for a regression the target plus 1): two rows at one timestamp that "
+                 "disagree. The previous value of the rows after them is their mean (D73)")
+    _repeat_stop(case)
+    return None
+
+
+def ch_stamp_shared(case, rng):
+    if not isinstance(case.time, str):
+        return "the run declares no time column"
+    at, t = case.col(case.time), case.header.index(case.target)
+    usable = [i for i in _usable_rows(case) if not g.is_missing(case.rows[i][at])]
+    k = rng.choice(usable)
+    try:
+        keys = {i: time_key(case.rows[i][at]) for i in usable}
+        earlier = [i for i in usable if keys[i] < keys[k]]
+        other = max(earlier, key=lambda i: keys[i]) if earlier \
+            else min((i for i in usable if keys[i] > keys[k]), key=lambda i: keys[i])
+    except ValueError:                      # a time column in no accepted form: any other row
+        other = rng.choice([i for i in usable if i != k])
+    case.rows[k][at] = case.rows[other][at]
+    _holds(case, "one row is given the timestamp before its own: two different rows at one "
+                 "timestamp. The split is by whole timestamps and the previous value of the "
+                 "rows after them is their mean (D73)")
+    _repeat_stop(case)
+    return None
+
+
+def _gap_two(repeat):
+    def change(case, rng):
+        if case.run not in ("random_walk", "int_stamps", "flat_tail"):
+            return "not a regression under time order with no entities that finishes"
+        case.gap = 2
+        if repeat:
+            case.rows.append(list(case.rows[case.pick(rng)]))
+        case.claims = [c for c in case.claims if not c.startswith("band:")]
+        case.kind = "structure"
+        case.must = ("the call passes --gap 2" + (" and one row is written twice" if repeat
+                                                   else "")
+                     + ": the split and both baselines as the judge makes them by hand, the "
+                       "previous value being the mean target of the timestamp three distinct "
+                       "timestamps before (no band: with a gap the feature is closer than the "
+                       "baseline)")
+        if repeat:
+            case.extra.append(("duplicate_rows",))
+        return None
+    return change
+
+
+def _copy_change(make, what, rotate=0, cell=None, target_cell=None):
+    def change(case, rng):
+        if not case.regression():
+            return ("the target is not a regression target (a two-valued target has "
+                    "`copy_two_valued` and `copy_distinct`)")
+        t, usable = case.header.index(case.target), _usable_rows(case)
+        cells = ["" if g.is_missing(c) else make(float(c), i, c)
+                 for i, c in enumerate(case.target_cells())]
+        if rotate:
+            picks = rng.sample(usable, rotate)
+            moved = [cells[i] for i in picks]
+            for i, value in zip(picks, moved[1:] + moved[:1]):
+                cells[i] = value
+            case.touched += picks
+        if cell is not None:
+            k = rng.choice(usable)
+            cells[k] = cell
+            case.touched.append(k)
+        case.add_column("target_copy", cells)
+        _added(case, "target_copy", "excluded", "suspected_leak", "predicts_target",
+               "suspected_leak")
+        if target_cell is not None:
+            k = case.pick(rng)
+            case.rows[k][t] = target_cell
+            case.touched.append(k)
+            _holds(case, what)
+            _or_named(case)
+        else:
+            _same(case, what)
+            if not _stops(case):
+                case.extra.append(("roles_as_base",))
+        return None
+    return change
+
+
+def _rescaled(value, i, cell):
+    return g._f(3.7 * value + 12 + i * 1e-9, 9)
+
+
+def ch_target_sentinel_big(case, rng):
+    if not case.regression():
+        return "the target is not a regression target"
+    k = case.pick(rng)
+    case.rows[k][case.header.index(case.target)] = "999999"
+    case.touched.append(k)
+    _holds(case, "one target cell set to 999999")
+    _or_named(case)
+    return None
+
+
+def _two_rows(case, rng):
+    first = case.pick(rng)
+    second = case.pick(rng)
+    while second == first:
+        second = case.pick(rng)
+    return [first, second]
+
+
+def ch_target_two_sentinels(case, rng):
+    if not case.regression():
+        return "the target is not a regression target"
+    for k in _two_rows(case, rng):
+        case.rows[k][case.header.index(case.target)] = "-999"
+        case.touched.append(k)
+    _holds(case, "two target cells, in two rows, set to -999")
+    _or_named(case)
+    return None
+
+
+def ch_number_two_sentinels(case, rng):
+    name = case.info.get("num")
+    if not name:
+        return "no numeric feature"
+    for k in _two_rows(case, rng):
+        case.rows[k][case.col(name)] = "999999"
+        case.touched.append(k)
+    _holds(case, f"two cells of the numeric feature `{name}`, in two rows, set to 999999")
+    _or_named(case)
+    return None
+
+
+def _placed(what, late):
+    def change(case, rng):
+        if not (isinstance(case.time, str) and case.regression()):
+            return "not a regression under time order"
+        name = case.info.get("num")
+        at, t = case.col(case.time), case.header.index(case.target)
+        usable = [i for i in _usable_rows(case) if not g.is_missing(case.rows[i][at])]
+        try:
+            order = sorted(usable, key=lambda i: time_key(case.rows[i][at]))
+        except ValueError:
+            return "the time column is in no accepted form"
+        k = order[-1] if late else order[int(0.4 * len(order))]
+        if what == "feature":
+            case.rows[k][case.col(name)] = "999999"
+        else:
+            case.rows[k][t] = "-999"
+        case.touched.append(k)
+        _holds(case, ("the numeric feature `" + name + "` set to 999999" if what == "feature"
+                      else "the target set to -999")
+               + (" in the latest row: a holdout row for sure" if late
+                  else " in the row four tenths of the way through time: a training row for "
+                       "sure"))
+        _or_named(case)
+        return None
+    return change
+
+
+def _messy_only(case):
+    return None if case.run == "messy" else \
+        "about the identifier and the whole-number measure of `messy`"
+
+
+def ch_id_shuffled_and_repeated(case, rng):
+    if _messy_only(case):
+        return _messy_only(case)
+    rng.shuffle(case.rows)
+    case.rows.insert(rng.randrange(len(case.rows) + 1), list(case.rows[case.pick(rng)]))
+    _holds(case, "the rows are written in another order and one of them twice: `record_id` "
+                 "is an identifier all the same")
+    case.extra.append(("duplicate_rows",))
+    return None
+
+
+def ch_rows_deleted_shuffled(case, rng):
+    if _messy_only(case):
+        return _messy_only(case)
+    gone = set(rng.sample(range(len(case.rows)), round(0.03 * len(case.rows))))
+    case.rows = [row for i, row in enumerate(case.rows) if i not in gone]
+    rng.shuffle(case.rows)
+    case.blank_after = {i for i in case.blank_after if i < len(case.rows) - 1}
+    _holds(case, "3% of the rows are deleted and the rest written in another order: "
+                 "`record_id` has gaps and no order, and is an identifier all the same")
+    return None
+
+
+def ch_id_floats_shuffled(case, rng):
+    if _messy_only(case):
+        return _messy_only(case)
+    for name in ("record_id", "visits"):
+        i = case.col(name)
+        for row in case.rows:
+            if not g.is_missing(row[i]):
+                row[i] = f"{int(row[i])}.0"
+    rng.shuffle(case.rows)
+    _holds(case, "the identifier and the measure are written as floats (100001.0) and the "
+                 "rows in another order: both are judged by value")
+    return None
+
+
+def ch_sorted_by_measure(case, rng):
+    if _messy_only(case):
+        return _messy_only(case)
+    i = case.col("visits")
+    case.rows.sort(key=lambda row: int(row[i]))
+    _holds(case, "the table is sorted by the whole-number measure `visits`: a measure is "
+                 "a feature whatever the order of the rows. A stated limit (D31): every "
+                 "value is distinct and in the order of the file, so the first clause of "
+                 "the id-like rule (D19) excludes it")
+    return None
+
+
+def ch_id_steps_by_7(case, rng):
+    if _messy_only(case):
+        return _messy_only(case)
+    i = case.col("record_id")
+    for k, row in enumerate(case.rows):
+        row[i] = str(100001 + 7 * k)
+    _holds(case, "`record_id` steps by 7 down the file, 100001, 100008, ...: strictly "
+                 "ordered and not consecutive, `id_like` by D19's ordered clause")
+    return None
+
+
+def ch_id_added_gaps(case, rng):
+    n = len(case.rows)
+    case.add_column("row_id_gaps", rng.sample(range(100001, 100002 + int(n / 0.97)), n))
+    _added(case, "row_id_gaps", "excluded", "id_like")
+    _same(case, "whole numbers distinct in every row, in no order and with 3% of the numbers "
+                "of their range missing, are an identifier and reach nothing")
+    return None
+
+
+def ch_entities_merged(case, rng):
+    if case.run != "entities":
+        return "only on `entities`: the one classification with an entity column and no time"
+    at = case.col(case.group)
+    names = sorted({row[at] for row in case.rows})
+    big = set(names[:round(0.45 * len(names))])
+    for row in case.rows:
+        if row[at] in big:
+            row[at] = "CBIG"
+    case.claims = ["band:entities", "entities_apart", "fold_rule"]
+    case.kind = "band"
+    case.must = ("45% of the entities are given one name: one entity of 675 rows, of both "
+                 "classes, beside 165 of five. No entity on both sides, the rule for a fold "
+                 "with few training rows as the judge counts it, and no skill (the band of "
+                 "`entities`): the label of a held-out entity is still its own")
+    return None
+
+
+NOISE_LIMIT_RUNS = ("random_walk", "int_stamps", "panel")
+
+
+def _told_copy(make_cells, what, only=None, by_spread=False):
+    """Under time order, a column derived from the target that must be excluded as a
+    suspected leak or at least named by a `strong_single_column` warning (D74 point
+    2; D76 points 1 and 2)."""
+    def change(case, rng):
+        if not case.regression():
+            return "the target is not a regression target"
+        if not isinstance(case.time, str):
+            return ("asserted under time order, where the previous value is a baseline; "
+                    "under the other schemes the screen already excludes or warns")
+        if only is not None and case.run not in only:
+            return ("a stated limit, asserted on three runs where the previous value is the "
+                    "baseline in use: " + ", ".join(only))
+        if by_spread and case.info.get("cell") == "target":
+            return ("the target of this run holds one cell far outside the rest, so its "
+                    "spread is no measure for the noise")
+        usable = _usable_rows(case)
+        values = [None if g.is_missing(c) else float(c) for c in case.target_cells()]
+        cells = make_cells(values, usable, rng, case)
+        case.add_column("target_copy", cells)
+        case.claims = [c for c in case.claims if not c.startswith("band")
+                       and c not in ("walk_baselines", "panel_baselines", "flat", "int_keys")]
+        case.extra.append(("copy_told", "target_copy"))
+        case.kind = "structure"
+        case.must = ("the added column `target_copy` is excluded as a suspected leak, or at "
+                     "least named by a `strong_single_column` warning: " + what)
+        return None
+    return change
+
+
+def _cells_altered(values, usable, rng, case):
+    cells = ["" if v is None else g._f(3.7 * v + 12, 9) for v in values]
+    picks = rng.sample(usable, max(1, round(0.02 * len(usable))))
+    moved = [cells[i] for i in picks]
+    for i, value in zip(picks, moved[1:] + moved[:1]):
+        cells[i] = value
+    case.touched += picks
+    return cells
+
+
+def _cells_noisy(share):
+    def make(values, usable, rng, case):
+        present = [values[i] for i in usable]
+        mean = sum(present) / len(present)
+        spread = math.sqrt(sum((v - mean) ** 2 for v in present) / len(present))
+        return ["" if v is None else g._f(3.7 * v + 12 + rng.gauss(0, 3.7 * share * spread), 9)
+                for v in values]
+    return make
+
+
+def _cells_curve(values, usable, rng, case):
+    return ["" if v is None else g._f((v + 1000.0) ** 2, 6) for v in values]
+
+
+def ch_measure_sentinel(case, rng):
+    """-999 in `visits` of `messy`, whole numbers from 1,000 to 100,000. The value is
+    not far outside the column and moves no number, so the warning need not name it
+    (D76 point 3): the run is in band, or the value is named."""
+    if _messy_only(case):
+        return _messy_only(case)
+    k = case.pick(rng)
+    case.rows[k][case.col("visits")] = "-999"
+    case.touched.append(k)
+    _holds(case, "one cell of the whole-number measure `visits` set to -999, just below "
+                 "its smallest value")
+    _or_named(case)
+    return None
+
+
+CHANGES.update({
+    "rows_repeated_1pct": _rows_repeated(0.01),
+    "rows_repeated_10pct": _rows_repeated(0.10),
+    "row_repeated_other_target": ch_row_other_target,
+    "stamp_shared": ch_stamp_shared,
+    "gap_2": _gap_two(False),
+    "gap_2_row_repeated": _gap_two(True),
+    "copy_exact": _copy_change(lambda value, i, cell: cell.strip(),
+                               "an exact copy of the target is excluded by the leak screen, "
+                               "after the split, so nothing else moves"),
+    "copy_negative_scale": _copy_change(lambda value, i, cell: g._f(-2.5 * value + 40, 9),
+                                        "a copy of the target with a negative scale "
+                                        "(-2.5 x target + 40) is excluded by the leak screen, "
+                                        "so nothing else moves"),
+    "copy_5_cells_differ": _copy_change(_rescaled,
+                                        "a rescaled copy of the target in which the values of "
+                                        "five rows are rotated among them is excluded by the "
+                                        "leak screen, so nothing else moves", rotate=5),
+    "copy_one_cell_999999": _copy_change(_rescaled,
+                                         "a rescaled copy of the target with one cell set to "
+                                         "999999 is excluded by the leak screen, so nothing "
+                                         "else moves", cell="999999"),
+    "copy_and_target_sentinel": _copy_change(_rescaled,
+                                             "a rescaled copy of the target, and then one "
+                                             "target cell set to -999: the copy is excluded by "
+                                             "the leak screen", target_cell="-999"),
+    "target_sentinel_999999": ch_target_sentinel_big,
+    "target_two_sentinels": ch_target_two_sentinels,
+    "number_two_sentinels": ch_number_two_sentinels,
+    "feature_999999_latest_row": _placed("feature", True),
+    "feature_999999_early_row": _placed("feature", False),
+    "target_-999_latest_row": _placed("target", True),
+    "target_-999_early_row": _placed("target", False),
+    "id_shuffled_and_repeated": ch_id_shuffled_and_repeated,
+    "rows_deleted_shuffled": ch_rows_deleted_shuffled,
+    "id_floats_shuffled": ch_id_floats_shuffled,
+    "sorted_by_measure": ch_sorted_by_measure,
+    "id_steps_by_7": ch_id_steps_by_7,
+    "id_added_gaps": ch_id_added_gaps,
+    "entities_merged_45pct": ch_entities_merged,
+    "copy_2pct_cells_altered": _told_copy(_cells_altered, "a rescaled copy of the target in "
+                                          "which the values of 2% of the rows are rotated "
+                                          "among them"),
+    "copy_curve": _told_copy(_cells_curve, "the square of the target plus 1,000, a curve that "
+                             "rises with it"),
+    "copy_noise_1pct": _told_copy(_cells_noisy(0.01), "a rescaled copy of the target with "
+                                  "noise of 1% of the target's spread added", by_spread=True),
+    "copy_noise_5pct": _told_copy(_cells_noisy(0.05), "a rescaled copy of the target with "
+                                  "noise of 5% of the target's spread added. A stated limit "
+                                  "(D76 point 2): above 1% such a column cannot be told from "
+                                  "a strong feature measured at the same moment, and whether "
+                                  "it is known before the outcome is the caller's to say",
+                                  only=NOISE_LIMIT_RUNS, by_spread=True),
+    "measure_sentinel_-999": ch_measure_sentinel,
+})
 
 
 def build_pairs(only=None):
@@ -1118,7 +1636,7 @@ class Judge:
                                          + g._tail(r["stderr"], 300)))
             return self.fails
         for name in ("u_rows", "u_columns", "u_headline", "u_statements", "u_random_counts",
-                     "u_copies", "u_finite"):
+                     "u_copies", "u_finite", "u_largest_row"):
             self.claim(name, getattr(self, name))
         for name in c.claims:
             head, _, arg = name.partition(":")
@@ -1312,7 +1830,7 @@ class Judge:
     # ---- the conclusions of the runs
     def c_band(self, name):
         skill = self.at("headline.skill")
-        low, high = g.BANDS[name]
+        low, high = BANDS[name]
         self.require(isinstance(skill, (int, float)) and low <= skill <= high,
                      f"skill is {skill if skill is None else round(skill, 4)}, expected "
                      f"between {low} and {high} (the band of `{name}`)")
@@ -1362,6 +1880,19 @@ class Judge:
         self.role_is("amount_scaled", "excluded", "suspected_leak", "predicts_target")
         self.require(self.c.name("amount_scaled") in self.names_warned("suspected_leak"),
                      "no `suspected_leak` warning names amount_scaled")
+
+    def c_walk_copy_roles(self):
+        self.role_is("level_scaled", "excluded", "suspected_leak", "predicts_target")
+        self.require(self.c.name("level_scaled") in self.names_warned("suspected_leak"),
+                     "no `suspected_leak` warning names level_scaled")
+        self.role_is("level_prev", "feature", None)
+
+    def c_named(self, original):
+        """An `extreme_value` warning names the column (D74 point 3)."""
+        name, named = self.c.name(original), self.names_warned("extreme_value")
+        self.require(name in named,
+                     f"`extreme_value` warnings name {named or 'no column'}: `{name}` holds one "
+                     "value far outside all its other values, and the result must name it")
 
     def c_near_leak_roles(self):
         self.role_is("outcome_noisy", "feature", None)
@@ -1458,39 +1989,314 @@ class Judge:
                      "block_length is not the cube root of the holdout timestamps, rounded up")
         self.require(self.at("headline.p_value") is None, "a p-value under time order")
 
-    def series_before(self, by_entity=False):
-        """order of the usable rows in time, and each row's previous row (of its entity)."""
+    def kept_in_time(self):
+        """Under time order: the timestamp of each row the cap keeps, and the judge's split."""
+        stamps, want = self.time_expectation()
+        kept = want["training"] | want["gap"] | want["holdout"]
+        return {i: stamps[i] for i in kept}, want
+
+    def previous_values(self, by_entity=False):
+        """Each kept row's previous value as step 11 has it (D10, D57, D73), where it has one.
+
+        With no entity column: the mean target of the rows at the timestamp `gap + 1`
+        distinct timestamps before the row's own; with unique timestamps that is the
+        row before. With one: the target of the latest row of the same entity at
+        least `gap + 1` distinct timestamps before. Returns (the previous value by
+        row, whether the timestamps are unique within each series, the rows of each
+        series, the target by row)."""
         header, source, c = self.r["header"], self.r["source"], self.c
-        at = header.index(c.time)
-        rows = self.usable()
-        stamps = {i: time_key(source[i][at]) for i in rows}
+        t = header.index(c.target)
+        stamps, _ = self.kept_in_time()
+        index = {s: k for k, s in enumerate(sorted(set(stamps.values())))}
+        level = {i: float(source[i][t]) for i in stamps}
         groups = {}
-        for i in rows:
+        for i in sorted(stamps):
             entity = source[i][header.index(c.group)].strip() if by_entity else None
             groups.setdefault(entity, []).append(i)
-        before, unique = {}, True
-        for members in groups.values():
-            members.sort(key=lambda i: stamps[i])
-            unique = unique and len({stamps[i] for i in members}) == len(members)
-            for earlier, later in zip(members, members[1:]):
-                before[later] = earlier
-        return rows, before, unique, groups
+        unique = all(len({stamps[i] for i in members}) == len(members)
+                     for members in groups.values())
+        previous = {}
+        if by_entity:
+            for members in groups.values():
+                members.sort(key=lambda i: stamps[i])
+                for position, i in enumerate(members):
+                    limit = index[stamps[i]] - c.gap - 1
+                    for j in reversed(members[:position]):
+                        if index[stamps[j]] <= limit:
+                            previous[i] = level[j]
+                            break
+        else:
+            at = {}
+            for i, s in stamps.items():
+                at.setdefault(index[s], []).append(level[i])
+            mean_at = {k: g.mean(values) for k, values in at.items()}
+            for i, s in stamps.items():
+                k = index[s] - c.gap - 1
+                if k >= 0:
+                    previous[i] = mean_at[k]
+        return previous, unique, groups, level
 
     def baselines_by_hand(self, by_entity=False):
-        header, source = self.r["header"], self.r["source"]
-        t = header.index(self.c.target)
-        rows, before, unique, groups = self.series_before(by_entity)
+        previous, unique, groups, level = self.previous_values(by_entity)
+        _, want = self.kept_in_time()
         held = self.held()
-        level = {i: float(source[i][t]) for i in rows}
-        in_holdout = set(held)
+        stray = [p for p in held if p not in level]
+        self.require(not stray, f"{len(stray)} holdout rows are not among the rows the judge "
+                                "expects to be split under time order")
         truth = [level[p] for p in held]
-        training_mean = g.mean([level[i] for i in rows if i not in in_holdout])
+        training_mean = g.mean([level[i] for i in want["training"]])
         base_mean = g.mse(truth, [training_mean] * len(truth))
-        without = [p for p in held if p not in before]
-        base_previous = g.mse(truth, [level[before[p]] if p in before else training_mean
-                                      for p in held])
+        without = [p for p in held if p not in previous]
+        base_previous = g.mse(truth, [previous.get(p, training_mean) for p in held])
         mine = g.mse(truth, [guess for _, _, guess in self.r["predictions"]])
         return base_mean, base_previous, mine, unique, without, groups
+
+    def baseline_predictions(self):
+        """The headline baseline's prediction for each holdout row, by the judge's own
+        count; None where the output does not say which rows were split (a row cap
+        under the random or the grouped scheme)."""
+        c, name = self.c, self.at("headline.baseline")
+        header, source = self.r["header"], self.r["source"]
+        t, held = header.index(c.target), self.held()
+        if isinstance(c.time, str):
+            previous, _, _, level = self.previous_values(isinstance(c.group, str))
+            _, want = self.kept_in_time()
+            mean = g.mean([level[i] for i in want["training"]])
+            if name == "training_mean":
+                return [mean] * len(held)
+            return [previous.get(p, mean) for p in held]
+        sides = self.split_rows()
+        if sides is None or name != "training_mean":
+            return None
+        return [g.mean([float(source[i][t]) for i in sides[0]])] * len(held)
+
+    def row_errors(self):
+        """(holdout rows, the model's squared error on each, the headline baseline's or None)."""
+        held = self.held()
+        truths = [float(truth) for _, truth, _ in self.r["predictions"]]
+        own = [(t - guess) ** 2 for t, (_, _, guess) in zip(truths, self.r["predictions"])]
+        base = self.baseline_predictions()
+        theirs = None if base is None else [(t - b) ** 2 for t, b in zip(truths, base)]
+        return held, own, theirs
+
+    @staticmethod
+    def largest(errors, held):
+        """(the largest row's share of the squared error, that row, whether it is alone)."""
+        total = math.fsum(errors)
+        if not total > 0:
+            return None, None, False
+        top = max(errors)
+        return top / total, held[errors.index(top)], errors.count(top) == 1
+
+    def u_largest_row(self):
+        """The share of the squared error that its largest row carries (D74 point 3). On
+        the holdout, for the chosen model and for the headline baseline: the share
+        and the row as the judge counts them from predictions.csv. Over the selection
+        folds: the same four keys in `cv` and two in every record of `models`. And
+        one `largest_row_dominates` warning for each statement above one half, the
+        configurations of `models` sharing one. Null for a classification."""
+        h = self.at("headline")
+        keys = ("largest_row_share", "largest_row", "baseline_largest_row_share",
+                "baseline_largest_row")
+        missing = [key for key in keys if key not in h]
+        self.require(not missing, f"`headline` has no {missing}")
+        warned = len(self.warned("largest_row_dominates"))
+        if self.at("task.type") != "regression":
+            self.require(all(h[key] is None for key in keys) and warned == 0,
+                         f"a classification reports {[h[key] for key in keys]} and {warned} "
+                         "`largest_row_dominates` warning(s); squared error is not its metric")
+            return
+        held, own, theirs = self.row_errors()
+        expected = 0
+        for label, errors, key in (("the chosen model", own, ""),
+                                   ("the headline baseline", theirs, "baseline_")):
+            got, got_row = h[key + "largest_row_share"], h[key + "largest_row"]
+            if errors is None:              # the judge cannot make this baseline's predictions
+                self.require(got is None or (isinstance(got, (int, float)) and 0 < got <= 1),
+                             f"`headline.{key}largest_row_share` is {got!r}")
+                expected += bool(got is not None and got > 0.5)
+                continue
+            share, row, alone = self.largest(errors, held)
+            if share is None:
+                self.require(got is None and got_row is None,
+                             f"`headline.{key}largest_row_share` is {got!r} where {label} has "
+                             "no error on the holdout")
+                continue
+            self.require(isinstance(got, (int, float)) and not isinstance(got, bool)
+                         and g.close(got, share, 1e-7),
+                         f"`headline.{key}largest_row_share` is {got!r}; the judge computes "
+                         f"{share!r} for {label} (row {row})")
+            if alone:
+                self.require(got_row == row, f"`headline.{key}largest_row` is {got_row!r}; the "
+                                             f"judge finds row {row}")
+            expected += share > 0.5
+        cv = self.at("cv")
+        absent = [key for key in keys if key not in cv] + [
+            f"models[{m.get('config')}].{key}" for m in self.at("models")
+            for key in ("largest_row_share", "largest_row") if key not in m]
+        self.require(not absent, f"the selection folds' statement is missing: {absent[:6]}")
+        ruled = [m["config"] for m in self.at("models")
+                 if isinstance(m["largest_row_share"], (int, float))
+                 and m["largest_row_share"] > 0.5]
+        expected += bool(ruled)
+        over = cv["baseline_largest_row_share"]
+        expected += bool(isinstance(over, (int, float)) and over > 0.5)
+        self.require(warned == expected,
+                     f"{warned} `largest_row_dominates` warning(s); the judge expects "
+                     f"{expected}: largest_row_share {h['largest_row_share']!r}, "
+                     f"baseline_largest_row_share {h['baseline_largest_row_share']!r}")
+
+    def where_touched(self):
+        """Where the rows the change altered fell, for the report."""
+        rows = list(getattr(self.c, "touched", []))
+        if not rows:
+            return "nowhere (the change altered no single row)"
+        held, want = set(self.held()), None
+        if isinstance(self.c.time, str):
+            try:
+                _, want = self.time_expectation()
+            except Exception:  # noqa: BLE001  a time column the judge cannot read
+                want = None
+        out = []
+        for k in rows:
+            if k in held:
+                where = "holdout"
+            elif want is not None:
+                where = "training" if k in want["training"] else "gap" if k in want["gap"] \
+                    else "left out by the cap"
+            else:
+                where = "training, or left out by the cap" if self.capped() else "training"
+            out.append(f"row {k}: {where}")
+        return "; ".join(out)
+
+    def named_rows(self):
+        """The rows the result names: the largest row of a squared error where its
+        share is above 0.5 (the holdout or the selection folds, a configuration or
+        the baseline), and every row that holds a value an `extreme_value` warning
+        names."""
+        rows = set()
+        parts = [self.at("headline"), self.at("cv")] + list(self.at("models"))
+        for part in parts:
+            for key in ("", "baseline_"):
+                share, row = part.get(key + "largest_row_share"), part.get(key + "largest_row")
+                if isinstance(share, (int, float)) and share > 0.5 and row is not None:
+                    rows.add(int(row))
+        header, source = self.r["header"], self.r["source"]
+        for w in self.warned("extreme_value"):
+            found = re.search(r"holds the value (\S+) in (\d+) row", w["message"])
+            if not found or w["column"] not in header:
+                continue
+            value, at = float(found.group(1)), header.index(w["column"])
+            for i, line in enumerate(source):
+                try:
+                    cell = float(line[at])
+                except ValueError:
+                    continue
+                if cell == value:
+                    rows.add(i)
+        return rows
+
+    def c_band_or_named(self, name):
+        """Skill inside the band; or the result names the row or the value, and the
+        same call on the table without the named rows is inside the band (D74 point
+        3). That call is the judge's own: one more run of the tool, on the table as
+        it was changed with the named rows taken out, written beside the pair's own
+        as `<run>__<change>__without`. On a table that holds two cells that were set,
+        the run's own and the change's, the claim is made of that second table too:
+        `rounds` calls at most."""
+        low, high = BANDS[name]
+        judge, where, story = self, self.where_touched(), []
+        for calls in range(self.c.rounds + 1):
+            skill = judge.at("headline.skill")
+            if isinstance(skill, (int, float)) and low <= skill <= high:
+                return
+            shown = skill if skill is None else round(skill, 4)
+            story.append(f"skill is {shown}" if not story
+                         else f"the same call without them gives skill {shown}")
+            told = "; ".join(story)
+            self.require(calls < self.c.rounds,
+                         f"{told}: still outside the band of `{name}` ({low} to {high}). The "
+                         f"changed row(s): {where}")
+            named = judge.named_rows()
+            codes = sorted({w["code"] for w in judge.at("warnings")
+                            if w["code"] in ("largest_row_dominates", "extreme_value")})
+            self.require(named, f"{told}, outside the band of `{name}` ({low} to {high}), and "
+                                f"the result names no row and no value. The changed row(s): "
+                                f"{where}. model {judge.at('headline.model')}, baseline "
+                                f"{judge.at('headline.baseline')}")
+            self.require(len(named) <= 20, f"{told}, outside the band; the result names "
+                                           f"{len(named)} rows, too many to be the changed cell")
+            story.append(f"the result names row(s) {sorted(named)} ({codes})")
+            case = copy.copy(judge.c)
+            case.change = judge.c.change + "__without"
+            case.rows = [list(row) for i, row in enumerate(judge.c.rows) if i not in named]
+            case.blank_after = set()
+            again = read_outputs(launch(case, _SECOND_CALL["package"], _SECOND_CALL["work"]))
+            _SECOND_CALL["made"].append((again["label"], again.get("seconds") or 0))
+            self.require(again.get("finished"),
+                         "; ".join(story) + "; the same call without them did not finish: "
+                         f"exit {again.get('rc')}, `{again.get('code')}`")
+            judge = Judge(case, again, None)
+
+    def c_fold_rule(self):
+        """Under the grouped scheme every fold is scored as it is. When some fold has
+        fewer than 50 training rows, and fewer training rows than validation rows, no
+        choice between configurations is made: the first configuration that was
+        fitted is used, and one `selection_not_made` warning says so (D74 point 6).
+        By the judge's own count there is such a fold when one entity outside the
+        holdout holds more than the rest of the training rows, and all but fewer
+        than 50 of them."""
+        floor = SELECTION_FLOOR
+        folds = self.at("validation.folds")
+        shape = [(f["training_rows"], f["validation_rows"], f["scored"]) for f in folds]
+        starved = [f["training_rows"] for f in folds
+                   if f["training_rows"] < floor and f["training_rows"] < f["validation_rows"]]
+        said = len(self.warned("selection_not_made"))
+        first = next(m["config"] for m in self.at("models") if m["cv_mean"] is not None)
+        if starved:
+            self.require(said == 1 and self.at("cv.chosen") == first
+                         and self.at("headline.model") == first,
+                         f"one fold trains on {min(starved)} rows, fewer than {floor} and "
+                         f"fewer than it validates on: {said} `selection_not_made` "
+                         f"warning(s), chosen {self.at('cv.chosen')!r}, the first "
+                         f"configuration is {first!r}; the folds (training rows, validation "
+                         f"rows, scored) are {shape}")
+        else:
+            self.require(said == 0, f"{said} `selection_not_made` warning(s) though no fold "
+                                    f"trains on fewer than {floor} rows and on fewer than it "
+                                    f"validates on: {shape}")
+        size, held_entities, _ = self.entity_sizes()
+        training, usable = self.counts()["training"], sum(size.values())
+        big = max((rows for e, rows in size.items() if e not in held_entities), default=0)
+        if (not self.capped() or 4 * big >= usable) and training - big < floor \
+                and training - big < big:
+            self.require(starved,
+                         f"an entity of {big} rows is among the {training} training rows, so "
+                         f"the fold that validates on it trains on fewer than {floor} and on "
+                         f"fewer than it validates on; the folds are {shape}")
+        unscored = [f for f in folds if not f["scored"]]
+        self.require(len(self.warned("fold_not_scored")) == len(unscored),
+                     f"{len(self.warned('fold_not_scored'))} `fold_not_scored` warning(s) for "
+                     f"{len(unscored)} fold(s) not scored")
+        if self.at("task.type") == "regression":
+            self.require(not unscored, f"fold(s) {[f['fold'] for f in unscored]} of a "
+                                       "regression are not scored")
+
+    def lower_baseline(self, base_mean, base_previous, mine):
+        """The headline baseline is the one with the lower error on the holdout by the
+        judge's own count, a tie going to the training mean (step 11)."""
+        name, best = ("previous_value", base_previous) if base_previous < base_mean \
+            else ("training_mean", base_mean)
+        skill = self.at("headline.skill")
+        self.require(self.at("headline.baseline") == name,
+                     f"the headline baseline is {self.at('headline.baseline')!r} (skill "
+                     f"{skill!r}); the previous value scores {base_previous:.6g} against "
+                     f"{base_mean:.6g} for the training mean")
+        if best == 0:
+            self.require(skill is None, f"skill is {skill!r} with a baseline error of 0")
+        else:
+            self.require(skill is not None and g.close(skill, 1 - mine / best, 1e-7),
+                         f"headline.skill {skill!r} is not 1 - {mine!r} / {best!r}")
 
     def check_baselines(self, base_mean, base_previous):
         baselines = {b["name"]: b for b in self.at("baselines")}
@@ -1503,25 +2309,11 @@ class Judge:
                          f"computes {want!r}")
 
     def c_walk_baselines(self):
+        # With repeated timestamps too the previous value is scored: the mean target
+        # of the timestamp before (D73, D74 point 1).
         base_mean, base_previous, mine, unique, _, _ = self.baselines_by_hand()
-        if not unique:
-            baselines = sorted(b["name"] for b in self.at("baselines"))
-            self.require("previous_value" in baselines,
-                         f"the timestamps of the source are not all distinct, the baselines "
-                         f"are {baselines} and the headline is skill "
-                         f"{self.at('headline.skill')!r} against "
-                         f"{self.at('headline.baseline')!r}: a random walk scored against the "
-                         "training mean; warnings "
-                         f"{sorted({w['code'] for w in self.at('warnings')})}")
-            return
         self.check_baselines(base_mean, base_previous)
-        skill = self.at("headline.skill")
-        self.require(self.at("headline.baseline") == "previous_value",
-                     f"the headline baseline is {self.at('headline.baseline')!r} (skill "
-                     f"{skill!r}); the previous value scores {base_previous:.4g} against "
-                     f"{base_mean:.4g} for the training mean")
-        self.require(g.close(skill, 1 - mine / base_previous, 1e-7),
-                     "headline.skill is not 1 - error / previous-value error")
+        self.lower_baseline(base_mean, base_previous, mine)
 
     def c_int_keys(self):
         stamps, want = self.time_expectation()
@@ -1538,10 +2330,6 @@ class Judge:
 
     def c_flat(self):
         base_mean, base_previous, mine, unique, _, _ = self.baselines_by_hand()
-        self.require(unique, "the timestamps of the source are not all distinct; baselines "
-                             f"{sorted(b['name'] for b in self.at('baselines'))}, skill "
-                             f"{self.at('headline.skill')!r} against "
-                             f"{self.at('headline.baseline')!r}")
         self.check_baselines(base_mean, base_previous)
         skill = self.at("headline.skill")
         if base_previous == 0:
@@ -1563,11 +2351,7 @@ class Judge:
     def c_panel_baselines(self):
         base_mean, base_previous, mine, unique, without, groups = self.baselines_by_hand(True)
         self.check_baselines(base_mean, base_previous)
-        skill = self.at("headline.skill")
-        self.require(self.at("headline.baseline") == "previous_value",
-                     f"the headline baseline is {self.at('headline.baseline')!r}, skill {skill!r}")
-        self.require(g.close(skill, 1 - mine / base_previous, 1e-7),
-                     "headline.skill is not 1 - error / previous-value error")
+        self.lower_baseline(base_mean, base_previous, mine)
         got = (self.at("validation.group_col"), self.at("validation.n_groups_training"),
                self.at("validation.n_groups_holdout"),
                self.at("validation.n_holdout_without_previous"))
@@ -1780,6 +2564,28 @@ class Judge:
             self.require(name in self.names_warned(warned),
                          f"no `{warned}` warning names `{name}`")
 
+    def x_copy_told(self, name):
+        got = self.columns().get(name, {})
+        out = (got.get("role"), got.get("reason")) == ("excluded", "suspected_leak")
+        warned = name in self.names_warned("strong_single_column")
+        self.require(out or warned,
+                     f"the added column `{name}` is a feature (role {got.get('role')!r}, reason "
+                     f"{got.get('reason')!r}) and no `strong_single_column` warning names it; "
+                     f"skill {self.at('headline.skill')!r} against "
+                     f"{self.at('headline.baseline')!r}, model {self.at('headline.model')}")
+
+    def x_roles_as_base(self):
+        base = self.base
+        self.require(base is not None and base.get("finished"),
+                     "the unperturbed run did not finish, so there is nothing to compare with")
+        theirs = {c["name"]: (c["role"], c["reason"]) for c in base["doc"]["columns"]}
+        back = {new: old for old, new in self.c.alias.items()}
+        moved = [f"`{c['name']}` {theirs[back.get(c['name'], c['name'])]} -> "
+                 f"{(c['role'], c['reason'])}" for c in self.at("columns")
+                 if back.get(c["name"], c["name"]) in theirs
+                 and theirs[back.get(c["name"], c["name"])] != (c["role"], c["reason"])]
+        self.require(not moved, "roles moved against the unperturbed run: " + "; ".join(moved[:6]))
+
     def x_duplicate_rows(self):
         self.require(self.at("input.duplicate_rows") >= 1
                      and len(self.warned("duplicate_rows")) == 1,
@@ -1850,6 +2656,18 @@ def observed(result, case):
                  case.name("status")}
         rows = {r["item"]: r["count"] for r in doc["rows"]}
         seen["cap"] = rows.get("dropped_row_cap")
+        for key, label in (("largest_row_share", "share"),
+                           ("baseline_largest_row_share", "base_share")):
+            value = doc["headline"].get(key)
+            seen[label] = None if value is None else round(value, 4)
+        seen["folds"] = [(f["training_rows"], f["validation_rows"], f["scored"])
+                         for f in doc["validation"].get("folds", [])] \
+            if doc["validation"].get("scheme") == "grouped" else None
+        if case.touched:
+            try:
+                seen["changed"] = Judge(case, result, None).where_touched()
+            except Exception as exc:  # noqa: BLE001
+                seen["changed"] = f"(not placed: {type(exc).__name__})"
         seen["roles"] = {c["name"]: f"{c['role']}/{c['reason']}" for c in doc["columns"]
                          if c["name"] in watch}
     return seen
@@ -1904,6 +2722,46 @@ CHANGE_WORDS = {
     "duplicates_error": "the call passes --duplicates error (the default)",
     "duplicates_keep": "the call passes --duplicates keep",
     "duplicates_group": "the call passes --duplicates group",
+    "rows_repeated_1pct": "1% of the rows are written twice",
+    "rows_repeated_10pct": "10% of the rows are written twice",
+    "row_repeated_other_target": "one row is written twice, the second time with another target",
+    "stamp_shared": "one row is given the timestamp before its own",
+    "gap_2": "the call passes --gap 2",
+    "gap_2_row_repeated": "the call passes --gap 2 and one row is written twice",
+    "copy_exact": "a column `target_copy` is added: the target as it is",
+    "copy_negative_scale": "a column `target_copy` is added: -2.5 x the target + 40",
+    "copy_5_cells_differ": "a column `target_copy` is added: the target rescaled, the values "
+                           "of five rows rotated among them",
+    "copy_one_cell_999999": "a column `target_copy` is added: the target rescaled, one cell "
+                            "set to 999999",
+    "copy_and_target_sentinel": "a column `target_copy` is added, the target rescaled, and "
+                                "then one target cell is set to -999",
+    "target_sentinel_999999": "one cell of the regression target is set to 999999",
+    "target_two_sentinels": "two cells of the regression target, in two rows, are set to -999",
+    "number_two_sentinels": "two cells of a numeric feature, in two rows, are set to 999999",
+    "feature_999999_latest_row": "the numeric feature of the latest row is set to 999999",
+    "feature_999999_early_row": "the numeric feature of a row four tenths of the way through "
+                                "time is set to 999999",
+    "target_-999_latest_row": "the target of the latest row is set to -999",
+    "target_-999_early_row": "the target of a row four tenths of the way through time is set "
+                             "to -999",
+    "id_shuffled_and_repeated": "the rows are written in another order and one of them twice",
+    "rows_deleted_shuffled": "3% of the rows are deleted and the rest written in another order",
+    "id_floats_shuffled": "the identifier and the measure are written as floats and the rows "
+                          "in another order",
+    "sorted_by_measure": "the table is sorted by the whole-number measure `visits`",
+    "id_steps_by_7": "the identifier steps by 7 down the file",
+    "id_added_gaps": "a column `row_id_gaps` is added: distinct whole numbers in no order, "
+                     "3% of their range missing",
+    "entities_merged_45pct": "45% of the entities are given one name",
+    "copy_2pct_cells_altered": "a column `target_copy` is added: the target rescaled, the "
+                               "values of 2% of the rows rotated among them",
+    "copy_curve": "a column `target_copy` is added: the square of the target plus 1,000",
+    "copy_noise_1pct": "a column `target_copy` is added: the target rescaled, with noise of "
+                       "1% of the target's spread",
+    "copy_noise_5pct": "a column `target_copy` is added: the target rescaled, with noise of "
+                       "5% of the target's spread",
+    "measure_sentinel_-999": "one cell of the whole-number measure `visits` is set to -999",
 }
 
 
@@ -1931,7 +2789,7 @@ def main(argv=None):
                                                  "conclusion survive a small change?")
     parser.add_argument("package", nargs="?", help="the package folder `mlprofessor`")
     parser.add_argument("--only", default=None, help="run, run:change or :change, comma-separated")
-    parser.add_argument("--jobs", type=int, default=16, help="tool runs side by side (default 16)")
+    parser.add_argument("--jobs", type=int, default=32, help="tool runs side by side (default 32)")
     parser.add_argument("--list", action="store_true", help="print every pair and stop")
     parser.add_argument("--json", default=None, help="write every pair's verdict to this file")
     parser.add_argument("--work", default=None,
@@ -1986,7 +2844,7 @@ def run_battery(args):
         print(f"{len(cases)} tool runs: {sum(c.change == 'base' for c in cases)} gate runs as "
               f"they are and {sum(c.change != 'base' for c in cases)} pairs; "
               f"{len(left_out)} pairs left out; {len(STATED_LIMITS)} pairs listed as a stated "
-              f"limit and {len(OPEN)} as open ({OPEN_OWNER})")
+              f"limit and {len(OPEN)} as open")
         return EXIT_PASS
     if not args.package:
         raise HarnessError("no package folder given")
@@ -1997,6 +2855,7 @@ def run_battery(args):
     if args.jobs < 1:
         raise HarnessError("--jobs must be at least 1")
     work = Path(args.work).resolve() if args.work else WORK
+    _SECOND_CALL.update(package=package, work=work)
     try:
         (work / "data").mkdir(parents=True, exist_ok=True)
         started = time.perf_counter()
@@ -2005,23 +2864,30 @@ def run_battery(args):
     except OSError as exc:
         raise HarnessError(f"could not write under {work} or start {sys.executable}: {exc}") \
             from exc
-    wall = time.perf_counter() - started
     for result in results:
         for module in ("pandas", "numpy", "sklearn", "threadpoolctl", "scipy", "joblib"):
             if f"No module named '{module}'" in (result.get("stderr") or ""):
                 raise HarnessError(f"the interpreter {sys.executable} cannot import {module}; "
                                    "the modelling stack recorded in CLAUDE.md is not installed")
     base = {c.run: r for c, r in zip(cases, results) if c.change == "base"}
+    # The judging, side by side too: a claim for an extreme cell may run the tool once
+    # more, and those second calls should not wait in line. A judge reads its own
+    # pair and the unperturbed run, and writes nothing that another reads.
+    with ThreadPoolExecutor(max_workers=args.jobs) as pool:
+        verdicts = list(pool.map(lambda pair: Judge(pair[0], pair[1],
+                                                    base.get(pair[0].run)).run(),
+                                 zip(cases, results)))
+    wall = time.perf_counter() - started
+    second = sorted(_SECOND_CALL["made"])
     report, shown = [], {"fails": [], "stated limit": [], "open": [], "moved": []}
-    for case, result in zip(cases, results):
-        fails = Judge(case, result, base.get(case.run)).run()
+    for case, result, fails in zip(cases, results, verdicts):
         listed = case.listed
         verdict = "holds" if not fails else listed[0] if listed else "fails"
         record = {"run": case.run, "change": case.change, "kind": case.kind, "must": case.must,
                   "class": verdict, "listed": f"{listed[0]}: {listed[1]}" if listed else None,
                   "fails": [list(f) for f in fails], "observed": observed(result, case),
                   "seconds": result.get("seconds"), "attempts": result.get("attempts"),
-                  "args": case.args()}
+                  "args": case.args(), "touched": list(case.touched)}
         report.append(record)
         if fails:
             shown[verdict].append((case, record, result))
@@ -2031,26 +2897,30 @@ def run_battery(args):
         show(case, record, result, args.package, "FAIL")
     for label in ("stated limit", "open"):
         for case, record, result in shown[label]:
-            what = STATED_LIMITS.get((case.run, case.change)) or OPEN_OWNER
-            show(case, record, result, args.package, f"{label.upper()} ({what}):")
+            show(case, record, result, args.package, f"{label.upper()} ({case.listed[1]}):")
             if label == "open":
-                print(f"     the finding: {OPEN[(case.run, case.change)]}")
+                print(f"     the finding: {OPEN[(case.run, case.change)][0]}")
     for case, listed in shown["moved"]:
         print(f"LISTED AND HOLDS HERE {case.run}:{case.change} ({listed[0]}: {listed[1]})")
     count = {label: sum(r["class"] == label for r in report)
              for label in ("holds", "stated limit", "open", "fails")}
-    total = sum(r.get("seconds") or 0 for r in results)
-    print(f"{len(cases)} tool runs in {wall:.0f} s at {args.jobs} side by side "
-          f"({total:.0f} s of tool time): {len(base)} gate runs as they are and "
-          f"{len(cases) - len(base)} pairs; {len(left_out)} pairs left out (--list says why)")
+    total = sum(r.get("seconds") or 0 for r in results) + sum(s for _, s in second)
+    print(f"{len(cases)} tool runs, and {len(second)} second calls by the judge, in "
+          f"{wall:.0f} s at {args.jobs} side by side ({total:.0f} s of tool time): "
+          f"{len(base)} gate runs as they are and {len(cases) - len(base)} pairs; "
+          f"{len(left_out)} pairs left out (--list says why)")
     print(f"holds {count['holds']}; stated limit {count['stated limit']} of "
-          f"{len(STATED_LIMITS)} listed; open {count['open']} of {len(OPEN)} listed "
-          f"({OPEN_OWNER}); on neither list and failing {count['fails']}")
+          f"{len(STATED_LIMITS)} listed; open {count['open']} of {len(OPEN)} listed; "
+          f"on neither list and failing {count['fails']}")
     if args.json:
         try:
             Path(args.json).write_text(json.dumps(
                 {"package": str(package), "wall_seconds": round(wall, 1),
                  "tool_seconds": round(total, 1), "jobs": args.jobs, "counts": count,
+                 "second_calls": [label for label, _ in second],
+                 "stated_limits": {f"{run}:{change}": decision
+                                   for (run, change), decision in STATED_LIMITS.items()},
+                 "open": {f"{run}:{change}": list(what) for (run, change), what in OPEN.items()},
                  "pairs": report, "left_out": [list(x) for x in left_out],
                  "left_out_runs": LEFT_OUT_RUNS}, indent=1), encoding="utf-8")
         except OSError as exc:

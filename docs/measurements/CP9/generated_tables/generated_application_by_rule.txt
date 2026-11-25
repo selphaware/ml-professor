@@ -1,0 +1,63 @@
+package E:\CODE\ml-professor\mlprofessor
+reference E:\CODE\ml-professor\verify\reference\mlprofessor
+1000 tables of seed 20261122: {'agrees': 415, 'stated limit': 0, 'open': 0, 'fails': 585, 'harness': 0}; 275.4 s at 24 workers; in the tool {'application': 1926.3459999999993, 'reference': 384.4939999999997}
+outcomes {'application': {'result': 585, 'error': 415, 'other': 0}, 'reference': {'result': 585, 'error': 415, 'other': 0}}
+failing findings by class {'property': 662, 'exact': 1144, 'fit': 1163}
+
+585 tables fail
+
+tables by rule (a table is counted under every rule one of its findings has):
+  A1 baseline: 47: 2, 11, 58, 79, 91, 136, 143, 180, 198, 235, 259, 261, 271, 296, 319, 322, 354, 388, 410, 422, 439, 450, 454, 462, 469, 524, 547, 551, 553, 567, 574, 590, 601, 644, 674, 700, 704, 706, 751, 775, 809, 829, 846, 925, 948, 967, 979
+  A2/A3b screen and order reading: 27: 2, 21, 81, 159, 212, 221, 247, 301, 319, 339, 397, 445, 450, 461, 463, 478, 524, 635, 704, 742, 755, 775, 812, 912, 916, 918, 948
+  A3 statements: 585: 0, 1, 2, 5, 6, 8, 11, 13, 14, 18, 21, 25, 29, 31, 32, 33, 34, 36, 38, 39, ...
+  A3 warnings: 1: 918
+  A4 order of rows: 8: 296, 332, 605, 626, 644, 816, 836, 974
+  A5 identifier: 14: 78, 81, 234, 417, 452, 528, 745, 789, 809, 853, 854, 867, 942, 992
+  A6 no choice: 3: 634, 778, 923
+
+tables by the set of rules they fail for:
+    497  A3 statements
+     37  A1 baseline + A3 statements
+     18  A2/A3b screen and order reading + A3 statements
+     12  A3 statements + A5 identifier
+      7  A1 baseline + A2/A3b screen and order reading + A3 statements
+      6  A3 statements + A4 order of rows
+      3  A3 statements + A6 no choice
+      2  A1 baseline + A3 statements + A4 order of rows
+      1  A2/A3b screen and order reading + A3 statements + A5 identifier
+      1  A1 baseline + A3 statements + A5 identifier
+      1  A2/A3b screen and order reading + A3 statements + A3 warnings
+
+failing findings by rule, class and field:
+  A1 baseline | exact | baselines: 47
+  A1 baseline | exact | baselines (names): 47
+  A1 baseline | exact | headline.baseline: 23
+  A1 baseline | exact | headline.baseline_score: 23
+  A1 baseline | property | application: under time order a regression scores both baselines, whet: 47
+  A2/A3b screen and order reading | exact | columns: 6
+  A2/A3b screen and order reading | exact | warnings: 26
+  A2/A3b screen and order reading | property | application: an exact copy of the target is excluded by the leak scree: 14
+  A3 statements | exact | cv.baseline_largest_row: 239
+  A3 statements | exact | cv.baseline_largest_row_share: 239
+  A3 statements | exact | headline.baseline_largest_row: 239
+  A3 statements | exact | headline.baseline_largest_row_share: 239
+  A3 statements | fit | cv.largest_row: 239
+  A3 statements | fit | cv.largest_row_share: 239
+  A3 statements | fit | headline.largest_row: 239
+  A3 statements | fit | headline.largest_row_share: 239
+  A3 statements | fit | models: 112
+  A3 statements | property | application: headline holds the largest row's share, for the model and: 585
+  A3 warnings | exact | warnings: 1
+  A5 identifier | exact | columns: 15
+  A5 identifier | property | application: a whole-number column is id-like exactly when every value: 13
+  A6 no choice | property | application: one selection_not_made record exactly when, under the gro: 3
+  follows | fit | cv.chosen: 2
+  follows | fit | cv.chosen_mean: 11
+  follows | fit | cv.chosen_std: 11
+  follows | fit | headline.model: 2
+  follows | fit | headline.score: 11
+  follows | fit | headline.skill: 34
+  follows | fit | models: 13
+  follows | fit | predictions.csv (y_pred): 11
+
+tables with a finding that no rule explains, in full: 0

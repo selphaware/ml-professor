@@ -1,0 +1,154 @@
+
+signal_clf
+  new     +0.6719 to +0.8005
+    +0.742 +0.708 +0.697 +0.734 +0.748 +0.703 +0.690 +0.791 +0.672 +0.726 +0.753 +0.744 +0.736 +0.771 +0.729 +0.779 +0.756 +0.801 +0.738 +0.756 +0.723 +0.779 +0.740 +0.760 +0.793 +0.696 +0.726 +0.754 +0.779 +0.719
+
+signal_reg
+  new     +0.8191 to +0.8914
+    +0.831 +0.839 +0.843 +0.863 +0.846 +0.891 +0.850 +0.849 +0.819 +0.833 +0.835 +0.854 +0.854 +0.847 +0.861 +0.840 +0.857 +0.845 +0.871 +0.859 +0.868 +0.876 +0.830 +0.832 +0.835 +0.867 +0.856 +0.825 +0.848 +0.826
+
+noise_clf
+  new     -0.1145 to +0.1590
+    -0.115 -0.050 +0.003 +0.012 -0.028 +0.023 -0.020 +0.032 +0.016 +0.055 +0.072 +0.002 +0.008 -0.018 +0.097 -0.032 -0.057 +0.033 -0.069 -0.008 +0.021 +0.072 +0.024 +0.018 -0.096 -0.072 -0.043 +0.030 +0.057 +0.159
+
+noise_reg
+  new     -0.5026 to -0.2423
+    -0.407 -0.503 -0.318 -0.383 -0.429 -0.494 -0.355 -0.383 -0.380 -0.321 -0.278 -0.320 -0.472 -0.242 -0.352 -0.351 -0.425 -0.478 -0.352 -0.332 -0.453 -0.414 -0.387 -0.431 -0.290 -0.289 -0.497 -0.272 -0.449 -0.266
+
+imbalanced
+  new     -0.1499 to +0.3758
+    +0.072 +0.052 -0.041 +0.040 +0.125 +0.083 +0.033 -0.047 -0.015 +0.113 -0.113 +0.010 +0.064 -0.012 +0.037 +0.376 -0.139 +0.016 -0.051 -0.031 -0.150 -0.022 -0.051 +0.077 +0.005 +0.008 +0.112 -0.028 +0.009 -0.034
+
+leak
+  new     +0.6479 to +0.8210
+    +0.763 +0.712 +0.703 +0.814 +0.766 +0.749 +0.745 +0.758 +0.775 +0.753 +0.737 +0.782 +0.728 +0.787 +0.648 +0.821 +0.763 +0.735 +0.739 +0.753 +0.737 +0.713 +0.804 +0.747 +0.764 +0.687 +0.731 +0.762 +0.773 +0.786
+
+leak_reg
+  new     +0.8064 to +0.8593
+    +0.820 +0.843 +0.832 +0.827 +0.859 +0.833 +0.852 +0.813 +0.857 +0.846 +0.849 +0.840 +0.842 +0.806 +0.821 +0.857 +0.844 +0.858 +0.842 +0.853 +0.827 +0.850 +0.839 +0.839 +0.830 +0.832 +0.833 +0.857 +0.859 +0.850
+
+near_leak
+  new     +0.9691 to +0.9996
+    +0.969 +0.992 +0.989 +0.992 +1.000 +0.990 +0.989 +0.992 +0.979 +0.985 +0.996 +0.997 +0.991 +0.990 +0.993 +0.993 +0.988 +0.998 +0.987 +0.988 +0.989 +0.994 +0.992 +0.987 +0.990 +0.980 +0.978 +0.985 +0.994 +0.994
+
+binary_numeric
+  new     +0.6614 to +0.8130
+    +0.734 +0.736 +0.711 +0.795 +0.684 +0.719 +0.769 +0.813 +0.734 +0.679 +0.755 +0.760 +0.774 +0.734 +0.730 +0.766 +0.757 +0.731 +0.664 +0.761 +0.702 +0.728 +0.774 +0.744 +0.751 +0.734 +0.753 +0.661 +0.770 +0.756
+
+ambiguous_target
+  new     no value; 30 stopped
+    task_ambiguous task_ambiguous task_ambiguous task_ambiguous task_ambiguous task_ambiguous task_ambiguous task_ambiguous task_ambiguous task_ambiguous task_ambiguous task_ambiguous task_ambiguous task_ambiguous task_ambiguous task_ambiguous task_ambiguous task_ambiguous task_ambiguous task_ambiguous task_ambiguous task_ambiguous task_ambiguous task_ambiguous task_ambiguous task_ambiguous task_ambiguous task_ambiguous task_ambiguous task_ambiguous
+
+messy
+  new     +0.6702 to +0.8263
+    +0.722 +0.826 +0.712 +0.739 +0.770 +0.757 +0.761 +0.762 +0.786 +0.696 +0.782 +0.709 +0.810 +0.773 +0.724 +0.814 +0.730 +0.736 +0.751 +0.722 +0.722 +0.761 +0.710 +0.745 +0.752 +0.748 +0.670 +0.724 +0.731 +0.734
+
+long_rows
+  new     no value; 30 stopped
+    input_error input_error input_error input_error input_error input_error input_error input_error input_error input_error input_error input_error input_error input_error input_error input_error input_error input_error input_error input_error input_error input_error input_error input_error input_error input_error input_error input_error input_error input_error
+
+dup_noise
+  new     no value; 30 stopped
+    holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training
+
+time_blocks
+  new     -0.2483 to +0.2170
+    +0.122 +0.118 +0.217 -0.009 +0.031 +0.080 -0.104 +0.040 +0.028 +0.017 +0.014 -0.082 -0.155 +0.016 +0.050 +0.138 -0.068 -0.167 -0.144 +0.069 +0.217 -0.157 +0.085 -0.053 -0.173 -0.037 -0.007 -0.038 -0.023 -0.248
+
+time_blocks_gap
+  new     -0.4127 to +0.2264
+    -0.413 +0.138 +0.226 -0.011 +0.031 -0.086 -0.094 +0.040 +0.035 +0.017 +0.041 -0.072 -0.111 -0.001 +0.033 +0.139 -0.071 -0.123 -0.030 +0.070 -0.095 -0.017 +0.091 -0.049 -0.181 -0.025 -0.003 -0.040 -0.024 -0.247
+
+time_blocks_undeclared
+  new     +0.9782 to +1.0000
+    +0.999 +0.982 +0.978 +1.000 +0.994 +0.999 +1.000 +0.998 +1.000 +0.997 +0.999 +0.997 +1.000 +1.000 +0.999 +0.983 +0.998 +0.980 +0.998 +1.000 +0.999 +0.986 +0.996 +1.000 +1.000 +0.990 +1.000 +1.000 +0.999 +0.999
+
+time_blocks_unstated
+  new     no value; 30 stopped
+    time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared
+
+time_dayfirst
+  new     no value; 30 stopped
+    time_column_invalid time_column_invalid time_column_invalid time_column_invalid time_column_invalid time_column_invalid time_column_invalid time_column_invalid time_column_invalid time_column_invalid time_column_invalid time_column_invalid time_column_invalid time_column_invalid time_column_invalid time_column_invalid time_column_invalid time_column_invalid time_column_invalid time_column_invalid time_column_invalid time_column_invalid time_column_invalid time_column_invalid time_column_invalid time_column_invalid time_column_invalid time_column_invalid time_column_invalid time_column_invalid
+
+random_walk
+  new     -0.0998 to +0.0118
+    +0.001 -0.001 -0.011 -0.004 +0.005 +0.001 -0.003 +0.012 -0.027 +0.002 +0.002 +0.002 +0.002 -0.036 +0.004 +0.001 -0.018 -0.100 +0.003 +0.002 +0.004 +0.003 +0.001 +0.003 -0.005 -0.021 -0.001 -0.003 +0.004 -0.011
+
+int_stamps
+  new     -0.1823 to +0.0052
+    +0.002 -0.016 +0.005 +0.002 -0.182 +0.001 +0.002 +0.003 +0.003 -0.001 -0.001 -0.081 -0.038 -0.030 -0.011 -0.004 -0.005 -0.008 -0.016 -0.014 -0.176 +0.001 -0.038 -0.014 -0.000 -0.000 -0.001 +0.001 -0.003 -0.020
+
+flat_tail
+  new     no value
+    null null null null null null null null null null null null null null null null null null null null null null null null null null null null null null
+
+entities
+  new     -0.2599 to +0.1681
+    -0.081 +0.078 +0.041 -0.046 +0.004 -0.093 -0.035 -0.174 +0.029 -0.058 -0.059 -0.046 -0.204 +0.032 -0.083 +0.090 +0.153 -0.076 -0.046 -0.260 -0.201 +0.154 +0.142 +0.061 -0.063 +0.168 +0.150 -0.008 -0.240 -0.141
+
+panel
+  new     -0.0228 to +0.0062
+    -0.010 -0.023 -0.000 +0.000 -0.002 +0.004 +0.002 -0.001 -0.012 -0.001 +0.002 -0.009 +0.005 -0.000 -0.000 -0.004 -0.009 +0.000 -0.004 +0.000 -0.003 -0.007 -0.007 -0.019 +0.000 +0.006 +0.005 -0.002 +0.003 -0.001
+
+full_noise_small
+  new     -0.3600 to +0.2825
+    -0.038 -0.110 +0.023 +0.283 -0.134 -0.078 +0.111 -0.051 -0.135 +0.160 +0.124 +0.008 +0.024 -0.013 -0.037 +0.114 -0.050 -0.100 -0.032 +0.025 -0.031 +0.044 -0.132 +0.139 +0.090 -0.128 -0.098 -0.360 +0.013 +0.166
+
+full_signal_clf_j1
+  new     +0.5995 to +0.8204
+    +0.645 +0.785 +0.723 +0.797 +0.780 +0.744 +0.779 +0.752 +0.659 +0.673 +0.599 +0.762 +0.635 +0.712 +0.752 +0.733 +0.799 +0.803 +0.705 +0.820 +0.743 +0.761 +0.674 +0.633 +0.670 +0.756 +0.696 +0.601 +0.776 +0.666
+
+full_signal_clf_j4
+  new     +0.5995 to +0.8204
+    +0.645 +0.785 +0.723 +0.797 +0.780 +0.744 +0.779 +0.752 +0.659 +0.673 +0.599 +0.762 +0.635 +0.712 +0.752 +0.733 +0.799 +0.803 +0.705 +0.820 +0.743 +0.761 +0.674 +0.633 +0.670 +0.756 +0.696 +0.601 +0.776 +0.666
+
+full_signal_reg_j1
+  new     +0.7708 to +0.8896
+    +0.818 +0.815 +0.872 +0.847 +0.853 +0.835 +0.847 +0.844 +0.890 +0.833 +0.856 +0.840 +0.771 +0.842 +0.883 +0.848 +0.863 +0.844 +0.866 +0.845 +0.865 +0.878 +0.857 +0.790 +0.881 +0.834 +0.798 +0.820 +0.826 +0.831
+
+full_signal_reg_j4
+  new     +0.7708 to +0.8896
+    +0.818 +0.815 +0.872 +0.847 +0.853 +0.835 +0.847 +0.844 +0.890 +0.833 +0.856 +0.840 +0.771 +0.842 +0.883 +0.848 +0.863 +0.844 +0.866 +0.845 +0.865 +0.878 +0.857 +0.790 +0.881 +0.834 +0.798 +0.820 +0.826 +0.831
+
+unsaid_both
+  new     no value; 30 stopped
+    time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared time_order_undeclared
+
+unsaid_entities
+  new     no value; 30 stopped
+    entities_undeclared entities_undeclared entities_undeclared entities_undeclared entities_undeclared entities_undeclared entities_undeclared entities_undeclared entities_undeclared entities_undeclared entities_undeclared entities_undeclared entities_undeclared entities_undeclared entities_undeclared entities_undeclared entities_undeclared entities_undeclared entities_undeclared entities_undeclared entities_undeclared entities_undeclared entities_undeclared entities_undeclared entities_undeclared entities_undeclared entities_undeclared entities_undeclared entities_undeclared entities_undeclared
+
+few_valued
+  new     -0.1214 to +0.0835
+    +0.018 +0.000 -0.046 -0.020 +0.013 +0.084 -0.011 -0.088 +0.047 +0.038 -0.012 +0.044 +0.003 -0.005 +0.002 +0.008 -0.004 -0.086 +0.065 -0.011 -0.121 -0.025 -0.008 -0.002 +0.007 +0.066 +0.000 +0.000 +0.032 +0.015
+
+dominant_entity
+  new     -0.0117 to +0.0030
+    -0.006 -0.005 -0.005 -0.007 -0.011 +0.003 -0.005 -0.004 -0.012 -0.004 +0.003 +0.002 +0.002 -0.004 -0.006 +0.001 -0.004 -0.001 -0.006 +0.002 -0.008 -0.008 -0.009 -0.001 -0.004 -0.005 -0.003 -0.003 -0.004 +0.001
+  before  -0.8718 to +0.0030
+    -0.006 -0.005 -0.005 -0.872 -0.011 +0.003 -0.005 -0.004 -0.806 -0.004 +0.003 +0.002 +0.002 -0.004 -0.006 +0.001 -0.004 -0.001 -0.006 +0.002 -0.008 -0.008 -0.009 -0.001 -0.004 -0.005 -0.003 -0.003 -0.004 +0.001
+
+day_numbers
+  new     -0.0518 to +0.0806
+    -0.033 +0.065 +0.062 +0.024 +0.029 +0.081 -0.026 +0.004 +0.036 +0.009 -0.046 -0.052 -0.035 -0.038 +0.049 -0.044 -0.006 -0.004 -0.038 +0.073 +0.014 +0.046 +0.020 +0.020 +0.059 -0.009 +0.030 -0.031 +0.021 +0.066
+
+day_sentinel
+  new     -0.1302 to +0.0755
+    -0.048 -0.040 +0.011 -0.100 +0.019 +0.067 +0.075 +0.053 -0.018 +0.034 -0.072 +0.052 -0.035 +0.038 -0.072 +0.062 +0.015 -0.047 +0.038 +0.041 -0.042 -0.007 +0.064 -0.009 -0.130 +0.074 -0.060 -0.051 -0.061 +0.034
+
+few_valued_leak
+  new     no value; 30 stopped
+    holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training holdout_copies_in_training
+
+large_entity
+  new     no value; 30 stopped
+    fast_profile_group_too_large fast_profile_group_too_large fast_profile_group_too_large fast_profile_group_too_large fast_profile_group_too_large fast_profile_group_too_large fast_profile_group_too_large fast_profile_group_too_large fast_profile_group_too_large fast_profile_group_too_large fast_profile_group_too_large fast_profile_group_too_large fast_profile_group_too_large fast_profile_group_too_large fast_profile_group_too_large fast_profile_group_too_large fast_profile_group_too_large fast_profile_group_too_large fast_profile_group_too_large fast_profile_group_too_large fast_profile_group_too_large fast_profile_group_too_large fast_profile_group_too_large fast_profile_group_too_large fast_profile_group_too_large fast_profile_group_too_large fast_profile_group_too_large fast_profile_group_too_large fast_profile_group_too_large fast_profile_group_too_large
+
+quarter_entity
+  new     -0.0110 to +0.0063
+    +0.002 -0.002 -0.002 -0.011 +0.000 -0.005 +0.001 -0.003 -0.001 +0.000 -0.006 -0.001 -0.003 +0.006 -0.001 +0.003 -0.007 +0.005 -0.002 -0.002 -0.007 -0.001 +0.002 -0.004 -0.006 +0.003 +0.001 +0.000 +0.000 +0.003
+
+Fields that differ from the reference as it stood, by run (seeds of 30):
+  dominant_entity: warnings on 30, skill on 2, score on 2, model on 2
+  no field differs on 36 runs: signal_clf, signal_reg, noise_clf, noise_reg, imbalanced, leak, leak_reg, near_leak, binary_numeric, ambiguous_target, messy, long_rows, dup_noise, time_blocks, time_blocks_gap, time_blocks_undeclared, time_blocks_unstated, time_dayfirst, random_walk, int_stamps, flat_tail, entities, panel, full_noise_small, full_signal_clf_j1, full_signal_clf_j4, full_signal_reg_j1, full_signal_reg_j4, unsaid_both, unsaid_entities, few_valued, day_numbers, day_sentinel, few_valued_leak, large_entity, quarter_entity

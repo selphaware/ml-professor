@@ -1,0 +1,34 @@
+On the reference (verify\battery.py verify\reference\mlprofessor), 281 seconds in all:
+1229 tool runs, and 143 second calls by the judge, in 273 s at 32 side by side (7893 s of tool time): 37 gate runs as they are and 1192 pairs; 1398 pairs left out (--list says why)
+holds 1223; stated limit 6 of 6 listed; open 0 of 0 listed; on neither list and failing 0
+BATTERY: PASS (holds 1223, stated limit 6, open 0)
+
+STATED LIMIT (D31): messy:sorted_by_measure [band]
+STATED LIMIT (D60): dup_noise:noise_added [stop-or-band]
+STATED LIMIT (D76): random_walk:copy_noise_5pct [structure]
+STATED LIMIT (D55): int_stamps:missing_cell_date [structure]
+STATED LIMIT (D76): int_stamps:copy_noise_5pct [structure]
+STATED LIMIT (D76): panel:copy_noise_5pct [structure]
+
+On the application (verify\battery.py mlprofessor), 232 seconds in all:
+holds 299; stated limit 6 of 6 listed; open 0 of 0 listed; on neither list and failing 924
+BATTERY: FAIL (924 of 1229 do not hold and are on neither list; holds 299, stated limit 6, open 0)
+
+924 pairs fail and are on neither list (930 of the 1229 runs finished)
+
+pairs by rule (a pair is counted under every rule one of its failing claims has):
+  A1 baseline: 73
+  A2/A3b screen and order reading: 144
+  A3 statements: 922
+  A3 extreme value: 162
+  A5 identifier: 66
+  A6 no choice: 31
+  none: 0
+
+By the task that owns the rule (a pair is counted under every task one of its failing claims belongs to; in brackets, the pairs that fail for that task's rule alone):
+  T61 identifier rule: 66 (2)
+  T62 previous value at repeated timestamps: 73 (0)
+  T63 leak screen and order reading: 144 (0)
+  T64 largest row's share and extreme_value: 922 (638)
+  T65 order of rows in a fit: 0 (no pair tests it; the generated tables do, on 8 tables)
+  T66 no choice on too few rows: 31 (0)

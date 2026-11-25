@@ -1,0 +1,53 @@
+data.rows_reconcile  [F6]  every row count equals the gate's own count from the source, and they add up
+data.columns_accounted  [F6b]  every source column appears exactly once, with the expected role and reason
+data.coercion_reported  [F6]  text cells in a numeric column are counted as coerced, n/a cells as missing
+data.long_rows_stop  [F6d]  data rows one field longer than the header stop with the named input error
+data.holdout_copies_stop  [F9]  noise with every row present twice stops with the named copies error, and writes no headline
+models.all_accounted  [F6c]  the models table lists every family of the profile, each with a status
+task.binary_numeric  [F5]  a target stored as the integers 0 and 1 is classification, decided by the rule
+task.ambiguous_stops  [F5]  an integer target with 7 distinct values stops with the named task error
+leak.excluded  [F2]  both leak columns are excluded with their reasons; skill is not near 1
+leak.control_kept  [-]  a strongly predictive but legitimate column stays a feature, with no warning
+leak.regression  [F2]  a rescaled copy of a numeric target is excluded and listed
+leak.near_leak_warned  [F2]  a copy of the target with 2% of its labels flipped stays a feature, with a warning
+model.signal_clf  [F16]  clear skill where a binary target depends on three features
+model.signal_reg  [F17]  clear skill where a numeric target is a known function of two features
+model.noise_clf  [F1]  no skill where the target is a coin flip
+model.noise_p_value  [F1]  a coin flip is not reported as significant
+model.noise_reg  [F1]  no positive skill where a numeric target is independent of every feature
+model.headline_recomputed  [F3, F4]  the gate recomputes the metric and the skill from predictions.csv and the source
+model.metric_clf  [F4]  on a 95/5 target the metric is ROC AUC against 0.5, not accuracy
+model.selection_full  [F3]  (slow)  full profile on noise: the headline is the holdout score, not the best CV score
+time.order_respected  [F7]  with a time column the holdout is exactly the latest rows, cut at a whole date
+time.no_skill_on_blocks  [F7]  no skill where only a shuffled split could find any
+time.gap_applied  [F7]  --gap 3 removes exactly the 3 timestamps before the holdout from training
+time.dayfirst_stops  [F7b]  a day/month/year time column stops with the named time-column error
+time.persistence_baseline  [F8]  on a random walk the baseline is the previous value and skill is about zero
+time.integer_keys_distinct  [F7c]  64-bit integer timestamps above 2**53 stay distinct: the timestamp counts equal the gate's own, and the baseline is the previous value
+time.undeclared_warns  [F18]  a date column and --no-time-order: random scheme, with a warning, and the statement recorded
+time.undeclared_stops  [F7d]  a date column, no --time-col and no --no-time-order: the run stops with the named error and writes no headline
+time.panel_previous_value  [F8b]  twelve random walks with --group-col: the baseline is each series' own previous value, recomputed by the gate, and skill is about zero
+groups.kept_together  [F10]  with --group-col no entity has rows on both sides of the split, by the gate's own count from predictions.csv, and the output reports the grouped scheme
+groups.no_skill_on_entities  [F10]  no skill where only an entity on both sides of the split could give any
+statements.time_order_asked  [F11]  nothing said about time order or entities, on a table with no date column: the run stops with the named error, and its message asks for both
+statements.entities_asked  [F11]  a time column, one series with unique timestamps, and nothing said about entities: the run stops with the named error
+duplicates.group_on_features  [F12]  with --duplicates group no combination of feature values is on both sides of the split, by the gate's own count from predictions.csv
+duplicates.group_no_skill  [F12]  noise in a table of two few-valued columns, with --duplicates group: no skill
+groups.holdout_bounded  [F13]  one entity of three quarters of the rows: the holdout is a quarter, made of whole small entities, by the gate's own count, and the large one is named
+time.date_numbers_seen  [F14]  a day written as a whole number, YYYYMMDD, and --no-time-order: the column is excluded as a date and the warning for a date column names it
+time.date_sentinel_seen  [F14b]  a day written YYYYMMDD with 99991231 in three rows of ten: the column is still excluded as a date and the warning names it
+duplicates.group_leak_stops  [F12b]  --duplicates group and a column that copies the label: once the leak screen has excluded it, feature combinations are on both sides, and the run stops
+fast.large_entity_stops  [F15]  the fast profile and an entity of more rows than its cap: the run stops and sends the caller to the full profile
+fast.large_entity_kept  [F15]  the fast profile and an entity of a quarter or more of the rows that fits under its cap: the entity is kept, by the gate's own count
+time.previous_value_at_repeats  [F23]  a random walk with one row written twice: both baselines are scored, the previous value as the mean target of the timestamp before, and skill is about zero
+leak.copy_excluded_under_time  [F24]  under time order a rescaled copy of a random walk's target is excluded, the lag stays a feature, and skill is about zero
+leak.excluded_despite_extreme_target  [F25]  one target cell of -999 in a training row: the rescaled copy of the target is still excluded, and a warning names the value
+result.largest_row_reported  [F26]  one holdout cell of the feature set to 999999: the share of the squared error that its largest row carries is as the gate recomputes it, for the model and the baseline, with one warning for each share above one half
+data.identifier_survives_shuffle  [F27]  `messy` with its rows shuffled: the identifier is still excluded as id-like, the whole-number measure is still a feature, and the signal is still there
+groups.choice_not_made  [F28]  one entity of three quarters of the rows: no choice between configurations is made on folds that train on a few rows, the one chosen is the first that has a mean, a warning says so, and skill is about zero
+time.flat_holdout_reported  [-]  a target flat across the holdout: the run finishes, skill is null with a warning, the score and both baselines are reported
+uncertainty.reported  [-]  the interval contains the score; row bootstrap with a p-value, or block bootstrap labelled approximate
+result.matches_json  [F19]  through the Python function, every part of ProfileResult equals profile.json
+output.complete  [F20]  every required key is present and populated; no NaN or infinity anywhere
+output.deterministic  [F21]  two runs with the same seed give identical files apart from meta.timing
+output.same_at_any_n_jobs  [F22]  (slow)  full profile at --n-jobs 1 and 4: identical files apart from timing and n_jobs

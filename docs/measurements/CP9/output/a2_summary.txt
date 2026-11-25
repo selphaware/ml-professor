@@ -1,0 +1,138 @@
+| run | change | copy excluded | copy warned | copy kept in silence | other column excluded | errors | skill |
+| signal_reg | copy_exact | 30 | 0 | 0 | 0 |  | +0.819 to +0.891 |
+| signal_reg | copy_rescaled | 30 | 0 | 0 | 0 |  | +0.819 to +0.891 |
+| signal_reg | copy_negative | 30 | 0 | 0 | 0 |  | +0.819 to +0.891 |
+| signal_reg | copy_tiny_scale | 30 | 0 | 0 | 0 |  | +0.819 to +0.891 |
+| signal_reg | copy_5_cells_differ | 30 | 0 | 0 | 0 |  | +0.819 to +0.891 |
+| signal_reg | copy_15_cells_differ | 30 | 0 | 0 | 0 |  | +0.819 to +0.891 |
+| signal_reg | copy_2pct_cells_differ | 30 | 0 | 0 | 0 |  | +0.819 to +0.891 |
+| signal_reg | copy_sentinel_999999 | 30 | 0 | 0 | 0 |  | +0.819 to +0.891 |
+| signal_reg | copy_sentinel_-999 | 30 | 0 | 0 | 0 |  | +0.819 to +0.891 |
+| signal_reg | copy_noise_5pct | 30 | 0 | 0 | 0 |  | +0.819 to +0.891 |
+| signal_reg | copy_noise_10pct | 30 | 0 | 0 | 0 |  | +0.819 to +0.891 |
+| signal_reg | copy_noise_20pct | 0 | 30 | 0 | 0 |  | +0.965 to +0.976 |
+| signal_reg | copy_squared | 30 | 0 | 0 | 0 |  | +0.819 to +0.891 |
+| signal_reg | copy_exp | 30 | 0 | 0 | 0 |  | +0.819 to +0.891 |
+| signal_reg | target_-999_and_copy | 30 | 0 | 0 | 0 |  | -646.300 to +0.720 |
+| noise_reg | copy_exact | 30 | 0 | 0 | 0 |  | -0.503 to -0.242 |
+| noise_reg | copy_rescaled | 30 | 0 | 0 | 0 |  | -0.503 to -0.242 |
+| noise_reg | copy_negative | 30 | 0 | 0 | 0 |  | -0.503 to -0.242 |
+| noise_reg | copy_tiny_scale | 30 | 0 | 0 | 0 |  | -0.503 to -0.242 |
+| noise_reg | copy_5_cells_differ | 30 | 0 | 0 | 0 |  | -0.503 to -0.242 |
+| noise_reg | copy_15_cells_differ | 30 | 0 | 0 | 0 |  | -0.503 to -0.242 |
+| noise_reg | copy_2pct_cells_differ | 30 | 0 | 0 | 0 |  | -0.503 to -0.242 |
+| noise_reg | copy_sentinel_999999 | 30 | 0 | 0 | 0 |  | -0.503 to -0.242 |
+| noise_reg | copy_sentinel_-999 | 30 | 0 | 0 | 0 |  | -0.503 to -0.242 |
+| noise_reg | copy_noise_5pct | 30 | 0 | 0 | 0 |  | -0.503 to -0.242 |
+| noise_reg | copy_noise_10pct | 30 | 0 | 0 | 0 |  | -0.503 to -0.242 |
+| noise_reg | copy_noise_20pct | 0 | 30 | 0 | 0 |  | +0.946 to +0.962 |
+| noise_reg | copy_squared | 30 | 0 | 0 | 0 |  | -0.503 to -0.242 |
+| noise_reg | copy_exp | 30 | 0 | 0 | 0 |  | -0.503 to -0.242 |
+| noise_reg | target_-999_and_copy | 30 | 0 | 0 | 0 |  | -1603.695 to +0.002 |
+| leak_reg | copy_exact | 30 | 0 | 0 | 0 |  | +0.806 to +0.859 |
+| leak_reg | copy_rescaled | 30 | 0 | 0 | 0 |  | +0.806 to +0.859 |
+| leak_reg | copy_negative | 30 | 0 | 0 | 0 |  | +0.806 to +0.859 |
+| leak_reg | copy_tiny_scale | 30 | 0 | 0 | 0 |  | +0.806 to +0.859 |
+| leak_reg | copy_5_cells_differ | 30 | 0 | 0 | 0 |  | +0.806 to +0.859 |
+| leak_reg | copy_15_cells_differ | 30 | 0 | 0 | 0 |  | +0.806 to +0.859 |
+| leak_reg | copy_2pct_cells_differ | 30 | 0 | 0 | 0 |  | +0.806 to +0.859 |
+| leak_reg | copy_sentinel_999999 | 30 | 0 | 0 | 0 |  | +0.806 to +0.859 |
+| leak_reg | copy_sentinel_-999 | 30 | 0 | 0 | 0 |  | +0.806 to +0.859 |
+| leak_reg | copy_noise_5pct | 30 | 0 | 0 | 0 |  | +0.806 to +0.859 |
+| leak_reg | copy_noise_10pct | 30 | 0 | 0 | 0 |  | +0.806 to +0.859 |
+| leak_reg | copy_noise_20pct | 0 | 30 | 0 | 0 |  | +0.964 to +0.976 |
+| leak_reg | copy_squared | 30 | 0 | 0 | 0 |  | +0.806 to +0.859 |
+| leak_reg | copy_exp | 30 | 0 | 0 | 0 |  | +0.806 to +0.859 |
+| leak_reg | target_-999_and_copy | 30 | 0 | 0 | 0 |  | -341.299 to +0.711 |
+| random_walk | copy_exact | 30 | 0 | 0 | 0 |  | -0.100 to +0.012 |
+| random_walk | copy_rescaled | 30 | 0 | 0 | 0 |  | -0.100 to +0.012 |
+| random_walk | copy_negative | 30 | 0 | 0 | 0 |  | -0.100 to +0.012 |
+| random_walk | copy_tiny_scale | 30 | 0 | 0 | 0 |  | -0.100 to +0.012 |
+| random_walk | copy_5_cells_differ | 30 | 0 | 0 | 0 |  | -0.100 to +0.012 |
+| random_walk | copy_15_cells_differ | 29 | 1 | 0 | 0 |  | -0.100 to +0.124 |
+| random_walk | copy_2pct_cells_differ | 1 | 29 | 0 | 0 |  | -47.660 to +0.590 |
+| random_walk | copy_sentinel_999999 | 30 | 0 | 0 | 0 |  | -0.100 to +0.012 |
+| random_walk | copy_sentinel_-999 | 30 | 0 | 0 | 0 |  | -0.100 to +0.012 |
+| random_walk | copy_noise_5pct | 0 | 1 | 29 | 0 |  | +0.431 to +0.932 |
+| random_walk | copy_noise_10pct | 0 | 0 | 30 | 0 |  | +0.098 to +0.772 |
+| random_walk | copy_noise_20pct | 0 | 0 | 30 | 0 |  | -0.015 to +0.456 |
+| random_walk | copy_squared | 0 | 30 | 0 | 0 |  | -36.407 to +0.982 |
+| random_walk | copy_exp | 0 | 30 | 0 | 0 |  | -83.623 to +1.000 |
+| random_walk | target_-999_and_copy | 30 | 0 | 0 | 0 |  | -29.544 to +0.388 |
+| int_stamps | copy_exact | 30 | 0 | 0 | 0 |  | -0.182 to +0.005 |
+| int_stamps | copy_rescaled | 30 | 0 | 0 | 0 |  | -0.182 to +0.005 |
+| int_stamps | copy_negative | 30 | 0 | 0 | 0 |  | -0.182 to +0.005 |
+| int_stamps | copy_tiny_scale | 30 | 0 | 0 | 0 |  | -0.182 to +0.005 |
+| int_stamps | copy_5_cells_differ | 30 | 0 | 0 | 0 |  | -0.182 to +0.005 |
+| int_stamps | copy_15_cells_differ | 28 | 2 | 0 | 0 |  | -0.182 to +0.395 |
+| int_stamps | copy_2pct_cells_differ | 1 | 29 | 0 | 0 |  | -121.013 to +0.285 |
+| int_stamps | copy_sentinel_999999 | 30 | 0 | 0 | 0 |  | -0.182 to +0.005 |
+| int_stamps | copy_sentinel_-999 | 30 | 0 | 0 | 0 |  | -0.182 to +0.005 |
+| int_stamps | copy_noise_5pct | 0 | 0 | 30 | 0 |  | +0.456 to +0.858 |
+| int_stamps | copy_noise_10pct | 0 | 0 | 30 | 0 |  | +0.148 to +0.679 |
+| int_stamps | copy_noise_20pct | 0 | 0 | 30 | 0 |  | -0.085 to +0.284 |
+| int_stamps | copy_squared | 0 | 30 | 0 | 0 |  | -62.342 to +0.807 |
+| int_stamps | copy_exp | 0 | 30 | 0 | 0 |  | -638.596 to +0.997 |
+| int_stamps | target_-999_and_copy | 30 | 0 | 0 | 0 |  | -38.398 to +0.345 |
+| flat_tail | copy_exact | 30 | 0 | 0 | 0 |  |  |
+| flat_tail | copy_rescaled | 30 | 0 | 0 | 0 |  |  |
+| flat_tail | copy_negative | 30 | 0 | 0 | 0 |  |  |
+| flat_tail | copy_tiny_scale | 30 | 0 | 0 | 0 |  |  |
+| flat_tail | copy_5_cells_differ | 30 | 0 | 0 | 0 |  |  |
+| flat_tail | copy_15_cells_differ | 30 | 0 | 0 | 0 |  |  |
+| flat_tail | copy_2pct_cells_differ | 30 | 0 | 0 | 0 |  |  |
+| flat_tail | copy_sentinel_999999 | 30 | 0 | 0 | 0 |  |  |
+| flat_tail | copy_sentinel_-999 | 30 | 0 | 0 | 0 |  |  |
+| flat_tail | copy_noise_5pct | 30 | 0 | 0 | 0 |  |  |
+| flat_tail | copy_noise_10pct | 30 | 0 | 0 | 0 |  |  |
+| flat_tail | copy_noise_20pct | 0 | 30 | 0 | 0 |  |  |
+| flat_tail | copy_squared | 30 | 0 | 0 | 0 |  |  |
+| flat_tail | copy_exp | 30 | 0 | 0 | 0 |  |  |
+| flat_tail | target_-999_and_copy | 30 | 0 | 0 | 0 |  | -0.009 to +0.028 |
+| panel | copy_exact | 30 | 0 | 0 | 0 |  | -0.023 to +0.006 |
+| panel | copy_rescaled | 30 | 0 | 0 | 0 |  | -0.023 to +0.006 |
+| panel | copy_negative | 30 | 0 | 0 | 0 |  | -0.023 to +0.006 |
+| panel | copy_tiny_scale | 30 | 0 | 0 | 0 |  | -0.023 to +0.006 |
+| panel | copy_5_cells_differ | 30 | 0 | 0 | 0 |  | -0.023 to +0.006 |
+| panel | copy_15_cells_differ | 26 | 4 | 0 | 0 |  | -3.285 to +0.572 |
+| panel | copy_2pct_cells_differ | 1 | 29 | 0 | 0 |  | -4.679 to +0.745 |
+| panel | copy_sentinel_999999 | 30 | 0 | 0 | 0 |  | -0.023 to +0.006 |
+| panel | copy_sentinel_-999 | 30 | 0 | 0 | 0 |  | -0.023 to +0.006 |
+| panel | copy_noise_5pct | 0 | 0 | 30 | 0 |  | +0.277 to +0.714 |
+| panel | copy_noise_10pct | 0 | 0 | 30 | 0 |  | -0.020 to +0.451 |
+| panel | copy_noise_20pct | 0 | 0 | 30 | 0 |  | -0.037 to +0.177 |
+| panel | copy_squared | 0 | 30 | 0 | 0 |  | -4.574 to +0.978 |
+| panel | copy_exp | 0 | 30 | 0 | 0 |  | -4.574 to +0.977 |
+| panel | target_-999_and_copy | 30 | 0 | 0 | 0 |  | -2201.992 to +0.201 |
+| dominant_entity | copy_exact | 30 | 0 | 0 | 0 |  | -0.012 to +0.003 |
+| dominant_entity | copy_rescaled | 30 | 0 | 0 | 0 |  | -0.012 to +0.003 |
+| dominant_entity | copy_negative | 30 | 0 | 0 | 0 |  | -0.012 to +0.003 |
+| dominant_entity | copy_tiny_scale | 30 | 0 | 0 | 0 |  | -0.012 to +0.003 |
+| dominant_entity | copy_5_cells_differ | 30 | 0 | 0 | 0 |  | -0.012 to +0.003 |
+| dominant_entity | copy_15_cells_differ | 30 | 0 | 0 | 0 |  | -0.012 to +0.003 |
+| dominant_entity | copy_2pct_cells_differ | 30 | 0 | 0 | 0 |  | -0.012 to +0.003 |
+| dominant_entity | copy_sentinel_999999 | 30 | 0 | 0 | 0 |  | -0.012 to +0.003 |
+| dominant_entity | copy_sentinel_-999 | 30 | 0 | 0 | 0 |  | -0.012 to +0.003 |
+| dominant_entity | copy_noise_5pct | 30 | 0 | 0 | 0 |  | -0.012 to +0.003 |
+| dominant_entity | copy_noise_10pct | 27 | 3 | 0 | 0 |  | -0.012 to +0.992 |
+| dominant_entity | copy_noise_20pct | 0 | 30 | 0 | 0 |  | +0.959 to +0.974 |
+| dominant_entity | copy_squared | 30 | 0 | 0 | 0 |  | -0.012 to +0.003 |
+| dominant_entity | copy_exp | 30 | 0 | 0 | 0 |  | -0.012 to +0.003 |
+| dominant_entity | target_-999_and_copy | 30 | 0 | 0 | 0 |  | -3.464 to +0.000 |
+| quarter_entity | copy_exact | 30 | 0 | 0 | 0 |  | -0.011 to +0.006 |
+| quarter_entity | copy_rescaled | 30 | 0 | 0 | 0 |  | -0.011 to +0.006 |
+| quarter_entity | copy_negative | 30 | 0 | 0 | 0 |  | -0.011 to +0.006 |
+| quarter_entity | copy_tiny_scale | 30 | 0 | 0 | 0 |  | -0.011 to +0.006 |
+| quarter_entity | copy_5_cells_differ | 30 | 0 | 0 | 0 |  | -0.011 to +0.006 |
+| quarter_entity | copy_15_cells_differ | 30 | 0 | 0 | 0 |  | -0.011 to +0.006 |
+| quarter_entity | copy_2pct_cells_differ | 30 | 0 | 0 | 0 |  | -0.011 to +0.006 |
+| quarter_entity | copy_sentinel_999999 | 30 | 0 | 0 | 0 |  | -0.011 to +0.006 |
+| quarter_entity | copy_sentinel_-999 | 30 | 0 | 0 | 0 |  | -0.011 to +0.006 |
+| quarter_entity | copy_noise_5pct | 30 | 0 | 0 | 0 |  | -0.011 to +0.006 |
+| quarter_entity | copy_noise_10pct | 30 | 0 | 0 | 0 |  | -0.011 to +0.006 |
+| quarter_entity | copy_noise_20pct | 0 | 30 | 0 | 0 |  | +0.958 to +0.970 |
+| quarter_entity | copy_squared | 30 | 0 | 0 | 0 |  | -0.011 to +0.006 |
+| quarter_entity | copy_exp | 30 | 0 | 0 | 0 |  | -0.011 to +0.006 |
+| quarter_entity | target_-999_and_copy | 30 | 0 | 0 | 0 |  | -1405.119 to +0.003 |
+| panel --no-entities | copy_rescaled | 30 | 0 | 0 | 30 |  | +0.758 to +0.958 |
+| panel --no-entities | copy_5_cells_differ | 30 | 0 | 0 | 30 |  | +0.758 to +0.958 |

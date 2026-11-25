@@ -1,0 +1,21 @@
+02:31:38 start; core.py battery.py generated_tables.py smoke_test.py: 116caf510038874f a76fbb5c570b7bb6 9dc7b4f3a022d573 7af964a499938a84 
+02:36:34 generated reference_seed20261122: 295 s in all; GENERATED TABLES: PASS (1000 tables from seed 20261122: 1000 agree, 0 stated limit, 0 open, 0 fail)
+02:41:56 generated reference_seed1: 322 s in all; GENERATED TABLES: PASS (1000 tables from seed 1: 1000 agree, 0 stated limit, 0 open, 0 fail)
+02:47:08 generated reference_seed2: 312 s in all; GENERATED TABLES: PASS (1000 tables from seed 2: 1000 agree, 0 stated limit, 0 open, 0 fail)
+02:49:33 battery application: 1074 s in all; BATTERY: FAIL (924 of 1229 do not hold and are on neither list; holds 299, stated limit 6, open 0)
+02:52:30 generated application: 322 s in all; GENERATED TABLES: FAIL (1000 tables from seed 20261122: 415 agree, 0 stated limit, 0 open, 585 fail)
+02:53:32 battery reference: 1313 s in all; BATTERY: PASS (holds 1223, stated limit 6, open 0)
+02:53:33 reference and application done; 116caf510038874f a76fbb5c570b7bb6 9dc7b4f3a022d573 7af964a499938a84 
+02:59:43 generated variant_F22: 370 s in all; GENERATED TABLES: PASS (1000 tables from seed 20261122: 1000 agree, 0 stated limit, 0 open, 0 fail)
+03:05:23 generated variant_M13: 339 s in all; GENERATED TABLES: FAIL (1000 tables from seed 20261122: 849 agree, 0 stated limit, 0 open, 151 fail)
+03:11:04 generated variant_M33: 341 s in all; GENERATED TABLES: PASS (1000 tables from seed 20261122: 1000 agree, 0 stated limit, 0 open, 0 fail)
+03:17:53 battery variant_M33: 1460 s in all; BATTERY: FAIL (1 of 1229 do not hold and are on neither list; holds 1222, stated limit 6, open 0)
+03:17:54 battery variant_F22: 1461 s in all; BATTERY: PASS (holds 1223, stated limit 6, open 0)
+03:17:58 battery variant_M13: 1465 s in all; BATTERY: FAIL (66 of 1229 do not hold and are on neither list; holds 1157, stated limit 6, open 0)
+03:23:25 generated variant_M34: 327 s in all; GENERATED TABLES: PASS (1000 tables from seed 20261122: 1000 agree, 0 stated limit, 0 open, 0 fail)
+03:29:04 generated variant_M37: 339 s in all; GENERATED TABLES: PASS (1000 tables from seed 20261122: 1000 agree, 0 stated limit, 0 open, 0 fail)
+03:34:45 generated variant_M39: 341 s in all; GENERATED TABLES: PASS (1000 tables from seed 20261122: 1000 agree, 0 stated limit, 0 open, 0 fail)
+03:41:32 battery variant_M37: 1414 s in all; BATTERY: PASS (holds 1223, stated limit 6, open 0)
+03:41:32 battery variant_M34: 1414 s in all; BATTERY: PASS (holds 1223, stated limit 6, open 0)
+03:41:33 battery variant_M39: 1414 s in all; BATTERY: PASS (holds 1223, stated limit 6, open 0)
+03:41:33 end; core.py battery.py generated_tables.py smoke_test.py: 116caf510038874f a76fbb5c570b7bb6 9dc7b4f3a022d573 7af964a499938a84 

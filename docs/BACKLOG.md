@@ -5,13 +5,14 @@ build loop: each item becomes work only through a decision in
 `docs/DECISIONS.md` and a change prompt. Phase 2 starts by reading this file
 (D47).
 
-**Status under D56, D71, D73, D74 and D76 (2026-11-25).** Nothing known to
-be wrong is carried into phase 2. Passes 5, 6 and 7 are built. Pass 8
-(CP9): the judge is written; both of its tools list nothing as open and
-four kinds of stated limit (D60, D55, D31, D76). After pass 8's build: a
-review. Then the broader repeat screen under D60, or the ruling that
-replaces it, and every remaining weakness here. No new detection rule
-during hardening (D71), with the one exception D74 records.
+**Status under D56 as amended by D77 (2026-11-25).** Nothing known to be
+wrong is carried into phase 2. Passes 5 to 8 are built. Pass 9 (CP10): the
+seventh review and the lead's two findings, under D77: the statement of
+what the headline rests on, the warning on a near-perfect headline, the
+screen's reading by levels, the two repairs, and a battery with repeated
+values, codes and columns that leak together. Then a review. Then the
+broader repeat screen under D60, or the ruling that replaces it, and every
+remaining weakness here.
 
 ## After pass 8: the broader repeat screen (D60)
 

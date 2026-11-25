@@ -1254,3 +1254,40 @@ strong legitimate feature under time order).
 Consequence: with a sharper screen more legitimate columns that predict
 98% or more of the target are excluded, which is why the override moves
 forward.
+
+## D77 — 2026-11-25 — Seventh review accepted; the headline says what it rests on (amends D11, D30, D33, D56, D74 and D76)
+Decision: The seventh review (`docs\reviews\phase1-review-7.md`, verdict FIX
+FIRST) is accepted in full, with the two findings of the lead's real-data
+run of the eighth pass. (1) Every result states which columns the headline
+rests on: for each feature, the skill of the chosen model on the holdout
+with that column's holdout values shuffled, and the fall from the headline.
+It describes the result, changes no number and chooses nothing. (2) A
+headline skill at or above 0.98, the level at which one column alone is
+excluded as a suspected leak, always carries a warning that names the
+columns it rests on most and asks whether they are known before the
+outcome. (3) The leak screen also reads a column by its levels, the mean
+target of each level fitted on a fold's training rows: for text columns
+and for numeric columns of few distinct values, in both tasks. The harness
+measures how often an honest column of many levels is wrongly excluded
+before the rule is adopted. (4) The order reading of D76 no longer puts
+rows of equal column value in the target's order. (5) A copy of the target
+with a handful of cells changed is excluded whatever the size of the
+change. (6) Under time order a holdout far above a quarter of the rows is
+named by a warning. (7) `tests\test_judge_tools.py` is strict again. (8)
+The battery gains columns with repeated values, coded columns, changes of
+several sizes and columns that give the target only together. (9) D56's
+closing rule is amended: a column, or columns, that carry the target in a
+form the screen does not read count as a defect only when the output
+neither excludes them, nor warns about them by name, nor names them under
+the warning of point 2. What that statement catches is a stated limit of
+the screen.
+Alternatives considered: one more reader for the screen and nothing else
+(rejected: each of the last four passes taught the screen one more
+disguise and each review found the next; two columns that give the target
+only together scored 1.000 with nothing said, and no reading of single
+columns can see them); a warning below 0.98 (rejected: it would fire on
+ordinary strong tables; the statement of point 1 is on every result).
+Consequence: a legitimately easy table, such as one that scores 0.995,
+carries the warning of point 2. Measurements: `docs\measurements\review-7\`
+and `docs\measurements\CP9\build-on-real-tables\`. After this pass: a
+review, then the repeat screen owed under D60.

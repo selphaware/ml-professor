@@ -64,8 +64,9 @@ def test_m23_the_panel_warning_starts_just_above_one_half(phi, seed, low, high, 
     v = doc["validation"]
     assert v["scheme"] == "time_ordered"
     assert v["n_train_timestamps"] == N_TRAIN_TIMES
-    assert [b["name"] for b in doc["baselines"]] == ["training_mean"]
-    assert doc["headline"]["baseline"] == "training_mean"
+    names = [b["name"] for b in doc["baselines"]]
+    assert names in (["training_mean"], ["training_mean", "previous_value"])
+    assert doc["headline"]["baseline"] in names
 
 
 def _features(frame):

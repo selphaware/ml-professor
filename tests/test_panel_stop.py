@@ -38,7 +38,8 @@ def test_the_statement_lets_the_run_go_ahead_as_before():
     doc = result.to_dict()
     assert doc["input"]["group_col"] is False
     assert doc["validation"]["group_col"] is None
-    assert [b["name"] for b in doc["baselines"]] == ["training_mean"]
+    assert [b["name"] for b in doc["baselines"]] in (
+        ["training_mean"], ["training_mean", "previous_value"])
     flagged = [c for code, c in h.warnings_of(result) if code == "autocorrelated_panel_target"]
     assert flagged == ["y"]
 

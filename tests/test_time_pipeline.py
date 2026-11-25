@@ -262,7 +262,8 @@ def test_panel_uses_training_mean_and_flags_persistence(persistent):
         res = _run(frame, families=[h.family("rec", h.Log())], time_col="date",
                    group_col=False)
     doc = res.to_dict()
-    assert [b["name"] for b in doc["baselines"]] == ["training_mean"]
+    assert [b["name"] for b in doc["baselines"]] in (
+        ["training_mean"], ["training_mean", "previous_value"])
     assert doc["validation"]["timestamps_unique"] is False
     flagged = [c for code, c in h.warnings_of(res) if code == "autocorrelated_panel_target"]
     assert flagged == (["y"] if persistent else [])

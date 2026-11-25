@@ -141,7 +141,8 @@ def test_missing_and_repeated_integer_stamps():
     validation = doc["validation"]
     assert validation["n_train_timestamps"] + validation["n_holdout_timestamps"] == 300
     assert validation["timestamps_unique"] is False
-    assert [b["name"] for b in doc["baselines"]] == ["training_mean"]
+    assert [b["name"] for b in doc["baselines"]] in (
+        ["training_mean"], ["training_mean", "previous_value"])
 
 
 def _exact_columns():

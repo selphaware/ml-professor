@@ -93,8 +93,16 @@ def test_f8_previous_value_refuses_repeated_keys():
     """F8: the persistence baseline is defined only on unique timestamps."""
     from mlprofessor import stages
 
-    with pytest.raises(ValueError):
-        stages.previous_value(np.arange(5.0), np.array([1.0, 2.0, 2.0, 3.0, 4.0]))
+    # Until D74 repeated keys were refused. Since D74 the previous value of a row is
+    # the mean target of the timestamp before. Either is accepted here (D59);
+    # the new behaviour is pinned by tests/test_repeated_stamps.py.
+    try:
+        got = np.asarray(stages.previous_value(
+            np.arange(5.0), np.array([1.0, 2.0, 2.0, 3.0, 4.0])), dtype=float)
+    except ValueError:
+        return
+    assert np.isnan(got[0])
+    assert np.allclose(got[1:], [0.0, 0.0, 1.5, 3.0])
 
 
 def test_f8_previous_value_beats_the_mean_on_a_random_walk():

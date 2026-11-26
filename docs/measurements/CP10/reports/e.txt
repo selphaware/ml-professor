@@ -1,0 +1,46 @@
+| table | parameters | holdout share | `holdout_far_above_quarter` raised | rows: training, holdout |
+|---|---|---|---|---|
+| last_stamp | {'share': 0.2} | 0.2510 | False | 749, 251 |
+| last_stamp | {'share': 0.26} | 0.2600 | False | 740, 260 |
+| last_stamp | {'share': 0.3} | 0.3000 | False | 700, 300 |
+| last_stamp | {'share': 0.34} | 0.3400 | False | 660, 340 |
+| last_stamp | {'share': 0.4} | 0.4000 | False | 600, 400 |
+| last_stamp | {'share': 0.45} | 0.4500 | False | 550, 450 |
+| last_stamp | {'share': 0.5} | 0.5000 | True | 500, 500 |
+| last_stamp | {'share': 0.55} | 0.5500 | True | 450, 550 |
+| last_stamp | {'share': 0.6} | 0.6000 | True | 400, 600 |
+| last_stamp | {'share': 0.7} | 0.7000 | True | 300, 700 |
+| even_stamps | {'stamps': 7, 'per': 40} | too_few_rows | | |
+| even_stamps | {'stamps': 8, 'per': 40} | 0.2500 | False | 240, 80 |
+| even_stamps | {'stamps': 9, 'per': 40} | 0.3333 | False | 240, 120 |
+| even_stamps | {'stamps': 10, 'per': 40} | 0.3000 | False | 280, 120 |
+| even_stamps | {'stamps': 11, 'per': 40} | 0.2727 | False | 320, 120 |
+| even_stamps | {'stamps': 12, 'per': 40} | 0.2500 | False | 360, 120 |
+| even_stamps | {'stamps': 13, 'per': 40} | 0.3077 | False | 360, 160 |
+| even_stamps | {'stamps': 14, 'per': 40} | 0.2857 | False | 400, 160 |
+| even_stamps | {'stamps': 15, 'per': 40} | 0.2667 | False | 440, 160 |
+| even_stamps | {'stamps': 16, 'per': 40} | 0.2500 | False | 480, 160 |
+| even_stamps | {'stamps': 17, 'per': 40} | 0.2941 | False | 480, 200 |
+| even_stamps | {'stamps': 18, 'per': 40} | 0.2778 | False | 520, 200 |
+| even_stamps | {'stamps': 19, 'per': 40} | 0.2632 | False | 560, 200 |
+| even_stamps | {'stamps': 20, 'per': 40} | 0.2500 | False | 600, 200 |
+| even_stamps | {'stamps': 21, 'per': 40} | 0.2857 | False | 600, 240 |
+| even_stamps | {'stamps': 22, 'per': 40} | 0.2727 | False | 640, 240 |
+| even_stamps | {'stamps': 23, 'per': 40} | 0.2609 | False | 680, 240 |
+| even_stamps | {'stamps': 24, 'per': 40} | 0.2500 | False | 720, 240 |
+| even_stamps | {'stamps': 25, 'per': 40} | 0.2800 | False | 720, 280 |
+| even_stamps | {'stamps': 26, 'per': 40} | 0.2692 | False | 760, 280 |
+| even_stamps | {'stamps': 27, 'per': 40} | 0.2593 | False | 800, 280 |
+| even_stamps | {'stamps': 28, 'per': 40} | 0.2500 | False | 840, 280 |
+| even_stamps | {'stamps': 29, 'per': 40} | 0.2759 | False | 840, 320 |
+| even_stamps | {'stamps': 30, 'per': 40} | 0.2667 | False | 880, 320 |
+| even_stamps | {'stamps': 31, 'per': 40} | 0.2581 | False | 920, 320 |
+| even_stamps | {'stamps': 32, 'per': 40} | 0.2500 | False | 960, 320 |
+| even_stamps | {'stamps': 33, 'per': 40} | 0.2727 | False | 960, 360 |
+| even_stamps | {'stamps': 34, 'per': 40} | 0.2647 | False | 1000, 360 |
+| even_stamps | {'stamps': 35, 'per': 40} | 0.2571 | False | 1040, 360 |
+| even_stamps | {'stamps': 36, 'per': 40} | 0.2500 | False | 1080, 360 |
+| even_stamps | {'stamps': 37, 'per': 40} | 0.2703 | False | 1080, 400 |
+| even_stamps | {'stamps': 38, 'per': 40} | 0.2632 | False | 1120, 400 |
+| even_stamps | {'stamps': 39, 'per': 40} | 0.2564 | False | 1160, 400 |
+| even_stamps | {'stamps': 40, 'per': 40} | 0.2500 | False | 1200, 400 |

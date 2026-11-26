@@ -1,0 +1,241 @@
+case	k	skill	model	columns: role/reason/rule fall	rests_on	floor	warnings
+signal_reg | bands:30:text_random	0	0.8307	linear-0	f1: feature/-/- 1.399; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:text_random	1	0.839	linear-0	f1: feature/-/- 1.169; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:text_random	2	0.8435	linear-0	f1: feature/-/- 1.325; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:text_random	3	0.8634	linear-0	f1: feature/-/- 1.213; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:text_random	4	0.8463	linear-0	f1: feature/-/- 1.115; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:text_random	5	0.8914	linear-0	f1: feature/-/- 1.218; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:text_random	6	0.8504	linear-0	f1: feature/-/- 1.112; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:text_random	7	0.8488	linear-0	f1: feature/-/- 1.261; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:text_random	8	0.8191	linear-0	f1: feature/-/- 1.27; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:text_random	9	0.8327	linear-0	f1: feature/-/- 1.252; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:text_random	10	0.8348	linear-0	f1: feature/-/- 1.255; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:text_random	11	0.854	linear-0	f1: feature/-/- 1.239; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:text_random	12	0.8544	linear-0	f1: feature/-/- 1.304; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:text_random	13	0.8474	linear-0	f1: feature/-/- 1.247; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:text_random	14	0.8612	linear-0	f1: feature/-/- 1.256; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:text_random	15	0.8402	linear-0	f1: feature/-/- 1.236; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:text_random	16	0.8568	linear-0	f1: feature/-/- 1.321; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:text_random	17	0.8449	linear-0	f1: feature/-/- 1.245; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:text_random	18	0.8707	linear-0	f1: feature/-/- 1.12; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:text_random	19	0.8591	linear-0	f1: feature/-/- 1.245; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:text_random	20	0.8678	linear-0	f1: feature/-/- 1.316; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:text_random	21	0.8758	linear-0	f1: feature/-/- 1.211; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:text_random	22	0.8303	linear-0	f1: feature/-/- 1.105; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:text_random	23	0.8323	linear-0	f1: feature/-/- 1.27; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:text_random	24	0.835	linear-0	f1: feature/-/- 1.318; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:text_random	25	0.8674	linear-0	f1: feature/-/- 1.145; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:text_random	26	0.8558	linear-0	f1: feature/-/- 1.306; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:text_random	27	0.825	linear-0	f1: feature/-/- 1.33; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:text_random	28	0.8476	linear-0	f1: feature/-/- 1.279; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:text_random	29	0.8263	linear-0	f1: feature/-/- 1.057; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:num_random	0	0.8307	linear-0	f1: feature/-/- 1.399; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:num_random	1	0.839	linear-0	f1: feature/-/- 1.169; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:num_random	2	0.8435	linear-0	f1: feature/-/- 1.325; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:num_random	3	0.8634	linear-0	f1: feature/-/- 1.213; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:num_random	4	0.8463	linear-0	f1: feature/-/- 1.115; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:num_random	5	0.8914	linear-0	f1: feature/-/- 1.218; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:num_random	6	0.8504	linear-0	f1: feature/-/- 1.112; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:num_random	7	0.8488	linear-0	f1: feature/-/- 1.261; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:num_random	8	0.8191	linear-0	f1: feature/-/- 1.27; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:num_random	9	0.8327	linear-0	f1: feature/-/- 1.252; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:num_random	10	0.8348	linear-0	f1: feature/-/- 1.255; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:num_random	11	0.854	linear-0	f1: feature/-/- 1.239; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:num_random	12	0.8544	linear-0	f1: feature/-/- 1.304; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:num_random	13	0.8474	linear-0	f1: feature/-/- 1.247; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:num_random	14	0.8612	linear-0	f1: feature/-/- 1.256; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:num_random	15	0.8402	linear-0	f1: feature/-/- 1.236; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:num_random	16	0.8568	linear-0	f1: feature/-/- 1.321; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:num_random	17	0.8449	linear-0	f1: feature/-/- 1.245; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:num_random	18	0.8707	linear-0	f1: feature/-/- 1.12; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:num_random	19	0.8591	linear-0	f1: feature/-/- 1.245; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:num_random	20	0.8678	linear-0	f1: feature/-/- 1.316; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:num_random	21	0.8758	linear-0	f1: feature/-/- 1.211; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:num_random	22	0.8303	linear-0	f1: feature/-/- 1.105; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:num_random	23	0.8323	linear-0	f1: feature/-/- 1.27; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:num_random	24	0.835	linear-0	f1: feature/-/- 1.318; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:num_random	25	0.8674	linear-0	f1: feature/-/- 1.145; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:num_random	26	0.8558	linear-0	f1: feature/-/- 1.306; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:num_random	27	0.825	linear-0	f1: feature/-/- 1.33; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:num_random	28	0.8476	linear-0	f1: feature/-/- 1.279; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | bands:30:num_random	29	0.8263	linear-0	f1: feature/-/- 1.057; target_band: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_band]
+signal_reg | tied:levels:40+tied:round:1	0	stop: duplicate_columns					
+signal_reg | tied:levels:40+tied:round:1	1	stop: duplicate_columns					
+signal_reg | tied:levels:40+tied:round:1	2	stop: duplicate_columns					
+signal_reg | tied:levels:40+tied:round:1	3	stop: duplicate_columns					
+signal_reg | tied:levels:40+tied:round:1	4	stop: duplicate_columns					
+signal_reg | tied:levels:40+tied:round:1	5	stop: duplicate_columns					
+signal_reg | tied:levels:40+tied:round:1	6	stop: duplicate_columns					
+signal_reg | tied:levels:40+tied:round:1	7	stop: duplicate_columns					
+signal_reg | tied:levels:40+tied:round:1	8	stop: duplicate_columns					
+signal_reg | tied:levels:40+tied:round:1	9	stop: duplicate_columns					
+signal_reg | tied:levels:40+tied:round:1	10	stop: duplicate_columns					
+signal_reg | tied:levels:40+tied:round:1	11	stop: duplicate_columns					
+signal_reg | tied:levels:40+tied:round:1	12	stop: duplicate_columns					
+signal_reg | tied:levels:40+tied:round:1	13	stop: duplicate_columns					
+signal_reg | tied:levels:40+tied:round:1	14	stop: duplicate_columns					
+signal_reg | tied:levels:40+tied:round:1	15	stop: duplicate_columns					
+signal_reg | tied:levels:40+tied:round:1	16	stop: duplicate_columns					
+signal_reg | tied:levels:40+tied:round:1	17	stop: duplicate_columns					
+signal_reg | tied:levels:40+tied:round:1	18	stop: duplicate_columns					
+signal_reg | tied:levels:40+tied:round:1	19	stop: duplicate_columns					
+signal_reg | tied:levels:40+tied:round:1	20	stop: duplicate_columns					
+signal_reg | tied:levels:40+tied:round:1	21	stop: duplicate_columns					
+signal_reg | tied:levels:40+tied:round:1	22	stop: duplicate_columns					
+signal_reg | tied:levels:40+tied:round:1	23	stop: duplicate_columns					
+signal_reg | tied:levels:40+tied:round:1	24	stop: duplicate_columns					
+signal_reg | tied:levels:40+tied:round:1	25	stop: duplicate_columns					
+signal_reg | tied:levels:40+tied:round:1	26	stop: duplicate_columns					
+signal_reg | tied:levels:40+tied:round:1	27	stop: duplicate_columns					
+signal_reg | tied:levels:40+tied:round:1	28	stop: duplicate_columns					
+signal_reg | tied:levels:40+tied:round:1	29	stop: duplicate_columns					
+signal_reg | two	0	0.9999	linear-0	f1: feature/-/- 0.0004214; pair_a: feature/-/- 3.614; pair_b: feature/-/- 1.974	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	1	1	linear-0	f1: feature/-/- 0.0002747; pair_a: feature/-/- 3.761; pair_b: feature/-/- 1.89	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	2	1	linear-0	f1: feature/-/- 0.0003593; pair_a: feature/-/- 3.655; pair_b: feature/-/- 2.015	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	3	0.9999	linear-0	f1: feature/-/- 0.0004492; pair_a: feature/-/- 4.011; pair_b: feature/-/- 2.114	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	4	1	linear-0	f1: feature/-/- 0.0002718; pair_a: feature/-/- 4.201; pair_b: feature/-/- 2.061	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	5	1	linear-0	f1: feature/-/- 0.0003971; pair_a: feature/-/- 3.495; pair_b: feature/-/- 1.579	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	6	1	linear-0	f1: feature/-/- 0.0002826; pair_a: feature/-/- 3.818; pair_b: feature/-/- 1.87	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	7	1	linear-0	f1: feature/-/- 0.0003831; pair_a: feature/-/- 3.497; pair_b: feature/-/- 1.931	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	8	1	linear-0	f1: feature/-/- 0.0003056; pair_a: feature/-/- 3.567; pair_b: feature/-/- 2.003	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	9	1	linear-0	f1: feature/-/- 0.0003328; pair_a: feature/-/- 3.919; pair_b: feature/-/- 2.152	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	10	1	linear-0	f1: feature/-/- 0.0003625; pair_a: feature/-/- 3.964; pair_b: feature/-/- 2.022	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	11	1	linear-0	f1: feature/-/- 0.0003207; pair_a: feature/-/- 3.315; pair_b: feature/-/- 1.671	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	12	1	linear-0	f1: feature/-/- 0.0004425; pair_a: feature/-/- 3.958; pair_b: feature/-/- 1.694	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	13	1	linear-0	f1: feature/-/- 0.0003186; pair_a: feature/-/- 3.821; pair_b: feature/-/- 1.963	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	14	1	linear-0	f1: feature/-/- 0.0004017; pair_a: feature/-/- 3.815; pair_b: feature/-/- 1.892	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	15	0.9999	linear-0	f1: feature/-/- 0.000384; pair_a: feature/-/- 3.663; pair_b: feature/-/- 1.697	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	16	1	linear-0	f1: feature/-/- 0.0003852; pair_a: feature/-/- 4.126; pair_b: feature/-/- 1.874	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	17	1	linear-0	f1: feature/-/- 0.0003861; pair_a: feature/-/- 3.784; pair_b: feature/-/- 1.961	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	18	1	linear-0	f1: feature/-/- 0.0003465; pair_a: feature/-/- 3.483; pair_b: feature/-/- 1.709	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	19	1	linear-0	f1: feature/-/- 0.0003226; pair_a: feature/-/- 3.649; pair_b: feature/-/- 1.924	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	20	1	linear-0	f1: feature/-/- 0.0003603; pair_a: feature/-/- 3.972; pair_b: feature/-/- 1.743	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	21	1	linear-0	f1: feature/-/- 0.0004576; pair_a: feature/-/- 3.807; pair_b: feature/-/- 1.691	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	22	1	linear-0	f1: feature/-/- 0.0003008; pair_a: feature/-/- 3.451; pair_b: feature/-/- 1.951	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	23	1	linear-0	f1: feature/-/- 0.0003721; pair_a: feature/-/- 3.732; pair_b: feature/-/- 1.868	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	24	1	linear-0	f1: feature/-/- 0.0003699; pair_a: feature/-/- 3.395; pair_b: feature/-/- 1.697	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	25	1	linear-0	f1: feature/-/- 0.0003265; pair_a: feature/-/- 3.912; pair_b: feature/-/- 1.781	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	26	1	linear-0	f1: feature/-/- 0.0003783; pair_a: feature/-/- 3.754; pair_b: feature/-/- 1.985	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	27	0.9999	linear-0	f1: feature/-/- 0.0004424; pair_a: feature/-/- 4.041; pair_b: feature/-/- 2.298	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	28	1	linear-0	f1: feature/-/- 0.00031; pair_a: feature/-/- 3.88; pair_b: feature/-/- 1.754	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	29	0.9999	linear-0	f1: feature/-/- 0.0003344; pair_a: feature/-/- 3.688; pair_b: feature/-/- 1.85	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | dup:f1	0	0.8307	linear-0	f1: feature/-/- 1.399; f1_again: feature/-/- 1.399	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	1	0.839	linear-0	f1: feature/-/- 1.17; f1_again: feature/-/- 1.17	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	2	0.8435	linear-0	f1: feature/-/- 1.325; f1_again: feature/-/- 1.325	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	3	0.8634	linear-0	f1: feature/-/- 1.213; f1_again: feature/-/- 1.213	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	4	0.8463	linear-0	f1: feature/-/- 1.116; f1_again: feature/-/- 1.116	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	5	0.8914	linear-0	f1: feature/-/- 1.219; f1_again: feature/-/- 1.219	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	6	0.8505	linear-0	f1: feature/-/- 1.112; f1_again: feature/-/- 1.112	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	7	0.8488	linear-0	f1: feature/-/- 1.262; f1_again: feature/-/- 1.262	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	8	0.8191	linear-0	f1: feature/-/- 1.27; f1_again: feature/-/- 1.27	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	9	0.8327	linear-0	f1: feature/-/- 1.252; f1_again: feature/-/- 1.252	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	10	0.8348	linear-0	f1: feature/-/- 1.256; f1_again: feature/-/- 1.256	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	11	0.854	linear-0	f1: feature/-/- 1.24; f1_again: feature/-/- 1.24	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	12	0.8544	linear-0	f1: feature/-/- 1.305; f1_again: feature/-/- 1.305	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	13	0.8474	linear-0	f1: feature/-/- 1.247; f1_again: feature/-/- 1.247	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	14	0.8612	linear-0	f1: feature/-/- 1.257; f1_again: feature/-/- 1.257	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	15	0.8402	linear-0	f1: feature/-/- 1.236; f1_again: feature/-/- 1.236	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	16	0.8568	linear-0	f1: feature/-/- 1.321; f1_again: feature/-/- 1.321	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	17	0.8449	linear-0	f1: feature/-/- 1.245; f1_again: feature/-/- 1.245	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	18	0.8707	linear-0	f1: feature/-/- 1.121; f1_again: feature/-/- 1.121	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	19	0.8591	linear-0	f1: feature/-/- 1.245; f1_again: feature/-/- 1.245	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	20	0.8678	linear-0	f1: feature/-/- 1.317; f1_again: feature/-/- 1.317	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	21	0.8758	linear-0	f1: feature/-/- 1.212; f1_again: feature/-/- 1.212	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	22	0.8303	linear-0	f1: feature/-/- 1.105; f1_again: feature/-/- 1.105	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	23	0.8323	linear-0	f1: feature/-/- 1.27; f1_again: feature/-/- 1.27	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	24	0.835	linear-0	f1: feature/-/- 1.319; f1_again: feature/-/- 1.319	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	25	0.8674	linear-0	f1: feature/-/- 1.146; f1_again: feature/-/- 1.146	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	26	0.8558	linear-0	f1: feature/-/- 1.307; f1_again: feature/-/- 1.307	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	27	0.825	linear-0	f1: feature/-/- 1.331; f1_again: feature/-/- 1.331	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	28	0.8476	linear-0	f1: feature/-/- 1.279; f1_again: feature/-/- 1.279	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	29	0.8263	linear-0	f1: feature/-/- 1.057; f1_again: feature/-/- 1.057	f1,f1_again,f2	0.05	-
+signal_clf | codes:40:text	0	0.7417	linear-0	f1: feature/-/- 0.3423; target_code: excluded/suspected_leak/predicts_target -	f1,f2,seg	0.07286	suspected_leak[target_code]
+signal_clf | codes:40:text	1	0.7083	linear-0	f1: feature/-/- 0.41; target_code: excluded/suspected_leak/predicts_target -	f1,f2,seg	0.0682	suspected_leak[target_code]
+signal_clf | codes:40:text	2	0.6972	linear-0	f1: feature/-/- 0.4278; target_code: excluded/suspected_leak/predicts_target -	f1,f2,seg	0.07508	suspected_leak[target_code]
+signal_clf | codes:40:text	3	0.7344	linear-0	f1: feature/-/- 0.3985; target_code: excluded/suspected_leak/predicts_target -	f1,f2,seg	0.06791	suspected_leak[target_code]
+signal_clf | codes:40:text	4	0.7483	linear-0	f1: feature/-/- 0.3902; target_code: excluded/suspected_leak/predicts_target -	f1,f2,seg	0.06481	suspected_leak[target_code]
+signal_clf | codes:40:text	5	0.7026	linear-0	f1: feature/-/- 0.4647; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.07748	suspected_leak[target_code]
+signal_clf | codes:40:text	6	0.6898	linear-0	f1: feature/-/- 0.3669; target_code: excluded/suspected_leak/predicts_target -	f1,f2,seg	0.07856	suspected_leak[target_code]
+signal_clf | codes:40:text	7	0.7912	linear-0	f1: feature/-/- 0.4477; target_code: excluded/suspected_leak/predicts_target -	f1,f2,seg	0.05871	suspected_leak[target_code]
+signal_clf | codes:40:text	8	0.6719	linear-0	f1: feature/-/- 0.3453; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.08424	suspected_leak[target_code]
+signal_clf | codes:40:text	9	0.7258	linear-0	f1: feature/-/- 0.4146; target_code: excluded/suspected_leak/predicts_target -	f1,f2,seg	0.06275	suspected_leak[target_code]
+signal_clf | codes:40:text	10	0.7526	linear-0	f1: feature/-/- 0.4259; target_code: excluded/suspected_leak/predicts_target -	f1,f2,seg	0.05969	suspected_leak[target_code]
+signal_clf | codes:40:text	11	0.744	linear-0	f1: feature/-/- 0.4133; target_code: excluded/suspected_leak/predicts_target -	f1,f2,seg	0.06428	suspected_leak[target_code]
+signal_clf | codes:40:text	12	0.7364	linear-0	f1: feature/-/- 0.3766; target_code: excluded/suspected_leak/predicts_target -	f1,f2,seg	0.0674	suspected_leak[target_code]
+signal_clf | codes:40:text	13	0.7713	linear-0	f1: feature/-/- 0.4967; target_code: excluded/suspected_leak/predicts_target -	f1,f2,seg	0.05935	suspected_leak[target_code]
+signal_clf | codes:40:text	14	0.7289	linear-0	f1: feature/-/- 0.4406; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.07896	suspected_leak[target_code]
+signal_clf | codes:40:text	15	0.7785	linear-0	f1: feature/-/- 0.4741; target_code: excluded/suspected_leak/predicts_target -	f1,f2,seg	0.06168	suspected_leak[target_code]
+signal_clf | codes:40:text	16	0.7563	linear-0	f1: feature/-/- 0.4337; target_code: excluded/suspected_leak/predicts_target -	f1,f2,seg	0.05997	suspected_leak[target_code]
+signal_clf | codes:40:text	17	0.8005	linear-0	f1: feature/-/- 0.4133; target_code: excluded/suspected_leak/predicts_target -	f1,f2,seg	0.06148	suspected_leak[target_code]
+signal_clf | codes:40:text	18	0.7378	linear-0	f1: feature/-/- 0.4088; target_code: excluded/suspected_leak/predicts_target -	f1,f2,seg	0.0681	suspected_leak[target_code]
+signal_clf | codes:40:text	19	0.7558	linear-0	f1: feature/-/- 0.3863; target_code: excluded/suspected_leak/predicts_target -	f1,f2,seg	0.06345	suspected_leak[target_code]
+signal_clf | codes:40:text	20	0.7229	linear-0	f1: feature/-/- 0.45; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.0788	suspected_leak[target_code]
+signal_clf | codes:40:text	21	0.779	linear-0	f1: feature/-/- 0.5053; target_code: excluded/suspected_leak/predicts_target -	f1,f2,seg	0.06971	suspected_leak[target_code]
+signal_clf | codes:40:text	22	0.7397	linear-0	f1: feature/-/- 0.3615; target_code: excluded/suspected_leak/predicts_target -	f1,f2,seg	0.06482	suspected_leak[target_code]
+signal_clf | codes:40:text	23	0.7605	linear-0	f1: feature/-/- 0.4739; target_code: excluded/suspected_leak/predicts_target -	f1,f2,seg	0.06865	suspected_leak[target_code]
+signal_clf | codes:40:text	24	0.7932	linear-0	f1: feature/-/- 0.3755; target_code: excluded/suspected_leak/predicts_target -	f1,f2,seg	0.05972	suspected_leak[target_code]
+signal_clf | codes:40:text	25	0.6962	linear-0	f1: feature/-/- 0.4186; target_code: excluded/suspected_leak/predicts_target -	f1,f2,seg	0.0717	suspected_leak[target_code]
+signal_clf | codes:40:text	26	0.7261	linear-0	f1: feature/-/- 0.4391; target_code: excluded/suspected_leak/predicts_target -	f1,f2,seg	0.07416	suspected_leak[target_code]
+signal_clf | codes:40:text	27	0.7537	linear-0	f1: feature/-/- 0.4146; target_code: excluded/suspected_leak/predicts_target -	f1,f2,seg	0.06143	suspected_leak[target_code]
+signal_clf | codes:40:text	28	0.779	linear-0	f1: feature/-/- 0.4641; target_code: excluded/suspected_leak/predicts_target -	f1,f2,seg	0.06277	suspected_leak[target_code]
+signal_clf | codes:40:text	29	0.7186	linear-0	f1: feature/-/- 0.4603; target_code: excluded/suspected_leak/predicts_target -	f1,f2,seg	0.06096	suspected_leak[target_code]
+skewed_reg cells=5 scheme=random sigma=1.0 size=20.0 | random	0	0.3565	linear-0	f1: feature/-/- 0.3977; target_copy: excluded/suspected_leak/predicts_target -	f1,f2	0.06119	suspected_leak[target_copy]
+skewed_reg cells=5 scheme=random sigma=1.0 size=20.0 | random	1	0.3165	linear-0	f1: feature/-/- 0.3524; target_copy: excluded/suspected_leak/predicts_target -	f1,f2	0.06332	suspected_leak[target_copy]
+skewed_reg cells=5 scheme=random sigma=1.0 size=20.0 | random	2	0.1848	linear-0	f1: feature/-/- 0.3407; target_copy: excluded/suspected_leak/predicts_target -	f1,f2	0.07239	suspected_leak[target_copy]
+skewed_reg cells=5 scheme=random sigma=1.0 size=20.0 | random	3	0.3544	linear-0	f1: feature/-/- 0.49; target_copy: excluded/suspected_leak/predicts_target -	f1,f2	0.07587	suspected_leak[target_copy]
+skewed_reg cells=5 scheme=random sigma=1.0 size=20.0 | random	4	0.2829	linear-0	f1: feature/-/- 0.4073; target_copy: excluded/suspected_leak/predicts_target -	f1,f2	0.09285	suspected_leak[target_copy]
+skewed_reg cells=5 scheme=random sigma=1.0 size=20.0 | random	5	0.3316	linear-0	f1: feature/-/- 0.3827; target_copy: excluded/suspected_leak/predicts_target -	f1,f2	0.05098	suspected_leak[target_copy]
+skewed_reg cells=5 scheme=random sigma=1.0 size=20.0 | random	6	0.3225	linear-0	f1: feature/-/- 0.5019; target_copy: excluded/suspected_leak/predicts_target -	f1,f2	0.07412	suspected_leak[target_copy]
+skewed_reg cells=5 scheme=random sigma=1.0 size=20.0 | random	7	0.2361	linear-0	f1: feature/-/- 0.2669; target_copy: excluded/suspected_leak/predicts_target -	f1,f2	0.07675	suspected_leak[target_copy]
+skewed_reg cells=5 scheme=random sigma=1.0 size=20.0 | random	8	0.3567	linear-0	f1: feature/-/- 0.602; target_copy: excluded/suspected_leak/predicts_target -	f1,f2	0.05836	suspected_leak[target_copy]
+skewed_reg cells=5 scheme=random sigma=1.0 size=20.0 | random	9	0.2948	linear-0	f1: feature/-/- 0.3753; target_copy: excluded/suspected_leak/predicts_target -	f1,f2	0.07681	suspected_leak[target_copy]
+skewed_reg cells=5 scheme=random sigma=1.0 size=20.0 | random	10	0.2851	linear-0	f1: feature/-/- 0.4284; target_copy: excluded/suspected_leak/predicts_target -	f1,f2	0.08728	suspected_leak[target_copy]
+skewed_reg cells=5 scheme=random sigma=1.0 size=20.0 | random	11	0.315	linear-0	f1: feature/-/- 0.6605; target_copy: excluded/suspected_leak/predicts_target -	f1,f2	0.123	suspected_leak[target_copy]
+skewed_reg cells=5 scheme=random sigma=1.0 size=20.0 | random	12	0.2632	linear-0	f1: feature/-/- 0.3588; target_copy: excluded/suspected_leak/predicts_target -	f1,f2	0.08494	suspected_leak[target_copy]
+skewed_reg cells=5 scheme=random sigma=1.0 size=20.0 | random	13	0.3787	linear-0	f1: feature/-/- 0.5587; target_copy: excluded/suspected_leak/predicts_target -	f1,f2	0.07724	suspected_leak[target_copy]
+skewed_reg cells=5 scheme=random sigma=1.0 size=20.0 | random	14	0.225	linear-0	f1: feature/-/- 0.2587; target_copy: excluded/suspected_leak/predicts_target -	f1,f2	0.0822	suspected_leak[target_copy]
+skewed_reg cells=5 scheme=random sigma=1.0 size=20.0 | random	15	0.3007	linear-0	f1: feature/-/- 0.4353; target_copy: excluded/suspected_leak/predicts_target -	f1,f2	0.06192	suspected_leak[target_copy]
+skewed_reg cells=5 scheme=random sigma=1.0 size=20.0 | random	16	0.3331	linear-0	f1: feature/-/- 0.5517; target_copy: excluded/suspected_leak/predicts_target -	f1,f2	0.09601	suspected_leak[target_copy]
+skewed_reg cells=5 scheme=random sigma=1.0 size=20.0 | random	17	0.3509	linear-0	f1: feature/-/- 0.3722; target_copy: excluded/suspected_leak/predicts_target -	f1,f2	0.05139	suspected_leak[target_copy]
+skewed_reg cells=5 scheme=random sigma=1.0 size=20.0 | random	18	0.3105	linear-0	f1: feature/-/- 0.3697; target_copy: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_copy]
+skewed_reg cells=5 scheme=random sigma=1.0 size=20.0 | random	19	0.3055	linear-0	f1: feature/-/- 0.5391; target_copy: excluded/suspected_leak/predicts_target -	f1,f2	0.08052	suspected_leak[target_copy]
+skewed_reg cells=5 scheme=random sigma=1.0 size=20.0 | random	20	0.272	linear-0	f1: feature/-/- 0.4847; target_copy: excluded/suspected_leak/predicts_target -	f1,f2	0.05071	suspected_leak[target_copy]
+skewed_reg cells=5 scheme=random sigma=1.0 size=20.0 | random	21	0.2866	linear-0	f1: feature/-/- 0.5162; target_copy: excluded/suspected_leak/predicts_target -	f1,f2	0.08004	suspected_leak[target_copy]
+skewed_reg cells=5 scheme=random sigma=1.0 size=20.0 | random	22	0.3079	linear-0	f1: feature/-/- 0.3718; target_copy: excluded/suspected_leak/predicts_target -	f1,f2	0.06638	suspected_leak[target_copy]
+skewed_reg cells=5 scheme=random sigma=1.0 size=20.0 | random	23	0.3179	linear-0	f1: feature/-/- 0.4134; target_copy: excluded/suspected_leak/predicts_target -	f1,f2	0.08139	suspected_leak[target_copy]
+skewed_reg cells=5 scheme=random sigma=1.0 size=20.0 | random	24	0.2682	linear-0	f1: feature/-/- 0.364; target_copy: excluded/suspected_leak/predicts_target -	f1,f2	0.06687	suspected_leak[target_copy]
+skewed_reg cells=5 scheme=random sigma=1.0 size=20.0 | random	25	0.3697	linear-0	f1: feature/-/- 0.4112; target_copy: excluded/suspected_leak/predicts_target -	f1,f2	0.05977	suspected_leak[target_copy]
+skewed_reg cells=5 scheme=random sigma=1.0 size=20.0 | random	26	0.3602	linear-0	f1: feature/-/- 0.5517; target_copy: excluded/suspected_leak/predicts_target -	f1,f2	0.07978	suspected_leak[target_copy]
+skewed_reg cells=5 scheme=random sigma=1.0 size=20.0 | random	27	0.2757	linear-0	f1: feature/-/- 0.3538; target_copy: excluded/suspected_leak/predicts_target -	f1,f2	0.08419	suspected_leak[target_copy]
+skewed_reg cells=5 scheme=random sigma=1.0 size=20.0 | random	28	0.3586	linear-0	f1: feature/-/- 0.4618; target_copy: excluded/suspected_leak/predicts_target -	f1,f2	0.05817	suspected_leak[target_copy]
+skewed_reg cells=5 scheme=random sigma=1.0 size=20.0 | random	29	0.2053	linear-0	f1: feature/-/- 0.3458; target_copy: excluded/suspected_leak/predicts_target -	f1,f2	0.08325	suspected_leak[target_copy]
+last_stamp share=0.6	0	0.006323	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.6	1	-0.008385	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.6	2	-0.005625	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.6	3	-0.005337	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.6	4	-0.03453	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.6	5	-0.005562	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.6	6	-0.002617	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.6	7	-0.007632	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.6	8	-0.01239	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.6	9	-0.00552	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.6	10	-0.003336	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.6	11	-0.007803	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.6	12	2.315e-05	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.6	13	-0.002004	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.6	14	-0.0138	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.6	15	-0.002658	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.6	16	-0.0007755	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.6	17	-0.01275	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.6	18	-0.006807	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.6	19	-0.001725	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.6	20	0.0005632	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.6	21	-0.04072	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.6	22	-0.01419	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.6	23	-0.0004178	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.6	24	0.0004991	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.6	25	-0.006097	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.6	26	-0.04675	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.6	27	-0.005932	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.6	28	-0.01942	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.6	29	-0.004662	linear-0		-	0.05	holdout_far_above_quarter[None]

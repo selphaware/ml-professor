@@ -224,6 +224,23 @@ reference agree. See `docs/measurements/CP9/build-on-real-tables/README.md`.
   The battery needs columns with repeated values and changes of several
   sizes.
 
+## Found in the CP10 session (ninth pass, 2026-11-26)
+
+- **A copy of the target rounded to 40 or 100 values under time order** was
+  named by nothing on 3 of 480 tables; the lift of those three was not
+  reported. The battery should gain a rounded copy as a carrier pair under
+  the claim of D81.
+- **Coded copies under time order** depend on how the target moves: on the
+  random walks 2 to 30 bands are neither excluded nor warned (at most 3 of
+  90), 40 and 60 bands are warned on up to 51 of 90; on a target that does
+  not wander, 24 bands or more are excluded. Section 11 states the walks'
+  numbers only.
+- **A two-column carrier beside a rare class** (5% positives): the first
+  column alone ranks the class, so only it is named.
+- **A stale gate comment:** `verify/smoke_test.py` still says 38 of 43 runs
+  are started on each edit (now 44 of 49).
+- **Measurements of pass 9 add 11 MB** to the repo, mostly per-seed tables.
+
 ## Notes for the framework (ailoop-engineering), not for this repo
 
 - The tests stage does not lock `tests/`, so on a second pass the existing

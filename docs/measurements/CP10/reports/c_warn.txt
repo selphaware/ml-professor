@@ -1,0 +1,37 @@
+the added column over the runs of each scheme, 30 seeds each: excluded / warned / kept in silence as run (the pairs form); then, among the runs in which the column is read by its order, on how many the two conditions hold under each form
+
+| scheme | the column | excluded / warned / silent | read by its order | old | mean | median | random | pairs |
+|---|---|---|---|---|---|---|---|---|
+| grouped | copy_2pct_cells_differ | 60 / 0 / 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| grouped | copy_exp | 60 / 0 / 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| grouped | copy_noise_5pct | 60 / 0 / 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| grouped | copy_squared | 60 / 0 / 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| grouped | round:2pct:100 | 60 / 0 / 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| grouped | round:2pct:40 | 60 / 0 / 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| grouped | round:exact:40 | 60 / 0 / 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| grouped | round:exp:100 | 60 / 0 / 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| grouped | round:exp:40 | 60 / 0 / 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| grouped | round:squared:100 | 60 / 0 / 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| grouped | round:squared:40 | 60 / 0 / 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| random | copy_2pct_cells_differ | 90 / 0 / 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| random | copy_exp | 90 / 0 / 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| random | copy_noise_5pct | 90 / 0 / 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| random | copy_squared | 90 / 0 / 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| random | round:2pct:100 | 90 / 0 / 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| random | round:2pct:40 | 90 / 0 / 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| random | round:exact:40 | 90 / 0 / 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| random | round:exp:100 | 90 / 0 / 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| random | round:exp:40 | 90 / 0 / 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| random | round:squared:100 | 90 / 0 / 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| random | round:squared:40 | 90 / 0 / 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| time | copy_2pct_cells_differ | 33 / 87 / 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| time | copy_exp | 30 / 90 / 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| time | copy_noise_5pct | 30 / 1 / 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| time | copy_squared | 30 / 90 / 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| time | round:2pct:100 | 29 / 91 / 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| time | round:2pct:40 | 30 / 82 / 1 | 0 | 0 | 0 | 0 | 0 | 0 |
+| time | round:exact:40 | 30 / 89 / 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| time | round:exp:100 | 33 / 86 / 1 | 0 | 0 | 0 | 0 | 0 | 0 |
+| time | round:exp:40 | 30 / 84 / 1 | 0 | 0 | 0 | 0 | 0 | 0 |
+| time | round:squared:100 | 40 / 80 / 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| time | round:squared:40 | 30 / 90 / 0 | 0 | 0 | 0 | 0 | 0 | 0 |

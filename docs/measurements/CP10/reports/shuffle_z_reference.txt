@@ -1,0 +1,9 @@
+| run | features | holdout rows | z of the reported score: range | largest abs z | sd of the mean of 5 shuffles, as a share of the mean | z of the score with nothing shuffled |
+|---|---|---|---|---|---|---|
+| random_walk | [1] | 375 to 375 | -1.46 to +3.40 | 3.40 | 0.023 to 0.023 | -43 to -40 |
+| int_stamps | [1] | 375 to 375 | -1.79 to +2.57 | 2.57 | 0.023 to 0.023 | -43 to -41 |
+| panel | [1] | 384 to 384 | -2.66 to +1.91 | 2.66 | 0.023 to 0.023 | -44 to -44 |
+| walk_repeated | [1] | 376 to 376 | -1.34 to +2.28 | 2.28 | 0.023 to 0.023 | -43 to -42 |
+| walk_copy | [1] | 375 to 375 | -1.25 to +2.27 | 2.27 | 0.023 to 0.023 | -43 to -41 |
+
+all 150 runs: abs z at most 3.40; above 2 on 14, above 3 on 1

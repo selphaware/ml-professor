@@ -1,0 +1,284 @@
+| table | scheme | the column | parameters | fate of `level`: excluded/warned/named/silent | levels reading (every row scored) | tree | used / logged only | headline |
+|---|---|---|---|---|---|---|---|---|
+| few_rows_a_level | grouped | numeric | classification=False r2=0.0 | 0/0/0/30 | - | - | 0 / 0 | -0.021 to +0.005 (mean -0.002) |
+| few_rows_a_level | grouped | numeric | classification=False r2=0.5 | 0/0/0/30 | - | - | 0 / 0 | -0.010 to +0.010 (mean -0.000) |
+| few_rows_a_level | grouped | numeric | classification=False r2=0.9 | 0/0/0/30 | - | - | 0 / 0 | -0.020 to +0.005 (mean -0.003) |
+| few_rows_a_level | grouped | numeric | classification=False r2=0.99 | 0/0/0/30 | - | - | 0 / 0 | -0.016 to +0.012 (mean +0.000) |
+| few_rows_a_level | grouped | numeric | classification=True r2=0.0 | 0/0/0/29 {'listed': 1} | - | - | 0 / 0 | -0.139 to +0.190 (mean -0.004) |
+| few_rows_a_level | grouped | numeric | classification=True r2=0.5 | 0/0/0/27 {'listed': 3} | - | - | 0 / 0 | -0.067 to +0.136 (mean +0.019) |
+| few_rows_a_level | grouped | numeric | classification=True r2=0.9 | 0/0/0/18 {'listed': 12} | - | - | 0 / 0 | -0.030 to +0.265 (mean +0.108) |
+| few_rows_a_level | grouped | numeric | classification=True r2=0.99 | 0/0/0/6 {'listed': 24} | - | - | 0 / 0 | -0.007 to +0.407 (mean +0.185) |
+| few_rows_a_level | grouped | text | classification=False r2=0.0 | 0/0/0/30 | - | - | 0 / 0 | -0.013 to +0.006 (mean -0.002) |
+| few_rows_a_level | grouped | text | classification=False r2=0.5 | 0/0/0/30 | - | - | 0 / 0 | -0.016 to +0.006 (mean -0.004) |
+| few_rows_a_level | grouped | text | classification=False r2=0.9 | 0/0/0/30 | - | - | 0 / 0 | -0.009 to +0.004 (mean -0.001) |
+| few_rows_a_level | grouped | text | classification=False r2=0.99 | 30/0/0/0 | - | - | 0 / 0 | -0.025 to +0.007 (mean -0.002) |
+| few_rows_a_level | grouped | text | classification=True r2=0.0 | 0/0/0/30 | - | - | 0 / 0 | -0.102 to +0.104 (mean -0.000) |
+| few_rows_a_level | grouped | text | classification=True r2=0.5 | 0/0/0/30 | - | - | 0 / 0 | -0.083 to +0.109 (mean +0.011) |
+| few_rows_a_level | grouped | text | classification=True r2=0.9 | 0/0/0/30 | - | - | 0 / 0 | -0.160 to +0.118 (mean -0.017) |
+| few_rows_a_level | grouped | text | classification=True r2=0.99 | 0/30/0/0 | - | - | 0 / 0 | -0.113 to +0.119 (mean -0.001) |
+| few_rows_a_level | random | numeric | classification=False r2=0.0 | 0/0/0/30 | - | - | 0 / 0 | -0.029 to +0.006 (mean -0.001) |
+| few_rows_a_level | random | numeric | classification=False r2=0.5 | 0/0/0/30 | - | - | 0 / 0 | -0.016 to +0.013 (mean -0.000) |
+| few_rows_a_level | random | numeric | classification=False r2=0.9 | 0/0/0/30 | - | - | 0 / 0 | -0.012 to +0.012 (mean -0.001) |
+| few_rows_a_level | random | numeric | classification=False r2=0.99 | 0/0/0/30 | - | - | 0 / 0 | -0.053 to +0.009 (mean -0.002) |
+| few_rows_a_level | random | numeric | classification=True r2=0.0 | 0/0/0/29 {'listed': 1} | - | - | 0 / 0 | -0.072 to +0.099 (mean +0.010) |
+| few_rows_a_level | random | numeric | classification=True r2=0.5 | 0/0/0/28 {'listed': 2} | - | - | 0 / 0 | -0.122 to +0.184 (mean +0.026) |
+| few_rows_a_level | random | numeric | classification=True r2=0.9 | 0/0/0/13 {'listed': 17} | - | - | 0 / 0 | -0.051 to +0.253 (mean +0.107) |
+| few_rows_a_level | random | numeric | classification=True r2=0.99 | 0/0/0/6 {'listed': 24} | - | - | 0 / 0 | +0.006 to +0.403 (mean +0.190) |
+| few_rows_a_level | random | text | classification=False r2=0.0 | 0/0/0/30 | - | - | 0 / 0 | -0.018 to +0.004 (mean -0.004) |
+| few_rows_a_level | random | text | classification=False r2=0.5 | 0/0/0/30 | - | - | 0 / 0 | -0.020 to +0.012 (mean -0.001) |
+| few_rows_a_level | random | text | classification=False r2=0.9 | 0/0/0/30 | - | - | 0 / 0 | -0.015 to +0.010 (mean -0.001) |
+| few_rows_a_level | random | text | classification=False r2=0.99 | 30/0/0/0 | - | - | 0 / 0 | -0.011 to +0.008 (mean -0.002) |
+| few_rows_a_level | random | text | classification=True r2=0.0 | 0/0/0/30 | - | - | 0 / 0 | -0.138 to +0.109 (mean -0.007) |
+| few_rows_a_level | random | text | classification=True r2=0.5 | 0/0/0/30 | - | - | 0 / 0 | -0.115 to +0.088 (mean -0.013) |
+| few_rows_a_level | random | text | classification=True r2=0.9 | 0/0/0/30 | - | - | 0 / 0 | -0.130 to +0.152 (mean +0.006) |
+| few_rows_a_level | random | text | classification=True r2=0.99 | 0/28/0/2 | - | - | 0 / 0 | -0.096 to +0.099 (mean +0.002) |
+| few_rows_a_level | time | numeric | classification=False r2=0.0 | 0/0/0/30 | - | - | 0 / 0 | -0.017 to +0.007 (mean -0.002) |
+| few_rows_a_level | time | numeric | classification=False r2=0.5 | 0/0/0/30 | - | - | 0 / 0 | -0.018 to +0.013 (mean -0.002) |
+| few_rows_a_level | time | numeric | classification=False r2=0.9 | 0/0/0/30 | - | - | 0 / 0 | -0.020 to +0.009 (mean -0.002) |
+| few_rows_a_level | time | numeric | classification=False r2=0.99 | 0/0/0/30 | - | - | 0 / 0 | -0.023 to +0.006 (mean -0.002) |
+| few_rows_a_level | time | numeric | classification=True r2=0.0 | 0/0/0/29 {'listed': 1} | - | - | 0 / 0 | -0.102 to +0.117 (mean -0.007) |
+| few_rows_a_level | time | numeric | classification=True r2=0.5 | 0/0/0/27 {'listed': 3} | - | - | 0 / 0 | -0.071 to +0.099 (mean +0.021) |
+| few_rows_a_level | time | numeric | classification=True r2=0.9 | 0/0/0/9 {'listed': 21} | - | - | 0 / 0 | -0.088 to +0.228 (mean +0.123) |
+| few_rows_a_level | time | numeric | classification=True r2=0.99 | 0/0/0/7 {'listed': 23} | - | - | 0 / 0 | -0.029 to +0.419 (mean +0.176) |
+| few_rows_a_level | time | text | classification=False r2=0.0 | 0/0/0/30 | - | - | 0 / 0 | -0.009 to +0.006 (mean -0.002) |
+| few_rows_a_level | time | text | classification=False r2=0.5 | 0/0/0/30 | - | - | 0 / 0 | -0.014 to +0.013 (mean -0.001) |
+| few_rows_a_level | time | text | classification=False r2=0.9 | 0/0/0/30 | - | - | 0 / 0 | -0.019 to +0.004 (mean -0.003) |
+| few_rows_a_level | time | text | classification=False r2=0.99 | 27/3/0/0 | - | - | 0 / 0 | -0.018 to +0.013 (mean -0.001) |
+| few_rows_a_level | time | text | classification=True r2=0.0 | 0/0/0/30 | - | - | 0 / 0 | -0.103 to +0.116 (mean -0.016) |
+| few_rows_a_level | time | text | classification=True r2=0.5 | 0/0/0/30 | - | - | 0 / 0 | -0.095 to +0.120 (mean -0.000) |
+| few_rows_a_level | time | text | classification=True r2=0.9 | 0/0/0/30 | - | - | 0 / 0 | -0.125 to +0.135 (mean +0.015) |
+| few_rows_a_level | time | text | classification=True r2=0.99 | 0/27/0/3 | - | - | 0 / 0 | -0.078 to +0.111 (mean -0.006) |
+| honest_levels | grouped | numeric | levels=10 r2=0.5 | 0/0/0/14 {'listed': 16} | - | - | 0 / 0 | -0.101 to +0.173 (mean +0.036) |
+| honest_levels | grouped | numeric | levels=10 r2=0.7 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.268 to +0.497 (mean +0.382) |
+| honest_levels | grouped | numeric | levels=10 r2=0.9 | 0/13/0/0 {'listed': 17} | - | - | 0 / 0 | +0.735 to +0.824 (mean +0.794) |
+| honest_levels | grouped | numeric | levels=10 r2=0.95 | 0/30/0/0 | - | - | 0 / 0 | +0.869 to +0.913 (mean +0.895) |
+| honest_levels | grouped | numeric | levels=10 r2=0.97 | 0/30/0/0 | - | - | 0 / 0 | +0.927 to +0.948 (mean +0.939) |
+| honest_levels | grouped | numeric | levels=10 r2=0.98 | 30/0/0/0 | - | - | 0 / 0 | -0.012 to +0.006 (mean -0.001) |
+| honest_levels | grouped | numeric | levels=10 r2=0.99 | 30/0/0/0 | - | - | 0 / 0 | -0.010 to +0.005 (mean -0.002) |
+| honest_levels | grouped | numeric | levels=24 r2=0.5 | 0/0/0/19 {'listed': 11} | - | - | 0 / 0 | -0.117 to +0.071 (mean +0.004) |
+| honest_levels | grouped | numeric | levels=24 r2=0.7 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.228 to +0.507 (mean +0.373) |
+| honest_levels | grouped | numeric | levels=24 r2=0.9 | 0/6/0/0 {'listed': 24} | - | - | 0 / 0 | +0.751 to +0.826 (mean +0.793) |
+| honest_levels | grouped | numeric | levels=24 r2=0.95 | 0/30/0/0 | - | - | 0 / 0 | +0.869 to +0.912 (mean +0.895) |
+| honest_levels | grouped | numeric | levels=24 r2=0.97 | 0/30/0/0 | - | - | 0 / 0 | +0.924 to +0.949 (mean +0.939) |
+| honest_levels | grouped | numeric | levels=24 r2=0.98 | 18/12/0/0 | - | - | 0 / 0 | -0.007 to +0.966 (mean +0.383) |
+| honest_levels | grouped | numeric | levels=24 r2=0.99 | 30/0/0/0 | - | - | 0 / 0 | -0.020 to +0.007 (mean -0.002) |
+| honest_levels | grouped | numeric | levels=60 r2=0.5 | 0/0/0/27 {'listed': 3} | - | - | 0 / 0 | -0.025 to +0.043 (mean +0.003) |
+| honest_levels | grouped | numeric | levels=60 r2=0.7 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.212 to +0.516 (mean +0.364) |
+| honest_levels | grouped | numeric | levels=60 r2=0.9 | 0/1/0/0 {'listed': 29} | - | - | 0 / 0 | +0.755 to +0.839 (mean +0.797) |
+| honest_levels | grouped | numeric | levels=60 r2=0.95 | 0/30/0/0 | - | - | 0 / 0 | +0.876 to +0.913 (mean +0.895) |
+| honest_levels | grouped | numeric | levels=60 r2=0.97 | 0/30/0/0 | - | - | 0 / 0 | +0.914 to +0.945 (mean +0.936) |
+| honest_levels | grouped | numeric | levels=60 r2=0.98 | 5/25/0/0 | - | - | 0 / 0 | -0.007 to +0.963 (mean +0.798) |
+| honest_levels | grouped | numeric | levels=60 r2=0.99 | 30/0/0/0 | - | - | 0 / 0 | -0.007 to +0.008 (mean -0.001) |
+| honest_levels | grouped | text | levels=10 r2=0.5 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.432 to +0.545 (mean +0.488) |
+| honest_levels | grouped | text | levels=10 r2=0.7 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.642 to +0.737 (mean +0.695) |
+| honest_levels | grouped | text | levels=10 r2=0.9 | 0/13/0/0 {'listed': 17} | - | - | 0 / 0 | +0.886 to +0.921 (mean +0.899) |
+| honest_levels | grouped | text | levels=10 r2=0.95 | 0/30/0/0 | - | - | 0 / 0 | +0.939 to +0.958 (mean +0.949) |
+| honest_levels | grouped | text | levels=10 r2=0.97 | 0/30/0/0 | - | - | 0 / 0 | +0.966 to +0.974 (mean +0.969) |
+| honest_levels | grouped | text | levels=10 r2=0.98 | 29/1/0/0 | - | - | 0 / 0 | -0.013 to +0.982 (mean +0.031) |
+| honest_levels | grouped | text | levels=10 r2=0.99 | 30/0/0/0 | - | - | 0 / 0 | -0.010 to +0.005 (mean -0.002) |
+| honest_levels | grouped | text | levels=24 r2=0.5 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.449 to +0.530 (mean +0.490) |
+| honest_levels | grouped | text | levels=24 r2=0.7 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.645 to +0.752 (mean +0.696) |
+| honest_levels | grouped | text | levels=24 r2=0.9 | 0/6/0/0 {'listed': 24} | - | - | 0 / 0 | +0.880 to +0.912 (mean +0.897) |
+| honest_levels | grouped | text | levels=24 r2=0.95 | 0/30/0/0 | - | - | 0 / 0 | +0.939 to +0.957 (mean +0.949) |
+| honest_levels | grouped | text | levels=24 r2=0.97 | 0/30/0/0 | - | - | 0 / 0 | +0.961 to +0.973 (mean +0.969) |
+| honest_levels | grouped | text | levels=24 r2=0.98 | 21/9/0/0 | - | - | 0 / 0 | -0.020 to +0.982 (mean +0.292) |
+| honest_levels | grouped | text | levels=24 r2=0.99 | 30/0/0/0 | - | - | 0 / 0 | -0.015 to +0.006 (mean -0.001) |
+| honest_levels | grouped | text | levels=60 r2=0.5 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.127 to +0.399 (mean +0.244) |
+| honest_levels | grouped | text | levels=60 r2=0.7 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.185 to +0.478 (mean +0.352) |
+| honest_levels | grouped | text | levels=60 r2=0.9 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.263 to +0.699 (mean +0.418) |
+| honest_levels | grouped | text | levels=60 r2=0.95 | 0/30/0/0 | - | - | 0 / 0 | +0.290 to +0.612 (mean +0.465) |
+| honest_levels | grouped | text | levels=60 r2=0.97 | 0/30/0/0 | - | - | 0 / 0 | +0.312 to +0.676 (mean +0.466) |
+| honest_levels | grouped | text | levels=60 r2=0.98 | 2/28/0/0 | - | - | 0 / 0 | -0.004 to +0.731 (mean +0.495) |
+| honest_levels | grouped | text | levels=60 r2=0.99 | 30/0/0/0 | - | - | 0 / 0 | -0.028 to +0.003 (mean -0.004) |
+| honest_levels | random | numeric | levels=10 r2=0.5 | 0/0/0/10 {'listed': 20} | - | - | 0 / 0 | -0.149 to +0.263 (mean +0.040) |
+| honest_levels | random | numeric | levels=10 r2=0.7 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.235 to +0.489 (mean +0.374) |
+| honest_levels | random | numeric | levels=10 r2=0.9 | 0/15/0/0 {'listed': 15} | - | - | 0 / 0 | +0.742 to +0.822 (mean +0.790) |
+| honest_levels | random | numeric | levels=10 r2=0.95 | 0/30/0/0 | - | - | 0 / 0 | +0.875 to +0.913 (mean +0.896) |
+| honest_levels | random | numeric | levels=10 r2=0.97 | 0/30/0/0 | - | - | 0 / 0 | +0.928 to +0.946 (mean +0.939) |
+| honest_levels | random | numeric | levels=10 r2=0.98 | 28/2/0/0 | - | - | 0 / 0 | -0.018 to +0.963 (mean +0.061) |
+| honest_levels | random | numeric | levels=10 r2=0.99 | 30/0/0/0 | - | - | 0 / 0 | -0.014 to +0.004 (mean -0.003) |
+| honest_levels | random | numeric | levels=24 r2=0.5 | 0/0/0/18 {'listed': 12} | - | - | 0 / 0 | -0.235 to +0.064 (mean -0.009) |
+| honest_levels | random | numeric | levels=24 r2=0.7 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.246 to +0.458 (mean +0.381) |
+| honest_levels | random | numeric | levels=24 r2=0.9 | 0/6/0/0 {'listed': 24} | - | - | 0 / 0 | +0.752 to +0.831 (mean +0.791) |
+| honest_levels | random | numeric | levels=24 r2=0.95 | 0/30/0/0 | - | - | 0 / 0 | +0.877 to +0.913 (mean +0.896) |
+| honest_levels | random | numeric | levels=24 r2=0.97 | 0/30/0/0 | - | - | 0 / 0 | +0.926 to +0.948 (mean +0.938) |
+| honest_levels | random | numeric | levels=24 r2=0.98 | 21/9/0/0 | - | - | 0 / 0 | -0.005 to +0.965 (mean +0.288) |
+| honest_levels | random | numeric | levels=24 r2=0.99 | 30/0/0/0 | - | - | 0 / 0 | -0.014 to +0.006 (mean -0.001) |
+| honest_levels | random | numeric | levels=60 r2=0.5 | 0/0/0/26 {'listed': 4} | - | - | 0 / 0 | -0.015 to +0.047 (mean +0.005) |
+| honest_levels | random | numeric | levels=60 r2=0.7 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.214 to +0.441 (mean +0.371) |
+| honest_levels | random | numeric | levels=60 r2=0.9 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.731 to +0.821 (mean +0.785) |
+| honest_levels | random | numeric | levels=60 r2=0.95 | 0/30/0/0 | - | - | 0 / 0 | +0.878 to +0.912 (mean +0.894) |
+| honest_levels | random | numeric | levels=60 r2=0.97 | 0/30/0/0 | - | - | 0 / 0 | +0.928 to +0.944 (mean +0.937) |
+| honest_levels | random | numeric | levels=60 r2=0.98 | 2/28/0/0 | - | - | 0 / 0 | -0.000 to +0.964 (mean +0.894) |
+| honest_levels | random | numeric | levels=60 r2=0.99 | 30/0/0/0 | - | - | 0 / 0 | -0.011 to +0.018 (mean +0.000) |
+| honest_levels | random | text | levels=10 r2=0.5 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.448 to +0.560 (mean +0.496) |
+| honest_levels | random | text | levels=10 r2=0.7 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.659 to +0.729 (mean +0.698) |
+| honest_levels | random | text | levels=10 r2=0.9 | 0/10/0/0 {'listed': 20} | - | - | 0 / 0 | +0.883 to +0.912 (mean +0.900) |
+| honest_levels | random | text | levels=10 r2=0.95 | 0/30/0/0 | - | - | 0 / 0 | +0.942 to +0.956 (mean +0.949) |
+| honest_levels | random | text | levels=10 r2=0.97 | 0/30/0/0 | - | - | 0 / 0 | +0.966 to +0.975 (mean +0.970) |
+| honest_levels | random | text | levels=10 r2=0.98 | 29/1/0/0 | - | - | 0 / 0 | -0.016 to +0.983 (mean +0.031) |
+| honest_levels | random | text | levels=10 r2=0.99 | 30/0/0/0 | - | - | 0 / 0 | -0.013 to +0.005 (mean -0.002) |
+| honest_levels | random | text | levels=24 r2=0.5 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.424 to +0.563 (mean +0.491) |
+| honest_levels | random | text | levels=24 r2=0.7 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.654 to +0.734 (mean +0.698) |
+| honest_levels | random | text | levels=24 r2=0.9 | 0/6/0/0 {'listed': 24} | - | - | 0 / 0 | +0.874 to +0.912 (mean +0.897) |
+| honest_levels | random | text | levels=24 r2=0.95 | 0/30/0/0 | - | - | 0 / 0 | +0.942 to +0.959 (mean +0.950) |
+| honest_levels | random | text | levels=24 r2=0.97 | 0/30/0/0 | - | - | 0 / 0 | +0.964 to +0.973 (mean +0.968) |
+| honest_levels | random | text | levels=24 r2=0.98 | 23/7/0/0 | - | - | 0 / 0 | -0.009 to +0.983 (mean +0.229) |
+| honest_levels | random | text | levels=24 r2=0.99 | 30/0/0/0 | - | - | 0 / 0 | -0.013 to +0.006 (mean -0.002) |
+| honest_levels | random | text | levels=60 r2=0.5 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.117 to +0.415 (mean +0.235) |
+| honest_levels | random | text | levels=60 r2=0.7 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.232 to +0.461 (mean +0.341) |
+| honest_levels | random | text | levels=60 r2=0.9 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.214 to +0.712 (mean +0.428) |
+| honest_levels | random | text | levels=60 r2=0.95 | 0/30/0/0 | - | - | 0 / 0 | +0.292 to +0.691 (mean +0.502) |
+| honest_levels | random | text | levels=60 r2=0.97 | 0/30/0/0 | - | - | 0 / 0 | +0.338 to +0.681 (mean +0.482) |
+| honest_levels | random | text | levels=60 r2=0.98 | 7/23/0/0 | - | - | 0 / 0 | -0.016 to +0.737 (mean +0.378) |
+| honest_levels | random | text | levels=60 r2=0.99 | 30/0/0/0 | - | - | 0 / 0 | -0.007 to +0.006 (mean -0.001) |
+| honest_levels | time | numeric | levels=10 r2=0.5 | 0/0/0/14 {'listed': 16} | - | - | 0 / 0 | -0.120 to +0.217 (mean +0.035) |
+| honest_levels | time | numeric | levels=10 r2=0.7 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.269 to +0.534 (mean +0.395) |
+| honest_levels | time | numeric | levels=10 r2=0.9 | 0/9/0/0 {'listed': 21} | - | - | 0 / 0 | +0.767 to +0.822 (mean +0.794) |
+| honest_levels | time | numeric | levels=10 r2=0.95 | 0/30/0/0 | - | - | 0 / 0 | +0.878 to +0.909 (mean +0.896) |
+| honest_levels | time | numeric | levels=10 r2=0.97 | 0/30/0/0 | - | - | 0 / 0 | +0.929 to +0.953 (mean +0.939) |
+| honest_levels | time | numeric | levels=10 r2=0.98 | 24/6/0/0 | - | - | 0 / 0 | -0.020 to +0.964 (mean +0.190) |
+| honest_levels | time | numeric | levels=10 r2=0.99 | 30/0/0/0 | - | - | 0 / 0 | -0.014 to +0.005 (mean -0.004) |
+| honest_levels | time | numeric | levels=24 r2=0.5 | 0/0/0/20 {'listed': 10} | - | - | 0 / 0 | -0.247 to +0.075 (mean +0.002) |
+| honest_levels | time | numeric | levels=24 r2=0.7 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.273 to +0.492 (mean +0.389) |
+| honest_levels | time | numeric | levels=24 r2=0.9 | 0/1/0/0 {'listed': 29} | - | - | 0 / 0 | +0.708 to +0.837 (mean +0.797) |
+| honest_levels | time | numeric | levels=24 r2=0.95 | 0/30/0/0 | - | - | 0 / 0 | +0.874 to +0.920 (mean +0.898) |
+| honest_levels | time | numeric | levels=24 r2=0.97 | 0/30/0/0 | - | - | 0 / 0 | +0.927 to +0.948 (mean +0.938) |
+| honest_levels | time | numeric | levels=24 r2=0.98 | 11/19/0/0 | - | - | 0 / 0 | -0.002 to +0.966 (mean +0.608) |
+| honest_levels | time | numeric | levels=24 r2=0.99 | 30/0/0/0 | - | - | 0 / 0 | -0.017 to +0.010 (mean -0.002) |
+| honest_levels | time | numeric | levels=60 r2=0.5 | 0/0/0/27 {'listed': 3} | - | - | 0 / 0 | -0.014 to +0.042 (mean +0.006) |
+| honest_levels | time | numeric | levels=60 r2=0.7 | 0/0/0/2 {'listed': 28} | - | - | 0 / 0 | -0.007 to +0.459 (mean +0.315) |
+| honest_levels | time | numeric | levels=60 r2=0.9 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.727 to +0.814 (mean +0.784) |
+| honest_levels | time | numeric | levels=60 r2=0.95 | 0/30/0/0 | - | - | 0 / 0 | +0.775 to +0.910 (mean +0.892) |
+| honest_levels | time | numeric | levels=60 r2=0.97 | 0/30/0/0 | - | - | 0 / 0 | +0.913 to +0.945 (mean +0.937) |
+| honest_levels | time | numeric | levels=60 r2=0.98 | 0/30/0/0 | - | - | 0 / 0 | +0.948 to +0.965 (mean +0.959) |
+| honest_levels | time | numeric | levels=60 r2=0.99 | 30/0/0/0 | - | - | 0 / 0 | -0.026 to +0.011 (mean -0.002) |
+| honest_levels | time | text | levels=10 r2=0.5 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.413 to +0.560 (mean +0.489) |
+| honest_levels | time | text | levels=10 r2=0.7 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.628 to +0.746 (mean +0.697) |
+| honest_levels | time | text | levels=10 r2=0.9 | 0/9/0/0 {'listed': 21} | - | - | 0 / 0 | +0.880 to +0.915 (mean +0.898) |
+| honest_levels | time | text | levels=10 r2=0.95 | 0/30/0/0 | - | - | 0 / 0 | +0.942 to +0.960 (mean +0.950) |
+| honest_levels | time | text | levels=10 r2=0.97 | 0/30/0/0 | - | - | 0 / 0 | +0.963 to +0.974 (mean +0.970) |
+| honest_levels | time | text | levels=10 r2=0.98 | 25/5/0/0 | - | - | 0 / 0 | -0.014 to +0.982 (mean +0.162) |
+| honest_levels | time | text | levels=10 r2=0.99 | 30/0/0/0 | - | - | 0 / 0 | -0.011 to +0.004 (mean -0.002) |
+| honest_levels | time | text | levels=24 r2=0.5 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.439 to +0.578 (mean +0.493) |
+| honest_levels | time | text | levels=24 r2=0.7 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.640 to +0.733 (mean +0.689) |
+| honest_levels | time | text | levels=24 r2=0.9 | 0/3/0/0 {'listed': 27} | - | - | 0 / 0 | +0.880 to +0.912 (mean +0.897) |
+| honest_levels | time | text | levels=24 r2=0.95 | 0/30/0/0 | - | - | 0 / 0 | +0.939 to +0.958 (mean +0.948) |
+| honest_levels | time | text | levels=24 r2=0.97 | 0/30/0/0 | - | - | 0 / 0 | +0.962 to +0.972 (mean +0.968) |
+| honest_levels | time | text | levels=24 r2=0.98 | 11/19/0/0 | - | - | 0 / 0 | -0.013 to +0.982 (mean +0.620) |
+| honest_levels | time | text | levels=24 r2=0.99 | 30/0/0/0 | - | - | 0 / 0 | -0.023 to +0.007 (mean -0.003) |
+| honest_levels | time | text | levels=60 r2=0.5 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.097 to +0.334 (mean +0.234) |
+| honest_levels | time | text | levels=60 r2=0.7 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.184 to +0.511 (mean +0.352) |
+| honest_levels | time | text | levels=60 r2=0.9 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.297 to +0.616 (mean +0.434) |
+| honest_levels | time | text | levels=60 r2=0.95 | 0/30/0/0 | - | - | 0 / 0 | +0.336 to +0.614 (mean +0.467) |
+| honest_levels | time | text | levels=60 r2=0.97 | 0/30/0/0 | - | - | 0 / 0 | +0.306 to +0.669 (mean +0.483) |
+| honest_levels | time | text | levels=60 r2=0.98 | 0/30/0/0 | - | - | 0 / 0 | +0.317 to +0.702 (mean +0.502) |
+| honest_levels | time | text | levels=60 r2=0.99 | 30/0/0/0 | - | - | 0 / 0 | -0.018 to +0.006 (mean -0.002) |
+| honest_levels_clf | grouped | numeric | levels=10 strength=1.0 | 0/0/0/6 {'listed': 24} | - | - | 0 / 0 | +0.046 to +0.354 (mean +0.167) |
+| honest_levels_clf | grouped | numeric | levels=10 strength=2.0 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.113 to +0.685 (mean +0.354) |
+| honest_levels_clf | grouped | numeric | levels=10 strength=4.0 | 0/5/0/0 {'listed': 25} | - | - | 0 / 0 | +0.372 to +0.792 (mean +0.594) |
+| honest_levels_clf | grouped | numeric | levels=10 strength=8.0 | 4/21/0/0 {'listed': 5} | - | - | 0 / 0 | -0.092 to +0.949 (mean +0.673) |
+| honest_levels_clf | grouped | numeric | levels=24 strength=1.0 | 0/0/0/8 {'listed': 22} | - | - | 0 / 0 | +0.005 to +0.300 (mean +0.134) |
+| honest_levels_clf | grouped | numeric | levels=24 strength=2.0 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.251 to +0.543 (mean +0.371) |
+| honest_levels_clf | grouped | numeric | levels=24 strength=4.0 | 0/7/0/0 {'listed': 23} | - | - | 0 / 0 | +0.397 to +0.766 (mean +0.619) |
+| honest_levels_clf | grouped | numeric | levels=24 strength=8.0 | 2/26/0/0 {'listed': 2} | - | - | 0 / 0 | -0.035 to +0.878 (mean +0.724) |
+| honest_levels_clf | grouped | numeric | levels=60 strength=1.0 | 0/0/0/16 {'listed': 14} | - | - | 0 / 0 | -0.032 to +0.211 (mean +0.107) |
+| honest_levels_clf | grouped | numeric | levels=60 strength=2.0 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.116 to +0.504 (mean +0.339) |
+| honest_levels_clf | grouped | numeric | levels=60 strength=4.0 | 0/5/0/0 {'listed': 25} | - | - | 0 / 0 | +0.433 to +0.726 (mean +0.619) |
+| honest_levels_clf | grouped | numeric | levels=60 strength=8.0 | 0/30/0/0 | - | - | 0 / 0 | +0.689 to +0.864 (mean +0.779) |
+| honest_levels_clf | grouped | text | levels=10 strength=1.0 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.225 to +0.671 (mean +0.428) |
+| honest_levels_clf | grouped | text | levels=10 strength=2.0 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.416 to +0.864 (mean +0.663) |
+| honest_levels_clf | grouped | text | levels=10 strength=4.0 | 0/8/0/0 {'listed': 22} | - | - | 0 / 0 | +0.733 to +0.981 (mean +0.866) |
+| honest_levels_clf | grouped | text | levels=10 strength=8.0 | 2/26/0/0 {'listed': 2} | - | - | 0 / 0 | -0.144 to +0.988 (mean +0.882) |
+| honest_levels_clf | grouped | text | levels=24 strength=1.0 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.287 to +0.631 (mean +0.443) |
+| honest_levels_clf | grouped | text | levels=24 strength=2.0 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.570 to +0.815 (mean +0.713) |
+| honest_levels_clf | grouped | text | levels=24 strength=4.0 | 0/6/0/0 {'listed': 24} | - | - | 0 / 0 | +0.775 to +0.935 (mean +0.865) |
+| honest_levels_clf | grouped | text | levels=24 strength=8.0 | 3/26/0/0 {'listed': 1} | - | - | 0 / 0 | -0.062 to +0.990 (mean +0.858) |
+| honest_levels_clf | grouped | text | levels=60 strength=1.0 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.136 to +0.392 (mean +0.277) |
+| honest_levels_clf | grouped | text | levels=60 strength=2.0 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.336 to +0.581 (mean +0.437) |
+| honest_levels_clf | grouped | text | levels=60 strength=4.0 | 0/3/0/0 {'listed': 27} | - | - | 0 / 0 | +0.468 to +0.700 (mean +0.591) |
+| honest_levels_clf | grouped | text | levels=60 strength=8.0 | 1/29/0/0 | - | - | 0 / 0 | -0.023 to +0.769 (mean +0.638) |
+| honest_levels_clf | random | numeric | levels=10 strength=1.0 | 0/0/0/4 {'listed': 26} | - | - | 0 / 0 | +0.042 to +0.298 (mean +0.176) |
+| honest_levels_clf | random | numeric | levels=10 strength=2.0 | 0/0/0/1 {'listed': 29} | - | - | 0 / 0 | +0.044 to +0.738 (mean +0.350) |
+| honest_levels_clf | random | numeric | levels=10 strength=4.0 | 0/5/0/0 {'listed': 25} | - | - | 0 / 0 | +0.366 to +0.819 (mean +0.588) |
+| honest_levels_clf | random | numeric | levels=10 strength=8.0 | 6/20/0/0 {'listed': 4} | - | - | 0 / 0 | -0.109 to +0.897 (mean +0.609) |
+| honest_levels_clf | random | numeric | levels=24 strength=1.0 | 0/0/0/13 {'listed': 17} | - | - | 0 / 0 | -0.145 to +0.252 (mean +0.118) |
+| honest_levels_clf | random | numeric | levels=24 strength=2.0 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.240 to +0.500 (mean +0.369) |
+| honest_levels_clf | random | numeric | levels=24 strength=4.0 | 0/6/0/0 {'listed': 24} | - | - | 0 / 0 | +0.414 to +0.778 (mean +0.612) |
+| honest_levels_clf | random | numeric | levels=24 strength=8.0 | 2/26/0/0 {'listed': 2} | - | - | 0 / 0 | +0.038 to +0.963 (mean +0.731) |
+| honest_levels_clf | random | numeric | levels=60 strength=1.0 | 0/0/0/13 {'listed': 17} | - | - | 0 / 0 | -0.097 to +0.288 (mean +0.124) |
+| honest_levels_clf | random | numeric | levels=60 strength=2.0 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.184 to +0.526 (mean +0.353) |
+| honest_levels_clf | random | numeric | levels=60 strength=4.0 | 0/7/0/0 {'listed': 23} | - | - | 0 / 0 | +0.473 to +0.719 (mean +0.620) |
+| honest_levels_clf | random | numeric | levels=60 strength=8.0 | 0/30/0/0 | - | - | 0 / 0 | +0.680 to +0.917 (mean +0.790) |
+| honest_levels_clf | random | text | levels=10 strength=1.0 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.222 to +0.606 (mean +0.420) |
+| honest_levels_clf | random | text | levels=10 strength=2.0 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.273 to +0.854 (mean +0.672) |
+| honest_levels_clf | random | text | levels=10 strength=4.0 | 0/8/0/0 {'listed': 22} | - | - | 0 / 0 | +0.672 to +0.967 (mean +0.861) |
+| honest_levels_clf | random | text | levels=10 strength=8.0 | 2/26/0/0 {'listed': 2} | - | - | 0 / 0 | +0.008 to +0.988 (mean +0.889) |
+| honest_levels_clf | random | text | levels=24 strength=1.0 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.228 to +0.632 (mean +0.433) |
+| honest_levels_clf | random | text | levels=24 strength=2.0 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.581 to +0.829 (mean +0.715) |
+| honest_levels_clf | random | text | levels=24 strength=4.0 | 0/6/0/0 {'listed': 24} | - | - | 0 / 0 | +0.714 to +0.953 (mean +0.866) |
+| honest_levels_clf | random | text | levels=24 strength=8.0 | 3/26/0/0 {'listed': 1} | - | - | 0 / 0 | -0.086 to +0.991 (mean +0.862) |
+| honest_levels_clf | random | text | levels=60 strength=1.0 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.150 to +0.405 (mean +0.281) |
+| honest_levels_clf | random | text | levels=60 strength=2.0 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.322 to +0.552 (mean +0.430) |
+| honest_levels_clf | random | text | levels=60 strength=4.0 | 0/1/0/0 {'listed': 29} | - | - | 0 / 0 | +0.456 to +0.675 (mean +0.584) |
+| honest_levels_clf | random | text | levels=60 strength=8.0 | 2/28/0/0 | - | - | 0 / 0 | -0.045 to +0.738 (mean +0.617) |
+| honest_levels_clf | time | numeric | levels=10 strength=1.0 | 0/0/0/5 {'listed': 25} | - | - | 0 / 0 | +0.006 to +0.300 (mean +0.162) |
+| honest_levels_clf | time | numeric | levels=10 strength=2.0 | 0/0/0/2 {'listed': 28} | - | - | 0 / 0 | +0.073 to +0.686 (mean +0.347) |
+| honest_levels_clf | time | numeric | levels=10 strength=4.0 | 0/6/0/0 {'listed': 24} | - | - | 0 / 0 | +0.388 to +0.861 (mean +0.598) |
+| honest_levels_clf | time | numeric | levels=10 strength=8.0 | 4/22/0/0 {'listed': 4} | - | - | 0 / 0 | -0.126 to +0.947 (mean +0.664) |
+| honest_levels_clf | time | numeric | levels=24 strength=1.0 | 0/0/0/10 {'listed': 20} | - | - | 0 / 0 | -0.026 to +0.252 (mean +0.132) |
+| honest_levels_clf | time | numeric | levels=24 strength=2.0 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.196 to +0.508 (mean +0.376) |
+| honest_levels_clf | time | numeric | levels=24 strength=4.0 | 0/7/0/0 {'listed': 23} | - | - | 0 / 0 | +0.442 to +0.833 (mean +0.626) |
+| honest_levels_clf | time | numeric | levels=24 strength=8.0 | 0/27/0/0 {'listed': 3} | - | - | 0 / 0 | +0.633 to +0.944 (mean +0.788) |
+| honest_levels_clf | time | numeric | levels=60 strength=1.0 | 0/0/0/18 {'listed': 12} | - | - | 0 / 0 | -0.029 to +0.275 (mean +0.107) |
+| honest_levels_clf | time | numeric | levels=60 strength=2.0 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.205 to +0.451 (mean +0.339) |
+| honest_levels_clf | time | numeric | levels=60 strength=4.0 | 0/2/0/0 {'listed': 28} | - | - | 0 / 0 | +0.461 to +0.786 (mean +0.629) |
+| honest_levels_clf | time | numeric | levels=60 strength=8.0 | 0/25/0/0 {'listed': 5} | - | - | 0 / 0 | +0.645 to +0.910 (mean +0.782) |
+| honest_levels_clf | time | text | levels=10 strength=1.0 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.266 to +0.635 (mean +0.423) |
+| honest_levels_clf | time | text | levels=10 strength=2.0 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.326 to +0.869 (mean +0.659) |
+| honest_levels_clf | time | text | levels=10 strength=4.0 | 0/7/0/0 {'listed': 23} | - | - | 0 / 0 | +0.720 to +0.985 (mean +0.860) |
+| honest_levels_clf | time | text | levels=10 strength=8.0 | 3/24/0/0 {'listed': 3} | - | - | 0 / 0 | -0.026 to +0.988 (mean +0.851) |
+| honest_levels_clf | time | text | levels=24 strength=1.0 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.282 to +0.635 (mean +0.434) |
+| honest_levels_clf | time | text | levels=24 strength=2.0 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.565 to +0.826 (mean +0.713) |
+| honest_levels_clf | time | text | levels=24 strength=4.0 | 0/4/0/0 {'listed': 26} | - | - | 0 / 0 | +0.794 to +0.952 (mean +0.868) |
+| honest_levels_clf | time | text | levels=24 strength=8.0 | 2/27/0/0 {'listed': 1} | - | - | 0 / 0 | -0.088 to +0.997 (mean +0.887) |
+| honest_levels_clf | time | text | levels=60 strength=1.0 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.186 to +0.426 (mean +0.292) |
+| honest_levels_clf | time | text | levels=60 strength=2.0 | 0/0/0/0 {'listed': 30} | - | - | 0 / 0 | +0.306 to +0.572 (mean +0.435) |
+| honest_levels_clf | time | text | levels=60 strength=4.0 | 0/1/0/0 {'listed': 29} | - | - | 0 / 0 | +0.503 to +0.652 (mean +0.593) |
+| honest_levels_clf | time | text | levels=60 strength=8.0 | 0/27/0/0 {'listed': 3} | - | - | 0 / 0 | +0.585 to +0.783 (mean +0.680) |
+| noise_levels | grouped | numeric | levels=10 signal=False | 0/0/0/30 | - | - | 0 / 0 | -0.013 to +0.015 (mean -0.001) |
+| noise_levels | grouped | numeric | levels=10 signal=True | 0/0/0/30 | - | - | 0 / 0 | +0.818 to +0.871 (mean +0.844) |
+| noise_levels | grouped | numeric | levels=300 signal=False | 0/0/0/30 | - | - | 0 / 0 | -0.019 to +0.008 (mean -0.003) |
+| noise_levels | grouped | numeric | levels=300 signal=True | 0/0/0/30 | - | - | 0 / 0 | +0.810 to +0.871 (mean +0.840) |
+| noise_levels | grouped | numeric | levels=60 signal=False | 0/0/0/30 | - | - | 0 / 0 | -0.009 to +0.007 (mean -0.002) |
+| noise_levels | grouped | numeric | levels=60 signal=True | 0/0/0/30 | - | - | 0 / 0 | +0.815 to +0.870 (mean +0.842) |
+| noise_levels | grouped | text | levels=10 signal=False | 0/0/0/30 | - | - | 0 / 0 | -0.040 to +0.010 (mean -0.012) |
+| noise_levels | grouped | text | levels=10 signal=True | 0/0/0/30 | - | - | 0 / 0 | +0.809 to +0.880 (mean +0.841) |
+| noise_levels | grouped | text | levels=300 signal=False | 0/0/0/30 | - | - | 0 / 0 | -0.043 to +0.018 (mean -0.011) |
+| noise_levels | grouped | text | levels=300 signal=True | 0/0/0/30 | - | - | 0 / 0 | +0.804 to +0.867 (mean +0.839) |
+| noise_levels | grouped | text | levels=60 signal=False | 0/0/0/30 | - | - | 0 / 0 | -0.051 to +0.012 (mean -0.024) |
+| noise_levels | grouped | text | levels=60 signal=True | 0/0/0/30 | - | - | 0 / 0 | +0.813 to +0.872 (mean +0.840) |
+| noise_levels | random | numeric | levels=10 signal=False | 0/0/0/30 | - | - | 0 / 0 | -0.022 to +0.007 (mean -0.003) |
+| noise_levels | random | numeric | levels=10 signal=True | 0/0/0/30 | - | - | 0 / 0 | +0.825 to +0.884 (mean +0.843) |
+| noise_levels | random | numeric | levels=300 signal=False | 0/0/0/30 | - | - | 0 / 0 | -0.022 to +0.006 (mean -0.004) |
+| noise_levels | random | numeric | levels=300 signal=True | 0/0/0/30 | - | - | 0 / 0 | +0.801 to +0.863 (mean +0.840) |
+| noise_levels | random | numeric | levels=60 signal=False | 0/0/0/30 | - | - | 0 / 0 | -0.018 to +0.004 (mean -0.004) |
+| noise_levels | random | numeric | levels=60 signal=True | 0/0/0/30 | - | - | 0 / 0 | +0.818 to +0.868 (mean +0.846) |
+| noise_levels | random | text | levels=10 signal=False | 0/0/0/30 | - | - | 0 / 0 | -0.038 to +0.010 (mean -0.011) |
+| noise_levels | random | text | levels=10 signal=True | 0/0/0/30 | - | - | 0 / 0 | +0.795 to +0.873 (mean +0.841) |
+| noise_levels | random | text | levels=300 signal=False | 0/0/0/30 | - | - | 0 / 0 | -0.029 to +0.010 (mean -0.014) |
+| noise_levels | random | text | levels=300 signal=True | 0/0/0/30 | - | - | 0 / 0 | +0.823 to +0.875 (mean +0.848) |
+| noise_levels | random | text | levels=60 signal=False | 0/0/0/30 | - | - | 0 / 0 | -0.058 to +0.015 (mean -0.026) |
+| noise_levels | random | text | levels=60 signal=True | 0/0/0/30 | - | - | 0 / 0 | +0.809 to +0.863 (mean +0.844) |
+| noise_levels | time | numeric | levels=10 signal=False | 0/0/0/30 | - | - | 0 / 0 | -0.023 to +0.007 (mean -0.002) |
+| noise_levels | time | numeric | levels=10 signal=True | 0/0/0/30 | - | - | 0 / 0 | +0.801 to +0.862 (mean +0.841) |
+| noise_levels | time | numeric | levels=300 signal=False | 0/0/0/30 | - | - | 0 / 0 | -0.014 to +0.007 (mean -0.003) |
+| noise_levels | time | numeric | levels=300 signal=True | 0/0/0/30 | - | - | 0 / 0 | +0.805 to +0.877 (mean +0.842) |
+| noise_levels | time | numeric | levels=60 signal=False | 0/0/0/30 | - | - | 0 / 0 | -0.021 to +0.009 (mean -0.003) |
+| noise_levels | time | numeric | levels=60 signal=True | 0/0/0/30 | - | - | 0 / 0 | +0.819 to +0.867 (mean +0.841) |
+| noise_levels | time | text | levels=10 signal=False | 0/0/0/30 | - | - | 0 / 0 | -0.028 to +0.007 (mean -0.011) |
+| noise_levels | time | text | levels=10 signal=True | 0/0/0/30 | - | - | 0 / 0 | +0.801 to +0.884 (mean +0.840) |
+| noise_levels | time | text | levels=300 signal=False | 0/0/0/30 | - | - | 0 / 0 | -0.044 to +0.014 (mean -0.011) |
+| noise_levels | time | text | levels=300 signal=True | 0/0/0/30 | - | - | 0 / 0 | +0.806 to +0.867 (mean +0.845) |
+| noise_levels | time | text | levels=60 signal=False | 0/0/0/30 | - | - | 0 / 0 | -0.077 to +0.005 (mean -0.027) |
+| noise_levels | time | text | levels=60 signal=True | 0/0/0/30 | - | - | 0 / 0 | +0.810 to +0.866 (mean +0.842) |

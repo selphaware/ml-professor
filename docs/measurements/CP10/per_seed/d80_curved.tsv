@@ -1,0 +1,91 @@
+case	k	skill	model	columns: role/reason/rule fall	rests_on	floor	warnings
+curved copies=0 n=600 negate=False | full	0	0.9119	boosting-2	x1: feature/-/- 1.674	x1,x2	0.05	-
+curved copies=0 n=600 negate=False | full	1	0.883	boosting-2	x1: feature/-/- 1.602	x1,x2	0.08295	-
+curved copies=0 n=600 negate=False | full	2	0.8869	boosting-3	x1: feature/-/- 1.53	x1,x2	0.06204	-
+curved copies=0 n=600 negate=False | full	3	0.9004	boosting-2	x1: feature/-/- 1.485	x1,x2	0.05	-
+curved copies=0 n=600 negate=False | full	4	0.8733	boosting-2	x1: feature/-/- 1.483	x1,x2	0.07282	-
+curved copies=0 n=600 negate=False | full	5	0.9228	boosting-3	x1: feature/-/- 1.611	x1,x2	0.05	-
+curved copies=0 n=600 negate=False | full	6	0.8984	boosting-2	x1: feature/-/- 1.601	x1,x2	0.05	-
+curved copies=0 n=600 negate=False | full	7	0.863	boosting-2	x1: feature/-/- 1.523	x1,x2	0.07084	-
+curved copies=0 n=600 negate=False | full	8	0.9372	boosting-2	x1: feature/-/- 1.532	x1,x2	0.05	-
+curved copies=0 n=600 negate=False | full	9	0.8759	boosting-2	x1: feature/-/- 1.457	x1,x2	0.05953	-
+curved copies=0 n=600 negate=False | full	10	0.898	boosting-3	x1: feature/-/- 1.629	x1,x2	0.06722	-
+curved copies=0 n=600 negate=False | full	11	0.9241	boosting-2	x1: feature/-/- 1.75	x1,x2	0.05	-
+curved copies=0 n=600 negate=False | full	12	0.9274	boosting-2	x1: feature/-/- 1.912	x1,x2	0.05	-
+curved copies=0 n=600 negate=False | full	13	0.9121	boosting-2	x1: feature/-/- 1.69	x1,x2	0.05	-
+curved copies=0 n=600 negate=False | full	14	0.9032	boosting-2	x1: feature/-/- 1.528	x1,x2	0.05	-
+curved copies=0 n=600 negate=False | full	15	0.8845	boosting-2	x1: feature/-/- 1.703	x1,x2	0.05675	-
+curved copies=0 n=600 negate=False | full	16	0.9123	boosting-3	x1: feature/-/- 1.745	x1,x2	0.05	-
+curved copies=0 n=600 negate=False | full	17	0.9055	boosting-2	x1: feature/-/- 1.55	x1,x2	0.05	-
+curved copies=0 n=600 negate=False | full	18	0.854	boosting-2	x1: feature/-/- 1.443	x1,x2	0.06635	-
+curved copies=0 n=600 negate=False | full	19	0.8431	boosting-2	x1: feature/-/- 1.626	x1,x2	0.09604	-
+curved copies=0 n=600 negate=False | full	20	0.8878	boosting-2	x1: feature/-/- 1.605	x1,x2	0.05504	-
+curved copies=0 n=600 negate=False | full	21	0.9104	boosting-2	x1: feature/-/- 1.588	x1,x2	0.05	-
+curved copies=0 n=600 negate=False | full	22	0.9061	boosting-2	x1: feature/-/- 1.69	x1,x2	0.05	-
+curved copies=0 n=600 negate=False | full	23	0.8849	boosting-2	x1: feature/-/- 1.671	x1,x2	0.06904	-
+curved copies=0 n=600 negate=False | full	24	0.9089	boosting-3	x1: feature/-/- 1.684	x1,x2	0.05	-
+curved copies=0 n=600 negate=False | full	25	0.9148	boosting-2	x1: feature/-/- 1.495	x1,x2	0.05	-
+curved copies=0 n=600 negate=False | full	26	0.905	boosting-3	x1: feature/-/- 1.695	x1,x2	0.05176	-
+curved copies=0 n=600 negate=False | full	27	0.9039	boosting-2	x1: feature/-/- 1.603	x1,x2	0.05	-
+curved copies=0 n=600 negate=False | full	28	0.8868	boosting-2	x1: feature/-/- 1.673	x1,x2	0.0681	-
+curved copies=0 n=600 negate=False | full	29	0.8928	boosting-2	x1: feature/-/- 1.492	x1,x2	0.05	-
+curved copies=1 n=600 negate=False | full	0	0.8935	forest-1	x1: feature/-/- 1.667; x1_again1: feature/-/- 1.667	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=False | full	1	0.883	boosting-2	x1: feature/-/- 1.602; x1_again1: feature/-/- 1.602	x1,x1_again1,x2	0.08295	-
+curved copies=1 n=600 negate=False | full	2	0.9226	forest-1	x1: feature/-/- 1.673; x1_again1: feature/-/- 1.673	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=False | full	3	0.9089	forest-1	x1: feature/-/- 1.52; x1_again1: feature/-/- 1.52	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=False | full	4	0.8944	forest-1	x1: feature/-/- 1.555; x1_again1: feature/-/- 1.555	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=False | full	5	0.9056	forest-1	x1: feature/-/- 1.607; x1_again1: feature/-/- 1.607	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=False | full	6	0.8984	boosting-2	x1: feature/-/- 1.601; x1_again1: feature/-/- 1.601	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=False | full	7	0.9191	forest-1	x1: feature/-/- 1.623; x1_again1: feature/-/- 1.623	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=False | full	8	0.9296	forest-1	x1: feature/-/- 1.549; x1_again1: feature/-/- 1.549	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=False | full	9	0.9235	forest-1	x1: feature/-/- 1.575; x1_again1: feature/-/- 1.575	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=False | full	10	0.9284	forest-1	x1: feature/-/- 1.691; x1_again1: feature/-/- 1.691	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=False | full	11	0.9191	forest-1	x1: feature/-/- 1.799; x1_again1: feature/-/- 1.799	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=False | full	12	0.9342	forest-1	x1: feature/-/- 1.966; x1_again1: feature/-/- 1.966	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=False | full	13	0.9428	forest-1	x1: feature/-/- 1.759; x1_again1: feature/-/- 1.759	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=False | full	14	0.8984	forest-1	x1: feature/-/- 1.564; x1_again1: feature/-/- 1.564	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=False | full	15	0.9236	forest-1	x1: feature/-/- 1.723; x1_again1: feature/-/- 1.723	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=False | full	16	0.9389	forest-1	x1: feature/-/- 1.816; x1_again1: feature/-/- 1.816	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=False | full	17	0.9294	forest-1	x1: feature/-/- 1.648; x1_again1: feature/-/- 1.648	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=False | full	18	0.8912	forest-1	x1: feature/-/- 1.545; x1_again1: feature/-/- 1.545	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=False | full	19	0.9203	forest-1	x1: feature/-/- 1.714; x1_again1: feature/-/- 1.714	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=False | full	20	0.8974	forest-1	x1: feature/-/- 1.617; x1_again1: feature/-/- 1.617	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=False | full	21	0.9047	forest-1	x1: feature/-/- 1.589; x1_again1: feature/-/- 1.589	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=False | full	22	0.9301	forest-1	x1: feature/-/- 1.776; x1_again1: feature/-/- 1.776	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=False | full	23	0.9173	forest-1	x1: feature/-/- 1.778; x1_again1: feature/-/- 1.778	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=False | full	24	0.8922	forest-1	x1: feature/-/- 1.706; x1_again1: feature/-/- 1.706	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=False | full	25	0.9219	forest-1	x1: feature/-/- 1.631; x1_again1: feature/-/- 1.631	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=False | full	26	0.9231	forest-1	x1: feature/-/- 1.758; x1_again1: feature/-/- 1.758	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=False | full	27	0.9308	forest-1	x1: feature/-/- 1.672; x1_again1: feature/-/- 1.672	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=False | full	28	0.8868	boosting-2	x1: feature/-/- 1.673; x1_again1: feature/-/- 1.673	x1,x1_again1,x2	0.0681	-
+curved copies=1 n=600 negate=False | full	29	0.8928	boosting-2	x1: feature/-/- 1.492; x1_again1: feature/-/- 1.492	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=True | full	0	0.8944	forest-1	x1: feature/-/- 1.666; x1_again1: feature/-/- 1.666	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=True | full	1	0.8848	boosting-2	x1: feature/-/- 1.599; x1_again1: feature/-/- 1.599	x1,x1_again1,x2	0.07646	-
+curved copies=1 n=600 negate=True | full	2	0.9201	forest-1	x1: feature/-/- 1.669; x1_again1: feature/-/- 1.669	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=True | full	3	0.908	forest-1	x1: feature/-/- 1.52; x1_again1: feature/-/- 1.52	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=True | full	4	0.8972	forest-1	x1: feature/-/- 1.55; x1_again1: feature/-/- 1.55	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=True | full	5	0.9044	forest-1	x1: feature/-/- 1.606; x1_again1: feature/-/- 1.606	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=True | full	6	0.9005	boosting-2	x1: feature/-/- 1.595; x1_again1: feature/-/- 1.595	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=True | full	7	0.9206	forest-1	x1: feature/-/- 1.621; x1_again1: feature/-/- 1.621	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=True | full	8	0.9291	forest-1	x1: feature/-/- 1.542; x1_again1: feature/-/- 1.542	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=True | full	9	0.9279	forest-1	x1: feature/-/- 1.579; x1_again1: feature/-/- 1.579	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=True | full	10	0.9307	forest-1	x1: feature/-/- 1.705; x1_again1: feature/-/- 1.705	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=True | full	11	0.9198	forest-1	x1: feature/-/- 1.797; x1_again1: feature/-/- 1.797	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=True | full	12	0.9359	forest-1	x1: feature/-/- 1.967; x1_again1: feature/-/- 1.967	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=True | full	13	0.9449	forest-1	x1: feature/-/- 1.763; x1_again1: feature/-/- 1.763	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=True | full	14	0.9011	forest-1	x1: feature/-/- 1.57; x1_again1: feature/-/- 1.57	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=True | full	15	0.9207	forest-1	x1: feature/-/- 1.725; x1_again1: feature/-/- 1.725	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=True | full	16	0.9405	forest-1	x1: feature/-/- 1.815; x1_again1: feature/-/- 1.815	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=True | full	17	0.929	forest-1	x1: feature/-/- 1.647; x1_again1: feature/-/- 1.647	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=True | full	18	0.8888	forest-1	x1: feature/-/- 1.546; x1_again1: feature/-/- 1.546	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=True | full	19	0.9188	forest-1	x1: feature/-/- 1.721; x1_again1: feature/-/- 1.721	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=True | full	20	0.899	forest-1	x1: feature/-/- 1.617; x1_again1: feature/-/- 1.617	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=True | full	21	0.911	boosting-2	x1: feature/-/- 1.583; x1_again1: feature/-/- 1.583	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=True | full	22	0.9314	forest-1	x1: feature/-/- 1.78; x1_again1: feature/-/- 1.78	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=True | full	23	0.916	forest-1	x1: feature/-/- 1.791; x1_again1: feature/-/- 1.791	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=True | full	24	0.8947	forest-1	x1: feature/-/- 1.717; x1_again1: feature/-/- 1.717	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=True | full	25	0.9254	forest-1	x1: feature/-/- 1.632; x1_again1: feature/-/- 1.632	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=True | full	26	0.923	forest-1	x1: feature/-/- 1.755; x1_again1: feature/-/- 1.755	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=True | full	27	0.9308	forest-1	x1: feature/-/- 1.665; x1_again1: feature/-/- 1.665	x1,x1_again1,x2	0.05	-
+curved copies=1 n=600 negate=True | full	28	0.8841	boosting-2	x1: feature/-/- 1.658; x1_again1: feature/-/- 1.658	x1,x1_again1,x2	0.06807	-
+curved copies=1 n=600 negate=True | full	29	0.8934	boosting-3	x1: feature/-/- 1.499; x1_again1: feature/-/- 1.499	x1,x1_again1,x2	0.05	-

@@ -1,0 +1,211 @@
+case	k	skill	model	columns: role/reason/rule fall	rests_on	floor	warnings
+random_walk	0	0.001042	linear-0	level: target/-/- -	-	0.05	-
+random_walk	1	-0.001223	linear-0	level: target/-/- -	-	0.05	-
+random_walk	2	-0.01126	linear-0	level: target/-/- -	-	0.05	-
+random_walk	3	-0.003549	linear-0	level: target/-/- -	-	0.05	-
+random_walk	4	0.004518	linear-0	level: target/-/- -	-	0.05	-
+random_walk	5	0.0008406	linear-0	level: target/-/- -	-	0.05	-
+random_walk	6	-0.002734	linear-0	level: target/-/- -	-	0.05	-
+random_walk	7	0.01177	linear-0	level: target/-/- -	-	0.05	-
+random_walk	8	-0.02694	linear-0	level: target/-/- -	-	0.05	-
+random_walk	9	0.002133	linear-0	level: target/-/- -	-	0.05	-
+random_walk	10	0.001748	linear-0	level: target/-/- -	-	0.05	-
+random_walk	11	0.002476	linear-0	level: target/-/- -	-	0.05	-
+random_walk	12	0.00204	linear-0	level: target/-/- -	-	0.05	-
+random_walk	13	-0.03635	linear-0	level: target/-/- -	-	0.05	-
+random_walk	14	0.003997	linear-0	level: target/-/- -	-	0.05	-
+random_walk	15	0.00109	linear-0	level: target/-/- -	-	0.05	-
+random_walk	16	-0.01806	linear-0	level: target/-/- -	-	0.05	-
+random_walk	17	-0.09982	linear-0	level: target/-/- -	-	0.05662	-
+random_walk	18	0.003275	linear-0	level: target/-/- -	-	0.05	-
+random_walk	19	0.002315	linear-0	level: target/-/- -	-	0.05	-
+random_walk	20	0.004235	linear-0	level: target/-/- -	-	0.05	-
+random_walk	21	0.002642	linear-0	level: target/-/- -	-	0.05	-
+random_walk	22	0.001487	linear-0	level: target/-/- -	-	0.05	-
+random_walk	23	0.002636	linear-0	level: target/-/- -	-	0.05	-
+random_walk	24	-0.004623	linear-0	level: target/-/- -	-	0.05	-
+random_walk	25	-0.02051	linear-0	level: target/-/- -	-	0.05	-
+random_walk	26	-0.0006122	linear-0	level: target/-/- -	-	0.05	-
+random_walk	27	-0.003082	linear-0	level: target/-/- -	-	0.05	-
+random_walk	28	0.003878	linear-0	level: target/-/- -	-	0.05	-
+random_walk	29	-0.01146	linear-0	level: target/-/- -	-	0.05	-
+pair_together	0	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0; pair_b: feature/-/- 0	-	0.05	near_perfect_headline[None]
+pair_together	1	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0; pair_b: feature/-/- 0	-	0.05	near_perfect_headline[None]
+pair_together	2	0.9999	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0; pair_b: feature/-/- 0	-	0.05	near_perfect_headline[None]
+pair_together	3	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0; pair_b: feature/-/- 0	-	0.05	near_perfect_headline[None]
+pair_together	4	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0; pair_b: feature/-/- 0	-	0.05	near_perfect_headline[None]
+pair_together	5	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0; pair_b: feature/-/- 0	-	0.05	near_perfect_headline[None]
+pair_together	6	0.9999	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0; pair_b: feature/-/- 0	-	0.05	near_perfect_headline[None]
+pair_together	7	0.9999	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0; pair_b: feature/-/- 0	-	0.05	near_perfect_headline[None]
+pair_together	8	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0; pair_b: feature/-/- 0	-	0.05	near_perfect_headline[None]
+pair_together	9	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0; pair_b: feature/-/- 0	-	0.05	near_perfect_headline[None]
+pair_together	10	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0; pair_b: feature/-/- 0	-	0.05	near_perfect_headline[None]
+pair_together	11	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0; pair_b: feature/-/- 0	-	0.05	near_perfect_headline[None]
+pair_together	12	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0; pair_b: feature/-/- 0	-	0.05	near_perfect_headline[None]
+pair_together	13	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0; pair_b: feature/-/- 0	-	0.05	near_perfect_headline[None]
+pair_together	14	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0; pair_b: feature/-/- 0	-	0.05	near_perfect_headline[None]
+pair_together	15	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0; pair_b: feature/-/- 0	-	0.05	near_perfect_headline[None]
+pair_together	16	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0; pair_b: feature/-/- 0	-	0.05	near_perfect_headline[None]
+pair_together	17	0.9999	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0; pair_b: feature/-/- 0	-	0.05	near_perfect_headline[None]
+pair_together	18	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0; pair_b: feature/-/- 0	-	0.05	near_perfect_headline[None]
+pair_together	19	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0; pair_b: feature/-/- 0	-	0.05	near_perfect_headline[None]
+pair_together	20	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0; pair_b: feature/-/- 0	-	0.05	near_perfect_headline[None]
+pair_together	21	0.9999	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0; pair_b: feature/-/- 0	-	0.05	near_perfect_headline[None]
+pair_together	22	0.9999	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0; pair_b: feature/-/- 0	-	0.05	near_perfect_headline[None]
+pair_together	23	0.9999	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0; pair_b: feature/-/- 0	-	0.05	near_perfect_headline[None]
+pair_together	24	0.9999	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0; pair_b: feature/-/- 0	-	0.05	near_perfect_headline[None]
+pair_together	25	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0; pair_b: feature/-/- 0	-	0.05	near_perfect_headline[None]
+pair_together	26	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0; pair_b: feature/-/- 0	-	0.05	near_perfect_headline[None]
+pair_together	27	0.9999	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0; pair_b: feature/-/- 0	-	0.05	near_perfect_headline[None]
+pair_together	28	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0; pair_b: feature/-/- 0	-	0.05	near_perfect_headline[None]
+pair_together	29	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0; pair_b: feature/-/- 0	-	0.05	near_perfect_headline[None]
+signal_reg_copied	0	0.8565	linear-0	f1: feature/-/- 0; f1_scaled: feature/-/- 0	-	0.05	-
+signal_reg_copied	1	0.8083	linear-0	f1: feature/-/- 0; f1_scaled: feature/-/- 0	-	0.05	-
+signal_reg_copied	2	0.8561	linear-0	f1: feature/-/- 0; f1_scaled: feature/-/- 0	-	0.05	-
+signal_reg_copied	3	0.8399	linear-0	f1: feature/-/- 0; f1_scaled: feature/-/- 0	-	0.05	-
+signal_reg_copied	4	0.833	linear-0	f1: feature/-/- 0; f1_scaled: feature/-/- 0	-	0.05	-
+signal_reg_copied	5	0.8737	linear-0	f1: feature/-/- 0; f1_scaled: feature/-/- 0	-	0.05	-
+signal_reg_copied	6	0.8495	linear-0	f1: feature/-/- 0; f1_scaled: feature/-/- 0	-	0.05	-
+signal_reg_copied	7	0.8404	linear-0	f1: feature/-/- 0; f1_scaled: feature/-/- 0	-	0.05	-
+signal_reg_copied	8	0.846	linear-0	f1: feature/-/- 0; f1_scaled: feature/-/- 0	-	0.05	-
+signal_reg_copied	9	0.8275	linear-0	f1: feature/-/- 0; f1_scaled: feature/-/- 0	-	0.05	-
+signal_reg_copied	10	0.8547	linear-0	f1: feature/-/- 0; f1_scaled: feature/-/- 0	-	0.05	-
+signal_reg_copied	11	0.8389	linear-0	f1: feature/-/- 0; f1_scaled: feature/-/- 0	-	0.05	-
+signal_reg_copied	12	0.8411	linear-0	f1: feature/-/- 1.11e-16; f1_scaled: feature/-/- 1.11e-16	-	0.05	-
+signal_reg_copied	13	0.8249	linear-0	f1: feature/-/- 0; f1_scaled: feature/-/- 0	-	0.05	-
+signal_reg_copied	14	0.8626	linear-0	f1: feature/-/- 0; f1_scaled: feature/-/- 0	-	0.05	-
+signal_reg_copied	15	0.8535	linear-0	f1: feature/-/- 0; f1_scaled: feature/-/- 0	-	0.05	-
+signal_reg_copied	16	0.8439	linear-0	f1: feature/-/- 0; f1_scaled: feature/-/- 0	-	0.05	-
+signal_reg_copied	17	0.8325	linear-0	f1: feature/-/- 0; f1_scaled: feature/-/- 0	-	0.05	-
+signal_reg_copied	18	0.8596	linear-0	f1: feature/-/- 0; f1_scaled: feature/-/- 0	-	0.05	-
+signal_reg_copied	19	0.8431	linear-0	f1: feature/-/- 0; f1_scaled: feature/-/- 0	-	0.05	-
+signal_reg_copied	20	0.8446	linear-0	f1: feature/-/- 0; f1_scaled: feature/-/- 0	-	0.05	-
+signal_reg_copied	21	0.843	linear-0	f1: feature/-/- 0; f1_scaled: feature/-/- 0	-	0.05	-
+signal_reg_copied	22	0.8594	linear-0	f1: feature/-/- 0; f1_scaled: feature/-/- 0	-	0.05	-
+signal_reg_copied	23	0.8579	linear-0	f1: feature/-/- 0; f1_scaled: feature/-/- 0	-	0.05	-
+signal_reg_copied	24	0.8397	linear-0	f1: feature/-/- 0; f1_scaled: feature/-/- 0	-	0.05	-
+signal_reg_copied	25	0.8226	linear-0	f1: feature/-/- 0; f1_scaled: feature/-/- 0	-	0.05	-
+signal_reg_copied	26	0.8553	linear-0	f1: feature/-/- 0; f1_scaled: feature/-/- 0	-	0.05	-
+signal_reg_copied	27	0.854	linear-0	f1: feature/-/- 0; f1_scaled: feature/-/- 0	-	0.05	-
+signal_reg_copied	28	0.8355	linear-0	f1: feature/-/- 0; f1_scaled: feature/-/- 0	-	0.05	-
+signal_reg_copied	29	0.8436	linear-0	f1: feature/-/- 0; f1_scaled: feature/-/- 0	-	0.05	-
+leak_reg_coded	0	0.8723	linear-0	f1: feature/-/- 0; amount_band: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[amount_band]
+leak_reg_coded	1	0.8352	linear-0	f1: feature/-/- 0; amount_band: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[amount_band]
+leak_reg_coded	2	0.8545	linear-0	f1: feature/-/- 0; amount_band: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[amount_band]
+leak_reg_coded	3	0.8407	linear-0	f1: feature/-/- 0; amount_band: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[amount_band]
+leak_reg_coded	4	0.8451	linear-0	f1: feature/-/- 0; amount_band: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[amount_band]
+leak_reg_coded	5	0.8314	linear-0	f1: feature/-/- 0; amount_band: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[amount_band]
+leak_reg_coded	6	0.8494	linear-0	f1: feature/-/- 0; amount_band: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[amount_band]
+leak_reg_coded	7	0.8539	linear-0	f1: feature/-/- 0; amount_band: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[amount_band]
+leak_reg_coded	8	0.8452	linear-0	f1: feature/-/- 0; amount_band: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[amount_band]
+leak_reg_coded	9	0.8499	linear-0	f1: feature/-/- 0; amount_band: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[amount_band]
+leak_reg_coded	10	0.8597	linear-0	f1: feature/-/- 0; amount_band: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[amount_band]
+leak_reg_coded	11	0.8572	linear-0	f1: feature/-/- 0; amount_band: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[amount_band]
+leak_reg_coded	12	0.848	linear-0	f1: feature/-/- 0; amount_band: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[amount_band]
+leak_reg_coded	13	0.8252	linear-0	f1: feature/-/- 0; amount_band: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[amount_band]
+leak_reg_coded	14	0.8503	linear-0	f1: feature/-/- 0; amount_band: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[amount_band]
+leak_reg_coded	15	0.848	linear-0	f1: feature/-/- 0; amount_band: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[amount_band]
+leak_reg_coded	16	0.8513	linear-0	f1: feature/-/- 0; amount_band: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[amount_band]
+leak_reg_coded	17	0.8195	linear-0	f1: feature/-/- 0; amount_band: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[amount_band]
+leak_reg_coded	18	0.8612	linear-0	f1: feature/-/- 0; amount_band: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[amount_band]
+leak_reg_coded	19	0.8477	linear-0	f1: feature/-/- 0; amount_band: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[amount_band]
+leak_reg_coded	20	0.8449	linear-0	f1: feature/-/- 0; amount_band: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[amount_band]
+leak_reg_coded	21	0.8361	linear-0	f1: feature/-/- 0; amount_band: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[amount_band]
+leak_reg_coded	22	0.8248	linear-0	f1: feature/-/- 0; amount_band: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[amount_band]
+leak_reg_coded	23	0.8318	linear-0	f1: feature/-/- 0; amount_band: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[amount_band]
+leak_reg_coded	24	0.8483	linear-0	f1: feature/-/- 0; amount_band: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[amount_band]
+leak_reg_coded	25	0.8568	linear-0	f1: feature/-/- 0; amount_band: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[amount_band]
+leak_reg_coded	26	0.8534	linear-0	f1: feature/-/- 0; amount_band: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[amount_band]
+leak_reg_coded	27	0.839	linear-0	f1: feature/-/- 0; amount_band: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[amount_band]
+leak_reg_coded	28	0.8262	linear-0	f1: feature/-/- 0; amount_band: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[amount_band]
+leak_reg_coded	29	0.833	linear-0	f1: feature/-/- 0; amount_band: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[amount_band]
+noise_tied	0	0.8159	linear-0	f1: feature/-/- 0; score: feature/-/- 0; noise_rounded: feature/-/- 0	-	0.05	-
+noise_tied	1	0.8324	linear-0	f1: feature/-/- 0; score: feature/-/- 0; noise_rounded: feature/-/- 0	-	0.05	-
+noise_tied	2	0.8375	linear-0	f1: feature/-/- 0; score: feature/-/- 0; noise_rounded: feature/-/- 0	-	0.05	-
+noise_tied	3	0.8544	linear-0	f1: feature/-/- 0; score: feature/-/- 0; noise_rounded: feature/-/- 0	-	0.05	-
+noise_tied	4	0.8341	linear-0	f1: feature/-/- 0; score: feature/-/- 0; noise_rounded: feature/-/- 0	-	0.05	-
+noise_tied	5	0.8226	linear-0	f1: feature/-/- 0; score: feature/-/- 0; noise_rounded: feature/-/- 0	-	0.05	-
+noise_tied	6	0.8602	linear-0	f1: feature/-/- 0; score: feature/-/- 0; noise_rounded: feature/-/- 0	-	0.05	-
+noise_tied	7	0.8281	linear-0	f1: feature/-/- 0; score: feature/-/- 0; noise_rounded: feature/-/- 0	-	0.05	-
+noise_tied	8	0.8599	linear-0	f1: feature/-/- 0; score: feature/-/- 0; noise_rounded: feature/-/- 0	-	0.05	-
+noise_tied	9	0.8226	linear-0	f1: feature/-/- 0; score: feature/-/- 0; noise_rounded: feature/-/- 0	-	0.05	-
+noise_tied	10	0.8336	linear-0	f1: feature/-/- 0; score: feature/-/- 0; noise_rounded: feature/-/- 0	-	0.05	-
+noise_tied	11	0.8469	linear-0	f1: feature/-/- 0; score: feature/-/- 0; noise_rounded: feature/-/- 0	-	0.05	-
+noise_tied	12	0.8512	linear-0	f1: feature/-/- 0; score: feature/-/- 0; noise_rounded: feature/-/- 0	-	0.05	-
+noise_tied	13	0.8412	linear-0	f1: feature/-/- 0; score: feature/-/- 0; noise_rounded: feature/-/- 0	-	0.05	-
+noise_tied	14	0.8363	linear-0	f1: feature/-/- 0; score: feature/-/- 0; noise_rounded: feature/-/- 0	-	0.05	-
+noise_tied	15	0.8591	linear-0	f1: feature/-/- 0; score: feature/-/- 0; noise_rounded: feature/-/- 0	-	0.05	-
+noise_tied	16	0.8517	linear-0	f1: feature/-/- 0; score: feature/-/- 0; noise_rounded: feature/-/- 0	-	0.05	-
+noise_tied	17	0.8398	linear-0	f1: feature/-/- 0; score: feature/-/- 0; noise_rounded: feature/-/- 0	-	0.05	-
+noise_tied	18	0.8447	linear-0	f1: feature/-/- 0; score: feature/-/- 0; noise_rounded: feature/-/- 0	-	0.05	-
+noise_tied	19	0.8579	linear-0	f1: feature/-/- 0; score: feature/-/- 0; noise_rounded: feature/-/- 0	-	0.05	-
+noise_tied	20	0.8664	linear-0	f1: feature/-/- 1.11e-16; score: feature/-/- 1.11e-16; noise_rounded: feature/-/- 1.11e-16	-	0.05	-
+noise_tied	21	0.8382	linear-0	f1: feature/-/- 0; score: feature/-/- 0; noise_rounded: feature/-/- 0	-	0.05	-
+noise_tied	22	0.847	linear-0	f1: feature/-/- 0; score: feature/-/- 0; noise_rounded: feature/-/- 0	-	0.05	-
+noise_tied	23	0.8436	linear-0	f1: feature/-/- 0; score: feature/-/- 0; noise_rounded: feature/-/- 0	-	0.05	-
+noise_tied	24	0.8459	linear-0	f1: feature/-/- 0; score: feature/-/- 0; noise_rounded: feature/-/- 0	-	0.05	-
+noise_tied	25	0.8483	linear-0	f1: feature/-/- 0; score: feature/-/- 0; noise_rounded: feature/-/- 0	-	0.05	-
+noise_tied	26	0.8211	linear-0	f1: feature/-/- 0; score: feature/-/- 0; noise_rounded: feature/-/- 0	-	0.05	-
+noise_tied	27	0.8332	linear-0	f1: feature/-/- 0; score: feature/-/- 0; noise_rounded: feature/-/- 0	-	0.05	-
+noise_tied	28	0.8499	linear-0	f1: feature/-/- 0; score: feature/-/- 0; noise_rounded: feature/-/- 0	-	0.05	-
+noise_tied	29	0.8164	linear-0	f1: feature/-/- 0; score: feature/-/- 0; noise_rounded: feature/-/- 0	-	0.05	-
+skewed_copy	0	0.3525	linear-0	f1: feature/-/- 0; amount_copy: excluded/suspected_leak/predicts_target -	-	0.07955	suspected_leak[amount_copy]
+skewed_copy	1	0.2286	linear-0	f1: feature/-/- 0; amount_copy: excluded/suspected_leak/predicts_target -	-	0.1113	suspected_leak[amount_copy]
+skewed_copy	2	0.2407	linear-0	f1: feature/-/- 0; amount_copy: excluded/suspected_leak/predicts_target -	-	0.139	suspected_leak[amount_copy]
+skewed_copy	3	0.3074	linear-0	f1: feature/-/- -1.11e-16; amount_copy: excluded/suspected_leak/predicts_target -	-	0.06664	suspected_leak[amount_copy]
+skewed_copy	4	0.3136	linear-0	f1: feature/-/- 0; amount_copy: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[amount_copy]
+skewed_copy	5	0.3178	linear-0	f1: feature/-/- 0; amount_copy: excluded/suspected_leak/predicts_target -	-	0.07808	suspected_leak[amount_copy]
+skewed_copy	6	0.2345	linear-0	f1: feature/-/- 0; amount_copy: excluded/suspected_leak/predicts_target -	-	0.09059	suspected_leak[amount_copy]
+skewed_copy	7	0.3351	linear-0	f1: feature/-/- 1.11e-16; amount_copy: excluded/suspected_leak/predicts_target -	-	0.05643	suspected_leak[amount_copy]
+skewed_copy	8	0.2777	linear-0	f1: feature/-/- 0; amount_copy: excluded/suspected_leak/predicts_target -	-	0.05454	suspected_leak[amount_copy]
+skewed_copy	9	0.2869	linear-0	f1: feature/-/- 0; amount_copy: excluded/suspected_leak/predicts_target -	-	0.09123	suspected_leak[amount_copy]
+skewed_copy	10	0.3082	linear-0	f1: feature/-/- 0; amount_copy: excluded/suspected_leak/predicts_target -	-	0.06865	suspected_leak[amount_copy]
+skewed_copy	11	0.3802	linear-0	f1: feature/-/- -1.11e-16; amount_copy: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[amount_copy]
+skewed_copy	12	0.358	linear-0	f1: feature/-/- 0; amount_copy: excluded/suspected_leak/predicts_target -	-	0.1014	suspected_leak[amount_copy]
+skewed_copy	13	0.2584	linear-0	f1: feature/-/- 0; amount_copy: excluded/suspected_leak/predicts_target -	-	0.1029	suspected_leak[amount_copy]
+skewed_copy	14	0.2877	linear-0	f1: feature/-/- -1.11e-16; amount_copy: excluded/suspected_leak/predicts_target -	-	0.06424	suspected_leak[amount_copy]
+skewed_copy	15	0.2368	linear-0	f1: feature/-/- 1.11e-16; amount_copy: excluded/suspected_leak/predicts_target -	-	0.06975	suspected_leak[amount_copy]
+skewed_copy	16	0.3294	linear-0	f1: feature/-/- 0; amount_copy: excluded/suspected_leak/predicts_target -	-	0.07172	suspected_leak[amount_copy]
+skewed_copy	17	0.2941	linear-0	f1: feature/-/- 0; amount_copy: excluded/suspected_leak/predicts_target -	-	0.05451	suspected_leak[amount_copy]
+skewed_copy	18	0.3527	linear-0	f1: feature/-/- 0; amount_copy: excluded/suspected_leak/predicts_target -	-	0.05544	suspected_leak[amount_copy]
+skewed_copy	19	0.2797	linear-0	f1: feature/-/- 1.11e-16; amount_copy: excluded/suspected_leak/predicts_target -	-	0.07761	suspected_leak[amount_copy]
+skewed_copy	20	0.4117	linear-0	f1: feature/-/- 0; amount_copy: excluded/suspected_leak/predicts_target -	-	0.07129	suspected_leak[amount_copy]
+skewed_copy	21	0.2752	linear-0	f1: feature/-/- 0; amount_copy: excluded/suspected_leak/predicts_target -	-	0.05279	suspected_leak[amount_copy]
+skewed_copy	22	0.2779	linear-0	f1: feature/-/- 0; amount_copy: excluded/suspected_leak/predicts_target -	-	0.1502	suspected_leak[amount_copy]
+skewed_copy	23	0.2718	linear-0	f1: feature/-/- 2.22e-16; amount_copy: excluded/suspected_leak/predicts_target -	-	0.064	suspected_leak[amount_copy]
+skewed_copy	24	0.3489	linear-0	f1: feature/-/- 1.11e-16; amount_copy: excluded/suspected_leak/predicts_target -	-	0.07437	suspected_leak[amount_copy]
+skewed_copy	25	0.2024	linear-0	f1: feature/-/- -1.11e-16; amount_copy: excluded/suspected_leak/predicts_target -	-	0.09987	suspected_leak[amount_copy]
+skewed_copy	26	0.1697	linear-0	f1: feature/-/- 0; amount_copy: excluded/suspected_leak/predicts_target -	-	0.115	suspected_leak[amount_copy]
+skewed_copy	27	0.2319	linear-0	f1: feature/-/- 0; amount_copy: excluded/suspected_leak/predicts_target -	-	0.0796	suspected_leak[amount_copy]
+skewed_copy	28	0.2833	linear-0	f1: feature/-/- 0; amount_copy: excluded/suspected_leak/predicts_target -	-	0.06871	suspected_leak[amount_copy]
+skewed_copy	29	0.2929	linear-0	f1: feature/-/- 0; amount_copy: excluded/suspected_leak/predicts_target -	-	0.06474	suspected_leak[amount_copy]
+last_stamp	0	-0.001118	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp	1	0.003806	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp	2	-0.0005411	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp	3	0.0006755	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp	4	-0.000327	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp	5	0.00287	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp	6	-0.002473	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp	7	-0.01624	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp	8	-0.002792	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp	9	-0.001708	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp	10	0.0001119	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp	11	-0.009344	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp	12	-0.01173	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp	13	-0.002259	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp	14	-0.004503	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp	15	0.002868	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp	16	-0.01295	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp	17	-0.008607	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp	18	-0.009559	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp	19	-0.01198	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp	20	-0.001953	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp	21	-0.004044	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp	22	-0.009763	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp	23	-0.01472	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp	24	-0.004923	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp	25	-0.01502	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp	26	-3.841e-06	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp	27	-0.00152	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp	28	-0.03047	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp	29	0.003319	linear-0		-	0.05	holdout_far_above_quarter[None]

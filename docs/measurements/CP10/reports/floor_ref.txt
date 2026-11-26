@@ -1,0 +1,41 @@
+| run | seeds | floor: range | named at 0.05 (D78) | named at the floor (D80) | columns named most at the floor |
+|---|---|---|---|---|---|
+| signal_clf | 30 | +0.059 to +0.084 (mean +0.068) | 30 | 30 | f1 (30), f2 (30), seg (26) |
+| signal_reg | 30 | +0.050 to +0.050 (mean +0.050) | 30 | 30 | f1 (30), f2 (30) |
+| noise_clf | 30 | +0.091 to +0.143 (mean +0.108) | 3 | 0 |  |
+| noise_reg | 30 | +0.118 to +0.182 (mean +0.145) | 0 | 0 |  |
+| imbalanced | 30 | +0.050 to +0.254 (mean +0.168) | 13 | 1 | region (1) |
+| leak | 30 | +0.055 to +0.080 (mean +0.066) | 30 | 30 | f1 (30), f2 (30), seg (22) |
+| leak_reg | 30 | +0.050 to +0.050 (mean +0.050) | 30 | 30 | f1 (30), f2 (30) |
+| near_leak | 30 | +0.050 to +0.050 (mean +0.050) | 30 | 30 | outcome_noisy (30) |
+| binary_numeric | 30 | +0.057 to +0.082 (mean +0.069) | 30 | 30 | f1 (30), f2 (30), seg (30) |
+| messy | 30 | +0.052 to +0.080 (mean +0.068) | 30 | 30 | f1 (30), f2 (30), seg (30) |
+| time_blocks | 30 | +0.157 to +0.261 (mean +0.205) | 20 | 0 |  |
+| time_blocks_gap | 30 | +0.177 to +0.251 (mean +0.206) | 21 | 1 | b1 (1) |
+| time_blocks_undeclared | 30 | +0.050 to +0.050 (mean +0.050) | 30 | 30 | b1 (23), b7 (23), b3 (21) |
+| random_walk | 30 | +0.050 to +0.057 (mean +0.050) | 30 | 30 | level_prev (30) |
+| int_stamps | 30 | +0.050 to +0.075 (mean +0.052) | 30 | 30 | level_prev (30) |
+| flat_tail | 30 | - | 0 | 0 |  |
+| entities | 30 | +0.170 to +0.292 (mean +0.230) | 17 | 1 | m2 (1) |
+| panel | 30 | +0.050 to +0.050 (mean +0.050) | 30 | 30 | level_prev (30) |
+| full_noise_small | 30 | +0.211 to +0.242 (mean +0.228) | 18 | 0 |  |
+| full_signal_clf_j1 | 30 | +0.104 to +0.161 (mean +0.128) | 30 | 30 | f1 (30), f2 (29), seg (4) |
+| full_signal_clf_j4 | 30 | +0.104 to +0.161 (mean +0.128) | 30 | 30 | f1 (30), f2 (29), seg (4) |
+| full_signal_reg_j1 | 30 | +0.050 to +0.074 (mean +0.054) | 30 | 30 | f1 (30), f2 (30) |
+| full_signal_reg_j4 | 30 | +0.050 to +0.074 (mean +0.054) | 30 | 30 | f1 (30), f2 (30) |
+| few_valued | 30 | +0.050 to +0.095 (mean +0.081) | 5 | 0 |  |
+| dominant_entity | 30 | +0.050 to +0.050 (mean +0.050) | 0 | 0 |  |
+| day_numbers | 30 | +0.082 to +0.117 (mean +0.095) | 13 | 2 | n1 (2), n2 (1) |
+| day_sentinel | 30 | +0.078 to +0.115 (mean +0.098) | 10 | 1 | n4 (1) |
+| quarter_entity | 30 | +0.050 to +0.050 (mean +0.050) | 0 | 0 |  |
+| walk_repeated | 30 | +0.050 to +0.050 (mean +0.050) | 30 | 30 | level_prev (30) |
+| walk_copy | 30 | +0.050 to +0.067 (mean +0.051) | 30 | 30 | level_prev (30) |
+| walk_copy_cell | 30 | +0.079 to +22.512 (mean +1.123) | 30 | 30 | level_prev (30) |
+| walk_late_cell | 30 | +3657895430.414 to +5155357573.411 (mean +4477521610.738) | 10 | 0 |  |
+| messy_shuffled | 30 | +0.053 to +0.085 (mean +0.068) | 30 | 30 | f1 (30), f2 (30), seg (27) |
+| pair_together | 30 | +0.050 to +0.050 (mean +0.050) | 30 | 30 | pair_a (30), pair_b (30) |
+| signal_reg_copied | 30 | +0.050 to +0.050 (mean +0.050) | 30 | 30 | f1 (30), f1_scaled (30), f2 (30) |
+| leak_reg_coded | 30 | +0.050 to +0.050 (mean +0.050) | 30 | 30 | f1 (30), f2 (30) |
+| noise_tied | 30 | +0.050 to +0.050 (mean +0.050) | 30 | 30 | f1 (30), f2 (30) |
+| skewed_copy | 30 | +0.050 to +0.150 (mean +0.079) | 30 | 30 | f1 (30), f2 (27) |
+| last_stamp | 30 | +0.050 to +0.050 (mean +0.050) | 0 | 0 |  |

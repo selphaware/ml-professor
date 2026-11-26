@@ -1,0 +1,1471 @@
+case	k	skill	model	columns: role/reason/rule fall	rests_on	floor	warnings
+strong_small n=100 r2=0.9 shape=independent	0	0.8958	linear-0		x	0.1087	-
+strong_small n=100 r2=0.9 shape=independent	1	0.9028	linear-0		x	0.05036	-
+strong_small n=100 r2=0.9 shape=independent	2	0.8878	linear-0		x	0.07349	-
+strong_small n=100 r2=0.9 shape=independent	3	0.8838	linear-0		x	0.07324	-
+strong_small n=100 r2=0.9 shape=independent	4	0.9406	linear-0		x	0.05	-
+strong_small n=100 r2=0.9 shape=independent	5	0.8847	linear-0		x	0.05703	strong_single_column[x]
+strong_small n=100 r2=0.9 shape=independent	6	0.8876	linear-0		x	0.07385	-
+strong_small n=100 r2=0.9 shape=independent	7	0.9183	linear-0		x	0.07082	-
+strong_small n=100 r2=0.9 shape=independent	8	0.9039	linear-0		x	0.05	-
+strong_small n=100 r2=0.9 shape=independent	9	0.9306	linear-0		x	0.05312	-
+strong_small n=100 r2=0.9 shape=independent	10	0.9235	linear-0		x	0.05446	-
+strong_small n=100 r2=0.9 shape=independent	11	0.8862	linear-0		x	0.1079	-
+strong_small n=100 r2=0.9 shape=independent	12	0.9084	linear-0		x	0.07509	-
+strong_small n=100 r2=0.9 shape=independent	13	0.8504	linear-0		x	0.1109	-
+strong_small n=100 r2=0.9 shape=independent	14	0.8619	linear-0		x	0.06909	-
+strong_small n=100 r2=0.9 shape=independent	15	0.8891	linear-0		x	0.08007	-
+strong_small n=100 r2=0.9 shape=independent	16	0.9148	linear-0		x	0.08103	-
+strong_small n=100 r2=0.9 shape=independent	17	0.8601	linear-0		x	0.1301	strong_single_column[x]
+strong_small n=100 r2=0.9 shape=independent	18	0.907	linear-0		x	0.06737	-
+strong_small n=100 r2=0.9 shape=independent	19	0.8801	linear-0		x	0.06791	-
+strong_small n=100 r2=0.9 shape=independent	20	0.8595	linear-0		x	0.09113	strong_single_column[x]
+strong_small n=100 r2=0.9 shape=independent	21	0.8482	linear-0		x	0.139	-
+strong_small n=100 r2=0.9 shape=independent	22	0.9172	linear-0		x	0.05223	strong_single_column[x]
+strong_small n=100 r2=0.9 shape=independent	23	0.9627	linear-0		x	0.05	-
+strong_small n=100 r2=0.9 shape=independent	24	0.9133	linear-0		x	0.09323	-
+strong_small n=100 r2=0.9 shape=independent	25	0.8923	linear-0		x	0.07152	-
+strong_small n=100 r2=0.9 shape=independent	26	0.8968	linear-0		x	0.09603	-
+strong_small n=100 r2=0.9 shape=independent	27	0.8774	linear-0		x	0.08381	-
+strong_small n=100 r2=0.9 shape=independent	28	0.9136	linear-0		x	0.0708	-
+strong_small n=100 r2=0.9 shape=independent	29	0.8751	linear-0		x	0.09944	-
+strong_small n=100 r2=0.95 shape=independent	0	0.9498	linear-0		x	0.05	strong_single_column[x]
+strong_small n=100 r2=0.95 shape=independent	1	0.9397	linear-0		x	0.05	strong_single_column[x]
+strong_small n=100 r2=0.95 shape=independent	2	0.9559	linear-0		x	0.05	strong_single_column[x]
+strong_small n=100 r2=0.95 shape=independent	3	0.9452	linear-0		x	0.05	strong_single_column[x]
+strong_small n=100 r2=0.95 shape=independent	4	0.9535	linear-0		x	0.05289	strong_single_column[x]
+strong_small n=100 r2=0.95 shape=independent	5	0.9588	linear-0		x	0.05	strong_single_column[x]
+strong_small n=100 r2=0.95 shape=independent	6	0.9507	linear-0		x	0.05	strong_single_column[x]
+strong_small n=100 r2=0.95 shape=independent	7	0.9436	linear-0		x	0.05	strong_single_column[x]
+strong_small n=100 r2=0.95 shape=independent	8	0.9497	linear-0		x	0.05	strong_single_column[x]
+strong_small n=100 r2=0.95 shape=independent	9	0.9376	linear-0		x	0.05	strong_single_column[x]
+strong_small n=100 r2=0.95 shape=independent	10	0.9608	linear-0		x	0.05	strong_single_column[x]
+strong_small n=100 r2=0.95 shape=independent	11	0.9519	linear-0		x	0.05	strong_single_column[x]
+strong_small n=100 r2=0.95 shape=independent	12	0.9626	linear-0		x	0.05	strong_single_column[x]
+strong_small n=100 r2=0.95 shape=independent	13	0.9298	linear-0		x	0.05928	strong_single_column[x]
+strong_small n=100 r2=0.95 shape=independent	14	0.9525	linear-0		x	0.05	strong_single_column[x]
+strong_small n=100 r2=0.95 shape=independent	15	0.9408	linear-0		x	0.05	strong_single_column[x]
+strong_small n=100 r2=0.95 shape=independent	16	0.9527	linear-0		x	0.05	strong_single_column[x]
+strong_small n=100 r2=0.95 shape=independent	17	0.8866	linear-0		x	0.06968	strong_single_column[x]
+strong_small n=100 r2=0.95 shape=independent	18	0.9547	linear-0		x	0.05	strong_single_column[x]
+strong_small n=100 r2=0.95 shape=independent	19	0.9501	linear-0		x	0.05	strong_single_column[x]
+strong_small n=100 r2=0.95 shape=independent	20	0.9567	linear-0		x	0.0546	strong_single_column[x]
+strong_small n=100 r2=0.95 shape=independent	21	0.9462	linear-0		x	0.05	strong_single_column[x]
+strong_small n=100 r2=0.95 shape=independent	22	0.9444	linear-0		x	0.05519	strong_single_column[x]
+strong_small n=100 r2=0.95 shape=independent	23	0.9515	linear-0		x	0.05	strong_single_column[x]
+strong_small n=100 r2=0.95 shape=independent	24	0.9679	linear-0		x	0.05	strong_single_column[x]
+strong_small n=100 r2=0.95 shape=independent	25	0.9474	linear-0		x	0.05428	strong_single_column[x]
+strong_small n=100 r2=0.95 shape=independent	26	0.9638	linear-0		x	0.05	strong_single_column[x]
+strong_small n=100 r2=0.95 shape=independent	27	0.9369	linear-0		x	0.05	strong_single_column[x]
+strong_small n=100 r2=0.95 shape=independent	28	0.9365	linear-0		x	0.08634	strong_single_column[x]
+strong_small n=100 r2=0.95 shape=independent	29	0.9746	linear-0		x	0.05	strong_single_column[x]
+strong_small n=100 r2=0.99 shape=independent	0	0.00349	linear-0		-	0.07705	suspected_leak[x]
+strong_small n=100 r2=0.99 shape=independent	1	-0.0137	linear-0		-	0.07705	suspected_leak[x]
+strong_small n=100 r2=0.99 shape=independent	2	0.001296	linear-0		-	0.08289	suspected_leak[x]
+strong_small n=100 r2=0.99 shape=independent	3	-0.03678	linear-0		-	0.07928	suspected_leak[x]
+strong_small n=100 r2=0.99 shape=independent	4	0.0113	linear-0		-	0.1387	suspected_leak[x]
+strong_small n=100 r2=0.99 shape=independent	5	-0.007942	linear-0		-	0.1235	suspected_leak[x]
+strong_small n=100 r2=0.99 shape=independent	6	-0.04045	linear-0		-	0.06155	suspected_leak[x]
+strong_small n=100 r2=0.99 shape=independent	7	-0.04216	linear-0		-	0.0958	suspected_leak[x]
+strong_small n=100 r2=0.99 shape=independent	8	-0.1849	linear-0		-	0.27	suspected_leak[x]
+strong_small n=100 r2=0.99 shape=independent	9	0.03118	linear-0		-	0.1685	suspected_leak[x]
+strong_small n=100 r2=0.99 shape=independent	10	-0.02321	linear-0		-	0.05	suspected_leak[x]
+strong_small n=100 r2=0.99 shape=independent	11	0.02196	linear-0		-	0.103	suspected_leak[x]
+strong_small n=100 r2=0.99 shape=independent	12	-0.01885	linear-0		-	0.1087	suspected_leak[x]
+strong_small n=100 r2=0.99 shape=independent	13	-0.05985	linear-0		-	0.1274	suspected_leak[x]
+strong_small n=100 r2=0.99 shape=independent	14	-0.1029	linear-0		-	0.09019	suspected_leak[x]
+strong_small n=100 r2=0.99 shape=independent	15	-0.03107	linear-0		-	0.1063	suspected_leak[x]
+strong_small n=100 r2=0.99 shape=independent	16	-0.06463	linear-0		-	0.05	suspected_leak[x]
+strong_small n=100 r2=0.99 shape=independent	17	-0.08199	linear-0		-	0.08934	suspected_leak[x]
+strong_small n=100 r2=0.99 shape=independent	18	0.007579	linear-0		-	0.05	suspected_leak[x]
+strong_small n=100 r2=0.99 shape=independent	19	0.02447	linear-0		-	0.0686	suspected_leak[x]
+strong_small n=100 r2=0.99 shape=independent	20	-0.05659	linear-0		-	0.1435	suspected_leak[x]
+strong_small n=100 r2=0.99 shape=independent	21	0.08302	linear-0		-	0.1174	suspected_leak[x]
+strong_small n=100 r2=0.99 shape=independent	22	0.01443	linear-0		-	0.05	suspected_leak[x]
+strong_small n=100 r2=0.99 shape=independent	23	0.1288	linear-0		-	0.178	suspected_leak[x]
+strong_small n=100 r2=0.99 shape=independent	24	-0.07941	linear-0		-	0.1686	suspected_leak[x]
+strong_small n=100 r2=0.99 shape=independent	25	0.05237	linear-0		-	0.2067	suspected_leak[x]
+strong_small n=100 r2=0.99 shape=independent	26	-0.02755	linear-0		-	0.199	suspected_leak[x]
+strong_small n=100 r2=0.99 shape=independent	27	-0.085	linear-0		-	0.05578	suspected_leak[x]
+strong_small n=100 r2=0.99 shape=independent	28	-0.07244	linear-0		-	0.3117	suspected_leak[x]
+strong_small n=100 r2=0.99 shape=independent	29	-0.001861	linear-0		-	0.4464	suspected_leak[x]
+strong_small n=200 r2=0.9 shape=independent	0	0.889	linear-0		x	0.05264	-
+strong_small n=200 r2=0.9 shape=independent	1	0.9045	linear-0		x	0.05155	-
+strong_small n=200 r2=0.9 shape=independent	2	0.9144	linear-0		x	0.05	-
+strong_small n=200 r2=0.9 shape=independent	3	0.8352	linear-0		x	0.0767	strong_single_column[x]
+strong_small n=200 r2=0.9 shape=independent	4	0.8685	linear-0		x	0.06839	-
+strong_small n=200 r2=0.9 shape=independent	5	0.9489	linear-0		x	0.05	-
+strong_small n=200 r2=0.9 shape=independent	6	0.903	linear-0		x	0.05	-
+strong_small n=200 r2=0.9 shape=independent	7	0.89	linear-0		x	0.05	-
+strong_small n=200 r2=0.9 shape=independent	8	0.9241	linear-0		x	0.05	-
+strong_small n=200 r2=0.9 shape=independent	9	0.9142	linear-0		x	0.05	-
+strong_small n=200 r2=0.9 shape=independent	10	0.8492	linear-0		x	0.06141	strong_single_column[x]
+strong_small n=200 r2=0.9 shape=independent	11	0.8376	linear-0		x	0.05812	strong_single_column[x]
+strong_small n=200 r2=0.9 shape=independent	12	0.9005	linear-0		x	0.07189	-
+strong_small n=200 r2=0.9 shape=independent	13	0.9023	linear-0		x	0.05235	-
+strong_small n=200 r2=0.9 shape=independent	14	0.8636	linear-0		x	0.06553	strong_single_column[x]
+strong_small n=200 r2=0.9 shape=independent	15	0.9072	linear-0		x	0.05341	-
+strong_small n=200 r2=0.9 shape=independent	16	0.9157	linear-0		x	0.05	-
+strong_small n=200 r2=0.9 shape=independent	17	0.9211	linear-0		x	0.05	-
+strong_small n=200 r2=0.9 shape=independent	18	0.8878	linear-0		x	0.06602	-
+strong_small n=200 r2=0.9 shape=independent	19	0.9017	linear-0		x	0.05	-
+strong_small n=200 r2=0.9 shape=independent	20	0.8685	linear-0		x	0.05803	-
+strong_small n=200 r2=0.9 shape=independent	21	0.8919	linear-0		x	0.05542	-
+strong_small n=200 r2=0.9 shape=independent	22	0.9361	linear-0		x	0.05	-
+strong_small n=200 r2=0.9 shape=independent	23	0.8943	linear-0		x	0.06568	-
+strong_small n=200 r2=0.9 shape=independent	24	0.9082	linear-0		x	0.05626	-
+strong_small n=200 r2=0.9 shape=independent	25	0.9322	linear-0		x	0.05	strong_single_column[x]
+strong_small n=200 r2=0.9 shape=independent	26	0.8853	linear-0		x	0.05	-
+strong_small n=200 r2=0.9 shape=independent	27	0.8599	linear-0		x	0.07846	-
+strong_small n=200 r2=0.9 shape=independent	28	0.9181	linear-0		x	0.05	-
+strong_small n=200 r2=0.9 shape=independent	29	0.8608	linear-0		x	0.06858	strong_single_column[x]
+strong_small n=200 r2=0.95 shape=independent	0	0.9596	linear-0		x	0.05	strong_single_column[x]
+strong_small n=200 r2=0.95 shape=independent	1	0.9233	linear-0		x	0.05	strong_single_column[x]
+strong_small n=200 r2=0.95 shape=independent	2	0.9502	linear-0		x	0.05	strong_single_column[x]
+strong_small n=200 r2=0.95 shape=independent	3	0.9442	linear-0		x	0.05	strong_single_column[x]
+strong_small n=200 r2=0.95 shape=independent	4	0.9529	linear-0		x	0.05	strong_single_column[x]
+strong_small n=200 r2=0.95 shape=independent	5	0.9461	linear-0		x	0.05	strong_single_column[x]
+strong_small n=200 r2=0.95 shape=independent	6	0.9297	linear-0		x	0.05	strong_single_column[x]
+strong_small n=200 r2=0.95 shape=independent	7	0.9493	linear-0		x	0.05	strong_single_column[x]
+strong_small n=200 r2=0.95 shape=independent	8	0.9615	linear-0		x	0.05	strong_single_column[x]
+strong_small n=200 r2=0.95 shape=independent	9	0.9506	linear-0		x	0.05	strong_single_column[x]
+strong_small n=200 r2=0.95 shape=independent	10	0.9442	linear-0		x	0.05	strong_single_column[x]
+strong_small n=200 r2=0.95 shape=independent	11	0.9578	linear-0		x	0.05	strong_single_column[x]
+strong_small n=200 r2=0.95 shape=independent	12	0.9351	linear-0		x	0.05149	strong_single_column[x]
+strong_small n=200 r2=0.95 shape=independent	13	0.9501	linear-0		x	0.05	strong_single_column[x]
+strong_small n=200 r2=0.95 shape=independent	14	0.9552	linear-0		x	0.05	strong_single_column[x]
+strong_small n=200 r2=0.95 shape=independent	15	0.9404	linear-0		x	0.05	strong_single_column[x]
+strong_small n=200 r2=0.95 shape=independent	16	0.9536	linear-0		x	0.05	strong_single_column[x]
+strong_small n=200 r2=0.95 shape=independent	17	0.9401	linear-0		x	0.05	strong_single_column[x]
+strong_small n=200 r2=0.95 shape=independent	18	0.9389	linear-0		x	0.05	strong_single_column[x]
+strong_small n=200 r2=0.95 shape=independent	19	0.9426	linear-0		x	0.05	strong_single_column[x]
+strong_small n=200 r2=0.95 shape=independent	20	0.9536	linear-0		x	0.05	strong_single_column[x]
+strong_small n=200 r2=0.95 shape=independent	21	0.9544	linear-0		x	0.05	strong_single_column[x]
+strong_small n=200 r2=0.95 shape=independent	22	0.9484	linear-0		x	0.05	strong_single_column[x]
+strong_small n=200 r2=0.95 shape=independent	23	0.959	linear-0		x	0.05	strong_single_column[x]
+strong_small n=200 r2=0.95 shape=independent	24	0.9579	linear-0		x	0.05	strong_single_column[x]
+strong_small n=200 r2=0.95 shape=independent	25	0.9653	linear-0		x	0.05	strong_single_column[x]
+strong_small n=200 r2=0.95 shape=independent	26	0.9447	linear-0		x	0.05	strong_single_column[x]
+strong_small n=200 r2=0.95 shape=independent	27	0.9446	linear-0		x	0.05	strong_single_column[x]
+strong_small n=200 r2=0.95 shape=independent	28	0.9641	linear-0		x	0.05	strong_single_column[x]
+strong_small n=200 r2=0.95 shape=independent	29	0.9317	linear-0		x	0.05	strong_single_column[x]
+strong_small n=200 r2=0.99 shape=independent	0	-0.04098	linear-0		-	0.05773	suspected_leak[x]
+strong_small n=200 r2=0.99 shape=independent	1	0.001703	linear-0		-	0.05	suspected_leak[x]
+strong_small n=200 r2=0.99 shape=independent	2	-0.01421	linear-0		-	0.05	suspected_leak[x]
+strong_small n=200 r2=0.99 shape=independent	3	-0.003846	linear-0		-	0.05	suspected_leak[x]
+strong_small n=200 r2=0.99 shape=independent	4	0.02166	linear-0		-	0.05	suspected_leak[x]
+strong_small n=200 r2=0.99 shape=independent	5	-0.01145	linear-0		-	0.06826	suspected_leak[x]
+strong_small n=200 r2=0.99 shape=independent	6	0.0215	linear-0		-	0.05	suspected_leak[x]
+strong_small n=200 r2=0.99 shape=independent	7	0.02654	linear-0		-	0.05	suspected_leak[x]
+strong_small n=200 r2=0.99 shape=independent	8	0.02128	linear-0		-	0.0655	suspected_leak[x]
+strong_small n=200 r2=0.99 shape=independent	9	-0.07271	linear-0		-	0.08537	suspected_leak[x]
+strong_small n=200 r2=0.99 shape=independent	10	-0.01683	linear-0		-	0.05	suspected_leak[x]
+strong_small n=200 r2=0.99 shape=independent	11	-0.02039	linear-0		-	0.05	suspected_leak[x]
+strong_small n=200 r2=0.99 shape=independent	12	-0.1267	linear-0		-	0.1529	suspected_leak[x]
+strong_small n=200 r2=0.99 shape=independent	13	-0.03937	linear-0		-	0.08808	suspected_leak[x]
+strong_small n=200 r2=0.99 shape=independent	14	-0.02573	linear-0		-	0.0827	suspected_leak[x]
+strong_small n=200 r2=0.99 shape=independent	15	-0.05757	linear-0		-	0.08771	suspected_leak[x]
+strong_small n=200 r2=0.99 shape=independent	16	0.01981	linear-0		-	0.05168	suspected_leak[x]
+strong_small n=200 r2=0.99 shape=independent	17	0.01469	linear-0		-	0.05	suspected_leak[x]
+strong_small n=200 r2=0.99 shape=independent	18	-0.05236	linear-0		-	0.06484	suspected_leak[x]
+strong_small n=200 r2=0.99 shape=independent	19	-0.0468	linear-0		-	0.0692	suspected_leak[x]
+strong_small n=200 r2=0.99 shape=independent	20	-0.1341	linear-0		-	0.1109	suspected_leak[x]
+strong_small n=200 r2=0.99 shape=independent	21	-0.02696	linear-0		-	0.06881	suspected_leak[x]
+strong_small n=200 r2=0.99 shape=independent	22	-0.1891	linear-0		-	0.1571	suspected_leak[x]
+strong_small n=200 r2=0.99 shape=independent	23	0.0036	linear-0		-	0.05	suspected_leak[x]
+strong_small n=200 r2=0.99 shape=independent	24	-0.09932	linear-0		-	0.06662	suspected_leak[x]
+strong_small n=200 r2=0.99 shape=independent	25	0.003872	linear-0		-	0.05367	suspected_leak[x]
+strong_small n=200 r2=0.99 shape=independent	26	-0.002136	linear-0		-	0.05515	suspected_leak[x]
+strong_small n=200 r2=0.99 shape=independent	27	-0.02469	linear-0		-	0.05	suspected_leak[x]
+strong_small n=200 r2=0.99 shape=independent	28	0.01735	linear-0		-	0.07628	suspected_leak[x]
+strong_small n=200 r2=0.99 shape=independent	29	-0.03472	linear-0		-	0.05	suspected_leak[x]
+strong_small n=100 r2=0.9 shape=persistent	0	0.669	linear-0		x	0.1909	-
+strong_small n=100 r2=0.9 shape=persistent	1	0.3879	linear-0		x	0.3523	-
+strong_small n=100 r2=0.9 shape=persistent	2	0.6306	linear-0		x	0.1526	-
+strong_small n=100 r2=0.9 shape=persistent	3	0.3328	linear-0		x	0.399	-
+strong_small n=100 r2=0.9 shape=persistent	4	0.681	linear-0		x	0.1695	-
+strong_small n=100 r2=0.9 shape=persistent	5	0.7735	linear-0		x	0.1801	-
+strong_small n=100 r2=0.9 shape=persistent	6	0.4457	linear-0		x	0.4766	-
+strong_small n=100 r2=0.9 shape=persistent	7	0.658	linear-0		x	0.2097	-
+strong_small n=100 r2=0.9 shape=persistent	8	0.6718	linear-0		x	0.2344	-
+strong_small n=100 r2=0.9 shape=persistent	9	0.5484	linear-0		x	0.3197	-
+strong_small n=100 r2=0.9 shape=persistent	10	0.4822	linear-0		x	0.268	-
+strong_small n=100 r2=0.9 shape=persistent	11	0.4938	linear-0		x	0.2504	-
+strong_small n=100 r2=0.9 shape=persistent	12	0.6752	linear-0		x	0.168	-
+strong_small n=100 r2=0.9 shape=persistent	13	0.7566	linear-0		x	0.1497	-
+strong_small n=100 r2=0.9 shape=persistent	14	0.5946	linear-0		x	0.183	-
+strong_small n=100 r2=0.9 shape=persistent	15	0.5385	linear-0		x	0.2968	-
+strong_small n=100 r2=0.9 shape=persistent	16	0.6134	linear-0		x	0.2191	-
+strong_small n=100 r2=0.9 shape=persistent	17	0.7464	linear-0		x	0.2182	-
+strong_small n=100 r2=0.9 shape=persistent	18	0.4803	linear-0		x	0.3073	-
+strong_small n=100 r2=0.9 shape=persistent	19	0.6384	linear-0		x	0.2104	-
+strong_small n=100 r2=0.9 shape=persistent	20	0.3891	linear-0		x	0.2338	-
+strong_small n=100 r2=0.9 shape=persistent	21	0.5897	linear-0		x	0.2603	-
+strong_small n=100 r2=0.9 shape=persistent	22	0.5258	linear-0		x	0.2457	-
+strong_small n=100 r2=0.9 shape=persistent	23	0.4512	linear-0		x	0.4239	-
+strong_small n=100 r2=0.9 shape=persistent	24	0.7147	linear-0		x	0.1313	-
+strong_small n=100 r2=0.9 shape=persistent	25	0.5356	linear-0		x	0.2597	-
+strong_small n=100 r2=0.9 shape=persistent	26	-0.8148	linear-0		x	0.9533	-
+strong_small n=100 r2=0.9 shape=persistent	27	0.8311	linear-0		x	0.1041	-
+strong_small n=100 r2=0.9 shape=persistent	28	0.5483	linear-0		x	0.2481	-
+strong_small n=100 r2=0.9 shape=persistent	29	0.3648	linear-0		x	0.5079	-
+strong_small n=100 r2=0.95 shape=persistent	0	0.6921	linear-0		x	0.2874	-
+strong_small n=100 r2=0.95 shape=persistent	1	0.6894	linear-0		x	0.1674	-
+strong_small n=100 r2=0.95 shape=persistent	2	0.8508	linear-0		x	0.08056	-
+strong_small n=100 r2=0.95 shape=persistent	3	0.7781	linear-0		x	0.1117	-
+strong_small n=100 r2=0.95 shape=persistent	4	0.8601	linear-0		x	0.09977	-
+strong_small n=100 r2=0.95 shape=persistent	5	0.606	linear-0		x	0.2231	-
+strong_small n=100 r2=0.95 shape=persistent	6	0.8868	linear-0		x	0.1162	-
+strong_small n=100 r2=0.95 shape=persistent	7	0.7742	linear-0		x	0.1887	-
+strong_small n=100 r2=0.95 shape=persistent	8	0.3748	linear-0		x	0.3364	-
+strong_small n=100 r2=0.95 shape=persistent	9	0.8723	linear-0		x	0.07418	-
+strong_small n=100 r2=0.95 shape=persistent	10	0.6864	linear-0		x	0.2817	-
+strong_small n=100 r2=0.95 shape=persistent	11	0.636	linear-0		x	0.2955	-
+strong_small n=100 r2=0.95 shape=persistent	12	-0.006097	linear-0		x	0.631	-
+strong_small n=100 r2=0.95 shape=persistent	13	0.6111	linear-0		x	0.2158	-
+strong_small n=100 r2=0.95 shape=persistent	14	0.6563	linear-0		x	0.2582	-
+strong_small n=100 r2=0.95 shape=persistent	15	0.9069	linear-0		x	0.06192	-
+strong_small n=100 r2=0.95 shape=persistent	16	0.7018	linear-0		x	0.1274	-
+strong_small n=100 r2=0.95 shape=persistent	17	0.7185	linear-0		x	0.2232	-
+strong_small n=100 r2=0.95 shape=persistent	18	0.2658	linear-0		x	0.5429	-
+strong_small n=100 r2=0.95 shape=persistent	19	0.7176	linear-0		x	0.2131	-
+strong_small n=100 r2=0.95 shape=persistent	20	0.7275	linear-0		x	0.1721	-
+strong_small n=100 r2=0.95 shape=persistent	21	0.6332	linear-0		x	0.3412	-
+strong_small n=100 r2=0.95 shape=persistent	22	0.8546	linear-0		x	0.05393	-
+strong_small n=100 r2=0.95 shape=persistent	23	0.7767	linear-0		x	0.08181	-
+strong_small n=100 r2=0.95 shape=persistent	24	0.76	linear-0		x	0.215	-
+strong_small n=100 r2=0.95 shape=persistent	25	0.4729	linear-0		x	0.3502	-
+strong_small n=100 r2=0.95 shape=persistent	26	0.6468	linear-0		x	0.2892	-
+strong_small n=100 r2=0.95 shape=persistent	27	0.7205	linear-0		x	0.1787	-
+strong_small n=100 r2=0.95 shape=persistent	28	0.8132	linear-0		x	0.157	-
+strong_small n=100 r2=0.95 shape=persistent	29	0.8603	linear-0		x	0.08931	-
+strong_small n=100 r2=0.99 shape=persistent	0	0.9356	linear-0		x	0.05	strong_single_column[x]
+strong_small n=100 r2=0.99 shape=persistent	1	0.9195	linear-0		x	0.05	strong_single_column[x]
+strong_small n=100 r2=0.99 shape=persistent	2	0.9655	linear-0		x	0.05	strong_single_column[x]
+strong_small n=100 r2=0.99 shape=persistent	3	0.888	linear-0		x	0.1125	-
+strong_small n=100 r2=0.99 shape=persistent	4	0.9513	linear-0		x	0.05	-
+strong_small n=100 r2=0.99 shape=persistent	5	0.8907	linear-0		x	0.07488	strong_single_column[x]
+strong_small n=100 r2=0.99 shape=persistent	6	0.781	linear-0		x	0.09216	-
+strong_small n=100 r2=0.99 shape=persistent	7	0.8095	linear-0		x	0.1397	-
+strong_small n=100 r2=0.99 shape=persistent	8	0.9263	linear-0		x	0.06799	strong_single_column[x]
+strong_small n=100 r2=0.99 shape=persistent	9	0.9599	linear-0		x	0.05	-
+strong_small n=100 r2=0.99 shape=persistent	10	0.9383	linear-0		x	0.05	-
+strong_small n=100 r2=0.99 shape=persistent	11	0.9431	linear-0		x	0.05	strong_single_column[x]
+strong_small n=100 r2=0.99 shape=persistent	12	0.733	linear-0		x	0.1541	-
+strong_small n=100 r2=0.99 shape=persistent	13	0.9166	linear-0		x	0.06742	-
+strong_small n=100 r2=0.99 shape=persistent	14	0.8436	linear-0		x	0.1619	-
+strong_small n=100 r2=0.99 shape=persistent	15	0.8297	linear-0		x	0.1142	-
+strong_small n=100 r2=0.99 shape=persistent	16	0.9786	linear-0		x	0.05	strong_single_column[x]
+strong_small n=100 r2=0.99 shape=persistent	17	0.823	linear-0		x	0.1531	-
+strong_small n=100 r2=0.99 shape=persistent	18	0.8371	linear-0		x	0.1577	-
+strong_small n=100 r2=0.99 shape=persistent	19	0.9399	linear-0		x	0.05	strong_single_column[x]
+strong_small n=100 r2=0.99 shape=persistent	20	0.9545	linear-0		x	0.05	strong_single_column[x]
+strong_small n=100 r2=0.99 shape=persistent	21	0.6028	linear-0		x	0.2705	-
+strong_small n=100 r2=0.99 shape=persistent	22	0.9393	linear-0		x	0.05	strong_single_column[x]
+strong_small n=100 r2=0.99 shape=persistent	23	0.8606	linear-0		x	0.1246	strong_single_column[x]
+strong_small n=100 r2=0.99 shape=persistent	24	0.9686	linear-0		x	0.05	strong_single_column[x]
+strong_small n=100 r2=0.99 shape=persistent	25	0.789	linear-0		x	0.1149	-
+strong_small n=100 r2=0.99 shape=persistent	26	0.8943	linear-0		x	0.1242	-
+strong_small n=100 r2=0.99 shape=persistent	27	0.66	linear-0		x	0.3101	-
+strong_small n=100 r2=0.99 shape=persistent	28	0.8666	linear-0		x	0.1148	strong_single_column[x]
+strong_small n=100 r2=0.99 shape=persistent	29	0.9456	linear-0		x	0.05	strong_single_column[x]
+strong_small n=200 r2=0.9 shape=persistent	0	0.5207	linear-0		x	0.2158	-
+strong_small n=200 r2=0.9 shape=persistent	1	0.6383	linear-0		x	0.148	-
+strong_small n=200 r2=0.9 shape=persistent	2	0.5682	linear-0		x	0.145	-
+strong_small n=200 r2=0.9 shape=persistent	3	0.4886	linear-0		x	0.1523	-
+strong_small n=200 r2=0.9 shape=persistent	4	0.5952	linear-0		x	0.09023	-
+strong_small n=200 r2=0.9 shape=persistent	5	0.6476	linear-0		x	0.1079	-
+strong_small n=200 r2=0.9 shape=persistent	6	0.2362	linear-0		x	0.2802	-
+strong_small n=200 r2=0.9 shape=persistent	7	0.6228	linear-0		x	0.143	-
+strong_small n=200 r2=0.9 shape=persistent	8	0.4351	linear-0		x	0.1758	-
+strong_small n=200 r2=0.9 shape=persistent	9	0.4124	linear-0		x	0.1614	-
+strong_small n=200 r2=0.9 shape=persistent	10	0.4072	linear-0		x	0.1918	-
+strong_small n=200 r2=0.9 shape=persistent	11	0.497	linear-0		x	0.2645	-
+strong_small n=200 r2=0.9 shape=persistent	12	0.5832	linear-0		x	0.1184	-
+strong_small n=200 r2=0.9 shape=persistent	13	0.6473	linear-0		x	0.1545	-
+strong_small n=200 r2=0.9 shape=persistent	14	0.6563	linear-0		x	0.09753	-
+strong_small n=200 r2=0.9 shape=persistent	15	0.5435	linear-0		x	0.1959	-
+strong_small n=200 r2=0.9 shape=persistent	16	0.5202	linear-0		x	0.1194	-
+strong_small n=200 r2=0.9 shape=persistent	17	0.5468	linear-0		x	0.3198	-
+strong_small n=200 r2=0.9 shape=persistent	18	0.5987	linear-0		x	0.1169	-
+strong_small n=200 r2=0.9 shape=persistent	19	0.607	linear-0		x	0.2476	-
+strong_small n=200 r2=0.9 shape=persistent	20	0.5993	linear-0		x	0.1431	-
+strong_small n=200 r2=0.9 shape=persistent	21	0.6517	linear-0		x	0.2235	-
+strong_small n=200 r2=0.9 shape=persistent	22	0.5403	linear-0		x	0.1847	-
+strong_small n=200 r2=0.9 shape=persistent	23	0.5771	linear-0		x	0.1662	-
+strong_small n=200 r2=0.9 shape=persistent	24	0.5641	linear-0		x	0.2125	-
+strong_small n=200 r2=0.9 shape=persistent	25	0.596	linear-0		x	0.08392	-
+strong_small n=200 r2=0.9 shape=persistent	26	0.6676	linear-0		x	0.1015	-
+strong_small n=200 r2=0.9 shape=persistent	27	0.6528	linear-0		x	0.1505	-
+strong_small n=200 r2=0.9 shape=persistent	28	0.63	linear-0		x	0.09588	-
+strong_small n=200 r2=0.9 shape=persistent	29	0.5843	linear-0		x	0.2222	-
+strong_small n=200 r2=0.95 shape=persistent	0	0.6341	linear-0		x	0.1424	-
+strong_small n=200 r2=0.95 shape=persistent	1	0.6768	linear-0		x	0.1004	-
+strong_small n=200 r2=0.95 shape=persistent	2	0.6276	linear-0		x	0.1088	-
+strong_small n=200 r2=0.95 shape=persistent	3	0.5291	linear-0		x	0.1487	-
+strong_small n=200 r2=0.95 shape=persistent	4	0.6006	linear-0		x	0.1217	-
+strong_small n=200 r2=0.95 shape=persistent	5	0.5285	linear-0		x	0.1804	-
+strong_small n=200 r2=0.95 shape=persistent	6	0.7274	linear-0		x	0.1216	-
+strong_small n=200 r2=0.95 shape=persistent	7	0.6483	linear-0		x	0.1946	-
+strong_small n=200 r2=0.95 shape=persistent	8	0.6505	linear-0		x	0.1025	-
+strong_small n=200 r2=0.95 shape=persistent	9	0.6084	linear-0		x	0.1672	-
+strong_small n=200 r2=0.95 shape=persistent	10	0.497	linear-0		x	0.2001	-
+strong_small n=200 r2=0.95 shape=persistent	11	0.6687	linear-0		x	0.1406	-
+strong_small n=200 r2=0.95 shape=persistent	12	0.6219	linear-0		x	0.09305	-
+strong_small n=200 r2=0.95 shape=persistent	13	0.6922	linear-0		x	0.08245	-
+strong_small n=200 r2=0.95 shape=persistent	14	0.8447	linear-0		x	0.06902	-
+strong_small n=200 r2=0.95 shape=persistent	15	0.6665	linear-0		x	0.1283	-
+strong_small n=200 r2=0.95 shape=persistent	16	0.7098	linear-0		x	0.1161	-
+strong_small n=200 r2=0.95 shape=persistent	17	0.5323	linear-0		x	0.2684	-
+strong_small n=200 r2=0.95 shape=persistent	18	0.3608	linear-0		x	0.2986	-
+strong_small n=200 r2=0.95 shape=persistent	19	0.8073	linear-0		x	0.108	-
+strong_small n=200 r2=0.95 shape=persistent	20	0.6586	linear-0		x	0.1435	-
+strong_small n=200 r2=0.95 shape=persistent	21	0.7332	linear-0		x	0.07457	-
+strong_small n=200 r2=0.95 shape=persistent	22	0.6214	linear-0		x	0.1024	-
+strong_small n=200 r2=0.95 shape=persistent	23	0.6019	linear-0		x	0.1257	-
+strong_small n=200 r2=0.95 shape=persistent	24	0.7017	linear-0		x	0.1721	-
+strong_small n=200 r2=0.95 shape=persistent	25	0.5718	linear-0		x	0.1833	-
+strong_small n=200 r2=0.95 shape=persistent	26	0.6576	linear-0		x	0.1258	-
+strong_small n=200 r2=0.95 shape=persistent	27	0.5989	linear-0		x	0.1473	-
+strong_small n=200 r2=0.95 shape=persistent	28	0.6459	linear-0		x	0.1076	-
+strong_small n=200 r2=0.95 shape=persistent	29	0.6292	linear-0		x	0.195	-
+strong_small n=200 r2=0.99 shape=persistent	0	0.8448	linear-0		x	0.091	-
+strong_small n=200 r2=0.99 shape=persistent	1	0.7492	linear-0		x	0.1072	-
+strong_small n=200 r2=0.99 shape=persistent	2	0.721	linear-0		x	0.1365	-
+strong_small n=200 r2=0.99 shape=persistent	3	0.7138	linear-0		x	0.1023	-
+strong_small n=200 r2=0.99 shape=persistent	4	0.8323	linear-0		x	0.05685	-
+strong_small n=200 r2=0.99 shape=persistent	5	0.744	linear-0		x	0.1275	-
+strong_small n=200 r2=0.99 shape=persistent	6	0.8457	linear-0		x	0.06402	-
+strong_small n=200 r2=0.99 shape=persistent	7	0.897	linear-0		x	0.05	strong_single_column[x]
+strong_small n=200 r2=0.99 shape=persistent	8	0.9162	linear-0		x	0.05	strong_single_column[x]
+strong_small n=200 r2=0.99 shape=persistent	9	0.7713	linear-0		x	0.1514	-
+strong_small n=200 r2=0.99 shape=persistent	10	0.908	linear-0		x	0.05	strong_single_column[x]
+strong_small n=200 r2=0.99 shape=persistent	11	0.9156	linear-0		x	0.05	strong_single_column[x]
+strong_small n=200 r2=0.99 shape=persistent	12	0.7773	linear-0		x	0.1025	-
+strong_small n=200 r2=0.99 shape=persistent	13	0.8919	linear-0		x	0.05472	-
+strong_small n=200 r2=0.99 shape=persistent	14	0.8057	linear-0		x	0.1206	-
+strong_small n=200 r2=0.99 shape=persistent	15	0.9141	linear-0		x	0.05	strong_single_column[x]
+strong_small n=200 r2=0.99 shape=persistent	16	0.8229	linear-0		x	0.07764	-
+strong_small n=200 r2=0.99 shape=persistent	17	0.8483	linear-0		x	0.06522	-
+strong_small n=200 r2=0.99 shape=persistent	18	0.3861	linear-0		x	0.4562	-
+strong_small n=200 r2=0.99 shape=persistent	19	0.752	linear-0		x	0.1078	-
+strong_small n=200 r2=0.99 shape=persistent	20	0.8357	linear-0		x	0.06295	-
+strong_small n=200 r2=0.99 shape=persistent	21	0.756	linear-0		x	0.06745	-
+strong_small n=200 r2=0.99 shape=persistent	22	0.7039	linear-0		x	0.1462	-
+strong_small n=200 r2=0.99 shape=persistent	23	0.6248	linear-0		x	0.2161	-
+strong_small n=200 r2=0.99 shape=persistent	24	0.9217	linear-0		x	0.05	strong_single_column[x]
+strong_small n=200 r2=0.99 shape=persistent	25	0.8569	linear-0		x	0.06357	-
+strong_small n=200 r2=0.99 shape=persistent	26	0.8035	linear-0		x	0.07296	-
+strong_small n=200 r2=0.99 shape=persistent	27	0.7976	linear-0		x	0.07813	-
+strong_small n=200 r2=0.99 shape=persistent	28	0.9255	linear-0		x	0.05	-
+strong_small n=200 r2=0.99 shape=persistent	29	0.9357	linear-0		x	0.05	strong_single_column[x]
+running_total	0	0.2237	linear-0	level: target/-/- -	level_prev	0.05	-
+running_total	1	0.337	linear-0	level: target/-/- -	level_prev	0.05	-
+running_total	2	0.2385	linear-0	level: target/-/- -	level_prev	0.05	-
+running_total	3	0.2919	linear-0	level: target/-/- -	level_prev	0.05	-
+running_total	4	0.3217	linear-0	level: target/-/- -	level_prev	0.05	-
+running_total	5	0.2854	linear-0	level: target/-/- -	level_prev	0.05	-
+running_total	6	0.1768	linear-0	level: target/-/- -	level_prev	0.05	-
+running_total	7	0.2943	linear-0	level: target/-/- -	level_prev	0.05	-
+running_total	8	0.2552	linear-0	level: target/-/- -	level_prev	0.05	-
+running_total	9	0.2675	linear-0	level: target/-/- -	level_prev	0.05	-
+running_total	10	0.2441	linear-0	level: target/-/- -	level_prev	0.06038	-
+running_total	11	0.217	linear-0	level: target/-/- -	level_prev	0.05	-
+running_total	12	0.2504	linear-0	level: target/-/- -	level_prev	0.05	-
+running_total	13	0.2676	linear-0	level: target/-/- -	level_prev	0.05242	-
+running_total	14	0.156	linear-0	level: target/-/- -	level_prev	0.05	-
+running_total	15	0.2935	linear-0	level: target/-/- -	level_prev	0.05	-
+running_total	16	0.3393	linear-0	level: target/-/- -	level_prev	0.05	-
+running_total	17	0.2578	linear-0	level: target/-/- -	level_prev	0.05	-
+running_total	18	0.2363	linear-0	level: target/-/- -	level_prev	0.05	-
+running_total	19	0.3408	linear-0	level: target/-/- -	level_prev	0.05	-
+running_total	20	0.2077	linear-0	level: target/-/- -	level_prev	0.05	-
+running_total	21	0.261	linear-0	level: target/-/- -	level_prev	0.05	-
+running_total	22	0.2239	linear-0	level: target/-/- -	level_prev	0.05	-
+running_total	23	0.2191	linear-0	level: target/-/- -	level_prev	0.05167	-
+running_total	24	0.2351	linear-0	level: target/-/- -	level_prev	0.05	-
+running_total	25	0.2974	linear-0	level: target/-/- -	level_prev	0.05	-
+running_total	26	0.2023	linear-0	level: target/-/- -	level_prev	0.05	-
+running_total	27	0.2868	linear-0	level: target/-/- -	level_prev	0.05	-
+running_total	28	0.248	linear-0	level: target/-/- -	level_prev	0.05	-
+running_total	29	0.2949	linear-0	level: target/-/- -	level_prev	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=random | random	0	0.07254	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=random | random	1	0.0551	linear-0		x	0.05426	-
+monotone_levels distinct=25 r2=0.05 scheme=random | random	2	0.01393	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=random | random	3	0.002657	linear-0		x	0.05206	-
+monotone_levels distinct=25 r2=0.05 scheme=random | random	4	0.04336	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=random | random	5	0.06132	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=random | random	6	0.06007	linear-0		x	0.05087	-
+monotone_levels distinct=25 r2=0.05 scheme=random | random	7	0.04285	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=random | random	8	0.07322	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=random | random	9	0.03549	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=random | random	10	0.05373	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=random | random	11	0.05301	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=random | random	12	0.05977	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=random | random	13	0.07003	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=random | random	14	0.06024	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=random | random	15	0.06879	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=random | random	16	0.05243	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=random | random	17	0.1085	linear-0		x	0.05139	-
+monotone_levels distinct=25 r2=0.05 scheme=random | random	18	0.05698	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=random | random	19	0.04777	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=random | random	20	0.02883	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=random | random	21	0.06262	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=random | random	22	0.05927	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=random | random	23	0.05866	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=random | random	24	0.02578	linear-0		x	0.05008	-
+monotone_levels distinct=25 r2=0.05 scheme=random | random	25	0.05764	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=random | random	26	0.05044	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=random | random	27	0.04865	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=random | random	28	0.05622	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=random | random	29	0.02976	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.2 scheme=random | random	0	0.1602	linear-0		x	0.0713	-
+monotone_levels distinct=25 r2=0.2 scheme=random | random	1	0.1598	linear-0		x	0.05606	-
+monotone_levels distinct=25 r2=0.2 scheme=random | random	2	0.2736	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.2 scheme=random | random	3	0.216	linear-0		x	0.0677	-
+monotone_levels distinct=25 r2=0.2 scheme=random | random	4	0.1609	linear-0		x	0.07202	-
+monotone_levels distinct=25 r2=0.2 scheme=random | random	5	0.2315	linear-0		x	0.07286	-
+monotone_levels distinct=25 r2=0.2 scheme=random | random	6	0.217	linear-0		x	0.0587	-
+monotone_levels distinct=25 r2=0.2 scheme=random | random	7	0.1554	linear-0		x	0.08413	-
+monotone_levels distinct=25 r2=0.2 scheme=random | random	8	0.2124	linear-0		x	0.0715	-
+monotone_levels distinct=25 r2=0.2 scheme=random | random	9	0.1908	linear-0		x	0.06568	-
+monotone_levels distinct=25 r2=0.2 scheme=random | random	10	0.191	linear-0		x	0.06998	-
+monotone_levels distinct=25 r2=0.2 scheme=random | random	11	0.218	linear-0		x	0.06767	-
+monotone_levels distinct=25 r2=0.2 scheme=random | random	12	0.2077	linear-0		x	0.07969	-
+monotone_levels distinct=25 r2=0.2 scheme=random | random	13	0.24	linear-0		x	0.07455	-
+monotone_levels distinct=25 r2=0.2 scheme=random | random	14	0.2001	linear-0		x	0.06153	-
+monotone_levels distinct=25 r2=0.2 scheme=random | random	15	0.2317	linear-0		x	0.06367	-
+monotone_levels distinct=25 r2=0.2 scheme=random | random	16	0.2189	linear-0		x	0.0721	-
+monotone_levels distinct=25 r2=0.2 scheme=random | random	17	0.2273	linear-0		x	0.05332	-
+monotone_levels distinct=25 r2=0.2 scheme=random | random	18	0.1826	linear-0		x	0.07015	-
+monotone_levels distinct=25 r2=0.2 scheme=random | random	19	0.2197	linear-0		x	0.05666	-
+monotone_levels distinct=25 r2=0.2 scheme=random | random	20	0.2497	linear-0		x	0.05793	-
+monotone_levels distinct=25 r2=0.2 scheme=random | random	21	0.1899	linear-0		x	0.07103	-
+monotone_levels distinct=25 r2=0.2 scheme=random | random	22	0.2167	linear-0		x	0.07457	-
+monotone_levels distinct=25 r2=0.2 scheme=random | random	23	0.1493	linear-0		x	0.08347	-
+monotone_levels distinct=25 r2=0.2 scheme=random | random	24	0.1745	linear-0		x	0.05829	-
+monotone_levels distinct=25 r2=0.2 scheme=random | random	25	0.2391	linear-0		x	0.07717	-
+monotone_levels distinct=25 r2=0.2 scheme=random | random	26	0.09267	linear-0		x	0.07835	-
+monotone_levels distinct=25 r2=0.2 scheme=random | random	27	0.1498	linear-0		x	0.07208	-
+monotone_levels distinct=25 r2=0.2 scheme=random | random	28	0.1696	linear-0		x	0.07664	-
+monotone_levels distinct=25 r2=0.2 scheme=random | random	29	0.1225	linear-0		x	0.07002	-
+monotone_levels distinct=25 r2=0.5 scheme=random | random	0	0.4661	linear-0		x	0.06733	-
+monotone_levels distinct=25 r2=0.5 scheme=random | random	1	0.4653	linear-0		x	0.08377	-
+monotone_levels distinct=25 r2=0.5 scheme=random | random	2	0.4967	linear-0		x	0.06871	-
+monotone_levels distinct=25 r2=0.5 scheme=random | random	3	0.4947	linear-0		x	0.0674	-
+monotone_levels distinct=25 r2=0.5 scheme=random | random	4	0.519	linear-0		x	0.06528	-
+monotone_levels distinct=25 r2=0.5 scheme=random | random	5	0.5044	linear-0		x	0.05755	-
+monotone_levels distinct=25 r2=0.5 scheme=random | random	6	0.5003	linear-0		x	0.06343	-
+monotone_levels distinct=25 r2=0.5 scheme=random | random	7	0.4961	linear-0		x	0.06845	-
+monotone_levels distinct=25 r2=0.5 scheme=random | random	8	0.5231	linear-0		x	0.05015	-
+monotone_levels distinct=25 r2=0.5 scheme=random | random	9	0.4922	linear-0		x	0.05761	-
+monotone_levels distinct=25 r2=0.5 scheme=random | random	10	0.5336	linear-0		x	0.05059	-
+monotone_levels distinct=25 r2=0.5 scheme=random | random	11	0.5056	linear-0		x	0.06624	-
+monotone_levels distinct=25 r2=0.5 scheme=random | random	12	0.4943	linear-0		x	0.05781	-
+monotone_levels distinct=25 r2=0.5 scheme=random | random	13	0.4804	linear-0		x	0.05845	-
+monotone_levels distinct=25 r2=0.5 scheme=random | random	14	0.5363	linear-0		x	0.06906	-
+monotone_levels distinct=25 r2=0.5 scheme=random | random	15	0.4133	linear-0		x	0.07964	-
+monotone_levels distinct=25 r2=0.5 scheme=random | random	16	0.5314	linear-0		x	0.05723	-
+monotone_levels distinct=25 r2=0.5 scheme=random | random	17	0.453	linear-0		x	0.076	-
+monotone_levels distinct=25 r2=0.5 scheme=random | random	18	0.4776	linear-0		x	0.06137	-
+monotone_levels distinct=25 r2=0.5 scheme=random | random	19	0.482	linear-0		x	0.06677	-
+monotone_levels distinct=25 r2=0.5 scheme=random | random	20	0.518	linear-0		x	0.06739	-
+monotone_levels distinct=25 r2=0.5 scheme=random | random	21	0.4813	linear-0		x	0.05191	-
+monotone_levels distinct=25 r2=0.5 scheme=random | random	22	0.523	linear-0		x	0.06004	-
+monotone_levels distinct=25 r2=0.5 scheme=random | random	23	0.4566	linear-0		x	0.0669	-
+monotone_levels distinct=25 r2=0.5 scheme=random | random	24	0.5354	linear-0		x	0.06529	-
+monotone_levels distinct=25 r2=0.5 scheme=random | random	25	0.5025	linear-0		x	0.06224	-
+monotone_levels distinct=25 r2=0.5 scheme=random | random	26	0.4895	linear-0		x	0.06454	-
+monotone_levels distinct=25 r2=0.5 scheme=random | random	27	0.5479	linear-0		x	0.05135	-
+monotone_levels distinct=25 r2=0.5 scheme=random | random	28	0.4928	linear-0		x	0.06207	-
+monotone_levels distinct=25 r2=0.5 scheme=random | random	29	0.477	linear-0		x	0.07812	-
+monotone_levels distinct=25 r2=0.8 scheme=random | random	0	0.7953	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=random | random	1	0.7959	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=random | random	2	0.7956	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=random | random	3	0.7988	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=random | random	4	0.8179	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=random | random	5	0.7975	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=random | random	6	0.8012	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=random | random	7	0.8233	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=random | random	8	0.7713	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=random | random	9	0.7904	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=random | random	10	0.7951	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=random | random	11	0.7602	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=random | random	12	0.7741	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=random | random	13	0.8124	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=random | random	14	0.799	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=random | random	15	0.8019	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=random | random	16	0.8076	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=random | random	17	0.803	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=random | random	18	0.8095	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=random | random	19	0.828	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=random | random	20	0.806	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=random | random	21	0.7895	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=random | random	22	0.8005	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=random | random	23	0.7881	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=random | random	24	0.8009	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=random | random	25	0.7948	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=random | random	26	0.7982	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=random | random	27	0.7891	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=random | random	28	0.7976	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=random | random	29	0.7753	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=random | random	0	0.03648	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=random | random	1	0.02028	linear-0		-	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=random | random	2	0.06582	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=random | random	3	0.06174	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=random | random	4	0.0602	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=random | random	5	0.03354	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=random | random	6	0.005199	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=random | random	7	0.02318	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=random | random	8	0.05614	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=random | random	9	0.05087	linear-0		x	0.05003	-
+monotone_levels distinct=40 r2=0.05 scheme=random | random	10	0.01529	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=random | random	11	0.02301	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=random | random	12	0.04529	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=random | random	13	0.05562	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=random | random	14	0.01861	linear-0		x	0.05228	-
+monotone_levels distinct=40 r2=0.05 scheme=random | random	15	0.05513	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=random | random	16	0.03807	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=random | random	17	0.02563	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=random | random	18	0.04085	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=random | random	19	0.03433	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=random | random	20	0.07137	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=random | random	21	0.04169	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=random | random	22	0.02037	linear-0		x	0.06031	-
+monotone_levels distinct=40 r2=0.05 scheme=random | random	23	0.06576	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=random | random	24	0.05429	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=random | random	25	0.03157	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=random | random	26	0.05416	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=random | random	27	0.06827	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=random | random	28	0.03304	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=random | random	29	0.06817	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.2 scheme=random | random	0	0.2099	linear-0		x	0.0646	-
+monotone_levels distinct=40 r2=0.2 scheme=random | random	1	0.1915	linear-0		x	0.06716	-
+monotone_levels distinct=40 r2=0.2 scheme=random | random	2	0.2343	linear-0		x	0.07239	-
+monotone_levels distinct=40 r2=0.2 scheme=random | random	3	0.2334	linear-0		x	0.05594	-
+monotone_levels distinct=40 r2=0.2 scheme=random | random	4	0.2209	linear-0		x	0.05846	-
+monotone_levels distinct=40 r2=0.2 scheme=random | random	5	0.091	linear-0		x	0.0861	-
+monotone_levels distinct=40 r2=0.2 scheme=random | random	6	0.2181	linear-0		x	0.06553	-
+monotone_levels distinct=40 r2=0.2 scheme=random | random	7	0.1876	linear-0		x	0.06417	-
+monotone_levels distinct=40 r2=0.2 scheme=random | random	8	0.1791	linear-0		x	0.07973	-
+monotone_levels distinct=40 r2=0.2 scheme=random | random	9	0.2218	linear-0		x	0.06702	-
+monotone_levels distinct=40 r2=0.2 scheme=random | random	10	0.2034	linear-0		x	0.07151	-
+monotone_levels distinct=40 r2=0.2 scheme=random | random	11	0.1697	linear-0		x	0.06901	-
+monotone_levels distinct=40 r2=0.2 scheme=random | random	12	0.177	linear-0		x	0.06086	-
+monotone_levels distinct=40 r2=0.2 scheme=random | random	13	0.1655	linear-0		x	0.06632	-
+monotone_levels distinct=40 r2=0.2 scheme=random | random	14	0.2313	linear-0		x	0.05846	-
+monotone_levels distinct=40 r2=0.2 scheme=random | random	15	0.1926	linear-0		x	0.06605	-
+monotone_levels distinct=40 r2=0.2 scheme=random | random	16	0.1561	linear-0		x	0.06943	-
+monotone_levels distinct=40 r2=0.2 scheme=random | random	17	0.1601	linear-0		x	0.08048	-
+monotone_levels distinct=40 r2=0.2 scheme=random | random	18	0.2057	linear-0		x	0.06526	-
+monotone_levels distinct=40 r2=0.2 scheme=random | random	19	0.2197	linear-0		x	0.06281	-
+monotone_levels distinct=40 r2=0.2 scheme=random | random	20	0.2195	linear-0		x	0.06841	-
+monotone_levels distinct=40 r2=0.2 scheme=random | random	21	0.2013	linear-0		x	0.0817	-
+monotone_levels distinct=40 r2=0.2 scheme=random | random	22	0.1211	linear-0		x	0.0738	-
+monotone_levels distinct=40 r2=0.2 scheme=random | random	23	0.1703	linear-0		x	0.06596	-
+monotone_levels distinct=40 r2=0.2 scheme=random | random	24	0.1536	linear-0		x	0.09191	-
+monotone_levels distinct=40 r2=0.2 scheme=random | random	25	0.1743	linear-0		x	0.07944	-
+monotone_levels distinct=40 r2=0.2 scheme=random | random	26	0.2268	linear-0		x	0.06768	-
+monotone_levels distinct=40 r2=0.2 scheme=random | random	27	0.2532	linear-0		x	0.07144	-
+monotone_levels distinct=40 r2=0.2 scheme=random | random	28	0.2185	linear-0		x	0.06798	-
+monotone_levels distinct=40 r2=0.2 scheme=random | random	29	0.207	linear-0		x	0.06915	-
+monotone_levels distinct=40 r2=0.5 scheme=random | random	0	0.5393	linear-0		x	0.05227	-
+monotone_levels distinct=40 r2=0.5 scheme=random | random	1	0.5042	linear-0		x	0.07863	-
+monotone_levels distinct=40 r2=0.5 scheme=random | random	2	0.5043	linear-0		x	0.05832	-
+monotone_levels distinct=40 r2=0.5 scheme=random | random	3	0.5172	linear-0		x	0.05619	-
+monotone_levels distinct=40 r2=0.5 scheme=random | random	4	0.5242	linear-0		x	0.05174	-
+monotone_levels distinct=40 r2=0.5 scheme=random | random	5	0.4862	linear-0		x	0.07445	-
+monotone_levels distinct=40 r2=0.5 scheme=random | random	6	0.502	linear-0		x	0.07457	-
+monotone_levels distinct=40 r2=0.5 scheme=random | random	7	0.5143	linear-0		x	0.05402	-
+monotone_levels distinct=40 r2=0.5 scheme=random | random	8	0.5136	linear-0		x	0.0577	-
+monotone_levels distinct=40 r2=0.5 scheme=random | random	9	0.4684	linear-0		x	0.06565	-
+monotone_levels distinct=40 r2=0.5 scheme=random | random	10	0.5574	linear-0		x	0.055	-
+monotone_levels distinct=40 r2=0.5 scheme=random | random	11	0.5375	linear-0		x	0.05429	-
+monotone_levels distinct=40 r2=0.5 scheme=random | random	12	0.5028	linear-0		x	0.07223	-
+monotone_levels distinct=40 r2=0.5 scheme=random | random	13	0.471	linear-0		x	0.07841	-
+monotone_levels distinct=40 r2=0.5 scheme=random | random	14	0.4226	linear-0		x	0.07976	-
+monotone_levels distinct=40 r2=0.5 scheme=random | random	15	0.4603	linear-0		x	0.06244	-
+monotone_levels distinct=40 r2=0.5 scheme=random | random	16	0.4647	linear-0		x	0.07549	-
+monotone_levels distinct=40 r2=0.5 scheme=random | random	17	0.5162	linear-0		x	0.06871	-
+monotone_levels distinct=40 r2=0.5 scheme=random | random	18	0.4812	linear-0		x	0.06193	-
+monotone_levels distinct=40 r2=0.5 scheme=random | random	19	0.5257	linear-0		x	0.0583	-
+monotone_levels distinct=40 r2=0.5 scheme=random | random	20	0.5451	linear-0		x	0.05917	-
+monotone_levels distinct=40 r2=0.5 scheme=random | random	21	0.462	linear-0		x	0.0795	-
+monotone_levels distinct=40 r2=0.5 scheme=random | random	22	0.5175	linear-0		x	0.06258	-
+monotone_levels distinct=40 r2=0.5 scheme=random | random	23	0.5278	linear-0		x	0.06073	-
+monotone_levels distinct=40 r2=0.5 scheme=random | random	24	0.5324	linear-0		x	0.06189	-
+monotone_levels distinct=40 r2=0.5 scheme=random | random	25	0.5251	linear-0		x	0.05405	-
+monotone_levels distinct=40 r2=0.5 scheme=random | random	26	0.5012	linear-0		x	0.05973	-
+monotone_levels distinct=40 r2=0.5 scheme=random | random	27	0.5361	linear-0		x	0.05084	-
+monotone_levels distinct=40 r2=0.5 scheme=random | random	28	0.556	linear-0		x	0.06383	-
+monotone_levels distinct=40 r2=0.5 scheme=random | random	29	0.4514	linear-0		x	0.06919	-
+monotone_levels distinct=40 r2=0.8 scheme=random | random	0	0.7959	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=random | random	1	0.793	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=random | random	2	0.8177	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=random | random	3	0.7943	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=random | random	4	0.8053	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=random | random	5	0.8265	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=random | random	6	0.8206	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=random | random	7	0.8014	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=random | random	8	0.7753	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=random | random	9	0.7984	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=random | random	10	0.8071	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=random | random	11	0.8052	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=random | random	12	0.799	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=random | random	13	0.7834	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=random | random	14	0.7969	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=random | random	15	0.806	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=random | random	16	0.7949	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=random | random	17	0.8082	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=random | random	18	0.7894	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=random | random	19	0.7782	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=random | random	20	0.8223	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=random | random	21	0.7935	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=random | random	22	0.8228	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=random | random	23	0.8002	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=random | random	24	0.7873	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=random | random	25	0.8265	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=random | random	26	0.8105	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=random | random	27	0.7651	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=random | random	28	0.7729	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=random | random	29	0.8195	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=random | random	0	0.07352	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=random | random	1	0.0589	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=random | random	2	0.02899	linear-0		x	0.05523	-
+monotone_levels distinct=100 r2=0.05 scheme=random | random	3	0.07395	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=random | random	4	0.007519	linear-0		x	0.05049	-
+monotone_levels distinct=100 r2=0.05 scheme=random | random	5	0.0639	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=random | random	6	0.04827	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=random | random	7	0.0429	linear-0		x	0.05157	-
+monotone_levels distinct=100 r2=0.05 scheme=random | random	8	0.0287	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=random | random	9	0.08168	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=random | random	10	0.06022	linear-0		x	0.05228	-
+monotone_levels distinct=100 r2=0.05 scheme=random | random	11	0.04056	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=random | random	12	0.04722	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=random | random	13	0.03383	linear-0		x	0.05974	-
+monotone_levels distinct=100 r2=0.05 scheme=random | random	14	0.02515	linear-0		x	0.0592	-
+monotone_levels distinct=100 r2=0.05 scheme=random | random	15	0.05729	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=random | random	16	0.0371	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=random | random	17	0.06341	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=random | random	18	0.06216	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=random | random	19	0.04494	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=random | random	20	0.03676	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=random | random	21	0.06322	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=random | random	22	0.008845	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=random | random	23	0.05434	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=random | random	24	0.05171	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=random | random	25	0.0639	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=random | random	26	0.06877	linear-0		x	0.05565	-
+monotone_levels distinct=100 r2=0.05 scheme=random | random	27	0.05568	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=random | random	28	0.07696	linear-0		x	0.05243	-
+monotone_levels distinct=100 r2=0.05 scheme=random | random	29	0.02382	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.2 scheme=random | random	0	0.1825	linear-0		x	0.07507	-
+monotone_levels distinct=100 r2=0.2 scheme=random | random	1	0.1916	linear-0		x	0.06686	-
+monotone_levels distinct=100 r2=0.2 scheme=random | random	2	0.1491	linear-0		x	0.07839	-
+monotone_levels distinct=100 r2=0.2 scheme=random | random	3	0.2076	linear-0		x	0.07953	-
+monotone_levels distinct=100 r2=0.2 scheme=random | random	4	0.2223	linear-0		x	0.06518	-
+monotone_levels distinct=100 r2=0.2 scheme=random | random	5	0.1786	linear-0		x	0.0747	-
+monotone_levels distinct=100 r2=0.2 scheme=random | random	6	0.1824	linear-0		x	0.07356	-
+monotone_levels distinct=100 r2=0.2 scheme=random | random	7	0.1933	linear-0		x	0.07266	-
+monotone_levels distinct=100 r2=0.2 scheme=random | random	8	0.1414	linear-0		x	0.08676	-
+monotone_levels distinct=100 r2=0.2 scheme=random | random	9	0.2406	linear-0		x	0.0558	-
+monotone_levels distinct=100 r2=0.2 scheme=random | random	10	0.1847	linear-0		x	0.06758	-
+monotone_levels distinct=100 r2=0.2 scheme=random | random	11	0.2238	linear-0		x	0.06296	-
+monotone_levels distinct=100 r2=0.2 scheme=random | random	12	0.1936	linear-0		x	0.05424	-
+monotone_levels distinct=100 r2=0.2 scheme=random | random	13	0.2061	linear-0		x	0.05929	-
+monotone_levels distinct=100 r2=0.2 scheme=random | random	14	0.2282	linear-0		x	0.07259	-
+monotone_levels distinct=100 r2=0.2 scheme=random | random	15	0.168	linear-0		x	0.06507	-
+monotone_levels distinct=100 r2=0.2 scheme=random | random	16	0.1529	linear-0		x	0.07734	-
+monotone_levels distinct=100 r2=0.2 scheme=random | random	17	0.2023	linear-0		x	0.07285	-
+monotone_levels distinct=100 r2=0.2 scheme=random | random	18	0.1241	linear-0		x	0.08616	-
+monotone_levels distinct=100 r2=0.2 scheme=random | random	19	0.2428	linear-0		x	0.05718	-
+monotone_levels distinct=100 r2=0.2 scheme=random | random	20	0.1509	linear-0		x	0.07869	-
+monotone_levels distinct=100 r2=0.2 scheme=random | random	21	0.172	linear-0		x	0.07546	-
+monotone_levels distinct=100 r2=0.2 scheme=random | random	22	0.1841	linear-0		x	0.06225	-
+monotone_levels distinct=100 r2=0.2 scheme=random | random	23	0.2023	linear-0		x	0.06381	-
+monotone_levels distinct=100 r2=0.2 scheme=random | random	24	0.2524	linear-0		x	0.05538	-
+monotone_levels distinct=100 r2=0.2 scheme=random | random	25	0.2234	linear-0		x	0.06573	-
+monotone_levels distinct=100 r2=0.2 scheme=random | random	26	0.1759	linear-0		x	0.08397	-
+monotone_levels distinct=100 r2=0.2 scheme=random | random	27	0.1677	linear-0		x	0.08226	-
+monotone_levels distinct=100 r2=0.2 scheme=random | random	28	0.2121	linear-0		x	0.06946	-
+monotone_levels distinct=100 r2=0.2 scheme=random | random	29	0.1676	linear-0		x	0.07013	-
+monotone_levels distinct=100 r2=0.5 scheme=random | random	0	0.4757	linear-0		x	0.06339	-
+monotone_levels distinct=100 r2=0.5 scheme=random | random	1	0.5517	linear-0		x	0.0574	-
+monotone_levels distinct=100 r2=0.5 scheme=random | random	2	0.4704	linear-0		x	0.07	-
+monotone_levels distinct=100 r2=0.5 scheme=random | random	3	0.5348	linear-0		x	0.06241	-
+monotone_levels distinct=100 r2=0.5 scheme=random | random	4	0.4559	linear-0		x	0.07782	-
+monotone_levels distinct=100 r2=0.5 scheme=random | random	5	0.5132	linear-0		x	0.05864	-
+monotone_levels distinct=100 r2=0.5 scheme=random | random	6	0.5391	linear-0		x	0.05347	-
+monotone_levels distinct=100 r2=0.5 scheme=random | random	7	0.4555	linear-0		x	0.07816	-
+monotone_levels distinct=100 r2=0.5 scheme=random | random	8	0.4889	linear-0		x	0.06426	-
+monotone_levels distinct=100 r2=0.5 scheme=random | random	9	0.5318	linear-0		x	0.06165	-
+monotone_levels distinct=100 r2=0.5 scheme=random | random	10	0.4758	linear-0		x	0.07183	-
+monotone_levels distinct=100 r2=0.5 scheme=random | random	11	0.4824	linear-0		x	0.06555	-
+monotone_levels distinct=100 r2=0.5 scheme=random | random	12	0.4266	linear-0		x	0.07214	-
+monotone_levels distinct=100 r2=0.5 scheme=random | random	13	0.4969	linear-0		x	0.06012	-
+monotone_levels distinct=100 r2=0.5 scheme=random | random	14	0.5207	linear-0		x	0.05217	-
+monotone_levels distinct=100 r2=0.5 scheme=random | random	15	0.5952	linear-0		x	0.05419	-
+monotone_levels distinct=100 r2=0.5 scheme=random | random	16	0.4648	linear-0		x	0.06724	-
+monotone_levels distinct=100 r2=0.5 scheme=random | random	17	0.4975	linear-0		x	0.06455	-
+monotone_levels distinct=100 r2=0.5 scheme=random | random	18	0.5104	linear-0		x	0.06331	-
+monotone_levels distinct=100 r2=0.5 scheme=random | random	19	0.5381	linear-0		x	0.06276	-
+monotone_levels distinct=100 r2=0.5 scheme=random | random	20	0.4219	linear-0		x	0.07243	-
+monotone_levels distinct=100 r2=0.5 scheme=random | random	21	0.4968	linear-0		x	0.0608	-
+monotone_levels distinct=100 r2=0.5 scheme=random | random	22	0.4755	linear-0		x	0.07446	-
+monotone_levels distinct=100 r2=0.5 scheme=random | random	23	0.5228	linear-0		x	0.07607	-
+monotone_levels distinct=100 r2=0.5 scheme=random | random	24	0.4906	linear-0		x	0.06161	-
+monotone_levels distinct=100 r2=0.5 scheme=random | random	25	0.5355	linear-0		x	0.06	-
+monotone_levels distinct=100 r2=0.5 scheme=random | random	26	0.5128	linear-0		x	0.05738	-
+monotone_levels distinct=100 r2=0.5 scheme=random | random	27	0.512	linear-0		x	0.06	-
+monotone_levels distinct=100 r2=0.5 scheme=random | random	28	0.5393	linear-0		x	0.05872	-
+monotone_levels distinct=100 r2=0.5 scheme=random | random	29	0.4764	linear-0		x	0.06703	-
+monotone_levels distinct=100 r2=0.8 scheme=random | random	0	0.8117	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=random | random	1	0.7759	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=random | random	2	0.8016	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=random | random	3	0.807	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=random | random	4	0.8192	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=random | random	5	0.8013	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=random | random	6	0.7883	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=random | random	7	0.7601	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=random | random	8	0.7958	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=random | random	9	0.797	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=random | random	10	0.7804	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=random | random	11	0.7996	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=random | random	12	0.8032	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=random | random	13	0.776	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=random | random	14	0.7926	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=random | random	15	0.7661	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=random | random	16	0.8188	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=random | random	17	0.7761	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=random | random	18	0.8137	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=random | random	19	0.8183	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=random | random	20	0.8104	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=random | random	21	0.8007	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=random | random	22	0.8092	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=random | random	23	0.8161	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=random | random	24	0.7745	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=random | random	25	0.7879	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=random | random	26	0.8089	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=random | random	27	0.7783	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=random | random	28	0.826	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=random | random	29	0.7809	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=grouped | grouped	0	0.02389	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=grouped | grouped	1	0.09583	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=grouped | grouped	2	0.004159	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=grouped | grouped	3	0.06403	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=grouped | grouped	4	0.08218	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=grouped | grouped	5	0.06659	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=grouped | grouped	6	0.07156	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=grouped | grouped	7	0.02882	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=grouped | grouped	8	0.05224	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=grouped | grouped	9	0.04469	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=grouped | grouped	10	0.05139	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=grouped | grouped	11	0.03805	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=grouped | grouped	12	0.003086	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=grouped | grouped	13	0.04464	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=grouped | grouped	14	0.06255	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=grouped | grouped	15	0.0529	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=grouped | grouped	16	0.0472	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=grouped | grouped	17	0.08926	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=grouped | grouped	18	0.07072	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=grouped | grouped	19	0.07923	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=grouped | grouped	20	0.01289	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=grouped | grouped	21	0.05195	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=grouped | grouped	22	0.03504	linear-0		x	0.05392	-
+monotone_levels distinct=25 r2=0.05 scheme=grouped | grouped	23	0.04186	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=grouped | grouped	24	0.04146	linear-0		x	0.05989	-
+monotone_levels distinct=25 r2=0.05 scheme=grouped | grouped	25	0.03917	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=grouped | grouped	26	0.0612	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=grouped | grouped	27	0.02199	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=grouped | grouped	28	0.0832	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=grouped | grouped	29	0.04056	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.2 scheme=grouped | grouped	0	0.1886	linear-0		x	0.07594	-
+monotone_levels distinct=25 r2=0.2 scheme=grouped | grouped	1	0.133	linear-0		x	0.07457	-
+monotone_levels distinct=25 r2=0.2 scheme=grouped | grouped	2	0.2481	linear-0		x	0.05346	-
+monotone_levels distinct=25 r2=0.2 scheme=grouped | grouped	3	0.2523	linear-0		x	0.06319	-
+monotone_levels distinct=25 r2=0.2 scheme=grouped | grouped	4	0.2123	linear-0		x	0.06322	-
+monotone_levels distinct=25 r2=0.2 scheme=grouped | grouped	5	0.2556	linear-0		x	0.07528	-
+monotone_levels distinct=25 r2=0.2 scheme=grouped | grouped	6	0.2558	linear-0		x	0.06087	-
+monotone_levels distinct=25 r2=0.2 scheme=grouped | grouped	7	0.1774	linear-0		x	0.07837	-
+monotone_levels distinct=25 r2=0.2 scheme=grouped | grouped	8	0.1532	linear-0		x	0.06544	-
+monotone_levels distinct=25 r2=0.2 scheme=grouped | grouped	9	0.195	linear-0		x	0.05266	-
+monotone_levels distinct=25 r2=0.2 scheme=grouped | grouped	10	0.2004	linear-0		x	0.08708	-
+monotone_levels distinct=25 r2=0.2 scheme=grouped | grouped	11	0.183	linear-0		x	0.06874	-
+monotone_levels distinct=25 r2=0.2 scheme=grouped | grouped	12	0.2867	linear-0		x	0.0531	-
+monotone_levels distinct=25 r2=0.2 scheme=grouped | grouped	13	0.2783	linear-0		x	0.06905	-
+monotone_levels distinct=25 r2=0.2 scheme=grouped | grouped	14	0.2121	linear-0		x	0.06033	-
+monotone_levels distinct=25 r2=0.2 scheme=grouped | grouped	15	0.1829	linear-0		x	0.07853	-
+monotone_levels distinct=25 r2=0.2 scheme=grouped | grouped	16	0.2237	linear-0		x	0.06352	-
+monotone_levels distinct=25 r2=0.2 scheme=grouped | grouped	17	0.1955	linear-0		x	0.06088	-
+monotone_levels distinct=25 r2=0.2 scheme=grouped | grouped	18	0.1967	linear-0		x	0.06871	-
+monotone_levels distinct=25 r2=0.2 scheme=grouped | grouped	19	0.2163	linear-0		x	0.07133	-
+monotone_levels distinct=25 r2=0.2 scheme=grouped | grouped	20	0.1908	linear-0		x	0.0669	-
+monotone_levels distinct=25 r2=0.2 scheme=grouped | grouped	21	0.2044	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.2 scheme=grouped | grouped	22	0.1743	linear-0		x	0.07128	-
+monotone_levels distinct=25 r2=0.2 scheme=grouped | grouped	23	0.1951	linear-0		x	0.06948	-
+monotone_levels distinct=25 r2=0.2 scheme=grouped | grouped	24	0.1502	linear-0		x	0.0659	-
+monotone_levels distinct=25 r2=0.2 scheme=grouped | grouped	25	0.2389	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.2 scheme=grouped | grouped	26	0.2	linear-0		x	0.07469	-
+monotone_levels distinct=25 r2=0.2 scheme=grouped | grouped	27	0.1517	linear-0		x	0.06729	-
+monotone_levels distinct=25 r2=0.2 scheme=grouped | grouped	28	0.2076	linear-0		x	0.07361	-
+monotone_levels distinct=25 r2=0.2 scheme=grouped | grouped	29	0.1571	linear-0		x	0.06818	-
+monotone_levels distinct=25 r2=0.5 scheme=grouped | grouped	0	0.5469	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.5 scheme=grouped | grouped	1	0.4697	linear-0		x	0.06573	-
+monotone_levels distinct=25 r2=0.5 scheme=grouped | grouped	2	0.414	linear-0		x	0.09905	-
+monotone_levels distinct=25 r2=0.5 scheme=grouped | grouped	3	0.4399	linear-0		x	0.07347	-
+monotone_levels distinct=25 r2=0.5 scheme=grouped | grouped	4	0.5321	linear-0		x	0.07389	-
+monotone_levels distinct=25 r2=0.5 scheme=grouped | grouped	5	0.5221	linear-0		x	0.05001	-
+monotone_levels distinct=25 r2=0.5 scheme=grouped | grouped	6	0.4472	linear-0		x	0.06842	-
+monotone_levels distinct=25 r2=0.5 scheme=grouped | grouped	7	0.5374	linear-0		x	0.06079	-
+monotone_levels distinct=25 r2=0.5 scheme=grouped | grouped	8	0.5151	linear-0		x	0.0627	-
+monotone_levels distinct=25 r2=0.5 scheme=grouped | grouped	9	0.4632	linear-0		x	0.06172	-
+monotone_levels distinct=25 r2=0.5 scheme=grouped | grouped	10	0.4883	linear-0		x	0.05999	-
+monotone_levels distinct=25 r2=0.5 scheme=grouped | grouped	11	0.4875	linear-0		x	0.07863	-
+monotone_levels distinct=25 r2=0.5 scheme=grouped | grouped	12	0.4836	linear-0		x	0.06024	-
+monotone_levels distinct=25 r2=0.5 scheme=grouped | grouped	13	0.4571	linear-0		x	0.05819	-
+monotone_levels distinct=25 r2=0.5 scheme=grouped | grouped	14	0.4642	linear-0		x	0.08344	-
+monotone_levels distinct=25 r2=0.5 scheme=grouped | grouped	15	0.4764	linear-0		x	0.0778	-
+monotone_levels distinct=25 r2=0.5 scheme=grouped | grouped	16	0.4853	linear-0		x	0.05524	-
+monotone_levels distinct=25 r2=0.5 scheme=grouped | grouped	17	0.4645	linear-0		x	0.06523	-
+monotone_levels distinct=25 r2=0.5 scheme=grouped | grouped	18	0.5176	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.5 scheme=grouped | grouped	19	0.5038	linear-0		x	0.08515	-
+monotone_levels distinct=25 r2=0.5 scheme=grouped | grouped	20	0.5118	linear-0		x	0.0835	-
+monotone_levels distinct=25 r2=0.5 scheme=grouped | grouped	21	0.4555	linear-0		x	0.0632	-
+monotone_levels distinct=25 r2=0.5 scheme=grouped | grouped	22	0.504	linear-0		x	0.06052	-
+monotone_levels distinct=25 r2=0.5 scheme=grouped | grouped	23	0.4512	linear-0		x	0.06709	-
+monotone_levels distinct=25 r2=0.5 scheme=grouped | grouped	24	0.565	linear-0		x	0.05954	-
+monotone_levels distinct=25 r2=0.5 scheme=grouped | grouped	25	0.4559	linear-0		x	0.08553	-
+monotone_levels distinct=25 r2=0.5 scheme=grouped | grouped	26	0.4492	linear-0		x	0.07025	-
+monotone_levels distinct=25 r2=0.5 scheme=grouped | grouped	27	0.4948	linear-0		x	0.05274	-
+monotone_levels distinct=25 r2=0.5 scheme=grouped | grouped	28	0.5027	linear-0		x	0.06579	-
+monotone_levels distinct=25 r2=0.5 scheme=grouped | grouped	29	0.5431	linear-0		x	0.06495	-
+monotone_levels distinct=25 r2=0.8 scheme=grouped | grouped	0	0.8012	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=grouped | grouped	1	0.8025	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=grouped | grouped	2	0.7879	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=grouped | grouped	3	0.8101	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=grouped | grouped	4	0.7987	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=grouped | grouped	5	0.7967	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=grouped | grouped	6	0.8044	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=grouped | grouped	7	0.8039	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=grouped | grouped	8	0.7834	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=grouped | grouped	9	0.7798	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=grouped | grouped	10	0.8203	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=grouped | grouped	11	0.8149	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=grouped | grouped	12	0.7979	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=grouped | grouped	13	0.8339	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=grouped | grouped	14	0.787	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=grouped | grouped	15	0.7925	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=grouped | grouped	16	0.8125	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=grouped | grouped	17	0.8175	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=grouped | grouped	18	0.7709	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=grouped | grouped	19	0.804	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=grouped | grouped	20	0.7915	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=grouped | grouped	21	0.7989	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=grouped | grouped	22	0.7554	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=grouped | grouped	23	0.7879	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=grouped | grouped	24	0.802	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=grouped | grouped	25	0.8052	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=grouped | grouped	26	0.8155	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=grouped | grouped	27	0.7778	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=grouped | grouped	28	0.7947	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=grouped | grouped	29	0.7972	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=grouped | grouped	0	0.07672	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=grouped | grouped	1	0.03837	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=grouped | grouped	2	0.06792	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=grouped | grouped	3	0.006557	linear-0		-	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=grouped | grouped	4	0.04645	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=grouped | grouped	5	0.03688	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=grouped | grouped	6	0.005101	linear-0		-	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=grouped | grouped	7	0.04438	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=grouped | grouped	8	0.07599	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=grouped | grouped	9	0.03994	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=grouped | grouped	10	0.05614	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=grouped | grouped	11	0.01151	linear-0		x	0.05218	-
+monotone_levels distinct=40 r2=0.05 scheme=grouped | grouped	12	0.03475	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=grouped | grouped	13	0.05356	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=grouped | grouped	14	0.06475	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=grouped | grouped	15	0.0242	linear-0		x	0.05409	-
+monotone_levels distinct=40 r2=0.05 scheme=grouped | grouped	16	0.05438	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=grouped | grouped	17	0.06674	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=grouped | grouped	18	0.02104	linear-0		-	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=grouped | grouped	19	0.04853	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=grouped | grouped	20	0.05097	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=grouped | grouped	21	0.04211	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=grouped | grouped	22	0.0356	linear-0		x	0.05586	-
+monotone_levels distinct=40 r2=0.05 scheme=grouped | grouped	23	0.0185	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=grouped | grouped	24	0.05763	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=grouped | grouped	25	0.05124	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=grouped | grouped	26	0.04432	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=grouped | grouped	27	0.02607	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=grouped | grouped	28	0.02298	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=grouped | grouped	29	0.04888	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.2 scheme=grouped | grouped	0	0.2326	linear-0		x	0.06463	-
+monotone_levels distinct=40 r2=0.2 scheme=grouped | grouped	1	0.2059	linear-0		x	0.06742	-
+monotone_levels distinct=40 r2=0.2 scheme=grouped | grouped	2	0.2635	linear-0		x	0.07026	-
+monotone_levels distinct=40 r2=0.2 scheme=grouped | grouped	3	0.1879	linear-0		x	0.06661	-
+monotone_levels distinct=40 r2=0.2 scheme=grouped | grouped	4	0.118	linear-0		x	0.06509	-
+monotone_levels distinct=40 r2=0.2 scheme=grouped | grouped	5	0.1336	linear-0		x	0.07866	-
+monotone_levels distinct=40 r2=0.2 scheme=grouped | grouped	6	0.1812	linear-0		x	0.06524	-
+monotone_levels distinct=40 r2=0.2 scheme=grouped | grouped	7	0.2321	linear-0		x	0.0588	-
+monotone_levels distinct=40 r2=0.2 scheme=grouped | grouped	8	0.1691	linear-0		x	0.0637	-
+monotone_levels distinct=40 r2=0.2 scheme=grouped | grouped	9	0.2041	linear-0		x	0.0695	-
+monotone_levels distinct=40 r2=0.2 scheme=grouped | grouped	10	0.2037	linear-0		x	0.07504	-
+monotone_levels distinct=40 r2=0.2 scheme=grouped | grouped	11	0.156	linear-0		x	0.05793	-
+monotone_levels distinct=40 r2=0.2 scheme=grouped | grouped	12	0.2243	linear-0		x	0.05496	-
+monotone_levels distinct=40 r2=0.2 scheme=grouped | grouped	13	0.1848	linear-0		x	0.06365	-
+monotone_levels distinct=40 r2=0.2 scheme=grouped | grouped	14	0.1556	linear-0		x	0.0684	-
+monotone_levels distinct=40 r2=0.2 scheme=grouped | grouped	15	0.1919	linear-0		x	0.07172	-
+monotone_levels distinct=40 r2=0.2 scheme=grouped | grouped	16	0.2096	linear-0		x	0.06722	-
+monotone_levels distinct=40 r2=0.2 scheme=grouped | grouped	17	0.1169	linear-0		x	0.08544	-
+monotone_levels distinct=40 r2=0.2 scheme=grouped | grouped	18	0.2517	linear-0		x	0.05144	-
+monotone_levels distinct=40 r2=0.2 scheme=grouped | grouped	19	0.1475	linear-0		x	0.07346	-
+monotone_levels distinct=40 r2=0.2 scheme=grouped | grouped	20	0.178	linear-0		x	0.07213	-
+monotone_levels distinct=40 r2=0.2 scheme=grouped | grouped	21	0.2564	linear-0		x	0.05438	-
+monotone_levels distinct=40 r2=0.2 scheme=grouped | grouped	22	0.203	linear-0		x	0.06026	-
+monotone_levels distinct=40 r2=0.2 scheme=grouped | grouped	23	0.1729	linear-0		x	0.08104	-
+monotone_levels distinct=40 r2=0.2 scheme=grouped | grouped	24	0.2213	linear-0		x	0.06435	-
+monotone_levels distinct=40 r2=0.2 scheme=grouped | grouped	25	0.1667	linear-0		x	0.0665	-
+monotone_levels distinct=40 r2=0.2 scheme=grouped | grouped	26	0.1916	linear-0		x	0.08662	-
+monotone_levels distinct=40 r2=0.2 scheme=grouped | grouped	27	0.2363	linear-0		x	0.09303	-
+monotone_levels distinct=40 r2=0.2 scheme=grouped | grouped	28	0.1669	linear-0		x	0.06153	-
+monotone_levels distinct=40 r2=0.2 scheme=grouped | grouped	29	0.2244	linear-0		x	0.05365	-
+monotone_levels distinct=40 r2=0.5 scheme=grouped | grouped	0	0.5351	linear-0		x	0.06654	-
+monotone_levels distinct=40 r2=0.5 scheme=grouped | grouped	1	0.5354	linear-0		x	0.05541	-
+monotone_levels distinct=40 r2=0.5 scheme=grouped | grouped	2	0.4774	linear-0		x	0.06893	-
+monotone_levels distinct=40 r2=0.5 scheme=grouped | grouped	3	0.4934	linear-0		x	0.06174	-
+monotone_levels distinct=40 r2=0.5 scheme=grouped | grouped	4	0.515	linear-0		x	0.05182	-
+monotone_levels distinct=40 r2=0.5 scheme=grouped | grouped	5	0.5053	linear-0		x	0.08242	-
+monotone_levels distinct=40 r2=0.5 scheme=grouped | grouped	6	0.4889	linear-0		x	0.06658	-
+monotone_levels distinct=40 r2=0.5 scheme=grouped | grouped	7	0.4301	linear-0		x	0.06639	-
+monotone_levels distinct=40 r2=0.5 scheme=grouped | grouped	8	0.5079	linear-0		x	0.05471	-
+monotone_levels distinct=40 r2=0.5 scheme=grouped | grouped	9	0.4769	linear-0		x	0.05821	-
+monotone_levels distinct=40 r2=0.5 scheme=grouped | grouped	10	0.5537	linear-0		x	0.0645	-
+monotone_levels distinct=40 r2=0.5 scheme=grouped | grouped	11	0.5352	linear-0		x	0.08244	-
+monotone_levels distinct=40 r2=0.5 scheme=grouped | grouped	12	0.3827	linear-0		x	0.08307	-
+monotone_levels distinct=40 r2=0.5 scheme=grouped | grouped	13	0.5017	linear-0		x	0.05197	-
+monotone_levels distinct=40 r2=0.5 scheme=grouped | grouped	14	0.4964	linear-0		x	0.06706	-
+monotone_levels distinct=40 r2=0.5 scheme=grouped | grouped	15	0.5321	linear-0		x	0.05081	-
+monotone_levels distinct=40 r2=0.5 scheme=grouped | grouped	16	0.5292	linear-0		x	0.06185	-
+monotone_levels distinct=40 r2=0.5 scheme=grouped | grouped	17	0.5316	linear-0		x	0.06496	-
+monotone_levels distinct=40 r2=0.5 scheme=grouped | grouped	18	0.4557	linear-0		x	0.07814	-
+monotone_levels distinct=40 r2=0.5 scheme=grouped | grouped	19	0.4961	linear-0		x	0.05258	-
+monotone_levels distinct=40 r2=0.5 scheme=grouped | grouped	20	0.4689	linear-0		x	0.07469	-
+monotone_levels distinct=40 r2=0.5 scheme=grouped | grouped	21	0.4739	linear-0		x	0.06121	-
+monotone_levels distinct=40 r2=0.5 scheme=grouped | grouped	22	0.5183	linear-0		x	0.06989	-
+monotone_levels distinct=40 r2=0.5 scheme=grouped | grouped	23	0.5471	linear-0		x	0.06471	-
+monotone_levels distinct=40 r2=0.5 scheme=grouped | grouped	24	0.5077	linear-0		x	0.06481	-
+monotone_levels distinct=40 r2=0.5 scheme=grouped | grouped	25	0.5149	linear-0		x	0.05623	-
+monotone_levels distinct=40 r2=0.5 scheme=grouped | grouped	26	0.4676	linear-0		x	0.07893	-
+monotone_levels distinct=40 r2=0.5 scheme=grouped | grouped	27	0.4521	linear-0		x	0.06652	-
+monotone_levels distinct=40 r2=0.5 scheme=grouped | grouped	28	0.5277	linear-0		x	0.06216	-
+monotone_levels distinct=40 r2=0.5 scheme=grouped | grouped	29	0.5081	linear-0		x	0.061	-
+monotone_levels distinct=40 r2=0.8 scheme=grouped | grouped	0	0.8121	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=grouped | grouped	1	0.7912	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=grouped | grouped	2	0.7997	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=grouped | grouped	3	0.805	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=grouped | grouped	4	0.8114	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=grouped | grouped	5	0.8193	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=grouped | grouped	6	0.8105	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=grouped | grouped	7	0.8016	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=grouped | grouped	8	0.7622	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=grouped | grouped	9	0.8289	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=grouped | grouped	10	0.7979	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=grouped | grouped	11	0.7997	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=grouped | grouped	12	0.791	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=grouped | grouped	13	0.7872	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=grouped | grouped	14	0.7739	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=grouped | grouped	15	0.8035	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=grouped | grouped	16	0.8114	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=grouped | grouped	17	0.7887	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=grouped | grouped	18	0.7902	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=grouped | grouped	19	0.7769	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=grouped | grouped	20	0.7899	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=grouped | grouped	21	0.8107	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=grouped | grouped	22	0.8038	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=grouped | grouped	23	0.8024	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=grouped | grouped	24	0.808	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=grouped | grouped	25	0.7914	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=grouped | grouped	26	0.811	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=grouped | grouped	27	0.7779	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=grouped | grouped	28	0.804	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=grouped | grouped	29	0.8011	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=grouped | grouped	0	0.05144	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=grouped | grouped	1	0.07112	linear-0		x	0.05276	-
+monotone_levels distinct=100 r2=0.05 scheme=grouped | grouped	2	0.06052	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=grouped | grouped	3	0.09079	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=grouped | grouped	4	0.05032	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=grouped | grouped	5	0.06239	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=grouped | grouped	6	0.05741	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=grouped | grouped	7	0.09883	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=grouped | grouped	8	-0.01334	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=grouped | grouped	9	0.08506	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=grouped | grouped	10	0.1045	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=grouped | grouped	11	0.02292	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=grouped | grouped	12	0.06038	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=grouped | grouped	13	0.05862	linear-0		x	0.05073	-
+monotone_levels distinct=100 r2=0.05 scheme=grouped | grouped	14	0.04822	linear-0		x	0.05949	-
+monotone_levels distinct=100 r2=0.05 scheme=grouped | grouped	15	0.05977	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=grouped | grouped	16	0.05979	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=grouped | grouped	17	0.04668	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=grouped | grouped	18	0.0181	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=grouped | grouped	19	0.04331	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=grouped | grouped	20	0.03325	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=grouped | grouped	21	-0.01824	linear-0		-	0.05305	-
+monotone_levels distinct=100 r2=0.05 scheme=grouped | grouped	22	0.04271	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=grouped | grouped	23	0.05033	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=grouped | grouped	24	0.07042	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=grouped | grouped	25	0.04609	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=grouped | grouped	26	0.06048	linear-0		x	0.05082	-
+monotone_levels distinct=100 r2=0.05 scheme=grouped | grouped	27	0.07567	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=grouped | grouped	28	0.04152	linear-0		x	0.05015	-
+monotone_levels distinct=100 r2=0.05 scheme=grouped | grouped	29	0.01295	linear-0		x	0.05384	-
+monotone_levels distinct=100 r2=0.2 scheme=grouped | grouped	0	0.1807	linear-0		x	0.07029	-
+monotone_levels distinct=100 r2=0.2 scheme=grouped | grouped	1	0.1867	linear-0		x	0.08084	-
+monotone_levels distinct=100 r2=0.2 scheme=grouped | grouped	2	0.1689	linear-0		x	0.06629	-
+monotone_levels distinct=100 r2=0.2 scheme=grouped | grouped	3	0.2076	linear-0		x	0.07557	-
+monotone_levels distinct=100 r2=0.2 scheme=grouped | grouped	4	0.1773	linear-0		x	0.07346	-
+monotone_levels distinct=100 r2=0.2 scheme=grouped | grouped	5	0.2452	linear-0		x	0.05325	-
+monotone_levels distinct=100 r2=0.2 scheme=grouped | grouped	6	0.2358	linear-0		x	0.07718	-
+monotone_levels distinct=100 r2=0.2 scheme=grouped | grouped	7	0.247	linear-0		x	0.0703	-
+monotone_levels distinct=100 r2=0.2 scheme=grouped | grouped	8	0.219	linear-0		x	0.06255	-
+monotone_levels distinct=100 r2=0.2 scheme=grouped | grouped	9	0.1745	linear-0		x	0.07166	-
+monotone_levels distinct=100 r2=0.2 scheme=grouped | grouped	10	0.1545	linear-0		x	0.06486	-
+monotone_levels distinct=100 r2=0.2 scheme=grouped | grouped	11	0.2419	linear-0		x	0.08317	-
+monotone_levels distinct=100 r2=0.2 scheme=grouped | grouped	12	0.1588	linear-0		x	0.06312	-
+monotone_levels distinct=100 r2=0.2 scheme=grouped | grouped	13	0.1867	linear-0		x	0.0726	-
+monotone_levels distinct=100 r2=0.2 scheme=grouped | grouped	14	0.2268	linear-0		x	0.07228	-
+monotone_levels distinct=100 r2=0.2 scheme=grouped | grouped	15	0.16	linear-0		x	0.0715	-
+monotone_levels distinct=100 r2=0.2 scheme=grouped | grouped	16	0.1878	linear-0		x	0.07267	-
+monotone_levels distinct=100 r2=0.2 scheme=grouped | grouped	17	0.1791	linear-0		x	0.0829	-
+monotone_levels distinct=100 r2=0.2 scheme=grouped | grouped	18	0.2253	linear-0		x	0.07238	-
+monotone_levels distinct=100 r2=0.2 scheme=grouped | grouped	19	0.2343	linear-0		x	0.0686	-
+monotone_levels distinct=100 r2=0.2 scheme=grouped | grouped	20	0.1243	linear-0		x	0.07854	-
+monotone_levels distinct=100 r2=0.2 scheme=grouped | grouped	21	0.1414	linear-0		x	0.08812	-
+monotone_levels distinct=100 r2=0.2 scheme=grouped | grouped	22	0.1832	linear-0		x	0.06866	-
+monotone_levels distinct=100 r2=0.2 scheme=grouped | grouped	23	0.2395	linear-0		x	0.06177	-
+monotone_levels distinct=100 r2=0.2 scheme=grouped | grouped	24	0.178	linear-0		x	0.07986	-
+monotone_levels distinct=100 r2=0.2 scheme=grouped | grouped	25	0.2183	linear-0		x	0.06895	-
+monotone_levels distinct=100 r2=0.2 scheme=grouped | grouped	26	0.2586	linear-0		x	0.06911	-
+monotone_levels distinct=100 r2=0.2 scheme=grouped | grouped	27	0.2104	linear-0		x	0.06279	-
+monotone_levels distinct=100 r2=0.2 scheme=grouped | grouped	28	0.2039	linear-0		x	0.05655	-
+monotone_levels distinct=100 r2=0.2 scheme=grouped | grouped	29	0.1896	linear-0		x	0.05912	-
+monotone_levels distinct=100 r2=0.5 scheme=grouped | grouped	0	0.4602	linear-0		x	0.07073	-
+monotone_levels distinct=100 r2=0.5 scheme=grouped | grouped	1	0.5308	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.5 scheme=grouped | grouped	2	0.4763	linear-0		x	0.058	-
+monotone_levels distinct=100 r2=0.5 scheme=grouped | grouped	3	0.55	linear-0		x	0.0719	-
+monotone_levels distinct=100 r2=0.5 scheme=grouped | grouped	4	0.558	linear-0		x	0.05452	-
+monotone_levels distinct=100 r2=0.5 scheme=grouped | grouped	5	0.4724	linear-0		x	0.06821	-
+monotone_levels distinct=100 r2=0.5 scheme=grouped | grouped	6	0.4942	linear-0		x	0.06296	-
+monotone_levels distinct=100 r2=0.5 scheme=grouped | grouped	7	0.4917	linear-0		x	0.06945	-
+monotone_levels distinct=100 r2=0.5 scheme=grouped | grouped	8	0.5417	linear-0		x	0.0579	-
+monotone_levels distinct=100 r2=0.5 scheme=grouped | grouped	9	0.5203	linear-0		x	0.05245	-
+monotone_levels distinct=100 r2=0.5 scheme=grouped | grouped	10	0.5257	linear-0		x	0.05781	-
+monotone_levels distinct=100 r2=0.5 scheme=grouped | grouped	11	0.4982	linear-0		x	0.07396	-
+monotone_levels distinct=100 r2=0.5 scheme=grouped | grouped	12	0.4636	linear-0		x	0.07123	-
+monotone_levels distinct=100 r2=0.5 scheme=grouped | grouped	13	0.5218	linear-0		x	0.05949	-
+monotone_levels distinct=100 r2=0.5 scheme=grouped | grouped	14	0.456	linear-0		x	0.07527	-
+monotone_levels distinct=100 r2=0.5 scheme=grouped | grouped	15	0.5444	linear-0		x	0.0604	-
+monotone_levels distinct=100 r2=0.5 scheme=grouped | grouped	16	0.408	linear-0		x	0.0773	-
+monotone_levels distinct=100 r2=0.5 scheme=grouped | grouped	17	0.5069	linear-0		x	0.06707	-
+monotone_levels distinct=100 r2=0.5 scheme=grouped | grouped	18	0.4619	linear-0		x	0.07173	-
+monotone_levels distinct=100 r2=0.5 scheme=grouped | grouped	19	0.4819	linear-0		x	0.06127	-
+monotone_levels distinct=100 r2=0.5 scheme=grouped | grouped	20	0.4846	linear-0		x	0.06217	-
+monotone_levels distinct=100 r2=0.5 scheme=grouped | grouped	21	0.4957	linear-0		x	0.06422	-
+monotone_levels distinct=100 r2=0.5 scheme=grouped | grouped	22	0.4926	linear-0		x	0.07013	-
+monotone_levels distinct=100 r2=0.5 scheme=grouped | grouped	23	0.4962	linear-0		x	0.07092	-
+monotone_levels distinct=100 r2=0.5 scheme=grouped | grouped	24	0.5053	linear-0		x	0.06628	-
+monotone_levels distinct=100 r2=0.5 scheme=grouped | grouped	25	0.5334	linear-0		x	0.07738	-
+monotone_levels distinct=100 r2=0.5 scheme=grouped | grouped	26	0.5304	linear-0		x	0.05984	-
+monotone_levels distinct=100 r2=0.5 scheme=grouped | grouped	27	0.5076	linear-0		x	0.0579	-
+monotone_levels distinct=100 r2=0.5 scheme=grouped | grouped	28	0.4881	linear-0		x	0.05675	-
+monotone_levels distinct=100 r2=0.5 scheme=grouped | grouped	29	0.4894	linear-0		x	0.06399	-
+monotone_levels distinct=100 r2=0.8 scheme=grouped | grouped	0	0.8045	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=grouped | grouped	1	0.8096	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=grouped | grouped	2	0.8096	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=grouped | grouped	3	0.7856	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=grouped | grouped	4	0.7901	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=grouped | grouped	5	0.7859	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=grouped | grouped	6	0.783	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=grouped | grouped	7	0.7832	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=grouped | grouped	8	0.8098	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=grouped | grouped	9	0.8225	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=grouped | grouped	10	0.7945	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=grouped | grouped	11	0.8032	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=grouped | grouped	12	0.7886	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=grouped | grouped	13	0.8023	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=grouped | grouped	14	0.8019	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=grouped | grouped	15	0.824	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=grouped | grouped	16	0.8119	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=grouped | grouped	17	0.7877	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=grouped | grouped	18	0.8018	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=grouped | grouped	19	0.7867	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=grouped | grouped	20	0.8213	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=grouped | grouped	21	0.7998	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=grouped | grouped	22	0.8188	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=grouped | grouped	23	0.7962	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=grouped | grouped	24	0.7907	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=grouped | grouped	25	0.7926	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=grouped | grouped	26	0.8192	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=grouped | grouped	27	0.804	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=grouped | grouped	28	0.8066	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=grouped | grouped	29	0.7937	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=time | time	0	0.04452	linear-0		x	0.05004	-
+monotone_levels distinct=25 r2=0.05 scheme=time | time	1	0.1087	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=time | time	2	0.03217	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=time | time	3	0.01089	linear-0		x	0.05441	-
+monotone_levels distinct=25 r2=0.05 scheme=time | time	4	0.01619	linear-0		x	0.05366	-
+monotone_levels distinct=25 r2=0.05 scheme=time | time	5	0.04869	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=time | time	6	0.07872	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=time | time	7	0.03813	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=time | time	8	0.0295	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=time | time	9	0.01952	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=time | time	10	0.04085	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=time | time	11	0.0597	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=time | time	12	0.04632	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=time | time	13	0.02469	linear-0		x	0.0573	-
+monotone_levels distinct=25 r2=0.05 scheme=time | time	14	0.03873	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=time | time	15	0.03527	linear-0		x	0.05209	-
+monotone_levels distinct=25 r2=0.05 scheme=time | time	16	0.05775	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=time | time	17	0.09202	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=time | time	18	0.05726	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=time | time	19	0.001545	linear-0		x	0.05943	-
+monotone_levels distinct=25 r2=0.05 scheme=time | time	20	0.04807	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=time | time	21	0.09094	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=time | time	22	0.07408	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=time | time	23	0.005244	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=time | time	24	0.06574	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=time | time	25	0.0341	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=time | time	26	0.03368	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=time | time	27	0.0477	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=time | time	28	0.04918	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.05 scheme=time | time	29	0.06973	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.2 scheme=time | time	0	0.1551	linear-0		x	0.08145	-
+monotone_levels distinct=25 r2=0.2 scheme=time | time	1	0.1884	linear-0		x	0.06401	-
+monotone_levels distinct=25 r2=0.2 scheme=time | time	2	0.2003	linear-0		x	0.09139	-
+monotone_levels distinct=25 r2=0.2 scheme=time | time	3	0.1972	linear-0		x	0.05618	-
+monotone_levels distinct=25 r2=0.2 scheme=time | time	4	0.2181	linear-0		x	0.05806	-
+monotone_levels distinct=25 r2=0.2 scheme=time | time	5	0.274	linear-0		x	0.06632	-
+monotone_levels distinct=25 r2=0.2 scheme=time | time	6	0.2507	linear-0		x	0.0702	-
+monotone_levels distinct=25 r2=0.2 scheme=time | time	7	0.1891	linear-0		x	0.06092	-
+monotone_levels distinct=25 r2=0.2 scheme=time | time	8	0.2178	linear-0		x	0.06415	-
+monotone_levels distinct=25 r2=0.2 scheme=time | time	9	0.1247	linear-0		x	0.07038	-
+monotone_levels distinct=25 r2=0.2 scheme=time | time	10	0.2388	linear-0		x	0.0563	-
+monotone_levels distinct=25 r2=0.2 scheme=time | time	11	0.2002	linear-0		x	0.06448	-
+monotone_levels distinct=25 r2=0.2 scheme=time | time	12	0.2472	linear-0		x	0.08149	-
+monotone_levels distinct=25 r2=0.2 scheme=time | time	13	0.2355	linear-0		x	0.06559	-
+monotone_levels distinct=25 r2=0.2 scheme=time | time	14	0.163	linear-0		x	0.08323	-
+monotone_levels distinct=25 r2=0.2 scheme=time | time	15	0.14	linear-0		x	0.08284	-
+monotone_levels distinct=25 r2=0.2 scheme=time | time	16	0.2061	linear-0		x	0.07592	-
+monotone_levels distinct=25 r2=0.2 scheme=time | time	17	0.2271	linear-0		x	0.06319	-
+monotone_levels distinct=25 r2=0.2 scheme=time | time	18	0.208	linear-0		x	0.07487	-
+monotone_levels distinct=25 r2=0.2 scheme=time | time	19	0.1811	linear-0		x	0.0818	-
+monotone_levels distinct=25 r2=0.2 scheme=time | time	20	0.1922	linear-0		x	0.06619	-
+monotone_levels distinct=25 r2=0.2 scheme=time | time	21	0.2291	linear-0		x	0.05236	-
+monotone_levels distinct=25 r2=0.2 scheme=time | time	22	0.2124	linear-0		x	0.0576	-
+monotone_levels distinct=25 r2=0.2 scheme=time | time	23	0.1908	linear-0		x	0.0609	-
+monotone_levels distinct=25 r2=0.2 scheme=time | time	24	0.2007	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.2 scheme=time | time	25	0.209	linear-0		x	0.07705	-
+monotone_levels distinct=25 r2=0.2 scheme=time | time	26	0.2404	linear-0		x	0.07306	-
+monotone_levels distinct=25 r2=0.2 scheme=time | time	27	0.1509	linear-0		x	0.07055	-
+monotone_levels distinct=25 r2=0.2 scheme=time | time	28	0.1982	linear-0		x	0.05895	-
+monotone_levels distinct=25 r2=0.2 scheme=time | time	29	0.1601	linear-0		x	0.05123	-
+monotone_levels distinct=25 r2=0.5 scheme=time | time	0	0.5033	linear-0		x	0.05194	-
+monotone_levels distinct=25 r2=0.5 scheme=time | time	1	0.4475	linear-0		x	0.07209	-
+monotone_levels distinct=25 r2=0.5 scheme=time | time	2	0.5063	linear-0		x	0.05524	-
+monotone_levels distinct=25 r2=0.5 scheme=time | time	3	0.5098	linear-0		x	0.05584	-
+monotone_levels distinct=25 r2=0.5 scheme=time | time	4	0.5603	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.5 scheme=time | time	5	0.4879	linear-0		x	0.0667	-
+monotone_levels distinct=25 r2=0.5 scheme=time | time	6	0.5274	linear-0		x	0.06129	-
+monotone_levels distinct=25 r2=0.5 scheme=time | time	7	0.4366	linear-0		x	0.08318	-
+monotone_levels distinct=25 r2=0.5 scheme=time | time	8	0.5313	linear-0		x	0.05419	-
+monotone_levels distinct=25 r2=0.5 scheme=time | time	9	0.4607	linear-0		x	0.06899	-
+monotone_levels distinct=25 r2=0.5 scheme=time | time	10	0.5173	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.5 scheme=time | time	11	0.52	linear-0		x	0.0646	-
+monotone_levels distinct=25 r2=0.5 scheme=time | time	12	0.4943	linear-0		x	0.05533	-
+monotone_levels distinct=25 r2=0.5 scheme=time | time	13	0.4913	linear-0		x	0.06288	-
+monotone_levels distinct=25 r2=0.5 scheme=time | time	14	0.5438	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.5 scheme=time | time	15	0.3885	linear-0		x	0.1015	-
+monotone_levels distinct=25 r2=0.5 scheme=time | time	16	0.5199	linear-0		x	0.07592	-
+monotone_levels distinct=25 r2=0.5 scheme=time | time	17	0.488	linear-0		x	0.06911	-
+monotone_levels distinct=25 r2=0.5 scheme=time | time	18	0.4786	linear-0		x	0.06517	-
+monotone_levels distinct=25 r2=0.5 scheme=time | time	19	0.55	linear-0		x	0.0673	-
+monotone_levels distinct=25 r2=0.5 scheme=time | time	20	0.5163	linear-0		x	0.0549	-
+monotone_levels distinct=25 r2=0.5 scheme=time | time	21	0.5036	linear-0		x	0.06716	-
+monotone_levels distinct=25 r2=0.5 scheme=time | time	22	0.4966	linear-0		x	0.07434	-
+monotone_levels distinct=25 r2=0.5 scheme=time | time	23	0.4826	linear-0		x	0.06209	-
+monotone_levels distinct=25 r2=0.5 scheme=time | time	24	0.5215	linear-0		x	0.05884	-
+monotone_levels distinct=25 r2=0.5 scheme=time | time	25	0.482	linear-0		x	0.06468	-
+monotone_levels distinct=25 r2=0.5 scheme=time | time	26	0.5266	linear-0		x	0.05012	-
+monotone_levels distinct=25 r2=0.5 scheme=time | time	27	0.5176	linear-0		x	0.05188	-
+monotone_levels distinct=25 r2=0.5 scheme=time | time	28	0.5316	linear-0		x	0.06738	-
+monotone_levels distinct=25 r2=0.5 scheme=time | time	29	0.4737	linear-0		x	0.06971	-
+monotone_levels distinct=25 r2=0.8 scheme=time | time	0	0.785	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=time | time	1	0.7951	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=time | time	2	0.7988	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=time | time	3	0.8034	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=time | time	4	0.8059	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=time | time	5	0.7832	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=time | time	6	0.7686	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=time | time	7	0.8127	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=time | time	8	0.8176	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=time | time	9	0.797	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=time | time	10	0.8165	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=time | time	11	0.8181	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=time | time	12	0.778	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=time | time	13	0.7926	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=time | time	14	0.7785	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=time | time	15	0.7826	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=time | time	16	0.7884	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=time | time	17	0.7757	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=time | time	18	0.8032	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=time | time	19	0.8144	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=time | time	20	0.8077	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=time | time	21	0.7985	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=time | time	22	0.7883	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=time | time	23	0.8144	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=time | time	24	0.7904	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=time | time	25	0.8343	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=time | time	26	0.8155	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=time | time	27	0.7879	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=time | time	28	0.8127	linear-0		x	0.05	-
+monotone_levels distinct=25 r2=0.8 scheme=time | time	29	0.7805	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=time | time	0	0.07996	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=time | time	1	0.0335	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=time | time	2	0.06325	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=time | time	3	0.06827	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=time | time	4	0.07704	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=time | time	5	0.03632	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=time | time	6	0.04802	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=time | time	7	0.01173	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=time | time	8	0.0417	linear-0		x	0.05041	-
+monotone_levels distinct=40 r2=0.05 scheme=time | time	9	0.07467	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=time | time	10	0.06328	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=time | time	11	0.03349	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=time | time	12	0.03539	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=time | time	13	0.05374	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=time | time	14	0.04979	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=time | time	15	0.08706	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=time | time	16	0.03898	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=time | time	17	0.05226	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=time | time	18	0.007744	linear-0		-	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=time | time	19	0.02423	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=time | time	20	0.0649	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=time | time	21	0.04436	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=time | time	22	0.08028	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=time | time	23	0.08791	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=time | time	24	0.05663	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=time | time	25	0.05779	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=time | time	26	0.07924	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=time | time	27	0.05755	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=time | time	28	0.04112	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.05 scheme=time | time	29	0.07245	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.2 scheme=time | time	0	0.2219	linear-0		x	0.0669	-
+monotone_levels distinct=40 r2=0.2 scheme=time | time	1	0.1954	linear-0		x	0.07443	-
+monotone_levels distinct=40 r2=0.2 scheme=time | time	2	0.2662	linear-0		x	0.06746	-
+monotone_levels distinct=40 r2=0.2 scheme=time | time	3	0.2188	linear-0		x	0.06088	-
+monotone_levels distinct=40 r2=0.2 scheme=time | time	4	0.2205	linear-0		x	0.06938	-
+monotone_levels distinct=40 r2=0.2 scheme=time | time	5	0.1667	linear-0		x	0.07221	-
+monotone_levels distinct=40 r2=0.2 scheme=time | time	6	0.2026	linear-0		x	0.07148	-
+monotone_levels distinct=40 r2=0.2 scheme=time | time	7	0.2453	linear-0		x	0.06954	-
+monotone_levels distinct=40 r2=0.2 scheme=time | time	8	0.1986	linear-0		x	0.08576	-
+monotone_levels distinct=40 r2=0.2 scheme=time | time	9	0.1987	linear-0		x	0.07132	-
+monotone_levels distinct=40 r2=0.2 scheme=time | time	10	0.2296	linear-0		x	0.05936	-
+monotone_levels distinct=40 r2=0.2 scheme=time | time	11	0.1724	linear-0		x	0.07296	-
+monotone_levels distinct=40 r2=0.2 scheme=time | time	12	0.1871	linear-0		x	0.06466	-
+monotone_levels distinct=40 r2=0.2 scheme=time | time	13	0.167	linear-0		x	0.07624	-
+monotone_levels distinct=40 r2=0.2 scheme=time | time	14	0.2147	linear-0		x	0.0568	-
+monotone_levels distinct=40 r2=0.2 scheme=time | time	15	0.2175	linear-0		x	0.05477	-
+monotone_levels distinct=40 r2=0.2 scheme=time | time	16	0.1921	linear-0		x	0.05508	-
+monotone_levels distinct=40 r2=0.2 scheme=time | time	17	0.1962	linear-0		x	0.0818	-
+monotone_levels distinct=40 r2=0.2 scheme=time | time	18	0.1731	linear-0		x	0.08374	-
+monotone_levels distinct=40 r2=0.2 scheme=time | time	19	0.2239	linear-0		x	0.05919	-
+monotone_levels distinct=40 r2=0.2 scheme=time | time	20	0.2592	linear-0		x	0.06886	-
+monotone_levels distinct=40 r2=0.2 scheme=time | time	21	0.2357	linear-0		x	0.05954	-
+monotone_levels distinct=40 r2=0.2 scheme=time | time	22	0.1725	linear-0		x	0.05965	-
+monotone_levels distinct=40 r2=0.2 scheme=time | time	23	0.1799	linear-0		x	0.0684	-
+monotone_levels distinct=40 r2=0.2 scheme=time | time	24	0.2983	linear-0		x	0.06026	-
+monotone_levels distinct=40 r2=0.2 scheme=time | time	25	0.1883	linear-0		x	0.06772	-
+monotone_levels distinct=40 r2=0.2 scheme=time | time	26	0.2436	linear-0		x	0.0747	-
+monotone_levels distinct=40 r2=0.2 scheme=time | time	27	0.3012	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.2 scheme=time | time	28	0.1848	linear-0		x	0.06115	-
+monotone_levels distinct=40 r2=0.2 scheme=time | time	29	0.1886	linear-0		x	0.06249	-
+monotone_levels distinct=40 r2=0.5 scheme=time | time	0	0.4398	linear-0		x	0.0825	-
+monotone_levels distinct=40 r2=0.5 scheme=time | time	1	0.5195	linear-0		x	0.06279	-
+monotone_levels distinct=40 r2=0.5 scheme=time | time	2	0.4996	linear-0		x	0.05073	-
+monotone_levels distinct=40 r2=0.5 scheme=time | time	3	0.5194	linear-0		x	0.05806	-
+monotone_levels distinct=40 r2=0.5 scheme=time | time	4	0.5318	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.5 scheme=time | time	5	0.4955	linear-0		x	0.0709	-
+monotone_levels distinct=40 r2=0.5 scheme=time | time	6	0.4982	linear-0		x	0.05269	-
+monotone_levels distinct=40 r2=0.5 scheme=time | time	7	0.4963	linear-0		x	0.06345	-
+monotone_levels distinct=40 r2=0.5 scheme=time | time	8	0.5207	linear-0		x	0.05259	-
+monotone_levels distinct=40 r2=0.5 scheme=time | time	9	0.5045	linear-0		x	0.06235	-
+monotone_levels distinct=40 r2=0.5 scheme=time | time	10	0.5438	linear-0		x	0.07545	-
+monotone_levels distinct=40 r2=0.5 scheme=time | time	11	0.57	linear-0		x	0.05691	-
+monotone_levels distinct=40 r2=0.5 scheme=time | time	12	0.4601	linear-0		x	0.06407	-
+monotone_levels distinct=40 r2=0.5 scheme=time | time	13	0.4871	linear-0		x	0.06106	-
+monotone_levels distinct=40 r2=0.5 scheme=time | time	14	0.4932	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.5 scheme=time | time	15	0.5088	linear-0		x	0.06144	-
+monotone_levels distinct=40 r2=0.5 scheme=time | time	16	0.4912	linear-0		x	0.06166	-
+monotone_levels distinct=40 r2=0.5 scheme=time | time	17	0.5383	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.5 scheme=time | time	18	0.4759	linear-0		x	0.07734	-
+monotone_levels distinct=40 r2=0.5 scheme=time | time	19	0.5067	linear-0		x	0.05103	-
+monotone_levels distinct=40 r2=0.5 scheme=time | time	20	0.4794	linear-0		x	0.06444	-
+monotone_levels distinct=40 r2=0.5 scheme=time | time	21	0.5008	linear-0		x	0.05974	-
+monotone_levels distinct=40 r2=0.5 scheme=time | time	22	0.4976	linear-0		x	0.06542	-
+monotone_levels distinct=40 r2=0.5 scheme=time | time	23	0.5287	linear-0		x	0.05689	-
+monotone_levels distinct=40 r2=0.5 scheme=time | time	24	0.4495	linear-0		x	0.06984	-
+monotone_levels distinct=40 r2=0.5 scheme=time | time	25	0.5634	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.5 scheme=time | time	26	0.4874	linear-0		x	0.08018	-
+monotone_levels distinct=40 r2=0.5 scheme=time | time	27	0.4797	linear-0		x	0.06897	-
+monotone_levels distinct=40 r2=0.5 scheme=time | time	28	0.5377	linear-0		x	0.06738	-
+monotone_levels distinct=40 r2=0.5 scheme=time | time	29	0.5156	linear-0		x	0.05683	-
+monotone_levels distinct=40 r2=0.8 scheme=time | time	0	0.7985	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=time | time	1	0.7863	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=time | time	2	0.8029	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=time | time	3	0.8046	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=time | time	4	0.7857	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=time | time	5	0.8022	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=time | time	6	0.7863	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=time | time	7	0.8073	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=time | time	8	0.759	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=time | time	9	0.7965	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=time | time	10	0.799	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=time | time	11	0.7814	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=time | time	12	0.7839	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=time | time	13	0.8161	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=time | time	14	0.776	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=time | time	15	0.8009	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=time | time	16	0.8037	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=time | time	17	0.7931	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=time | time	18	0.7955	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=time | time	19	0.7926	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=time | time	20	0.8019	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=time | time	21	0.8028	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=time | time	22	0.8079	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=time | time	23	0.8116	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=time | time	24	0.8047	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=time | time	25	0.8235	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=time | time	26	0.8297	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=time | time	27	0.7897	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=time | time	28	0.7925	linear-0		x	0.05	-
+monotone_levels distinct=40 r2=0.8 scheme=time | time	29	0.7959	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=time | time	0	0.04219	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=time | time	1	0.06274	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=time | time	2	0.06776	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=time | time	3	0.02447	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=time | time	4	0.03588	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=time | time	5	0.03343	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=time | time	6	0.03615	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=time | time	7	0.05462	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=time | time	8	0.01462	linear-0		-	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=time | time	9	0.03088	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=time | time	10	0.05267	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=time | time	11	0.01559	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=time | time	12	0.08478	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=time | time	13	0.0576	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=time | time	14	0.0575	linear-0		x	0.0597	-
+monotone_levels distinct=100 r2=0.05 scheme=time | time	15	0.06414	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=time | time	16	0.02618	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=time | time	17	0.04235	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=time | time	18	0.04038	linear-0		x	0.05122	-
+monotone_levels distinct=100 r2=0.05 scheme=time | time	19	0.0429	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=time | time	20	0.0277	linear-0		-	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=time | time	21	0.04784	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=time | time	22	0.0239	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=time | time	23	0.01608	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=time | time	24	0.007963	linear-0		x	0.06013	-
+monotone_levels distinct=100 r2=0.05 scheme=time | time	25	0.05581	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=time | time	26	0.008376	linear-0		x	0.05411	-
+monotone_levels distinct=100 r2=0.05 scheme=time | time	27	0.05508	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=time | time	28	0.0842	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.05 scheme=time | time	29	0.04206	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.2 scheme=time | time	0	0.1849	linear-0		x	0.06998	-
+monotone_levels distinct=100 r2=0.2 scheme=time | time	1	0.2013	linear-0		x	0.07174	-
+monotone_levels distinct=100 r2=0.2 scheme=time | time	2	0.1864	linear-0		x	0.07556	-
+monotone_levels distinct=100 r2=0.2 scheme=time | time	3	0.2635	linear-0		x	0.06239	-
+monotone_levels distinct=100 r2=0.2 scheme=time | time	4	0.2152	linear-0		x	0.0648	-
+monotone_levels distinct=100 r2=0.2 scheme=time | time	5	0.2221	linear-0		x	0.06541	-
+monotone_levels distinct=100 r2=0.2 scheme=time | time	6	0.2581	linear-0		x	0.05823	-
+monotone_levels distinct=100 r2=0.2 scheme=time | time	7	0.2535	linear-0		x	0.06947	-
+monotone_levels distinct=100 r2=0.2 scheme=time | time	8	0.1924	linear-0		x	0.06946	-
+monotone_levels distinct=100 r2=0.2 scheme=time | time	9	0.2187	linear-0		x	0.0625	-
+monotone_levels distinct=100 r2=0.2 scheme=time | time	10	0.1435	linear-0		x	0.06405	-
+monotone_levels distinct=100 r2=0.2 scheme=time | time	11	0.2245	linear-0		x	0.06237	-
+monotone_levels distinct=100 r2=0.2 scheme=time | time	12	0.1616	linear-0		x	0.07501	-
+monotone_levels distinct=100 r2=0.2 scheme=time | time	13	0.1992	linear-0		x	0.06539	-
+monotone_levels distinct=100 r2=0.2 scheme=time | time	14	0.2282	linear-0		x	0.08985	-
+monotone_levels distinct=100 r2=0.2 scheme=time | time	15	0.2005	linear-0		x	0.05905	-
+monotone_levels distinct=100 r2=0.2 scheme=time | time	16	0.1947	linear-0		x	0.08742	-
+monotone_levels distinct=100 r2=0.2 scheme=time | time	17	0.2426	linear-0		x	0.06358	-
+monotone_levels distinct=100 r2=0.2 scheme=time | time	18	0.1261	linear-0		x	0.07717	-
+monotone_levels distinct=100 r2=0.2 scheme=time | time	19	0.2676	linear-0		x	0.05795	-
+monotone_levels distinct=100 r2=0.2 scheme=time | time	20	0.1889	linear-0		x	0.06497	-
+monotone_levels distinct=100 r2=0.2 scheme=time | time	21	0.1939	linear-0		x	0.07191	-
+monotone_levels distinct=100 r2=0.2 scheme=time | time	22	0.2099	linear-0		x	0.05187	-
+monotone_levels distinct=100 r2=0.2 scheme=time | time	23	0.2151	linear-0		x	0.05327	-
+monotone_levels distinct=100 r2=0.2 scheme=time | time	24	0.1671	linear-0		x	0.0646	-
+monotone_levels distinct=100 r2=0.2 scheme=time | time	25	0.1987	linear-0		x	0.07863	-
+monotone_levels distinct=100 r2=0.2 scheme=time | time	26	0.2214	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.2 scheme=time | time	27	0.2486	linear-0		x	0.0755	-
+monotone_levels distinct=100 r2=0.2 scheme=time | time	28	0.2355	linear-0		x	0.06271	-
+monotone_levels distinct=100 r2=0.2 scheme=time | time	29	0.1832	linear-0		x	0.05666	-
+monotone_levels distinct=100 r2=0.5 scheme=time | time	0	0.4689	linear-0		x	0.07326	-
+monotone_levels distinct=100 r2=0.5 scheme=time | time	1	0.4834	linear-0		x	0.0635	-
+monotone_levels distinct=100 r2=0.5 scheme=time | time	2	0.4879	linear-0		x	0.0632	-
+monotone_levels distinct=100 r2=0.5 scheme=time | time	3	0.5241	linear-0		x	0.07665	-
+monotone_levels distinct=100 r2=0.5 scheme=time | time	4	0.4955	linear-0		x	0.06363	-
+monotone_levels distinct=100 r2=0.5 scheme=time | time	5	0.5189	linear-0		x	0.0591	-
+monotone_levels distinct=100 r2=0.5 scheme=time | time	6	0.4949	linear-0		x	0.06386	-
+monotone_levels distinct=100 r2=0.5 scheme=time | time	7	0.5073	linear-0		x	0.06975	-
+monotone_levels distinct=100 r2=0.5 scheme=time | time	8	0.5278	linear-0		x	0.059	-
+monotone_levels distinct=100 r2=0.5 scheme=time | time	9	0.4786	linear-0		x	0.07931	-
+monotone_levels distinct=100 r2=0.5 scheme=time | time	10	0.5064	linear-0		x	0.0566	-
+monotone_levels distinct=100 r2=0.5 scheme=time | time	11	0.4866	linear-0		x	0.05973	-
+monotone_levels distinct=100 r2=0.5 scheme=time | time	12	0.5057	linear-0		x	0.0589	-
+monotone_levels distinct=100 r2=0.5 scheme=time | time	13	0.5161	linear-0		x	0.06752	-
+monotone_levels distinct=100 r2=0.5 scheme=time | time	14	0.4744	linear-0		x	0.06286	-
+monotone_levels distinct=100 r2=0.5 scheme=time | time	15	0.4802	linear-0		x	0.08639	-
+monotone_levels distinct=100 r2=0.5 scheme=time | time	16	0.5321	linear-0		x	0.06628	-
+monotone_levels distinct=100 r2=0.5 scheme=time | time	17	0.5076	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.5 scheme=time | time	18	0.5162	linear-0		x	0.05656	-
+monotone_levels distinct=100 r2=0.5 scheme=time | time	19	0.519	linear-0		x	0.0565	-
+monotone_levels distinct=100 r2=0.5 scheme=time | time	20	0.479	linear-0		x	0.06077	-
+monotone_levels distinct=100 r2=0.5 scheme=time | time	21	0.5587	linear-0		x	0.05813	-
+monotone_levels distinct=100 r2=0.5 scheme=time | time	22	0.5141	linear-0		x	0.067	-
+monotone_levels distinct=100 r2=0.5 scheme=time | time	23	0.4652	linear-0		x	0.07209	-
+monotone_levels distinct=100 r2=0.5 scheme=time | time	24	0.5313	linear-0		x	0.06371	-
+monotone_levels distinct=100 r2=0.5 scheme=time | time	25	0.521	linear-0		x	0.07658	-
+monotone_levels distinct=100 r2=0.5 scheme=time | time	26	0.4878	linear-0		x	0.06508	-
+monotone_levels distinct=100 r2=0.5 scheme=time | time	27	0.4837	linear-0		x	0.05882	-
+monotone_levels distinct=100 r2=0.5 scheme=time | time	28	0.48	linear-0		x	0.06615	-
+monotone_levels distinct=100 r2=0.5 scheme=time | time	29	0.5139	linear-0		x	0.06712	-
+monotone_levels distinct=100 r2=0.8 scheme=time | time	0	0.7978	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=time | time	1	0.8002	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=time | time	2	0.7889	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=time | time	3	0.8168	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=time | time	4	0.8049	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=time | time	5	0.7872	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=time | time	6	0.7971	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=time | time	7	0.7963	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=time | time	8	0.7985	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=time | time	9	0.8111	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=time | time	10	0.8006	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=time | time	11	0.8001	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=time | time	12	0.7587	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=time | time	13	0.8285	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=time | time	14	0.7899	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=time | time	15	0.8134	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=time | time	16	0.8068	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=time | time	17	0.7998	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=time | time	18	0.8166	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=time | time	19	0.8067	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=time | time	20	0.8121	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=time | time	21	0.7853	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=time | time	22	0.8517	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=time | time	23	0.7786	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=time | time	24	0.7927	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=time | time	25	0.7954	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=time | time	26	0.8089	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=time | time	27	0.7919	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=time | time	28	0.8013	linear-0		x	0.05	-
+monotone_levels distinct=100 r2=0.8 scheme=time | time	29	0.8002	linear-0		x	0.05	-

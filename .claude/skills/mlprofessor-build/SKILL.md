@@ -230,6 +230,47 @@ task owns which check. The rules, in the order of the spec:
 51. **The README, then the judge's two other tools.** Both must end with
     nothing failing and nothing open.
 
+### Ninth pass, after the seventh review (tasks T69 to T76)
+
+Four passes each taught the leak screen one more disguise of a column that
+carries the target, and each review found the next; two columns that give
+the target only together cannot be seen by any reading of single columns.
+So the result now says what its headline rests on (D77), and the screen
+gains three repairs. Five earlier cases were loosened by the tests stage
+(D59): two pinned the holdout reaching the chosen model once, three pinned
+rule 2 scoring every row when too many rows are marked.
+`tests/test_judge_tools.py` and `tests/test_judge_tools_pass8.py` accept
+exactly the failures the plan lists until the pass is built; the strict test
+is `tests/test_judge_tools_pass9.py`, the last task's (D78 point 8). The
+rules, in the order of the tasks:
+
+52. **What the headline rests on.** After step 12, for each feature: the
+    chosen model's score on the holdout matrix with that feature's part of it
+    shuffled among the holdout rows, the mean of five shuffles, nothing
+    refitted. Its skill, and the fall from the headline skill, in the
+    column's record. Copies as the models receive them (the same matrix
+    column within 1e-9, or its negation; the same block of level columns) are
+    shuffled together. The list: falls of at least the floor, at most five,
+    largest first, ties by position; the floor is max(0.05, the half-width of
+    the skill interval, or of a bootstrap of the holdout rows where there is
+    none). The summary prints it.
+53. **The near-perfect warning.** At a headline skill of 0.98 or more, in
+    either task, one warning that names the list.
+54. **The leak screen reads a column by its levels.** Text columns, and
+    numeric ones with five training rows for each distinct value. Unseen
+    levels are not scored; the reading needs 20 rows scored, and 10 of each
+    class. The message of such a column excluded names `group_col`.
+55. **The order reading compares rows between neighbouring distinct values,**
+    every row of one with every row of the other. Never sort equal values by
+    the target.
+56. **Too many rows marked as far off:** set none aside, but leave rule 2's
+    1% unscored all the same, and read it against the fold's training median
+    too.
+57. **A time-ordered holdout of half of the rows or more is named.**
+58. **The README, then the judge's two other tools.** A carrier of the target
+    holds in the battery when something names it, or when the headline does
+    not rise with it by more than the unperturbed run's floor (D81).
+
 ## Rules that keep the number honest
 
 - The holdout rows are chosen before anything is fitted, and nothing fitted
@@ -357,8 +398,28 @@ task owns which check. The rules, in the order of the spec:
   which row carries the error and which value lies far outside its column,
   and leave both in every number (D74, D76).
 - The warning tier reads every row; only the cut-off that excludes leaves the
-  worst 1% unscored. The order reading warns and never excludes, and it is
-  not taken of a column whose skill has no value (D36, D76).
+  worst 1% unscored, and it does so even when too many rows are far off to
+  set any aside, against the fold's median as well as its mean (D77, D78).
+  The order reading warns and never excludes, and it is not taken of a column
+  whose skill has no value (D36, D76).
+- Never put rows of equal value in the target's order (D77). Sorting ties by
+  the target makes the target rise inside every run of equal values, and a
+  column of rounded noise reads as one the target follows. Compare the rows
+  of neighbouring values with each other instead.
+- A column of labels is read by its levels, not by the order of their names
+  (D77). The target cut into 30 bands with random labels is noise to a tree
+  on sorted codes and exact to a mean per level. Do not score a level the
+  fold never saw: give it the baseline and a coded copy is diluted below the
+  cut-off; score it on too few rows and noise reads as perfect.
+- Say what the number rests on, and do not judge it (D77, D78). A shuffled
+  column's fall is a description: the tool cannot know whether a column is
+  known before the outcome, and it can always say what the headline depends
+  on. Compare copies on the matrix the models receive, not on the values as
+  loaded: a rescaled copy is the same column to a scaled model, and shuffled
+  apart each shows a quarter of the fall.
+- A fall that the headline's own uncertainty could give is no statement
+  (D80). Floor the list at the half-width of the skill interval: at 0.05
+  alone it named a noise column on two thirds of the seeds of a noise table.
 - Where the folds cannot choose, do not choose (D74). A fold of ten training
   rows that the other four validate on decides nothing: score every fold,
   report it, and use the first configuration.
@@ -431,6 +492,11 @@ task owns which check. The rules, in the order of the spec:
 | `leak.excluded` fails with skill near 1 | The leak screen is missing, runs after the model, or screens on rows that include the holdout (F2). | Step 8 of the spec: the screen runs first, on training rows, with the selection folds. |
 | Every strong feature is flagged as a leak under time order | The screen uses random folds, or measures skill against the training mean only. Under time order it uses the expanding folds, and for regression the previous-value baseline, with unique timestamps and with repeated ones (D74). | The screen's folds and baselines. |
 | An id column is among the features and skill is odd | The id-like rule was applied after the row cap, or by dtype: one blank cell turns an integer id into `float64`. | Roles are decided before the cap, by value. |
+| A coded copy of the target (bands with labels in random order) is kept | The screen read a categorical column of a regression by a tree on codes of its sorted level names: random labels make it noise. | Read it by its levels, the mean target of each level in the fold's training rows, unseen levels not scored (D77, D78). |
+| A column of rounded noise, or a score from 1 to 40, gets `strong_single_column` | The order reading sorted rows of equal value by the target, so the target rose inside each run of ties. | Compare every row of one value with every row of the next value; never order ties by the target (D77). |
+| A copy of a long-tailed target with a few cells changed is kept | More than 1% of the rows were marked as far off, none could be set aside, and rule 2 then scored every row: the few changed cells were most of the copy's error. | Leave rule 2's 1% unscored all the same, and read it against the fold's training median too (D77, D78). |
+| `near_perfect_headline` on a table that is genuinely easy | Not a fault: the warning is raised at 0.98 whatever the table. | Nothing to fix; it names what the headline rests on, and the caller decides (D77). |
+| A copy of a feature shows a quarter of the fall the feature shows alone | The copies were found by their loaded values, so a rescaled copy was shuffled on its own. | Find copies on the final fit's matrix, up to sign (D78, D80). |
 | A real integer measure (price, volume) is excluded as id-like | The 95%-distinct rule was applied to a number column on its own. For whole numbers it is half of a clause: the distinct values must also fill at least half of their range (D74). | Rule 8b: distinct, and consecutive or strictly ordered; or more than 95% distinct and filling half of the range. A distinct measure in a table sorted by it is still caught: a stated limit (D31). |
 | `task.binary_numeric` fails: 0/1 target treated as regression | The task was read from the dtype. With a blank cell a 0/1 column loads as `float64` (F5). | Count distinct values; ignore the type. |
 | `data.rows_reconcile` fails by a few rows | `dropna()` somewhere, or blank lines counted as rows, or rows dropped before `loaded` was counted (F6). | The first line that changes the number of rows. |
@@ -545,12 +611,17 @@ E:\CODE\ml-professor\mlprof_env\Scripts\python.exe verify/generated_tables.py ml
   `verify/artifacts/generated/`.
 - Both end with a line of three counts. Only a failure outside their two fixed
   lists fails the tool; that failure is yours. Since the eighth pass nothing
-  is listed as open; the battery lists four kinds of stated limit, and the
-  generated tables none (spec 8.2).
+  is listed as open; the battery lists the four kinds of stated limit of D76
+  and one pair of D36, and the generated tables none (spec 8.2). The battery
+  also prints six counts for the pairs that plant a carrier of the target:
+  excluded, warned, named by the near-perfect warning, named in the list,
+  within the unperturbed run's floor, and lowered (D81).
 - `tests/test_judge_tools.py` runs both, so the full suite takes about seven
   minutes longer once that file exists (the battery about five minutes at
   its default of 32 runs side by side, the generated tables about two,
   measured on 2026-11-25 with nothing else on the machine and the pairs of
-  the eighth pass). For the eighth pass that file accepts exactly the failures the plan
-  lists, and the strict test of both tools belongs to the pass's last task.
+  the eighth pass). For the ninth pass that file and
+  `tests/test_judge_tools_pass8.py` accept exactly the failures the plan
+  lists, and the strict test of both tools, `tests/test_judge_tools_pass9.py`,
+  belongs to the pass's last task (D78 point 8).
   While working on one task, run that task's own test files.

@@ -1,11 +1,11 @@
 """Does the test suite catch what it is there to catch? (D39)
 
 The gate's self-test proves the gate against the reference implementation
-broken in thirty-seven ways (F1 to F28, and the other forms F6b, F6c, F6d, F7b,
+broken in forty-four ways (F1 to F35, and the other forms F6b, F6c, F6d, F7b,
 F7c, F7d, F8b, F12b and F14b: D46, D49, D50, D57, D58, D62 to D66, D69 to
-D76). This script proves the test suite the same way, against those thirty-seven
-and against fifty-one smaller faults no gate check is relied on to catch (M1
-to M51; verify/reference/mlprofessor/_variant.py lists them all).
+D81). This script proves the test suite the same way, against those forty-four
+and against sixty-nine smaller faults no gate check is relied on to catch (M1
+to M69; verify/reference/mlprofessor/_variant.py lists them all).
 
 For the known-good reference and for each variant it builds a throwaway
 project outside the repo and runs the whole suite there:
@@ -46,7 +46,9 @@ Four things to know.
 - A data file the README names is copied from the repo. One under
   verify/artifacts/data/ is written by the gate's own generator instead,
   because that folder exists only after the gate has run.
-- tests/test_judge_tools.py is not run here (D72). Its tests run the judge's
+- tests/test_judge_tools.py is not run here (D72), nor is each pass's own file
+  of the same kind (tests/test_judge_tools_pass8.py, tests/test_judge_tools_pass9.py:
+  D74, D78 point 8). Their tests run the judge's
   two other tools, verify/battery.py and verify/generated_tables.py, on the
   package beside them: they need verify/, which a throwaway project does not
   have, and they judge the application against the reference, not a variant
@@ -77,13 +79,14 @@ GATE_FILE = HERE / "smoke_test.py"
 GATE_DATA = "verify/artifacts/data/"
 CASES = (["good"] + [f"F{i}" for i in range(1, 10)] + ["F6b", "F6c", "F6d", "F7b", "F7c"]
          + ["F10", "F7d", "F8b"] + [f"F{i}" for i in range(11, 15)]
-         + ["F12b", "F14b"] + [f"F{i}" for i in range(15, 29)]
-         + [f"M{i}" for i in range(1, 52)])
+         + ["F12b", "F14b"] + [f"F{i}" for i in range(15, 36)]
+         + [f"M{i}" for i in range(1, 70)])
 PROBE = "test_mutation_check_probe.py"
 # Run by the loop against the application, never against a variant (see the docstring).
 NOT_RUN_HERE = "tests/test_judge_tools.py"
-# The strict form of the same, owned by the last task of the eighth pass (D74 point 7).
-NOT_RUN_HERE_EITHER = "tests/test_judge_tools_pass8.py"
+# Each pass's own form of the same (D74 point 7, D78 point 8): the eighth pass's, which
+# accepts exactly the failures the ninth pass owns, and the ninth pass's, which is strict.
+NOT_RUN_HERE_EITHER = ("tests/test_judge_tools_pass8.py", "tests/test_judge_tools_pass9.py")
 README_TESTS = re.compile(r"^test_readme\w*\.py::")
 RUN_SECONDS = 1800
 EXIT_OK, EXIT_FAIL, EXIT_HARNESS = 0, 1, 3
@@ -188,7 +191,10 @@ def run_suite(project, case):
     env.update(PYTHONDONTWRITEBYTECODE="1", PYTHONIOENCODING="utf-8")
     cmd = [sys.executable, "-m", "pytest", "-c", "tests/pytest.ini", "--rootdir", ".",
            "--confcutdir", "tests", "-p", "no:cacheprovider", "-q", "--junitxml", str(report),
-           "--ignore", NOT_RUN_HERE, "--ignore", NOT_RUN_HERE_EITHER, "tests"]
+           "--ignore", NOT_RUN_HERE]
+    for other in NOT_RUN_HERE_EITHER:
+        cmd += ["--ignore", other]
+    cmd += ["tests"]
     try:
         proc = subprocess.run(cmd, cwd=str(project), env=env, capture_output=True, text=True,
                               encoding="utf-8", errors="replace", timeout=RUN_SECONDS)
@@ -283,8 +289,8 @@ def main(argv=None):
     if (REPO / NOT_RUN_HERE).is_file() or (args.overlay is not None
                                            and (Path(args.overlay) / Path(NOT_RUN_HERE).name)
                                            .is_file()):
-        print(f"  note: {NOT_RUN_HERE} and {NOT_RUN_HERE_EITHER} are not run here: they run "
-              "the judge's other tools on the application")
+        print(f"  note: {NOT_RUN_HERE} and {', '.join(NOT_RUN_HERE_EITHER)} are not run "
+              "here: they run the judge's other tools on the application")
     if problems:
         for problem in problems:
             print(f"HARNESS ERROR - this says nothing about the suite: {problem}")

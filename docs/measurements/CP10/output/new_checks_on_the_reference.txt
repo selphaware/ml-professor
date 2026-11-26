@@ -1,0 +1,8 @@
+PASS result.rests_on_recomputed
+PASS rests_on.near_perfect_named
+PASS result.copies_share_a_fall
+PASS leak.coded_copy_excluded
+PASS leak.tied_noise_quiet
+PASS leak.changed_cells_excluded
+PASS time.large_holdout_named
+GATE: PASS (7 checks)

@@ -1,0 +1,46 @@
+excluded/warned/named/silent of the coded column, 30 seeds; the level reading with every row scored; the reading of the other readers; the headline where it is kept
+
+| scheme | run | the column | levels | fate | levels reading | rule 2 reading by levels | tree | share of validation rows whose level was seen | headline where kept | another column excluded |
+|---|---|---|---|---|---|---|---|---|---|---|
+| grouped | entities | num | 10 | 30/0/0/0 | - | - | - | - | - | 0 |
+| grouped | entities | num | 40 | 30/0/0/0 | - | - | - | - | - | 0 |
+| grouped | entities | num | 100 | 30/0/0/0 | - | - | - | - | - | 0 |
+| grouped | entities | text | 10 | 30/0/0/0 | - | - | - | - | - | 0 |
+| grouped | entities | text | 40 | 30/0/0/0 | - | - | - | - | - | 0 |
+| grouped | entities | text | 100 | 30/0/0/0 | - | - | - | - | - | 0 |
+| random | binary_numeric | num | 10 | 30/0/0/0 | - | - | - | - | - | 0 |
+| random | binary_numeric | num | 40 | 30/0/0/0 | - | - | - | - | - | 0 |
+| random | binary_numeric | num | 100 | 30/0/0/0 | - | - | - | - | - | 0 |
+| random | binary_numeric | text | 10 | 30/0/0/0 | - | - | - | - | - | 0 |
+| random | binary_numeric | text | 40 | 30/0/0/0 | - | - | - | - | - | 0 |
+| random | binary_numeric | text | 100 | 30/0/0/0 | - | - | - | - | - | 0 |
+| random | imbalanced | num | 10 | 30/0/0/0 | - | - | - | - | - | 0 |
+| random | imbalanced | num | 40 | 30/0/0/0 | - | - | - | - | - | 0 |
+| random | imbalanced | num | 100 | 30/0/0/0 | - | - | - | - | - | 0 |
+| random | imbalanced | text | 10 | 30/0/0/0 | - | - | - | - | - | 0 |
+| random | imbalanced | text | 40 | 30/0/0/0 | - | - | - | - | - | 0 |
+| random | imbalanced | text | 100 | 30/0/0/0 | - | - | - | - | - | 0 |
+| random | messy | num | 10 | 30/0/0/0 | - | - | - | - | - | 0 |
+| random | messy | num | 40 | 30/0/0/0 | - | - | - | - | - | 0 |
+| random | messy | num | 100 | 30/0/0/0 | - | - | - | - | - | 0 |
+| random | messy | text | 10 | 30/0/0/0 | - | - | - | - | - | 0 |
+| random | messy | text | 40 | 30/0/0/0 | - | - | - | - | - | 0 |
+| random | messy | text | 100 | 30/0/0/0 | - | - | - | - | - | 0 |
+| random | noise_clf | num | 10 | 30/0/0/0 | - | - | - | - | - | 0 |
+| random | noise_clf | num | 40 | 30/0/0/0 | - | - | - | - | - | 0 |
+| random | noise_clf | num | 100 | 30/0/0/0 | - | - | - | - | - | 0 |
+| random | noise_clf | text | 10 | 30/0/0/0 | - | - | - | - | - | 0 |
+| random | noise_clf | text | 40 | 30/0/0/0 | - | - | - | - | - | 0 |
+| random | noise_clf | text | 100 | 30/0/0/0 | - | - | - | - | - | 0 |
+| random | signal_clf | num | 10 | 30/0/0/0 | - | - | - | - | - | 0 |
+| random | signal_clf | num | 40 | 30/0/0/0 | - | - | - | - | - | 0 |
+| random | signal_clf | num | 100 | 30/0/0/0 | - | - | - | - | - | 0 |
+| random | signal_clf | text | 10 | 30/0/0/0 | - | - | - | - | - | 0 |
+| random | signal_clf | text | 40 | 30/0/0/0 | - | - | - | - | - | 0 |
+| random | signal_clf | text | 100 | 30/0/0/0 | - | - | - | - | - | 0 |
+| time | time_blocks | num | 10 | 30/0/0/0 | - | - | - | - | - | 0 |
+| time | time_blocks | num | 40 | 30/0/0/0 | - | - | - | - | - | 0 |
+| time | time_blocks | num | 100 | 30/0/0/0 | - | - | - | - | - | 0 |
+| time | time_blocks | text | 10 | 30/0/0/0 | - | - | - | - | - | 0 |
+| time | time_blocks | text | 40 | 30/0/0/0 | - | - | - | - | - | 0 |
+| time | time_blocks | text | 100 | 30/0/0/0 | - | - | - | - | - | 0 |

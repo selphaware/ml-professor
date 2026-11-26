@@ -1,0 +1,7 @@
+the copy excluded, of 30 tables, for each size of change (old / new)
+
+| table | kind or sigma | scheme | cells changed | x1.5 | other | +0.5 | +7 | another column excluded, all sizes (old, new) |
+|---|---|---|---|---|---|---|---|---|
+| heavy_series | t2 | time | 5 | 3 / 30 | 3 / 30 | 30 / 30 | 6 / 30 | 0, 0 |
+| heavy_series | vol | time | 5 | 13 / 30 | 9 / 30 | 30 / 30 | 25 / 30 | 0, 0 |
+| heavy_series | walk | time | 5 | 30 / 30 | 30 / 30 | 30 / 30 | 30 / 30 | 0, 0 |

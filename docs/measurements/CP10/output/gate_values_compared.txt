@@ -1,0 +1,60 @@
+before: gate 7af964a49993, core.py 116caf510038
+after: gate 8d52c9ea3b4b, core.py dfb0e90fcffc
+
+datasets (seed, target, bytes): 35 before, 41 after
+  105 values before; 0 moved, 0 gone, 0 new under an existing name
+  only after: pair_together, signal_reg_copied, leak_reg_coded, noise_tied, skewed_copy, last_stamp
+
+checks (verdict, message, failure modes named): 53 before, 60 after
+  160 values before; 0 moved, 0 gone, 0 new under an existing name
+  only after: result.rests_on_recomputed, rests_on.near_perfect_named, result.copies_share_a_fall, leak.coded_copy_excluded, leak.tied_noise_quiet, leak.changed_cells_excluded, time.large_holdout_named
+
+values the gate recorded: 143 before, 155 after
+  143 values before; 0 moved, 0 gone, 0 new under an existing name
+  only after: random_walk rests_on, random_walk level_prev shuffled z, pair_together rests_on, pair_together skill, pair_together near_perfect_headline, signal_reg_copied rests_on, signal_reg_copied f1 fall, leak_reg_coded amount_band, noise_tied score, noise_tied noise_rounded, skewed_copy amount_copy, last_stamp holdout_far_above_quarter
+
+runs (exit code, both streams, files, every field of profile.json but meta.timing, bytes of predictions.csv): 43 before, 49 after
+  18093 values before; 33 moved, 0 gone, 2682 new under an existing name
+    moved  messy: stdout: "task: classification (rule); scheme: random\nrows: 1540 loaded, 1125 training, 375 holdout\nheadline: skill 0.721972 (roc_auc 0.860986 against chance 0.5), model linear-0\n95% interval on roc_auc: 0. -> "task: classification (rule); scheme: random\nrows: 1540 loaded, 1125 training, 375 holdout\nheadline: skill 0.721972 (roc_auc 0.860986 against chance 0.5), model linear-0\n95% interval on roc_auc: 0.
+    moved  imbalanced: stdout: 'task: classification (rule); scheme: random\nrows: 2600 loaded, 1500 training, 500 holdout\nheadline: skill 0.0717346 (roc_auc 0.535867 against chance 0.5), model linear-0\n95% interval on roc_auc: 0 -> 'task: classification (rule); scheme: random\nrows: 2600 loaded, 1500 training, 500 holdout\nheadline: skill 0.0717346 (roc_auc 0.535867 against chance 0.5), model linear-0\n95% interval on roc_auc: 0
+    moved  signal_clf: stdout: 'task: classification (rule); scheme: random\nrows: 1500 loaded, 1125 training, 375 holdout\nheadline: skill 0.741657 (roc_auc 0.870829 against chance 0.5), model linear-0\n95% interval on roc_auc: 0. -> "task: classification (rule); scheme: random\nrows: 1500 loaded, 1125 training, 375 holdout\nheadline: skill 0.741657 (roc_auc 0.870829 against chance 0.5), model linear-0\n95% interval on roc_auc: 0.
+    moved  binary_numeric: stdout: 'task: classification (rule); scheme: random\nrows: 1500 loaded, 1125 training, 375 holdout\nheadline: skill 0.733948 (roc_auc 0.866974 against chance 0.5), model linear-0\n95% interval on roc_auc: 0. -> "task: classification (rule); scheme: random\nrows: 1500 loaded, 1125 training, 375 holdout\nheadline: skill 0.733948 (roc_auc 0.866974 against chance 0.5), model linear-0\n95% interval on roc_auc: 0.
+    moved  leak: stdout: "task: classification (rule); scheme: random\nrows: 1500 loaded, 1125 training, 375 holdout\nheadline: skill 0.762564 (roc_auc 0.881282 against chance 0.5), model linear-0\n95% interval on roc_auc: 0. -> "task: classification (rule); scheme: random\nrows: 1500 loaded, 1125 training, 375 holdout\nheadline: skill 0.762564 (roc_auc 0.881282 against chance 0.5), model linear-0\n95% interval on roc_auc: 0.
+    moved  leak_reg: stdout: "task: regression (rule); scheme: random\nrows: 1500 loaded, 1125 training, 375 holdout\nheadline: skill 0.819767 (mse 1.19128 against training_mean 6.60964), model linear-0\n95% interval on mse: 1.01 -> "task: regression (rule); scheme: random\nrows: 1500 loaded, 1125 training, 375 holdout\nheadline: skill 0.819767 (mse 1.19128 against training_mean 6.60964), model linear-0\n95% interval on mse: 1.01
+    moved  near_leak: stdout: "task: classification (rule); scheme: random\nrows: 1500 loaded, 1125 training, 375 holdout\nheadline: skill 0.969107 (roc_auc 0.984553 against chance 0.5), model linear-0\n95% interval on roc_auc: 0. -> "task: classification (rule); scheme: random\nrows: 1500 loaded, 1125 training, 375 holdout\nheadline: skill 0.969107 (roc_auc 0.984553 against chance 0.5), model linear-0\n95% interval on roc_auc: 0.
+    moved  signal_reg: stdout: 'task: regression (rule); scheme: random\nrows: 1500 loaded, 1125 training, 375 holdout\nheadline: skill 0.830677 (mse 0.918244 against training_mean 5.42303), model linear-0\n95% interval on mse: 0.7 -> "task: regression (rule); scheme: random\nrows: 1500 loaded, 1125 training, 375 holdout\nheadline: skill 0.830677 (mse 0.918244 against training_mean 5.42303), model linear-0\n95% interval on mse: 0.7
+    moved  time_blocks: stdout: 'task: classification (rule); scheme: time_ordered\nrows: 2223 loaded, 1500 training, 500 holdout\nheadline: skill 0.122399 (roc_auc 0.5612 against chance 0.5), model tree-0\n95% interval on roc_auc:  -> 'task: classification (rule); scheme: time_ordered\nrows: 2223 loaded, 1500 training, 500 holdout\nheadline: skill 0.122399 (roc_auc 0.5612 against chance 0.5), model tree-0\n95% interval on roc_auc: 
+    moved  time_blocks_gap: stdout: 'task: classification (rule); scheme: time_ordered\nrows: 2223 loaded, 1496 training, 500 holdout\nheadline: skill -0.412681 (roc_auc 0.29366 against chance 0.5), model linear-0\n95% interval on roc_a -> 'task: classification (rule); scheme: time_ordered\nrows: 2223 loaded, 1496 training, 500 holdout\nheadline: skill -0.412681 (roc_auc 0.29366 against chance 0.5), model linear-0\n95% interval on roc_a
+    moved  random_walk: stdout: 'task: regression (rule); scheme: time_ordered\nrows: 1500 loaded, 1125 training, 375 holdout\nheadline: skill 0.00104209 (mse 1.00715 against previous_value 1.0082), model linear-0\n95% interval on m -> "task: regression (rule); scheme: time_ordered\nrows: 1500 loaded, 1125 training, 375 holdout\nheadline: skill 0.00104209 (mse 1.00715 against previous_value 1.0082), model linear-0\n95% interval on m
+    moved  int_stamps: stdout: 'task: regression (rule); scheme: time_ordered\nrows: 1500 loaded, 1125 training, 375 holdout\nheadline: skill 0.00235871 (mse 0.979419 against previous_value 0.981734), model linear-0\n95% interval o -> "task: regression (rule); scheme: time_ordered\nrows: 1500 loaded, 1125 training, 375 holdout\nheadline: skill 0.00235871 (mse 0.979419 against previous_value 0.981734), model linear-0\n95% interval o
+    moved  full_noise_small: stdout: 'task: classification (rule); scheme: random\nrows: 400 loaded, 300 training, 100 holdout\nheadline: skill -0.0380152 (roc_auc 0.480992 against chance 0.5), model forest-2\n95% interval on roc_auc: 0. -> 'task: classification (rule); scheme: random\nrows: 400 loaded, 300 training, 100 holdout\nheadline: skill -0.0380152 (roc_auc 0.480992 against chance 0.5), model forest-2\n95% interval on roc_auc: 0.
+    moved  full_signal_reg_j1: stdout: 'task: regression (rule); scheme: random\nrows: 500 loaded, 375 training, 125 holdout\nheadline: skill 0.818117 (mse 1.09842 against training_mean 6.03912), model linear-0\n95% interval on mse: 0.8060 -> "task: regression (rule); scheme: random\nrows: 500 loaded, 375 training, 125 holdout\nheadline: skill 0.818117 (mse 1.09842 against training_mean 6.03912), model linear-0\n95% interval on mse: 0.8060
+    moved  time_blocks_undeclared: stdout: "task: classification (rule); scheme: random\nrows: 2223 loaded, 1500 training, 500 holdout\nheadline: skill 0.999019 (roc_auc 0.99951 against chance 0.5), model tree-0\n95% interval on roc_auc: 0.998 -> "task: classification (rule); scheme: random\nrows: 2223 loaded, 1500 training, 500 holdout\nheadline: skill 0.999019 (roc_auc 0.99951 against chance 0.5), model tree-0\n95% interval on roc_auc: 0.998
+    moved  full_signal_clf_j1: stdout: 'task: classification (rule); scheme: random\nrows: 500 loaded, 375 training, 125 holdout\nheadline: skill 0.645161 (roc_auc 0.822581 against chance 0.5), model linear-4\n95% interval on roc_auc: 0.74 -> "task: classification (rule); scheme: random\nrows: 500 loaded, 375 training, 125 holdout\nheadline: skill 0.645161 (roc_auc 0.822581 against chance 0.5), model linear-4\n95% interval on roc_auc: 0.74
+    moved  panel: stdout: 'task: regression (rule); scheme: time_ordered\nrows: 1500 loaded, 1116 training, 384 holdout\nheadline: skill -0.00984773 (mse 1.01791 against previous_value 1.00798), model linear-0\n95% interval on -> "task: regression (rule); scheme: time_ordered\nrows: 1500 loaded, 1116 training, 384 holdout\nheadline: skill -0.00984773 (mse 1.01791 against previous_value 1.00798), model linear-0\n95% interval on
+    moved  entities: stdout: 'task: classification (rule); scheme: grouped\nrows: 1500 loaded, 1120 training, 380 holdout\nheadline: skill -0.0812188 (roc_auc 0.459391 against chance 0.5), model linear-0\n95% interval on roc_auc: -> 'task: classification (rule); scheme: grouped\nrows: 1500 loaded, 1120 training, 380 holdout\nheadline: skill -0.0812188 (roc_auc 0.459391 against chance 0.5), model linear-0\n95% interval on roc_auc:
+    moved  noise_reg: stdout: 'task: regression (rule); scheme: random\nrows: 1500 loaded, 1125 training, 375 holdout\nheadline: skill -0.406767 (mse 1.40217 against training_mean 0.996733), model linear-0\n95% interval on mse: 1. -> 'task: regression (rule); scheme: random\nrows: 1500 loaded, 1125 training, 375 holdout\nheadline: skill -0.406767 (mse 1.40217 against training_mean 0.996733), model linear-0\n95% interval on mse: 1.
+    moved  flat_tail: stdout: 'task: regression (rule); scheme: time_ordered\nrows: 1500 loaded, 1125 training, 375 holdout\nheadline: skill not defined (mse 349.385 against previous_value 0), model linear-0\n95% interval on mse:  -> 'task: regression (rule); scheme: time_ordered\nrows: 1500 loaded, 1125 training, 375 holdout\nheadline: skill not defined (mse 349.385 against previous_value 0), model linear-0\n95% interval on mse: 
+    new  messy: profile.columns[0].shuffled_score: None -> 0.671280532938564
+    new  messy: profile.columns[0].shuffled_skill: None -> 0.3425610658771281
+    new  messy: profile.columns[0].skill_fall: None -> 0.37941126231281674
+    new  messy: profile.columns[1].shuffled_score: None -> 0.7510846666287081
+    new  messy: profile.columns[1].shuffled_skill: None -> 0.5021693332574162
+    new  messy: profile.columns[1].skill_fall: None -> 0.21980299493252864
+    new  messy: profile.columns[2].shuffled_score: None -> 0.7789329841143312
+    new  messy: profile.columns[2].shuffled_skill: None -> 0.5578659682286624
+    new  messy: profile.columns[2].skill_fall: None -> 0.16410635996128242
+    new  messy: profile.columns[3].shuffled_score: None -> 0.8605648237772592
+    new  messy: profile.columns[3].shuffled_skill: None -> 0.7211296475545184
+    new  messy: profile.columns[3].skill_fall: None -> 0.0008426806354264738
+    new  messy: profile.columns[4].shuffled_score: None -> 0.861191140465752
+    new  messy: profile.columns[4].shuffled_skill: None -> 0.7223822809315039
+    new  messy: profile.columns[4].skill_fall: None -> -0.0004099527415590831
+    new  messy: profile.columns[5].shuffled_score: None -> 0.8611683653134431
+    new  messy: profile.columns[5].shuffled_skill: None -> 0.7223367306268862
+    new  messy: profile.columns[5].skill_fall: None -> -0.0003644024369413579
+    new  messy: profile.columns[6].shuffled_score: None -> None
+    new  messy: profile.columns[6].shuffled_skill: None -> None
+  only after: pair_together, signal_reg_copied, leak_reg_coded, noise_tied, skewed_copy, last_stamp
+
+2715 VALUES MOVED

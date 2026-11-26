@@ -1,0 +1,2 @@
+classification: forest of 100 trees fitted on 75000 rows x 144 columns in 2 s; one prediction of 25000 rows on one thread 0.43 s; 99 columns x 5 shuffles: 214 s one after another, 20.8 s at 64 side by side
+regression: forest of 100 trees fitted on 75000 rows x 144 columns in 8 s; one prediction of 25000 rows on one thread 0.72 s; 99 columns x 5 shuffles: 357 s one after another, 34.0 s at 64 side by side

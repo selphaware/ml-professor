@@ -1,0 +1,6 @@
+runs before: 43; after: 49, of which new: ['last_stamp', 'leak_reg_coded', 'noise_tied', 'pair_together', 'signal_reg_copied', 'skewed_copy']
+   2450  a key of the statement, new
+     32  stdout: the `rests on` line added
+      1  stdout: the `rests on` line added and the near-perfect warning's
+      2  the near-perfect warning, new: time_blocks_undeclared
+anything else that moved: 0

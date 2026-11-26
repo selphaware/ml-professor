@@ -1,0 +1,85 @@
+case	k	skill	model	columns: role/reason/rule fall	rests_on	floor	warnings
+last_stamp share=0.2	0	0.003224	linear-0		-	0.05	-
+last_stamp share=0.2	1	0.001175	linear-0		-	0.05	-
+last_stamp share=0.2	2	-0.007683	linear-0		-	0.05	-
+last_stamp share=0.2	3	-0.001424	linear-0		-	0.05	-
+last_stamp share=0.2	4	-0.005173	linear-0		-	0.05	-
+last_stamp share=0.26	0	-0.01074	linear-0		-	0.05	-
+last_stamp share=0.26	1	-0.03416	linear-0		-	0.05	-
+last_stamp share=0.26	2	0.008357	linear-0		-	0.05	-
+last_stamp share=0.26	3	-0.02391	linear-0		-	0.05	-
+last_stamp share=0.26	4	-0.001208	linear-0		-	0.06152	-
+last_stamp share=0.3	0	-0.008295	linear-0		-	0.05	-
+last_stamp share=0.3	1	-0.0007356	linear-0		-	0.05	-
+last_stamp share=0.3	2	0.001076	linear-0		-	0.05	-
+last_stamp share=0.3	3	0.01207	linear-0		-	0.05	-
+last_stamp share=0.3	4	-0.0002456	linear-0		-	0.05	-
+last_stamp share=0.34	0	-0.0005223	linear-0		-	0.05	-
+last_stamp share=0.34	1	0.002021	linear-0		-	0.05	-
+last_stamp share=0.34	2	-0.002806	linear-0		-	0.05	-
+last_stamp share=0.34	3	-0.001179	linear-0		-	0.05	-
+last_stamp share=0.34	4	-0.006216	linear-0		-	0.05	-
+last_stamp share=0.4	0	-0.001149	linear-0		-	0.05	-
+last_stamp share=0.4	1	-0.01442	linear-0		-	0.05	-
+last_stamp share=0.4	2	-0.0003451	linear-0		-	0.05	-
+last_stamp share=0.4	3	-0.0008406	linear-0		-	0.05	-
+last_stamp share=0.4	4	0.001093	linear-0		-	0.05	-
+last_stamp share=0.45	0	-0.01465	linear-0		-	0.05	-
+last_stamp share=0.45	1	-0.001991	linear-0		-	0.05	-
+last_stamp share=0.45	2	0.002922	linear-0		-	0.05	-
+last_stamp share=0.45	3	0.002219	linear-0		-	0.05	-
+last_stamp share=0.45	4	-0.01382	linear-0		-	0.05	-
+last_stamp share=0.5	0	-0.01072	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.5	1	-0.001215	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.5	2	0.003548	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.5	3	-0.01194	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.5	4	-0.03616	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.55	0	0.002754	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.55	1	0.003867	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.55	2	-0.008504	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.55	3	-0.01688	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.55	4	-0.005491	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.6	0	0.006323	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.6	1	-0.008385	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.6	2	-0.005625	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.6	3	-0.005337	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.6	4	-0.03453	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.7	0	0.001933	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.7	1	-0.001587	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.7	2	0.00321	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.7	3	-0.006145	linear-0		-	0.05	holdout_far_above_quarter[None]
+last_stamp share=0.7	4	-0.01191	linear-0		-	0.05	holdout_far_above_quarter[None]
+even_stamps per=40 stamps=7	0	stop: too_few_rows					
+even_stamps per=40 stamps=8	0	-0.04326	linear-0		-	0.1106	-
+even_stamps per=40 stamps=9	0	-0.01004	linear-0		-	0.05	-
+even_stamps per=40 stamps=10	0	-0.01574	linear-0		-	0.05	-
+even_stamps per=40 stamps=11	0	0.01766	linear-0		-	0.05	-
+even_stamps per=40 stamps=12	0	0.0126	linear-0		-	0.05	-
+even_stamps per=40 stamps=13	0	-0.01254	linear-0		-	0.05	-
+even_stamps per=40 stamps=14	0	-0.007519	linear-0		-	0.05	-
+even_stamps per=40 stamps=15	0	-0.02768	linear-0		-	0.0586	-
+even_stamps per=40 stamps=16	0	0.0003435	linear-0		-	0.05	-
+even_stamps per=40 stamps=17	0	-0.02905	linear-0		-	0.05	-
+even_stamps per=40 stamps=18	0	-0.00545	linear-0		-	0.05	-
+even_stamps per=40 stamps=19	0	-0.003709	linear-0		-	0.05	-
+even_stamps per=40 stamps=20	0	0.02056	linear-0		-	0.05	-
+even_stamps per=40 stamps=21	0	-0.0003406	linear-0		-	0.05	-
+even_stamps per=40 stamps=22	0	-0.006681	linear-0		-	0.05	-
+even_stamps per=40 stamps=23	0	-0.0005747	linear-0		-	0.05	-
+even_stamps per=40 stamps=24	0	-0.003781	linear-0		-	0.05	-
+even_stamps per=40 stamps=25	0	0.003648	linear-0		-	0.05	-
+even_stamps per=40 stamps=26	0	-0.0009998	linear-0		-	0.05	-
+even_stamps per=40 stamps=27	0	-0.01032	linear-0		-	0.05	-
+even_stamps per=40 stamps=28	0	-0.003759	linear-0		-	0.05	-
+even_stamps per=40 stamps=29	0	-0.002571	linear-0		-	0.05	-
+even_stamps per=40 stamps=30	0	-0.01154	linear-0		-	0.05	-
+even_stamps per=40 stamps=31	0	-0.005404	linear-0		-	0.05	-
+even_stamps per=40 stamps=32	0	-0.007232	linear-0		-	0.05095	-
+even_stamps per=40 stamps=33	0	-0.001998	linear-0		-	0.05	-
+even_stamps per=40 stamps=34	0	0.004359	linear-0		-	0.05	-
+even_stamps per=40 stamps=35	0	0.002957	linear-0		-	0.05	-
+even_stamps per=40 stamps=36	0	0.009524	linear-0		-	0.05	-
+even_stamps per=40 stamps=37	0	-0.002468	linear-0		-	0.05	-
+even_stamps per=40 stamps=38	0	-0.0001689	linear-0		-	0.05	-
+even_stamps per=40 stamps=39	0	-0.000741	linear-0		-	0.05	-
+even_stamps per=40 stamps=40	0	-0.001995	linear-0		-	0.05	-

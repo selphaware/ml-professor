@@ -1,0 +1,481 @@
+case	k	skill	model	columns: role/reason/rule fall	rests_on	floor	warnings
+signal_reg | dup:f1	0	0.8307	linear-0	f1: feature/-/- 1.399; f1_again: feature/-/- 1.399	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	1	0.839	linear-0	f1: feature/-/- 1.17; f1_again: feature/-/- 1.17	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	2	0.8435	linear-0	f1: feature/-/- 1.325; f1_again: feature/-/- 1.325	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	3	0.8634	linear-0	f1: feature/-/- 1.213; f1_again: feature/-/- 1.213	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	4	0.8463	linear-0	f1: feature/-/- 1.116; f1_again: feature/-/- 1.116	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	5	0.8914	linear-0	f1: feature/-/- 1.219; f1_again: feature/-/- 1.219	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	6	0.8505	linear-0	f1: feature/-/- 1.112; f1_again: feature/-/- 1.112	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	7	0.8488	linear-0	f1: feature/-/- 1.262; f1_again: feature/-/- 1.262	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	8	0.8191	linear-0	f1: feature/-/- 1.27; f1_again: feature/-/- 1.27	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	9	0.8327	linear-0	f1: feature/-/- 1.252; f1_again: feature/-/- 1.252	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	10	0.8348	linear-0	f1: feature/-/- 1.256; f1_again: feature/-/- 1.256	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	11	0.854	linear-0	f1: feature/-/- 1.24; f1_again: feature/-/- 1.24	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	12	0.8544	linear-0	f1: feature/-/- 1.305; f1_again: feature/-/- 1.305	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	13	0.8474	linear-0	f1: feature/-/- 1.247; f1_again: feature/-/- 1.247	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	14	0.8612	linear-0	f1: feature/-/- 1.257; f1_again: feature/-/- 1.257	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	15	0.8402	linear-0	f1: feature/-/- 1.236; f1_again: feature/-/- 1.236	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	16	0.8568	linear-0	f1: feature/-/- 1.321; f1_again: feature/-/- 1.321	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	17	0.8449	linear-0	f1: feature/-/- 1.245; f1_again: feature/-/- 1.245	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	18	0.8707	linear-0	f1: feature/-/- 1.121; f1_again: feature/-/- 1.121	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	19	0.8591	linear-0	f1: feature/-/- 1.245; f1_again: feature/-/- 1.245	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	20	0.8678	linear-0	f1: feature/-/- 1.317; f1_again: feature/-/- 1.317	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	21	0.8758	linear-0	f1: feature/-/- 1.212; f1_again: feature/-/- 1.212	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	22	0.8303	linear-0	f1: feature/-/- 1.105; f1_again: feature/-/- 1.105	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	23	0.8323	linear-0	f1: feature/-/- 1.27; f1_again: feature/-/- 1.27	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	24	0.835	linear-0	f1: feature/-/- 1.319; f1_again: feature/-/- 1.319	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	25	0.8674	linear-0	f1: feature/-/- 1.146; f1_again: feature/-/- 1.146	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	26	0.8558	linear-0	f1: feature/-/- 1.307; f1_again: feature/-/- 1.307	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	27	0.825	linear-0	f1: feature/-/- 1.331; f1_again: feature/-/- 1.331	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	28	0.8476	linear-0	f1: feature/-/- 1.279; f1_again: feature/-/- 1.279	f1,f1_again,f2	0.05	-
+signal_reg | dup:f1	29	0.8263	linear-0	f1: feature/-/- 1.057; f1_again: feature/-/- 1.057	f1,f1_again,f2	0.05	-
+signal_reg | dupscaled:f1	0	0.8307	linear-0	f1: feature/-/- 1.399; f1_scaled: feature/-/- 1.399	f1,f1_scaled,f2	0.05	-
+signal_reg | dupscaled:f1	1	0.839	linear-0	f1: feature/-/- 1.17; f1_scaled: feature/-/- 1.17	f1,f1_scaled,f2	0.05	-
+signal_reg | dupscaled:f1	2	0.8435	linear-0	f1: feature/-/- 1.325; f1_scaled: feature/-/- 1.325	f1,f1_scaled,f2	0.05	-
+signal_reg | dupscaled:f1	3	0.8634	linear-0	f1: feature/-/- 1.213; f1_scaled: feature/-/- 1.213	f1,f1_scaled,f2	0.05	-
+signal_reg | dupscaled:f1	4	0.8463	linear-0	f1: feature/-/- 1.116; f1_scaled: feature/-/- 1.116	f1,f1_scaled,f2	0.05	-
+signal_reg | dupscaled:f1	5	0.8914	linear-0	f1: feature/-/- 1.219; f1_scaled: feature/-/- 1.219	f1,f1_scaled,f2	0.05	-
+signal_reg | dupscaled:f1	6	0.8505	linear-0	f1: feature/-/- 1.112; f1_scaled: feature/-/- 1.112	f1,f1_scaled,f2	0.05	-
+signal_reg | dupscaled:f1	7	0.8488	linear-0	f1: feature/-/- 1.262; f1_scaled: feature/-/- 1.262	f1,f1_scaled,f2	0.05	-
+signal_reg | dupscaled:f1	8	0.8191	linear-0	f1: feature/-/- 1.27; f1_scaled: feature/-/- 1.27	f1,f1_scaled,f2	0.05	-
+signal_reg | dupscaled:f1	9	0.8327	linear-0	f1: feature/-/- 1.252; f1_scaled: feature/-/- 1.252	f1,f1_scaled,f2	0.05	-
+signal_reg | dupscaled:f1	10	0.8348	linear-0	f1: feature/-/- 1.256; f1_scaled: feature/-/- 1.256	f1,f1_scaled,f2	0.05	-
+signal_reg | dupscaled:f1	11	0.854	linear-0	f1: feature/-/- 1.24; f1_scaled: feature/-/- 1.24	f1,f1_scaled,f2	0.05	-
+signal_reg | dupscaled:f1	12	0.8544	linear-0	f1: feature/-/- 1.305; f1_scaled: feature/-/- 1.305	f1,f1_scaled,f2	0.05	-
+signal_reg | dupscaled:f1	13	0.8474	linear-0	f1: feature/-/- 1.247; f1_scaled: feature/-/- 1.247	f1,f1_scaled,f2	0.05	-
+signal_reg | dupscaled:f1	14	0.8612	linear-0	f1: feature/-/- 1.257; f1_scaled: feature/-/- 1.257	f1,f1_scaled,f2	0.05	-
+signal_reg | dupscaled:f1	15	0.8402	linear-0	f1: feature/-/- 1.236; f1_scaled: feature/-/- 1.236	f1,f1_scaled,f2	0.05	-
+signal_reg | dupscaled:f1	16	0.8568	linear-0	f1: feature/-/- 1.321; f1_scaled: feature/-/- 1.321	f1,f1_scaled,f2	0.05	-
+signal_reg | dupscaled:f1	17	0.8449	linear-0	f1: feature/-/- 1.245; f1_scaled: feature/-/- 1.245	f1,f1_scaled,f2	0.05	-
+signal_reg | dupscaled:f1	18	0.8707	linear-0	f1: feature/-/- 1.121; f1_scaled: feature/-/- 1.121	f1,f1_scaled,f2	0.05	-
+signal_reg | dupscaled:f1	19	0.8591	linear-0	f1: feature/-/- 1.245; f1_scaled: feature/-/- 1.245	f1,f1_scaled,f2	0.05	-
+signal_reg | dupscaled:f1	20	0.8678	linear-0	f1: feature/-/- 1.317; f1_scaled: feature/-/- 1.317	f1,f1_scaled,f2	0.05	-
+signal_reg | dupscaled:f1	21	0.8758	linear-0	f1: feature/-/- 1.212; f1_scaled: feature/-/- 1.212	f1,f1_scaled,f2	0.05	-
+signal_reg | dupscaled:f1	22	0.8303	linear-0	f1: feature/-/- 1.105; f1_scaled: feature/-/- 1.105	f1,f1_scaled,f2	0.05	-
+signal_reg | dupscaled:f1	23	0.8323	linear-0	f1: feature/-/- 1.27; f1_scaled: feature/-/- 1.27	f1,f1_scaled,f2	0.05	-
+signal_reg | dupscaled:f1	24	0.835	linear-0	f1: feature/-/- 1.319; f1_scaled: feature/-/- 1.319	f1,f1_scaled,f2	0.05	-
+signal_reg | dupscaled:f1	25	0.8674	linear-0	f1: feature/-/- 1.146; f1_scaled: feature/-/- 1.146	f1,f1_scaled,f2	0.05	-
+signal_reg | dupscaled:f1	26	0.8558	linear-0	f1: feature/-/- 1.307; f1_scaled: feature/-/- 1.307	f1,f1_scaled,f2	0.05	-
+signal_reg | dupscaled:f1	27	0.825	linear-0	f1: feature/-/- 1.331; f1_scaled: feature/-/- 1.331	f1,f1_scaled,f2	0.05	-
+signal_reg | dupscaled:f1	28	0.8476	linear-0	f1: feature/-/- 1.279; f1_scaled: feature/-/- 1.279	f1,f1_scaled,f2	0.05	-
+signal_reg | dupscaled:f1	29	0.8263	linear-0	f1: feature/-/- 1.057; f1_scaled: feature/-/- 1.057	f1,f1_scaled,f2	0.05	-
+signal_reg | dupneg:f1	0	0.8307	linear-0	f1: feature/-/- 1.399; f1_negated: feature/-/- 1.399	f1,f1_negated,f2	0.05	-
+signal_reg | dupneg:f1	1	0.839	linear-0	f1: feature/-/- 1.17; f1_negated: feature/-/- 1.17	f1,f1_negated,f2	0.05	-
+signal_reg | dupneg:f1	2	0.8435	linear-0	f1: feature/-/- 1.325; f1_negated: feature/-/- 1.325	f1,f1_negated,f2	0.05	-
+signal_reg | dupneg:f1	3	0.8634	linear-0	f1: feature/-/- 1.213; f1_negated: feature/-/- 1.213	f1,f1_negated,f2	0.05	-
+signal_reg | dupneg:f1	4	0.8463	linear-0	f1: feature/-/- 1.116; f1_negated: feature/-/- 1.116	f1,f1_negated,f2	0.05	-
+signal_reg | dupneg:f1	5	0.8914	linear-0	f1: feature/-/- 1.219; f1_negated: feature/-/- 1.219	f1,f1_negated,f2	0.05	-
+signal_reg | dupneg:f1	6	0.8505	linear-0	f1: feature/-/- 1.112; f1_negated: feature/-/- 1.112	f1,f1_negated,f2	0.05	-
+signal_reg | dupneg:f1	7	0.8488	linear-0	f1: feature/-/- 1.262; f1_negated: feature/-/- 1.262	f1,f1_negated,f2	0.05	-
+signal_reg | dupneg:f1	8	0.8191	linear-0	f1: feature/-/- 1.27; f1_negated: feature/-/- 1.27	f1,f1_negated,f2	0.05	-
+signal_reg | dupneg:f1	9	0.8327	linear-0	f1: feature/-/- 1.252; f1_negated: feature/-/- 1.252	f1,f1_negated,f2	0.05	-
+signal_reg | dupneg:f1	10	0.8348	linear-0	f1: feature/-/- 1.256; f1_negated: feature/-/- 1.256	f1,f1_negated,f2	0.05	-
+signal_reg | dupneg:f1	11	0.854	linear-0	f1: feature/-/- 1.24; f1_negated: feature/-/- 1.24	f1,f1_negated,f2	0.05	-
+signal_reg | dupneg:f1	12	0.8544	linear-0	f1: feature/-/- 1.305; f1_negated: feature/-/- 1.305	f1,f1_negated,f2	0.05	-
+signal_reg | dupneg:f1	13	0.8474	linear-0	f1: feature/-/- 1.247; f1_negated: feature/-/- 1.247	f1,f1_negated,f2	0.05	-
+signal_reg | dupneg:f1	14	0.8612	linear-0	f1: feature/-/- 1.257; f1_negated: feature/-/- 1.257	f1,f1_negated,f2	0.05	-
+signal_reg | dupneg:f1	15	0.8402	linear-0	f1: feature/-/- 1.236; f1_negated: feature/-/- 1.236	f1,f1_negated,f2	0.05	-
+signal_reg | dupneg:f1	16	0.8568	linear-0	f1: feature/-/- 1.321; f1_negated: feature/-/- 1.321	f1,f1_negated,f2	0.05	-
+signal_reg | dupneg:f1	17	0.8449	linear-0	f1: feature/-/- 1.245; f1_negated: feature/-/- 1.245	f1,f1_negated,f2	0.05	-
+signal_reg | dupneg:f1	18	0.8707	linear-0	f1: feature/-/- 1.121; f1_negated: feature/-/- 1.121	f1,f1_negated,f2	0.05	-
+signal_reg | dupneg:f1	19	0.8591	linear-0	f1: feature/-/- 1.245; f1_negated: feature/-/- 1.245	f1,f1_negated,f2	0.05	-
+signal_reg | dupneg:f1	20	0.8678	linear-0	f1: feature/-/- 1.317; f1_negated: feature/-/- 1.317	f1,f1_negated,f2	0.05	-
+signal_reg | dupneg:f1	21	0.8758	linear-0	f1: feature/-/- 1.212; f1_negated: feature/-/- 1.212	f1,f1_negated,f2	0.05	-
+signal_reg | dupneg:f1	22	0.8303	linear-0	f1: feature/-/- 1.105; f1_negated: feature/-/- 1.105	f1,f1_negated,f2	0.05	-
+signal_reg | dupneg:f1	23	0.8323	linear-0	f1: feature/-/- 1.27; f1_negated: feature/-/- 1.27	f1,f1_negated,f2	0.05	-
+signal_reg | dupneg:f1	24	0.835	linear-0	f1: feature/-/- 1.319; f1_negated: feature/-/- 1.319	f1,f1_negated,f2	0.05	-
+signal_reg | dupneg:f1	25	0.8674	linear-0	f1: feature/-/- 1.146; f1_negated: feature/-/- 1.146	f1,f1_negated,f2	0.05	-
+signal_reg | dupneg:f1	26	0.8558	linear-0	f1: feature/-/- 1.307; f1_negated: feature/-/- 1.307	f1,f1_negated,f2	0.05	-
+signal_reg | dupneg:f1	27	0.825	linear-0	f1: feature/-/- 1.331; f1_negated: feature/-/- 1.331	f1,f1_negated,f2	0.05	-
+signal_reg | dupneg:f1	28	0.8476	linear-0	f1: feature/-/- 1.279; f1_negated: feature/-/- 1.279	f1,f1_negated,f2	0.05	-
+signal_reg | dupneg:f1	29	0.8263	linear-0	f1: feature/-/- 1.057; f1_negated: feature/-/- 1.057	f1,f1_negated,f2	0.05	-
+signal_reg	0	0.8307	linear-0	f1: feature/-/- 1.399	f1,f2	0.05	-
+signal_reg	1	0.839	linear-0	f1: feature/-/- 1.169	f1,f2	0.05	-
+signal_reg	2	0.8435	linear-0	f1: feature/-/- 1.325	f1,f2	0.05	-
+signal_reg	3	0.8634	linear-0	f1: feature/-/- 1.213	f1,f2	0.05	-
+signal_reg	4	0.8463	linear-0	f1: feature/-/- 1.115	f1,f2	0.05	-
+signal_reg	5	0.8914	linear-0	f1: feature/-/- 1.218	f1,f2	0.05	-
+signal_reg	6	0.8504	linear-0	f1: feature/-/- 1.112	f1,f2	0.05	-
+signal_reg	7	0.8488	linear-0	f1: feature/-/- 1.261	f1,f2	0.05	-
+signal_reg	8	0.8191	linear-0	f1: feature/-/- 1.27	f1,f2	0.05	-
+signal_reg	9	0.8327	linear-0	f1: feature/-/- 1.252	f1,f2	0.05	-
+signal_reg	10	0.8348	linear-0	f1: feature/-/- 1.255	f1,f2	0.05	-
+signal_reg	11	0.854	linear-0	f1: feature/-/- 1.239	f1,f2	0.05	-
+signal_reg	12	0.8544	linear-0	f1: feature/-/- 1.304	f1,f2	0.05	-
+signal_reg	13	0.8474	linear-0	f1: feature/-/- 1.247	f1,f2	0.05	-
+signal_reg	14	0.8612	linear-0	f1: feature/-/- 1.256	f1,f2	0.05	-
+signal_reg	15	0.8402	linear-0	f1: feature/-/- 1.236	f1,f2	0.05	-
+signal_reg	16	0.8568	linear-0	f1: feature/-/- 1.321	f1,f2	0.05	-
+signal_reg	17	0.8449	linear-0	f1: feature/-/- 1.245	f1,f2	0.05	-
+signal_reg	18	0.8707	linear-0	f1: feature/-/- 1.12	f1,f2	0.05	-
+signal_reg	19	0.8591	linear-0	f1: feature/-/- 1.245	f1,f2	0.05	-
+signal_reg	20	0.8678	linear-0	f1: feature/-/- 1.316	f1,f2	0.05	-
+signal_reg	21	0.8758	linear-0	f1: feature/-/- 1.211	f1,f2	0.05	-
+signal_reg	22	0.8303	linear-0	f1: feature/-/- 1.105	f1,f2	0.05	-
+signal_reg	23	0.8323	linear-0	f1: feature/-/- 1.27	f1,f2	0.05	-
+signal_reg	24	0.835	linear-0	f1: feature/-/- 1.318	f1,f2	0.05	-
+signal_reg	25	0.8674	linear-0	f1: feature/-/- 1.145	f1,f2	0.05	-
+signal_reg	26	0.8558	linear-0	f1: feature/-/- 1.306	f1,f2	0.05	-
+signal_reg	27	0.825	linear-0	f1: feature/-/- 1.33	f1,f2	0.05	-
+signal_reg	28	0.8476	linear-0	f1: feature/-/- 1.279	f1,f2	0.05	-
+signal_reg	29	0.8263	linear-0	f1: feature/-/- 1.057	f1,f2	0.05	-
+signal_clf | dup:f1	0	0.7417	linear-0	f1: feature/-/- 0.3429; f1_again: feature/-/- 0.3429	f1,f1_again,f2,seg	0.07263	-
+signal_clf | dup:f1	1	0.7082	linear-0	f1: feature/-/- 0.4102; f1_again: feature/-/- 0.4102	f1,f1_again,f2,seg	0.06821	-
+signal_clf | dup:f1	2	0.6972	linear-0	f1: feature/-/- 0.4284; f1_again: feature/-/- 0.4284	f1,f1_again,f2,seg	0.07503	-
+signal_clf | dup:f1	3	0.7345	linear-0	f1: feature/-/- 0.3992; f1_again: feature/-/- 0.3992	f1,f1_again,f2,seg	0.06786	-
+signal_clf | dup:f1	4	0.7482	linear-0	f1: feature/-/- 0.3902; f1_again: feature/-/- 0.3902	f1,f1_again,f2,seg	0.0647	-
+signal_clf | dup:f1	5	0.702	linear-0	f1: feature/-/- 0.4648; f1_again: feature/-/- 0.4648	f1,f1_again,f2	0.07763	-
+signal_clf | dup:f1	6	0.6897	linear-0	f1: feature/-/- 0.3674; f1_again: feature/-/- 0.3674	f1,f1_again,f2,seg	0.07834	-
+signal_clf | dup:f1	7	0.7913	linear-0	f1: feature/-/- 0.4483; f1_again: feature/-/- 0.4483	f1,f1_again,f2,seg	0.05867	-
+signal_clf | dup:f1	8	0.672	linear-0	f1: feature/-/- 0.3459; f1_again: feature/-/- 0.3459	f1,f1_again,f2	0.08418	-
+signal_clf | dup:f1	9	0.7256	linear-0	f1: feature/-/- 0.415; f1_again: feature/-/- 0.415	f1,f1_again,f2,seg	0.06273	-
+signal_clf | dup:f1	10	0.7525	linear-0	f1: feature/-/- 0.4264; f1_again: feature/-/- 0.4264	f1,f1_again,f2,seg	0.0597	-
+signal_clf | dup:f1	11	0.7437	linear-0	f1: feature/-/- 0.4135; f1_again: feature/-/- 0.4135	f1,f1_again,f2,seg	0.0643	-
+signal_clf | dup:f1	12	0.7365	linear-0	f1: feature/-/- 0.3772; f1_again: feature/-/- 0.3772	f1,f1_again,f2,seg	0.06759	-
+signal_clf | dup:f1	13	0.7713	linear-0	f1: feature/-/- 0.4975; f1_again: feature/-/- 0.4975	f1,f1_again,f2,seg	0.05931	-
+signal_clf | dup:f1	14	0.7289	linear-0	f1: feature/-/- 0.441; f1_again: feature/-/- 0.441	f1,f1_again,f2	0.07907	-
+signal_clf | dup:f1	15	0.7785	linear-0	f1: feature/-/- 0.4748; f1_again: feature/-/- 0.4748	f1,f1_again,f2,seg	0.06182	-
+signal_clf | dup:f1	16	0.7561	linear-0	f1: feature/-/- 0.434; f1_again: feature/-/- 0.434	f1,f1_again,f2,seg	0.05992	-
+signal_clf | dup:f1	17	0.8004	linear-0	f1: feature/-/- 0.4142; f1_again: feature/-/- 0.4142	f1,f1_again,f2,seg	0.06155	-
+signal_clf | dup:f1	18	0.7378	linear-0	f1: feature/-/- 0.4095; f1_again: feature/-/- 0.4095	f1,f1_again,f2,seg	0.06802	-
+signal_clf | dup:f1	19	0.7559	linear-0	f1: feature/-/- 0.387; f1_again: feature/-/- 0.387	f1,f1_again,f2,seg	0.06339	-
+signal_clf | dup:f1	20	0.723	linear-0	f1: feature/-/- 0.4505; f1_again: feature/-/- 0.4505	f1,f1_again,f2	0.07886	-
+signal_clf | dup:f1	21	0.7792	linear-0	f1: feature/-/- 0.506; f1_again: feature/-/- 0.506	f1,f1_again,f2,seg	0.06959	-
+signal_clf | dup:f1	22	0.7396	linear-0	f1: feature/-/- 0.3619; f1_again: feature/-/- 0.3619	f1,f1_again,f2,seg	0.06475	-
+signal_clf | dup:f1	23	0.7603	linear-0	f1: feature/-/- 0.4743; f1_again: feature/-/- 0.4743	f1,f1_again,f2,seg	0.06845	-
+signal_clf | dup:f1	24	0.7933	linear-0	f1: feature/-/- 0.3764; f1_again: feature/-/- 0.3764	f1,f1_again,f2,seg	0.05959	-
+signal_clf | dup:f1	25	0.6963	linear-0	f1: feature/-/- 0.4192; f1_again: feature/-/- 0.4192	f1,f1_again,f2,seg	0.07198	-
+signal_clf | dup:f1	26	0.7265	linear-0	f1: feature/-/- 0.4402; f1_again: feature/-/- 0.4402	f1,f1_again,f2,seg	0.07393	-
+signal_clf | dup:f1	27	0.7537	linear-0	f1: feature/-/- 0.4152; f1_again: feature/-/- 0.4152	f1,f1_again,f2,seg	0.06137	-
+signal_clf | dup:f1	28	0.7791	linear-0	f1: feature/-/- 0.4648; f1_again: feature/-/- 0.4648	f1,f1_again,f2,seg	0.06284	-
+signal_clf | dup:f1	29	0.7184	linear-0	f1: feature/-/- 0.4606; f1_again: feature/-/- 0.4606	f1,f1_again,f2,seg	0.06074	-
+signal_clf | dupscaled:f1	0	0.7417	linear-0	f1: feature/-/- 0.3429; f1_scaled: feature/-/- 0.3429	f1,f1_scaled,f2,seg	0.07263	-
+signal_clf | dupscaled:f1	1	0.7082	linear-0	f1: feature/-/- 0.4102; f1_scaled: feature/-/- 0.4102	f1,f1_scaled,f2,seg	0.06821	-
+signal_clf | dupscaled:f1	2	0.6972	linear-0	f1: feature/-/- 0.4284; f1_scaled: feature/-/- 0.4284	f1,f1_scaled,f2,seg	0.07503	-
+signal_clf | dupscaled:f1	3	0.7345	linear-0	f1: feature/-/- 0.3992; f1_scaled: feature/-/- 0.3992	f1,f1_scaled,f2,seg	0.06786	-
+signal_clf | dupscaled:f1	4	0.7482	linear-0	f1: feature/-/- 0.3902; f1_scaled: feature/-/- 0.3902	f1,f1_scaled,f2,seg	0.0647	-
+signal_clf | dupscaled:f1	5	0.702	linear-0	f1: feature/-/- 0.4648; f1_scaled: feature/-/- 0.4648	f1,f1_scaled,f2	0.07763	-
+signal_clf | dupscaled:f1	6	0.6897	linear-0	f1: feature/-/- 0.3674; f1_scaled: feature/-/- 0.3674	f1,f1_scaled,f2,seg	0.07834	-
+signal_clf | dupscaled:f1	7	0.7913	linear-0	f1: feature/-/- 0.4483; f1_scaled: feature/-/- 0.4483	f1,f1_scaled,f2,seg	0.05867	-
+signal_clf | dupscaled:f1	8	0.672	linear-0	f1: feature/-/- 0.3459; f1_scaled: feature/-/- 0.3459	f1,f1_scaled,f2	0.08418	-
+signal_clf | dupscaled:f1	9	0.7256	linear-0	f1: feature/-/- 0.415; f1_scaled: feature/-/- 0.415	f1,f1_scaled,f2,seg	0.06273	-
+signal_clf | dupscaled:f1	10	0.7525	linear-0	f1: feature/-/- 0.4264; f1_scaled: feature/-/- 0.4264	f1,f1_scaled,f2,seg	0.0597	-
+signal_clf | dupscaled:f1	11	0.7437	linear-0	f1: feature/-/- 0.4135; f1_scaled: feature/-/- 0.4135	f1,f1_scaled,f2,seg	0.0643	-
+signal_clf | dupscaled:f1	12	0.7365	linear-0	f1: feature/-/- 0.3772; f1_scaled: feature/-/- 0.3772	f1,f1_scaled,f2,seg	0.06759	-
+signal_clf | dupscaled:f1	13	0.7713	linear-0	f1: feature/-/- 0.4975; f1_scaled: feature/-/- 0.4975	f1,f1_scaled,f2,seg	0.05931	-
+signal_clf | dupscaled:f1	14	0.7289	linear-0	f1: feature/-/- 0.441; f1_scaled: feature/-/- 0.441	f1,f1_scaled,f2	0.07907	-
+signal_clf | dupscaled:f1	15	0.7785	linear-0	f1: feature/-/- 0.4748; f1_scaled: feature/-/- 0.4748	f1,f1_scaled,f2,seg	0.06182	-
+signal_clf | dupscaled:f1	16	0.7561	linear-0	f1: feature/-/- 0.434; f1_scaled: feature/-/- 0.434	f1,f1_scaled,f2,seg	0.05992	-
+signal_clf | dupscaled:f1	17	0.8004	linear-0	f1: feature/-/- 0.4142; f1_scaled: feature/-/- 0.4142	f1,f1_scaled,f2,seg	0.06155	-
+signal_clf | dupscaled:f1	18	0.7378	linear-0	f1: feature/-/- 0.4095; f1_scaled: feature/-/- 0.4095	f1,f1_scaled,f2,seg	0.06802	-
+signal_clf | dupscaled:f1	19	0.7559	linear-0	f1: feature/-/- 0.387; f1_scaled: feature/-/- 0.387	f1,f1_scaled,f2,seg	0.06339	-
+signal_clf | dupscaled:f1	20	0.723	linear-0	f1: feature/-/- 0.4505; f1_scaled: feature/-/- 0.4505	f1,f1_scaled,f2	0.07886	-
+signal_clf | dupscaled:f1	21	0.7792	linear-0	f1: feature/-/- 0.506; f1_scaled: feature/-/- 0.506	f1,f1_scaled,f2,seg	0.06959	-
+signal_clf | dupscaled:f1	22	0.7396	linear-0	f1: feature/-/- 0.3619; f1_scaled: feature/-/- 0.3619	f1,f1_scaled,f2,seg	0.06475	-
+signal_clf | dupscaled:f1	23	0.7603	linear-0	f1: feature/-/- 0.4743; f1_scaled: feature/-/- 0.4743	f1,f1_scaled,f2,seg	0.06845	-
+signal_clf | dupscaled:f1	24	0.7933	linear-0	f1: feature/-/- 0.3764; f1_scaled: feature/-/- 0.3764	f1,f1_scaled,f2,seg	0.05959	-
+signal_clf | dupscaled:f1	25	0.6963	linear-0	f1: feature/-/- 0.4192; f1_scaled: feature/-/- 0.4192	f1,f1_scaled,f2,seg	0.07198	-
+signal_clf | dupscaled:f1	26	0.7265	linear-0	f1: feature/-/- 0.4402; f1_scaled: feature/-/- 0.4402	f1,f1_scaled,f2,seg	0.07393	-
+signal_clf | dupscaled:f1	27	0.7537	linear-0	f1: feature/-/- 0.4152; f1_scaled: feature/-/- 0.4152	f1,f1_scaled,f2,seg	0.06137	-
+signal_clf | dupscaled:f1	28	0.7791	linear-0	f1: feature/-/- 0.4648; f1_scaled: feature/-/- 0.4648	f1,f1_scaled,f2,seg	0.06284	-
+signal_clf | dupscaled:f1	29	0.7184	linear-0	f1: feature/-/- 0.4606; f1_scaled: feature/-/- 0.4606	f1,f1_scaled,f2,seg	0.06074	-
+signal_clf | dupneg:f1	0	0.7417	linear-0	f1: feature/-/- 0.3429; f1_negated: feature/-/- 0.3429	f1,f1_negated,f2,seg	0.07263	-
+signal_clf | dupneg:f1	1	0.7082	linear-0	f1: feature/-/- 0.4102; f1_negated: feature/-/- 0.4102	f1,f1_negated,f2,seg	0.06821	-
+signal_clf | dupneg:f1	2	0.6972	linear-0	f1: feature/-/- 0.4284; f1_negated: feature/-/- 0.4284	f1,f1_negated,f2,seg	0.07503	-
+signal_clf | dupneg:f1	3	0.7345	linear-0	f1: feature/-/- 0.3992; f1_negated: feature/-/- 0.3992	f1,f1_negated,f2,seg	0.06786	-
+signal_clf | dupneg:f1	4	0.7482	linear-0	f1: feature/-/- 0.3902; f1_negated: feature/-/- 0.3902	f1,f1_negated,f2,seg	0.0647	-
+signal_clf | dupneg:f1	5	0.702	linear-0	f1: feature/-/- 0.4648; f1_negated: feature/-/- 0.4648	f1,f1_negated,f2	0.07763	-
+signal_clf | dupneg:f1	6	0.6897	linear-0	f1: feature/-/- 0.3674; f1_negated: feature/-/- 0.3674	f1,f1_negated,f2,seg	0.07834	-
+signal_clf | dupneg:f1	7	0.7913	linear-0	f1: feature/-/- 0.4483; f1_negated: feature/-/- 0.4483	f1,f1_negated,f2,seg	0.05867	-
+signal_clf | dupneg:f1	8	0.672	linear-0	f1: feature/-/- 0.3459; f1_negated: feature/-/- 0.3459	f1,f1_negated,f2	0.08418	-
+signal_clf | dupneg:f1	9	0.7256	linear-0	f1: feature/-/- 0.415; f1_negated: feature/-/- 0.415	f1,f1_negated,f2,seg	0.06273	-
+signal_clf | dupneg:f1	10	0.7525	linear-0	f1: feature/-/- 0.4264; f1_negated: feature/-/- 0.4264	f1,f1_negated,f2,seg	0.0597	-
+signal_clf | dupneg:f1	11	0.7437	linear-0	f1: feature/-/- 0.4135; f1_negated: feature/-/- 0.4135	f1,f1_negated,f2,seg	0.0643	-
+signal_clf | dupneg:f1	12	0.7365	linear-0	f1: feature/-/- 0.3772; f1_negated: feature/-/- 0.3772	f1,f1_negated,f2,seg	0.06759	-
+signal_clf | dupneg:f1	13	0.7713	linear-0	f1: feature/-/- 0.4975; f1_negated: feature/-/- 0.4975	f1,f1_negated,f2,seg	0.05931	-
+signal_clf | dupneg:f1	14	0.7289	linear-0	f1: feature/-/- 0.441; f1_negated: feature/-/- 0.441	f1,f1_negated,f2	0.07907	-
+signal_clf | dupneg:f1	15	0.7785	linear-0	f1: feature/-/- 0.4748; f1_negated: feature/-/- 0.4748	f1,f1_negated,f2,seg	0.06182	-
+signal_clf | dupneg:f1	16	0.7561	linear-0	f1: feature/-/- 0.434; f1_negated: feature/-/- 0.434	f1,f1_negated,f2,seg	0.05992	-
+signal_clf | dupneg:f1	17	0.8004	linear-0	f1: feature/-/- 0.4142; f1_negated: feature/-/- 0.4142	f1,f1_negated,f2,seg	0.06155	-
+signal_clf | dupneg:f1	18	0.7378	linear-0	f1: feature/-/- 0.4095; f1_negated: feature/-/- 0.4095	f1,f1_negated,f2,seg	0.06802	-
+signal_clf | dupneg:f1	19	0.7559	linear-0	f1: feature/-/- 0.387; f1_negated: feature/-/- 0.387	f1,f1_negated,f2,seg	0.06339	-
+signal_clf | dupneg:f1	20	0.723	linear-0	f1: feature/-/- 0.4505; f1_negated: feature/-/- 0.4505	f1,f1_negated,f2	0.07886	-
+signal_clf | dupneg:f1	21	0.7792	linear-0	f1: feature/-/- 0.506; f1_negated: feature/-/- 0.506	f1,f1_negated,f2,seg	0.06959	-
+signal_clf | dupneg:f1	22	0.7396	linear-0	f1: feature/-/- 0.3619; f1_negated: feature/-/- 0.3619	f1,f1_negated,f2,seg	0.06475	-
+signal_clf | dupneg:f1	23	0.7603	linear-0	f1: feature/-/- 0.4743; f1_negated: feature/-/- 0.4743	f1,f1_negated,f2,seg	0.06845	-
+signal_clf | dupneg:f1	24	0.7933	linear-0	f1: feature/-/- 0.3764; f1_negated: feature/-/- 0.3764	f1,f1_negated,f2,seg	0.05959	-
+signal_clf | dupneg:f1	25	0.6963	linear-0	f1: feature/-/- 0.4192; f1_negated: feature/-/- 0.4192	f1,f1_negated,f2,seg	0.07198	-
+signal_clf | dupneg:f1	26	0.7265	linear-0	f1: feature/-/- 0.4402; f1_negated: feature/-/- 0.4402	f1,f1_negated,f2,seg	0.07393	-
+signal_clf | dupneg:f1	27	0.7537	linear-0	f1: feature/-/- 0.4152; f1_negated: feature/-/- 0.4152	f1,f1_negated,f2,seg	0.06137	-
+signal_clf | dupneg:f1	28	0.7791	linear-0	f1: feature/-/- 0.4648; f1_negated: feature/-/- 0.4648	f1,f1_negated,f2,seg	0.06284	-
+signal_clf | dupneg:f1	29	0.7184	linear-0	f1: feature/-/- 0.4606; f1_negated: feature/-/- 0.4606	f1,f1_negated,f2,seg	0.06074	-
+signal_clf	0	0.7417	linear-0	f1: feature/-/- 0.3423	f1,f2,seg	0.07286	-
+signal_clf	1	0.7083	linear-0	f1: feature/-/- 0.41	f1,f2,seg	0.0682	-
+signal_clf	2	0.6972	linear-0	f1: feature/-/- 0.4278	f1,f2,seg	0.07508	-
+signal_clf	3	0.7344	linear-0	f1: feature/-/- 0.3985	f1,f2,seg	0.06791	-
+signal_clf	4	0.7483	linear-0	f1: feature/-/- 0.3902	f1,f2,seg	0.06481	-
+signal_clf	5	0.7026	linear-0	f1: feature/-/- 0.4647	f1,f2	0.07748	-
+signal_clf	6	0.6898	linear-0	f1: feature/-/- 0.3669	f1,f2,seg	0.07856	-
+signal_clf	7	0.7912	linear-0	f1: feature/-/- 0.4477	f1,f2,seg	0.05871	-
+signal_clf	8	0.6719	linear-0	f1: feature/-/- 0.3453	f1,f2	0.08424	-
+signal_clf	9	0.7258	linear-0	f1: feature/-/- 0.4146	f1,f2,seg	0.06275	-
+signal_clf	10	0.7526	linear-0	f1: feature/-/- 0.4259	f1,f2,seg	0.05969	-
+signal_clf	11	0.744	linear-0	f1: feature/-/- 0.4133	f1,f2,seg	0.06428	-
+signal_clf	12	0.7364	linear-0	f1: feature/-/- 0.3766	f1,f2,seg	0.0674	-
+signal_clf	13	0.7713	linear-0	f1: feature/-/- 0.4967	f1,f2,seg	0.05935	-
+signal_clf	14	0.7289	linear-0	f1: feature/-/- 0.4406	f1,f2	0.07896	-
+signal_clf	15	0.7785	linear-0	f1: feature/-/- 0.4741	f1,f2,seg	0.06168	-
+signal_clf	16	0.7563	linear-0	f1: feature/-/- 0.4337	f1,f2,seg	0.05997	-
+signal_clf	17	0.8005	linear-0	f1: feature/-/- 0.4133	f1,f2,seg	0.06148	-
+signal_clf	18	0.7378	linear-0	f1: feature/-/- 0.4088	f1,f2,seg	0.0681	-
+signal_clf	19	0.7558	linear-0	f1: feature/-/- 0.3863	f1,f2,seg	0.06345	-
+signal_clf	20	0.7229	linear-0	f1: feature/-/- 0.45	f1,f2	0.0788	-
+signal_clf	21	0.779	linear-0	f1: feature/-/- 0.5053	f1,f2,seg	0.06971	-
+signal_clf	22	0.7397	linear-0	f1: feature/-/- 0.3615	f1,f2,seg	0.06482	-
+signal_clf	23	0.7605	linear-0	f1: feature/-/- 0.4739	f1,f2,seg	0.06865	-
+signal_clf	24	0.7932	linear-0	f1: feature/-/- 0.3755	f1,f2,seg	0.05972	-
+signal_clf	25	0.6962	linear-0	f1: feature/-/- 0.4186	f1,f2,seg	0.0717	-
+signal_clf	26	0.7261	linear-0	f1: feature/-/- 0.4391	f1,f2,seg	0.07416	-
+signal_clf	27	0.7537	linear-0	f1: feature/-/- 0.4146	f1,f2,seg	0.06143	-
+signal_clf	28	0.779	linear-0	f1: feature/-/- 0.4641	f1,f2,seg	0.06277	-
+signal_clf	29	0.7186	linear-0	f1: feature/-/- 0.4603	f1,f2,seg	0.06096	-
+full_signal_reg_j1 | dup:f1	0	0.8179	linear-0	f1: feature/-/- 1.219; f1_again: feature/-/- 1.219	f1,f1_again,f2	0.06988	-
+full_signal_reg_j1 | dup:f1	1	0.8151	linear-3	f1: feature/-/- 1.124; f1_again: feature/-/- 1.124	f1,f1_again,f2	0.05019	-
+full_signal_reg_j1 | dup:f1	2	0.8699	linear-3	f1: feature/-/- 1.386; f1_again: feature/-/- 1.386	f1,f1_again,f2	0.05	-
+full_signal_reg_j1 | dup:f1	3	0.8487	linear-3	f1: feature/-/- 1.41; f1_again: feature/-/- 1.41	f1,f1_again,f2	0.05661	-
+full_signal_reg_j1 | dup:f1	4	0.8526	linear-3	f1: feature/-/- 1.068; f1_again: feature/-/- 1.068	f1,f1_again,f2	0.05	-
+full_signal_reg_j1 | dup:f1	5	0.8354	linear-0	f1: feature/-/- 1.109; f1_again: feature/-/- 1.109	f1,f1_again,f2	0.05	-
+full_signal_reg_j1 | dup:f1	6	0.8474	linear-0	f1: feature/-/- 1.494; f1_again: feature/-/- 1.494	f1,f1_again,f2	0.05576	-
+full_signal_reg_j1 | dup:f1	7	0.8437	linear-0	f1: feature/-/- 1.159; f1_again: feature/-/- 1.159	f1,f1_again,f2	0.05067	-
+full_signal_reg_j1 | dup:f1	8	0.8886	linear-3	f1: feature/-/- 1.14; f1_again: feature/-/- 1.14	f1,f1_again,f2	0.05	-
+full_signal_reg_j1 | dup:f1	9	0.8336	linear-0	f1: feature/-/- 1.173; f1_again: feature/-/- 1.173	f1,f1_again,f2	0.05071	-
+full_signal_reg_j1 | dup:f1	10	0.8571	linear-3	f1: feature/-/- 1.209; f1_again: feature/-/- 1.209	f1,f1_again,f2	0.05	-
+full_signal_reg_j1 | dup:f1	11	0.8401	linear-0	f1: feature/-/- 1.112; f1_again: feature/-/- 1.112	f1,f1_again,f2	0.05869	-
+full_signal_reg_j1 | dup:f1	12	0.7705	linear-0	f1: feature/-/- 1.4; f1_again: feature/-/- 1.4	f1,f1_again,f2	0.07398	-
+full_signal_reg_j1 | dup:f1	13	0.8413	linear-3	f1: feature/-/- 1.342; f1_again: feature/-/- 1.342	f1,f1_again,f2	0.05	-
+full_signal_reg_j1 | dup:f1	14	0.883	linear-3	f1: feature/-/- 1.226; f1_again: feature/-/- 1.226	f1,f1_again,f2	0.05	-
+full_signal_reg_j1 | dup:f1	15	0.849	linear-3	f1: feature/-/- 1.388; f1_again: feature/-/- 1.388	f1,f1_again,f2	0.05	-
+full_signal_reg_j1 | dup:f1	16	0.8634	linear-0	f1: feature/-/- 1.273; f1_again: feature/-/- 1.273	f1,f1_again,f2	0.05	-
+full_signal_reg_j1 | dup:f1	17	0.8435	linear-0	f1: feature/-/- 1.09; f1_again: feature/-/- 1.09	f1,f1_again,f2	0.05	-
+full_signal_reg_j1 | dup:f1	18	0.8677	linear-3	f1: feature/-/- 1.062; f1_again: feature/-/- 1.062	f1,f1_again,f2	0.05	-
+full_signal_reg_j1 | dup:f1	19	0.8456	linear-3	f1: feature/-/- 1.326; f1_again: feature/-/- 1.326	f1,f1_again,f2	0.05	-
+full_signal_reg_j1 | dup:f1	20	0.8649	linear-0	f1: feature/-/- 1.173; f1_again: feature/-/- 1.173	f1,f1_again,f2	0.05	-
+full_signal_reg_j1 | dup:f1	21	0.8775	linear-3	f1: feature/-/- 1.321; f1_again: feature/-/- 1.321	f1,f1_again,f2	0.05	-
+full_signal_reg_j1 | dup:f1	22	0.8567	linear-0	f1: feature/-/- 1.478; f1_again: feature/-/- 1.478	f1,f1_again,f2	0.05	-
+full_signal_reg_j1 | dup:f1	23	0.7907	linear-3	f1: feature/-/- 1.217; f1_again: feature/-/- 1.217	f1,f1_again,f2	0.06218	-
+full_signal_reg_j1 | dup:f1	24	0.8807	linear-0	f1: feature/-/- 1.22; f1_again: feature/-/- 1.22	f1,f1_again,f2	0.05	-
+full_signal_reg_j1 | dup:f1	25	0.8336	linear-0	f1: feature/-/- 1.269; f1_again: feature/-/- 1.269	f1,f1_again,f2	0.05054	-
+full_signal_reg_j1 | dup:f1	26	0.7978	linear-0	f1: feature/-/- 1.12; f1_again: feature/-/- 1.12	f1,f1_again,f2	0.06291	-
+full_signal_reg_j1 | dup:f1	27	0.8197	linear-0	f1: feature/-/- 1.002; f1_again: feature/-/- 1.002	f1,f1_again,f2	0.05419	-
+full_signal_reg_j1 | dup:f1	28	0.826	linear-3	f1: feature/-/- 1.101; f1_again: feature/-/- 1.101	f1,f1_again,f2	0.05097	-
+full_signal_reg_j1 | dup:f1	29	0.831	linear-0	f1: feature/-/- 1.041; f1_again: feature/-/- 1.041	f1,f1_again,f2	0.05878	-
+full_signal_reg_j1 | dupscaled:f1	0	0.8179	linear-0	f1: feature/-/- 1.219; f1_scaled: feature/-/- 1.219	f1,f1_scaled,f2	0.06988	-
+full_signal_reg_j1 | dupscaled:f1	1	0.8151	linear-3	f1: feature/-/- 1.124; f1_scaled: feature/-/- 1.124	f1,f1_scaled,f2	0.05019	-
+full_signal_reg_j1 | dupscaled:f1	2	0.8699	linear-3	f1: feature/-/- 1.386; f1_scaled: feature/-/- 1.386	f1,f1_scaled,f2	0.05	-
+full_signal_reg_j1 | dupscaled:f1	3	0.8487	linear-3	f1: feature/-/- 1.41; f1_scaled: feature/-/- 1.41	f1,f1_scaled,f2	0.05661	-
+full_signal_reg_j1 | dupscaled:f1	4	0.8526	linear-3	f1: feature/-/- 1.068; f1_scaled: feature/-/- 1.068	f1,f1_scaled,f2	0.05	-
+full_signal_reg_j1 | dupscaled:f1	5	0.8354	linear-0	f1: feature/-/- 1.109; f1_scaled: feature/-/- 1.109	f1,f1_scaled,f2	0.05	-
+full_signal_reg_j1 | dupscaled:f1	6	0.8474	linear-0	f1: feature/-/- 1.494; f1_scaled: feature/-/- 1.494	f1,f1_scaled,f2	0.05576	-
+full_signal_reg_j1 | dupscaled:f1	7	0.8437	linear-0	f1: feature/-/- 1.159; f1_scaled: feature/-/- 1.159	f1,f1_scaled,f2	0.05067	-
+full_signal_reg_j1 | dupscaled:f1	8	0.8886	linear-3	f1: feature/-/- 1.14; f1_scaled: feature/-/- 1.14	f1,f1_scaled,f2	0.05	-
+full_signal_reg_j1 | dupscaled:f1	9	0.8336	linear-0	f1: feature/-/- 1.173; f1_scaled: feature/-/- 1.173	f1,f1_scaled,f2	0.05071	-
+full_signal_reg_j1 | dupscaled:f1	10	0.8571	linear-3	f1: feature/-/- 1.209; f1_scaled: feature/-/- 1.209	f1,f1_scaled,f2	0.05	-
+full_signal_reg_j1 | dupscaled:f1	11	0.8401	linear-0	f1: feature/-/- 1.112; f1_scaled: feature/-/- 1.112	f1,f1_scaled,f2	0.05869	-
+full_signal_reg_j1 | dupscaled:f1	12	0.7705	linear-0	f1: feature/-/- 1.4; f1_scaled: feature/-/- 1.4	f1,f1_scaled,f2	0.07398	-
+full_signal_reg_j1 | dupscaled:f1	13	0.8413	linear-3	f1: feature/-/- 1.342; f1_scaled: feature/-/- 1.342	f1,f1_scaled,f2	0.05	-
+full_signal_reg_j1 | dupscaled:f1	14	0.883	linear-3	f1: feature/-/- 1.226; f1_scaled: feature/-/- 1.226	f1,f1_scaled,f2	0.05	-
+full_signal_reg_j1 | dupscaled:f1	15	0.849	linear-3	f1: feature/-/- 1.388; f1_scaled: feature/-/- 1.388	f1,f1_scaled,f2	0.05	-
+full_signal_reg_j1 | dupscaled:f1	16	0.8634	linear-0	f1: feature/-/- 1.273; f1_scaled: feature/-/- 1.273	f1,f1_scaled,f2	0.05	-
+full_signal_reg_j1 | dupscaled:f1	17	0.8435	linear-0	f1: feature/-/- 1.09; f1_scaled: feature/-/- 1.09	f1,f1_scaled,f2	0.05	-
+full_signal_reg_j1 | dupscaled:f1	18	0.8677	linear-3	f1: feature/-/- 1.062; f1_scaled: feature/-/- 1.062	f1,f1_scaled,f2	0.05	-
+full_signal_reg_j1 | dupscaled:f1	19	0.8456	linear-3	f1: feature/-/- 1.326; f1_scaled: feature/-/- 1.326	f1,f1_scaled,f2	0.05	-
+full_signal_reg_j1 | dupscaled:f1	20	0.8649	linear-0	f1: feature/-/- 1.173; f1_scaled: feature/-/- 1.173	f1,f1_scaled,f2	0.05	-
+full_signal_reg_j1 | dupscaled:f1	21	0.8775	linear-3	f1: feature/-/- 1.321; f1_scaled: feature/-/- 1.321	f1,f1_scaled,f2	0.05	-
+full_signal_reg_j1 | dupscaled:f1	22	0.8567	linear-0	f1: feature/-/- 1.478; f1_scaled: feature/-/- 1.478	f1,f1_scaled,f2	0.05	-
+full_signal_reg_j1 | dupscaled:f1	23	0.7907	linear-3	f1: feature/-/- 1.217; f1_scaled: feature/-/- 1.217	f1,f1_scaled,f2	0.06218	-
+full_signal_reg_j1 | dupscaled:f1	24	0.8807	linear-0	f1: feature/-/- 1.22; f1_scaled: feature/-/- 1.22	f1,f1_scaled,f2	0.05	-
+full_signal_reg_j1 | dupscaled:f1	25	0.8336	linear-0	f1: feature/-/- 1.269; f1_scaled: feature/-/- 1.269	f1,f1_scaled,f2	0.05054	-
+full_signal_reg_j1 | dupscaled:f1	26	0.7978	linear-0	f1: feature/-/- 1.12; f1_scaled: feature/-/- 1.12	f1,f1_scaled,f2	0.06291	-
+full_signal_reg_j1 | dupscaled:f1	27	0.8197	linear-0	f1: feature/-/- 1.002; f1_scaled: feature/-/- 1.002	f1,f1_scaled,f2	0.05419	-
+full_signal_reg_j1 | dupscaled:f1	28	0.826	linear-3	f1: feature/-/- 1.101; f1_scaled: feature/-/- 1.101	f1,f1_scaled,f2	0.05097	-
+full_signal_reg_j1 | dupscaled:f1	29	0.831	linear-0	f1: feature/-/- 1.041; f1_scaled: feature/-/- 1.041	f1,f1_scaled,f2	0.05878	-
+full_signal_reg_j1 | dupneg:f1	0	0.8179	linear-0	f1: feature/-/- 1.219; f1_negated: feature/-/- 1.219	f1,f1_negated,f2	0.06988	-
+full_signal_reg_j1 | dupneg:f1	1	0.8151	linear-3	f1: feature/-/- 1.124; f1_negated: feature/-/- 1.124	f1,f1_negated,f2	0.05019	-
+full_signal_reg_j1 | dupneg:f1	2	0.8699	linear-3	f1: feature/-/- 1.386; f1_negated: feature/-/- 1.386	f1,f1_negated,f2	0.05	-
+full_signal_reg_j1 | dupneg:f1	3	0.8487	linear-3	f1: feature/-/- 1.41; f1_negated: feature/-/- 1.41	f1,f1_negated,f2	0.05661	-
+full_signal_reg_j1 | dupneg:f1	4	0.8526	linear-3	f1: feature/-/- 1.068; f1_negated: feature/-/- 1.068	f1,f1_negated,f2	0.05	-
+full_signal_reg_j1 | dupneg:f1	5	0.8354	linear-0	f1: feature/-/- 1.109; f1_negated: feature/-/- 1.109	f1,f1_negated,f2	0.05	-
+full_signal_reg_j1 | dupneg:f1	6	0.8474	linear-0	f1: feature/-/- 1.494; f1_negated: feature/-/- 1.494	f1,f1_negated,f2	0.05576	-
+full_signal_reg_j1 | dupneg:f1	7	0.8437	linear-0	f1: feature/-/- 1.159; f1_negated: feature/-/- 1.159	f1,f1_negated,f2	0.05067	-
+full_signal_reg_j1 | dupneg:f1	8	0.8886	linear-3	f1: feature/-/- 1.14; f1_negated: feature/-/- 1.14	f1,f1_negated,f2	0.05	-
+full_signal_reg_j1 | dupneg:f1	9	0.8336	linear-0	f1: feature/-/- 1.173; f1_negated: feature/-/- 1.173	f1,f1_negated,f2	0.05071	-
+full_signal_reg_j1 | dupneg:f1	10	0.8571	linear-3	f1: feature/-/- 1.209; f1_negated: feature/-/- 1.209	f1,f1_negated,f2	0.05	-
+full_signal_reg_j1 | dupneg:f1	11	0.8401	linear-0	f1: feature/-/- 1.112; f1_negated: feature/-/- 1.112	f1,f1_negated,f2	0.05869	-
+full_signal_reg_j1 | dupneg:f1	12	0.7705	linear-0	f1: feature/-/- 1.4; f1_negated: feature/-/- 1.4	f1,f1_negated,f2	0.07398	-
+full_signal_reg_j1 | dupneg:f1	13	0.8413	linear-3	f1: feature/-/- 1.342; f1_negated: feature/-/- 1.342	f1,f1_negated,f2	0.05	-
+full_signal_reg_j1 | dupneg:f1	14	0.883	linear-3	f1: feature/-/- 1.226; f1_negated: feature/-/- 1.226	f1,f1_negated,f2	0.05	-
+full_signal_reg_j1 | dupneg:f1	15	0.849	linear-3	f1: feature/-/- 1.388; f1_negated: feature/-/- 1.388	f1,f1_negated,f2	0.05	-
+full_signal_reg_j1 | dupneg:f1	16	0.8634	linear-0	f1: feature/-/- 1.273; f1_negated: feature/-/- 1.273	f1,f1_negated,f2	0.05	-
+full_signal_reg_j1 | dupneg:f1	17	0.8435	linear-0	f1: feature/-/- 1.09; f1_negated: feature/-/- 1.09	f1,f1_negated,f2	0.05	-
+full_signal_reg_j1 | dupneg:f1	18	0.8677	linear-3	f1: feature/-/- 1.062; f1_negated: feature/-/- 1.062	f1,f1_negated,f2	0.05	-
+full_signal_reg_j1 | dupneg:f1	19	0.8456	linear-3	f1: feature/-/- 1.326; f1_negated: feature/-/- 1.326	f1,f1_negated,f2	0.05	-
+full_signal_reg_j1 | dupneg:f1	20	0.8649	linear-0	f1: feature/-/- 1.173; f1_negated: feature/-/- 1.173	f1,f1_negated,f2	0.05	-
+full_signal_reg_j1 | dupneg:f1	21	0.8775	linear-3	f1: feature/-/- 1.321; f1_negated: feature/-/- 1.321	f1,f1_negated,f2	0.05	-
+full_signal_reg_j1 | dupneg:f1	22	0.8567	linear-0	f1: feature/-/- 1.478; f1_negated: feature/-/- 1.478	f1,f1_negated,f2	0.05	-
+full_signal_reg_j1 | dupneg:f1	23	0.7907	linear-3	f1: feature/-/- 1.217; f1_negated: feature/-/- 1.217	f1,f1_negated,f2	0.06218	-
+full_signal_reg_j1 | dupneg:f1	24	0.8807	linear-0	f1: feature/-/- 1.22; f1_negated: feature/-/- 1.22	f1,f1_negated,f2	0.05	-
+full_signal_reg_j1 | dupneg:f1	25	0.8336	linear-0	f1: feature/-/- 1.269; f1_negated: feature/-/- 1.269	f1,f1_negated,f2	0.05054	-
+full_signal_reg_j1 | dupneg:f1	26	0.7978	linear-0	f1: feature/-/- 1.12; f1_negated: feature/-/- 1.12	f1,f1_negated,f2	0.06291	-
+full_signal_reg_j1 | dupneg:f1	27	0.8197	linear-0	f1: feature/-/- 1.002; f1_negated: feature/-/- 1.002	f1,f1_negated,f2	0.05419	-
+full_signal_reg_j1 | dupneg:f1	28	0.826	linear-3	f1: feature/-/- 1.101; f1_negated: feature/-/- 1.101	f1,f1_negated,f2	0.05097	-
+full_signal_reg_j1 | dupneg:f1	29	0.831	linear-0	f1: feature/-/- 1.041; f1_negated: feature/-/- 1.041	f1,f1_negated,f2	0.05878	-
+full_signal_reg_j1	0	0.8181	linear-0	f1: feature/-/- 1.218	f1,f2	0.06986	-
+full_signal_reg_j1	1	0.8153	linear-0	f1: feature/-/- 1.135	f1,f2	0.05124	-
+full_signal_reg_j1	2	0.8723	linear-0	f1: feature/-/- 1.403	f1,f2	0.05	-
+full_signal_reg_j1	3	0.8475	linear-0	f1: feature/-/- 1.424	f1,f2	0.05883	-
+full_signal_reg_j1	4	0.8526	linear-0	f1: feature/-/- 1.078	f1,f2	0.05	-
+full_signal_reg_j1	5	0.8354	linear-0	f1: feature/-/- 1.108	f1,f2	0.05	-
+full_signal_reg_j1	6	0.8473	linear-2	f1: feature/-/- 1.496	f1,f2	0.05569	-
+full_signal_reg_j1	7	0.8436	linear-2	f1: feature/-/- 1.16	f1,f2	0.05072	-
+full_signal_reg_j1	8	0.8896	linear-0	f1: feature/-/- 1.151	f1,f2	0.05	-
+full_signal_reg_j1	9	0.8335	linear-0	f1: feature/-/- 1.172	f1,f2	0.05063	-
+full_signal_reg_j1	10	0.8559	linear-3	f1: feature/-/- 1.193	f1,f2	0.05	-
+full_signal_reg_j1	11	0.8401	linear-0	f1: feature/-/- 1.111	f1,f2	0.05866	-
+full_signal_reg_j1	12	0.7708	linear-0	f1: feature/-/- 1.399	f1,f2	0.07383	-
+full_signal_reg_j1	13	0.8424	linear-0	f1: feature/-/- 1.359	f1,f2	0.05	-
+full_signal_reg_j1	14	0.8831	linear-0	f1: feature/-/- 1.24	f1,f2	0.05	-
+full_signal_reg_j1	15	0.8478	linear-0	f1: feature/-/- 1.404	f1,f2	0.05	-
+full_signal_reg_j1	16	0.8634	linear-0	f1: feature/-/- 1.271	f1,f2	0.05	-
+full_signal_reg_j1	17	0.8435	linear-0	f1: feature/-/- 1.088	f1,f2	0.05	-
+full_signal_reg_j1	18	0.8661	linear-3	f1: feature/-/- 1.047	f1,f2	0.05	-
+full_signal_reg_j1	19	0.8446	linear-0	f1: feature/-/- 1.338	f1,f2	0.05	-
+full_signal_reg_j1	20	0.8649	linear-2	f1: feature/-/- 1.174	f1,f2	0.05	-
+full_signal_reg_j1	21	0.8776	linear-0	f1: feature/-/- 1.337	f1,f2	0.05	-
+full_signal_reg_j1	22	0.8566	linear-0	f1: feature/-/- 1.476	f1,f2	0.05	-
+full_signal_reg_j1	23	0.7902	linear-0	f1: feature/-/- 1.234	f1,f2	0.06324	-
+full_signal_reg_j1	24	0.8806	linear-0	f1: feature/-/- 1.218	f1,f2	0.05	-
+full_signal_reg_j1	25	0.8336	linear-0	f1: feature/-/- 1.267	f1,f2	0.0504	-
+full_signal_reg_j1	26	0.7977	linear-0	f1: feature/-/- 1.118	f1,f2	0.0628	-
+full_signal_reg_j1	27	0.8198	linear-0	f1: feature/-/- 1.001	f1,f2	0.05421	-
+full_signal_reg_j1	28	0.8263	linear-0	f1: feature/-/- 1.114	f1,f2	0.05174	-
+full_signal_reg_j1	29	0.831	linear-0	f1: feature/-/- 1.04	f1,f2	0.05877	-
+full_signal_clf_j1 | dup:f1	0	0.6452	linear-4	f1: feature/-/- 0.3254; f1_again: feature/-/- 0.3254	f1,f1_again,f2	0.1482	-
+full_signal_clf_j1 | dup:f1	1	0.7841	linear-3	f1: feature/-/- 0.5572; f1_again: feature/-/- 0.5572	f1,f1_again,f2	0.1039	-
+full_signal_clf_j1 | dup:f1	2	0.7234	linear-5	f1: feature/-/- 0.415; f1_again: feature/-/- 0.415	f1,f1_again,f2,seg	0.1305	-
+full_signal_clf_j1 | dup:f1	3	0.7976	linear-3	f1: feature/-/- 0.5656; f1_again: feature/-/- 0.5656	f1,f1_again,f2	0.1091	-
+full_signal_clf_j1 | dup:f1	4	0.7797	linear-0	f1: feature/-/- 0.3247; f1_again: feature/-/- 0.3247	f1,f1_again,f2	0.1114	-
+full_signal_clf_j1 | dup:f1	5	0.7547	linear-3	f1: feature/-/- 0.4881; f1_again: feature/-/- 0.4881	f1,f1_again,f2	0.1286	-
+full_signal_clf_j1 | dup:f1	6	0.7746	linear-0	f1: feature/-/- 0.4333; f1_again: feature/-/- 0.4333	f1,f1_again,f2,seg	0.1148	-
+full_signal_clf_j1 | dup:f1	7	0.7538	linear-0	f1: feature/-/- 0.4587; f1_again: feature/-/- 0.4587	f1,f1_again,f2	0.1131	-
+full_signal_clf_j1 | dup:f1	8	0.6605	linear-0	f1: feature/-/- 0.4358; f1_again: feature/-/- 0.4358	f1,f1_again,f2	0.144	-
+full_signal_clf_j1 | dup:f1	9	0.6806	linear-4	f1: feature/-/- 0.4651; f1_again: feature/-/- 0.4651	f1,f1_again	0.1384	-
+full_signal_clf_j1 | dup:f1	10	0.5995	linear-0	f1: feature/-/- 0.3994; f1_again: feature/-/- 0.3994	f1,f1_again	0.1622	-
+full_signal_clf_j1 | dup:f1	11	0.7629	linear-0	f1: feature/-/- 0.43; f1_again: feature/-/- 0.43	f1,f1_again,f2,seg	0.1175	-
+full_signal_clf_j1 | dup:f1	12	0.6241	linear-3	f1: feature/-/- 0.2538; f1_again: feature/-/- 0.2538	f1,f1_again,f2	0.1428	-
+full_signal_clf_j1 | dup:f1	13	0.7066	linear-3	f1: feature/-/- 0.5392; f1_again: feature/-/- 0.5392	f1,f1_again,f2	0.1342	-
+full_signal_clf_j1 | dup:f1	14	0.7504	linear-3	f1: feature/-/- 0.5426; f1_again: feature/-/- 0.5426	f1,f1_again,f2	0.1173	-
+full_signal_clf_j1 | dup:f1	15	0.7375	linear-0	f1: feature/-/- 0.4452; f1_again: feature/-/- 0.4452	f1,f1_again,f2	0.1231	-
+full_signal_clf_j1 | dup:f1	16	0.7987	linear-0	f1: feature/-/- 0.457; f1_again: feature/-/- 0.457	f1,f1_again,f2,seg	0.1078	-
+full_signal_clf_j1 | dup:f1	17	0.8038	linear-0	f1: feature/-/- 0.4169; f1_again: feature/-/- 0.4169	f1,f1_again,f2	0.1084	-
+full_signal_clf_j1 | dup:f1	18	0.7044	linear-0	f1: feature/-/- 0.2868; f1_again: feature/-/- 0.2868	f1,f1_again,f2	0.1313	-
+full_signal_clf_j1 | dup:f1	19	0.8168	linear-0	f1: feature/-/- 0.5423; f1_again: feature/-/- 0.5423	f1,f1_again,f2	0.1201	-
+full_signal_clf_j1 | dup:f1	20	0.7431	linear-5	f1: feature/-/- 0.3825; f1_again: feature/-/- 0.3825	f1,f1_again,f2	0.126	-
+full_signal_clf_j1 | dup:f1	21	0.7619	linear-4	f1: feature/-/- 0.5057; f1_again: feature/-/- 0.5057	f1,f1_again,f2	0.118	-
+full_signal_clf_j1 | dup:f1	22	0.6749	linear-0	f1: feature/-/- 0.4008; f1_again: feature/-/- 0.4008	f1,f1_again,f2	0.1392	-
+full_signal_clf_j1 | dup:f1	23	0.6359	linear-3	f1: feature/-/- 0.4428; f1_again: feature/-/- 0.4428	f1,f1_again,f2	0.1505	-
+full_signal_clf_j1 | dup:f1	24	0.6723	linear-3	f1: feature/-/- 0.5707; f1_again: feature/-/- 0.5707	f1,f1_again,f2	0.1373	-
+full_signal_clf_j1 | dup:f1	25	0.7574	linear-0	f1: feature/-/- 0.4142; f1_again: feature/-/- 0.4142	f1,f1_again,f2	0.1073	-
+full_signal_clf_j1 | dup:f1	26	0.6948	linear-0	f1: feature/-/- 0.3999; f1_again: feature/-/- 0.3999	f1,f1_again,f2	0.1379	-
+full_signal_clf_j1 | dup:f1	27	0.6009	linear-5	f1: feature/-/- 0.3643; f1_again: feature/-/- 0.3643	f1,f1_again,f2	0.1561	-
+full_signal_clf_j1 | dup:f1	28	0.7769	linear-5	f1: feature/-/- 0.4359; f1_again: feature/-/- 0.4359	f1,f1_again,f2	0.1122	-
+full_signal_clf_j1 | dup:f1	29	0.6374	forest-2	f1: feature/-/- 0.4041; f1_again: feature/-/- 0.4041	f1,f1_again,f2	0.1478	-
+full_signal_clf_j1 | dupscaled:f1	0	0.6452	linear-4	f1: feature/-/- 0.3254; f1_scaled: feature/-/- 0.3254	f1,f1_scaled,f2	0.1482	-
+full_signal_clf_j1 | dupscaled:f1	1	0.7841	linear-3	f1: feature/-/- 0.5572; f1_scaled: feature/-/- 0.5572	f1,f1_scaled,f2	0.1039	-
+full_signal_clf_j1 | dupscaled:f1	2	0.7234	linear-5	f1: feature/-/- 0.415; f1_scaled: feature/-/- 0.415	f1,f1_scaled,f2,seg	0.1305	-
+full_signal_clf_j1 | dupscaled:f1	3	0.7976	linear-3	f1: feature/-/- 0.5656; f1_scaled: feature/-/- 0.5656	f1,f1_scaled,f2	0.1091	-
+full_signal_clf_j1 | dupscaled:f1	4	0.7797	linear-0	f1: feature/-/- 0.3247; f1_scaled: feature/-/- 0.3247	f1,f1_scaled,f2	0.1114	-
+full_signal_clf_j1 | dupscaled:f1	5	0.7547	linear-3	f1: feature/-/- 0.4881; f1_scaled: feature/-/- 0.4881	f1,f1_scaled,f2	0.1286	-
+full_signal_clf_j1 | dupscaled:f1	6	0.7746	linear-0	f1: feature/-/- 0.4333; f1_scaled: feature/-/- 0.4333	f1,f1_scaled,f2,seg	0.1148	-
+full_signal_clf_j1 | dupscaled:f1	7	0.7538	linear-0	f1: feature/-/- 0.4587; f1_scaled: feature/-/- 0.4587	f1,f1_scaled,f2	0.1131	-
+full_signal_clf_j1 | dupscaled:f1	8	0.6605	linear-0	f1: feature/-/- 0.4358; f1_scaled: feature/-/- 0.4358	f1,f1_scaled,f2	0.144	-
+full_signal_clf_j1 | dupscaled:f1	9	0.6806	linear-4	f1: feature/-/- 0.4651; f1_scaled: feature/-/- 0.4651	f1,f1_scaled	0.1384	-
+full_signal_clf_j1 | dupscaled:f1	10	0.5995	linear-0	f1: feature/-/- 0.3994; f1_scaled: feature/-/- 0.3994	f1,f1_scaled	0.1622	-
+full_signal_clf_j1 | dupscaled:f1	11	0.7629	linear-0	f1: feature/-/- 0.43; f1_scaled: feature/-/- 0.43	f1,f1_scaled,f2,seg	0.1175	-
+full_signal_clf_j1 | dupscaled:f1	12	0.6241	linear-3	f1: feature/-/- 0.2538; f1_scaled: feature/-/- 0.2538	f1,f1_scaled,f2	0.1428	-
+full_signal_clf_j1 | dupscaled:f1	13	0.7066	linear-3	f1: feature/-/- 0.5392; f1_scaled: feature/-/- 0.5392	f1,f1_scaled,f2	0.1342	-
+full_signal_clf_j1 | dupscaled:f1	14	0.7504	linear-3	f1: feature/-/- 0.5426; f1_scaled: feature/-/- 0.5426	f1,f1_scaled,f2	0.1173	-
+full_signal_clf_j1 | dupscaled:f1	15	0.7375	linear-0	f1: feature/-/- 0.4452; f1_scaled: feature/-/- 0.4452	f1,f1_scaled,f2	0.1231	-
+full_signal_clf_j1 | dupscaled:f1	16	0.7987	linear-0	f1: feature/-/- 0.457; f1_scaled: feature/-/- 0.457	f1,f1_scaled,f2,seg	0.1078	-
+full_signal_clf_j1 | dupscaled:f1	17	0.8038	linear-0	f1: feature/-/- 0.4169; f1_scaled: feature/-/- 0.4169	f1,f1_scaled,f2	0.1084	-
+full_signal_clf_j1 | dupscaled:f1	18	0.7044	linear-0	f1: feature/-/- 0.2868; f1_scaled: feature/-/- 0.2868	f1,f1_scaled,f2	0.1313	-
+full_signal_clf_j1 | dupscaled:f1	19	0.8168	linear-0	f1: feature/-/- 0.5423; f1_scaled: feature/-/- 0.5423	f1,f1_scaled,f2	0.1201	-
+full_signal_clf_j1 | dupscaled:f1	20	0.7431	linear-5	f1: feature/-/- 0.3825; f1_scaled: feature/-/- 0.3825	f1,f1_scaled,f2	0.126	-
+full_signal_clf_j1 | dupscaled:f1	21	0.7619	linear-4	f1: feature/-/- 0.5057; f1_scaled: feature/-/- 0.5057	f1,f1_scaled,f2	0.118	-
+full_signal_clf_j1 | dupscaled:f1	22	0.6749	linear-0	f1: feature/-/- 0.4008; f1_scaled: feature/-/- 0.4008	f1,f1_scaled,f2	0.1392	-
+full_signal_clf_j1 | dupscaled:f1	23	0.6359	linear-3	f1: feature/-/- 0.4428; f1_scaled: feature/-/- 0.4428	f1,f1_scaled,f2	0.1505	-
+full_signal_clf_j1 | dupscaled:f1	24	0.6723	linear-3	f1: feature/-/- 0.5707; f1_scaled: feature/-/- 0.5707	f1,f1_scaled,f2	0.1373	-
+full_signal_clf_j1 | dupscaled:f1	25	0.7574	linear-0	f1: feature/-/- 0.4142; f1_scaled: feature/-/- 0.4142	f1,f1_scaled,f2	0.1073	-
+full_signal_clf_j1 | dupscaled:f1	26	0.6948	linear-0	f1: feature/-/- 0.3999; f1_scaled: feature/-/- 0.3999	f1,f1_scaled,f2	0.1379	-
+full_signal_clf_j1 | dupscaled:f1	27	0.6009	linear-5	f1: feature/-/- 0.3643; f1_scaled: feature/-/- 0.3643	f1,f1_scaled,f2	0.1561	-
+full_signal_clf_j1 | dupscaled:f1	28	0.7769	linear-5	f1: feature/-/- 0.4359; f1_scaled: feature/-/- 0.4359	f1,f1_scaled,f2	0.1122	-
+full_signal_clf_j1 | dupscaled:f1	29	0.6374	forest-2	f1: feature/-/- 0.4041; f1_scaled: feature/-/- 0.4041	f1,f1_scaled,f2	0.1478	-
+full_signal_clf_j1 | dupneg:f1	0	0.6452	linear-4	f1: feature/-/- 0.3254; f1_negated: feature/-/- 0.3254	f1,f1_negated,f2	0.1482	-
+full_signal_clf_j1 | dupneg:f1	1	0.7841	linear-3	f1: feature/-/- 0.5572; f1_negated: feature/-/- 0.5572	f1,f1_negated,f2	0.1039	-
+full_signal_clf_j1 | dupneg:f1	2	0.7234	linear-5	f1: feature/-/- 0.415; f1_negated: feature/-/- 0.415	f1,f1_negated,f2,seg	0.1305	-
+full_signal_clf_j1 | dupneg:f1	3	0.7976	linear-3	f1: feature/-/- 0.5656; f1_negated: feature/-/- 0.5656	f1,f1_negated,f2	0.1091	-
+full_signal_clf_j1 | dupneg:f1	4	0.7797	linear-0	f1: feature/-/- 0.3247; f1_negated: feature/-/- 0.3247	f1,f1_negated,f2	0.1114	-
+full_signal_clf_j1 | dupneg:f1	5	0.7547	linear-3	f1: feature/-/- 0.4881; f1_negated: feature/-/- 0.4881	f1,f1_negated,f2	0.1286	-
+full_signal_clf_j1 | dupneg:f1	6	0.7746	linear-0	f1: feature/-/- 0.4333; f1_negated: feature/-/- 0.4333	f1,f1_negated,f2,seg	0.1148	-
+full_signal_clf_j1 | dupneg:f1	7	0.7538	linear-0	f1: feature/-/- 0.4587; f1_negated: feature/-/- 0.4587	f1,f1_negated,f2	0.1131	-
+full_signal_clf_j1 | dupneg:f1	8	0.6605	linear-0	f1: feature/-/- 0.4358; f1_negated: feature/-/- 0.4358	f1,f1_negated,f2	0.144	-
+full_signal_clf_j1 | dupneg:f1	9	0.6806	linear-4	f1: feature/-/- 0.4651; f1_negated: feature/-/- 0.4651	f1,f1_negated	0.1384	-
+full_signal_clf_j1 | dupneg:f1	10	0.5995	linear-0	f1: feature/-/- 0.3994; f1_negated: feature/-/- 0.3994	f1,f1_negated	0.1622	-
+full_signal_clf_j1 | dupneg:f1	11	0.7629	linear-0	f1: feature/-/- 0.43; f1_negated: feature/-/- 0.43	f1,f1_negated,f2,seg	0.1175	-
+full_signal_clf_j1 | dupneg:f1	12	0.6241	linear-3	f1: feature/-/- 0.2538; f1_negated: feature/-/- 0.2538	f1,f1_negated,f2	0.1428	-
+full_signal_clf_j1 | dupneg:f1	13	0.7066	linear-3	f1: feature/-/- 0.5392; f1_negated: feature/-/- 0.5392	f1,f1_negated,f2	0.1342	-
+full_signal_clf_j1 | dupneg:f1	14	0.7504	linear-3	f1: feature/-/- 0.5426; f1_negated: feature/-/- 0.5426	f1,f1_negated,f2	0.1173	-
+full_signal_clf_j1 | dupneg:f1	15	0.7375	linear-0	f1: feature/-/- 0.4452; f1_negated: feature/-/- 0.4452	f1,f1_negated,f2	0.1231	-
+full_signal_clf_j1 | dupneg:f1	16	0.7987	linear-0	f1: feature/-/- 0.457; f1_negated: feature/-/- 0.457	f1,f1_negated,f2,seg	0.1078	-
+full_signal_clf_j1 | dupneg:f1	17	0.8038	linear-0	f1: feature/-/- 0.4169; f1_negated: feature/-/- 0.4169	f1,f1_negated,f2	0.1084	-
+full_signal_clf_j1 | dupneg:f1	18	0.7044	linear-0	f1: feature/-/- 0.2868; f1_negated: feature/-/- 0.2868	f1,f1_negated,f2	0.1313	-
+full_signal_clf_j1 | dupneg:f1	19	0.8168	linear-0	f1: feature/-/- 0.5423; f1_negated: feature/-/- 0.5423	f1,f1_negated,f2	0.1201	-
+full_signal_clf_j1 | dupneg:f1	20	0.7431	linear-5	f1: feature/-/- 0.3825; f1_negated: feature/-/- 0.3825	f1,f1_negated,f2	0.126	-
+full_signal_clf_j1 | dupneg:f1	21	0.7619	linear-4	f1: feature/-/- 0.5057; f1_negated: feature/-/- 0.5057	f1,f1_negated,f2	0.118	-
+full_signal_clf_j1 | dupneg:f1	22	0.6749	linear-0	f1: feature/-/- 0.4008; f1_negated: feature/-/- 0.4008	f1,f1_negated,f2	0.1392	-
+full_signal_clf_j1 | dupneg:f1	23	0.6359	linear-3	f1: feature/-/- 0.4428; f1_negated: feature/-/- 0.4428	f1,f1_negated,f2	0.1505	-
+full_signal_clf_j1 | dupneg:f1	24	0.6723	linear-3	f1: feature/-/- 0.5707; f1_negated: feature/-/- 0.5707	f1,f1_negated,f2	0.1373	-
+full_signal_clf_j1 | dupneg:f1	25	0.7574	linear-0	f1: feature/-/- 0.4142; f1_negated: feature/-/- 0.4142	f1,f1_negated,f2	0.1073	-
+full_signal_clf_j1 | dupneg:f1	26	0.6948	linear-0	f1: feature/-/- 0.3999; f1_negated: feature/-/- 0.3999	f1,f1_negated,f2	0.1379	-
+full_signal_clf_j1 | dupneg:f1	27	0.6009	linear-5	f1: feature/-/- 0.3643; f1_negated: feature/-/- 0.3643	f1,f1_negated,f2	0.1561	-
+full_signal_clf_j1 | dupneg:f1	28	0.7769	linear-5	f1: feature/-/- 0.4359; f1_negated: feature/-/- 0.4359	f1,f1_negated,f2	0.1122	-
+full_signal_clf_j1 | dupneg:f1	29	0.6394	forest-3	f1: feature/-/- 0.3952; f1_negated: feature/-/- 0.3952	f1,f1_negated,f2	0.1477	-
+full_signal_clf_j1	0	0.6452	linear-4	f1: feature/-/- 0.3251	f1,f2	0.1482	-
+full_signal_clf_j1	1	0.7851	linear-3	f1: feature/-/- 0.5457	f1,f2	0.1042	-
+full_signal_clf_j1	2	0.7234	linear-5	f1: feature/-/- 0.4149	f1,f2,seg	0.1305	-
+full_signal_clf_j1	3	0.7966	linear-3	f1: feature/-/- 0.5502	f1,f2	0.1093	-
+full_signal_clf_j1	4	0.7802	linear-0	f1: feature/-/- 0.3228	f1,f2	0.1116	-
+full_signal_clf_j1	5	0.744	linear-2	f1: feature/-/- 0.4666	f1,f2	0.1294	-
+full_signal_clf_j1	6	0.7792	linear-5	f1: feature/-/- 0.4312	f1,f2,seg	0.1121	-
+full_signal_clf_j1	7	0.7523	linear-3	f1: feature/-/- 0.4646	f1,f2	0.116	-
+full_signal_clf_j1	8	0.6594	linear-0	f1: feature/-/- 0.4338	f1,f2	0.1455	-
+full_signal_clf_j1	9	0.6729	linear-3	f1: feature/-/- 0.4795	f1	0.1457	-
+full_signal_clf_j1	10	0.5995	linear-0	f1: feature/-/- 0.3987	f1,f2	0.1611	-
+full_signal_clf_j1	11	0.7619	linear-0	f1: feature/-/- 0.4286	f1,f2,seg	0.1175	-
+full_signal_clf_j1	12	0.6349	linear-3	f1: feature/-/- 0.2513	f1,f2	0.14	-
+full_signal_clf_j1	13	0.7117	linear-3	f1: feature/-/- 0.5353	f1,f2	0.1357	-
+full_signal_clf_j1	14	0.7519	linear-3	f1: feature/-/- 0.5304	f1,f2	0.1165	-
+full_signal_clf_j1	15	0.7334	linear-0	f1: feature/-/- 0.4399	f1,f2	0.1246	-
+full_signal_clf_j1	16	0.7992	linear-0	f1: feature/-/- 0.4551	f1,f2,seg	0.1072	-
+full_signal_clf_j1	17	0.8033	linear-0	f1: feature/-/- 0.4159	f1,f2	0.1086	-
+full_signal_clf_j1	18	0.7054	linear-0	f1: feature/-/- 0.2864	f1,f2	0.1317	-
+full_signal_clf_j1	19	0.8204	linear-3	f1: feature/-/- 0.5457	f1,f2	0.1171	-
+full_signal_clf_j1	20	0.7431	linear-5	f1: feature/-/- 0.3824	f1,f2	0.126	-
+full_signal_clf_j1	21	0.7614	linear-0	f1: feature/-/- 0.5068	f1,f2	0.1184	-
+full_signal_clf_j1	22	0.6744	linear-0	f1: feature/-/- 0.3994	f1,f2	0.1403	-
+full_signal_clf_j1	23	0.6329	linear-3	f1: feature/-/- 0.4318	f1,f2	0.1521	-
+full_signal_clf_j1	24	0.6703	linear-3	f1: feature/-/- 0.5534	f1,f2	0.1359	-
+full_signal_clf_j1	25	0.7564	linear-0	f1: feature/-/- 0.4114	f1,f2	0.1084	-
+full_signal_clf_j1	26	0.6964	linear-4	f1: feature/-/- 0.3966	f1,f2	0.1366	-
+full_signal_clf_j1	27	0.6014	linear-5	f1: feature/-/- 0.3647	f1,f2	0.1554	-
+full_signal_clf_j1	28	0.7764	linear-4	f1: feature/-/- 0.4358	f1,f2	0.1122	-
+full_signal_clf_j1	29	0.6662	forest-3	f1: feature/-/- 0.3546	f1,f2	0.1415	-

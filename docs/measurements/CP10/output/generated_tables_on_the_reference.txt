@@ -1,0 +1,21 @@
+generated tables: 1200 table(s) from seed 20261122, 400 worker run(s), 24 at a time, under E:\CODE\ml-professor\verify\artifacts\generated\run-cd5bca8m
+  package:   E:\CODE\ml-professor\verify\reference\mlprofessor
+  reference: E:\CODE\ml-professor\verify\reference\mlprofessor
+
+STATED LIMITS
+  none is known
+
+OPEN: owned, not yet built
+  none is known
+
+NOT COMPARED (no part of the verdict): differences by kind
+      0  the table earns two named errors of steps 1 to 4, and which is raised is open (spec 2.4)
+      0  it depends on which rows a random or a grouped split took, or the fast cap kept (spec 11)
+      0  both sides raise the warning; how many records it has is not pinned (spec 2.5)
+      0  which estimator of the lag-1 autocorrelation the panel warning uses is open (spec 11)
+
+application: 704 result(s) {'grouped': 179, 'random': 231, 'time_ordered': 294}, 496 named error(s) {'column_not_found': 9, 'duplicate_columns': 17, 'entities_undeclared': 41, 'fast_profile_group_too_large': 4, 'fast_profile_too_few_rows': 2, 'fast_profile_too_few_timestamps': 5, 'feature_name_collision': 18, 'gap_too_large': 14, 'group_column_invalid': 36, 'holdout_copies_in_training': 53, 'input_error': 8, 'non_finite_score': 10, 'target_constant': 26, 'task_ambiguous': 44, 'task_unsupported': 45, 'time_column_invalid': 29, 'time_order_undeclared': 67, 'too_few_groups': 22, 'too_few_rows': 46}, 0 other
+reference: 704 result(s) {'grouped': 179, 'random': 231, 'time_ordered': 294}, 496 named error(s) {'column_not_found': 9, 'duplicate_columns': 17, 'entities_undeclared': 41, 'fast_profile_group_too_large': 4, 'fast_profile_too_few_rows': 2, 'fast_profile_too_few_timestamps': 5, 'feature_name_collision': 18, 'gap_too_large': 14, 'group_column_invalid': 36, 'holdout_copies_in_training': 53, 'input_error': 8, 'non_finite_score': 10, 'target_constant': 26, 'task_ambiguous': 44, 'task_unsupported': 45, 'time_column_invalid': 29, 'time_order_undeclared': 67, 'too_few_groups': 22, 'too_few_rows': 46}, 0 other
+time: 90 s wall-clock at 24 worker(s) (6 s making the tables); in the tool: application 238 s, reference 232 s
+GENERATED TABLES: PASS (1200 tables from seed 20261122: 1200 agree, 0 stated limit, 0 open, 0 fail)
+exit 0

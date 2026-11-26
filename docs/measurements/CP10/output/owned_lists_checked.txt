@@ -1,0 +1,8 @@
+1196 pairs and 704 tables
+the helper's lists are the same: True
+1025 ('u_rests_on',)
+65 ('carrier:target_copy', 'u_rests_on')
+54 ('carrier:target_code', 'u_rests_on')
+26 ('carrier:pair_a', 'u_rests_on')
+13 ('quiet:noise_rounded', 'u_rests_on')
+13 ('quiet:noise_score', 'u_rests_on')

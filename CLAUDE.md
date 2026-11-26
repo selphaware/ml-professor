@@ -2,7 +2,7 @@
 
 A Python package, `mlprofessor`, that measures how predictable one target
 column of one table is. The contract is `spec.md`. The decisions behind it are
-`docs/DECISIONS.md` (D1 to D76). The build order is `plan/tasks.json`; what the
+`docs/DECISIONS.md` (D1 to D81). The build order is `plan/tasks.json`; what the
 tests prove is `plan/test-plan.md`. The method and the table of common failures
 are in the skill `mlprofessor-build`.
 
@@ -25,9 +25,10 @@ writes to `verify/artifacts/selftest_runs/<fixture>/` instead (D46).
 One file of the suite takes several minutes: `tests/test_judge_tools.py` runs
 the judge's two other tools on the build, the perturbation battery and the
 generated-table test ("The judge's two other tools", below; D72). For the
-eighth pass it accepts exactly the failures that pass's plan lists (D74), and
-the strict test of the two tools belongs to the pass's last task: it is red
-until the tasks before it are built. While working on another task, run that
+ninth pass it accepts exactly the failures that pass's plan lists, and so
+does `tests/test_judge_tools_pass8.py`; the strict test of the two tools,
+`tests/test_judge_tools_pass9.py`, belongs to the pass's last task: it is
+red until the tasks before it are built (D78 point 8). While working on another task, run that
 task's own test files.
 
 ## The methodology in five lines
@@ -152,10 +153,23 @@ going to the training mean. `stages.previous_value` no longer refuses
 repeated keys. The panel warning, `autocorrelated_panel_target`, names the
 baseline the run used, in a fixed text (spec 5.4).
 
-**The leak screen has two readers and two readings (D74, D76).** Beside its
-tree a column is read, in a regression, by a straight line that a few rows
-cannot move (the median of paired slopes), and in a classification directly,
-with no minimum leaf. The column's skill is the better reader's, against
+**The leak screen has its readers and two readings (D74, D76, D77).** Beside
+its tree a column is read, in a regression, by a straight line that a few
+rows cannot move (the median of paired slopes), and in a classification
+directly, with no minimum leaf. **Since D77 it is also read by its levels,**
+in both tasks: every categorical column, and a numeric column whose training
+rows hold at least five rows for each distinct value. A validation row is
+given the mean target of the fold's training rows of its level; **a row whose
+level the fold's training rows do not hold is not scored** (D78 point 5),
+and the reading has a value only with at least 20 rows scored and, in a
+classification, 10 of each class or all of one. So the target cut into 16 or
+more bands, with labels in any order, is excluded under the random scheme;
+six to eight bands are warned about, and four or fewer read like an honest
+column and are only named (D80 point 3). Under time order on a wandering
+target the latest rows' levels are new, and a coded copy is mostly neither
+excluded nor warned about (spec 11). The `suspected_leak` message of such a column says to
+declare it as `group_col` if it names the entity each row belongs to (D78
+point 6). The column's skill is the better reader's, against
 every baseline, the lower counting. Rule 2 (0.98, excluded) leaves unscored
 the 1% of rows the column misses by most and the 1% the baseline misses by
 most; rule 3 (0.90, warned) scores every row. In a regression the training
@@ -166,7 +180,14 @@ second reading, of a column's order (D76):** for a numeric column of a
 regression whose skill has a value below 0.90, when the target, put in the
 column's order, moves the other way between at most 10% of neighbouring
 training rows and does not follow its own previous value as closely. It
-raises `strong_single_column` and excludes nothing. A column whose skill
+raises `strong_single_column` and excludes nothing. **Rows of equal column
+value are never put in the target's order (D77 point 4):** the share is
+taken over every pair of rows between neighbouring distinct values, so a
+column of noise with repeated values is not named. **When more than 1% of
+the training rows are marked as far off, none is set aside, but rule 2 still
+leaves its 1% unscored and is read against each fold's training median as
+well (D77 point 5, D78 point 7):** a copy of a long-tailed target with five
+cells moved is excluded. A column whose skill
 cannot be computed is flagged by no rule and by neither reading (D36). Spec
 step 8 has every count.
 
@@ -200,6 +221,27 @@ sorted by it is still excluded wrongly: a stated limit (D31).
 order in time order, the rows of one timestamp in file order; otherwise in
 file order. A forest draws its rows by position, so two builds agree only
 when the order does (spec 2.6, step 9).
+
+**The headline says what it rests on (D77, D78, D80, D81).** On every
+finished run each feature's record holds `shuffled_score`, the chosen
+configuration's score on the holdout with that feature's holdout values
+shuffled (the mean of five shuffles, on a stream of their own; nothing
+refitted), `shuffled_skill` and `skill_fall`. Copies of one another as the
+models receive them (the same matrix column within 1e-9, or its negation;
+the same block of level columns) are shuffled together and share one fall.
+`headline.rests_on` lists the features whose fall is at least
+`headline.rests_on_floor`, the larger of 0.05 and the half-width of the skill
+interval (or of a bootstrap of the holdout rows where there is none), at
+most five, largest first; the console summary prints it. **A headline skill
+of 0.98 or more always carries one `near_perfect_headline` warning** that
+names those columns and asks whether each is known before the outcome, in
+both tasks and every scheme: an easy table carries it too. A model that
+cannot predict a shuffled matrix leaves that feature's keys null with a
+`shuffled_score_not_computed` warning; the run finishes. **Under time order a
+holdout of half of the rows or more is named** by `holdout_far_above_quarter`
+(D77 point 6). A carrier of the target that the screen does not read is a
+defect only when nothing names it and the headline rises with it by more
+than the unperturbed run's floor (D77 point 9, D80, D81; spec 11).
 
 **Nothing is open (D73, D74, D76).** The faults that the judge's two other
 tools listed as open are built in the eighth pass. What is left is stated
@@ -239,10 +281,10 @@ document that holds a float that is not finite, in any part of it.
 | `meta` | tool, schema version, profile, seed, `n_jobs`, library versions, `timing` | `to_dict()` |
 | `input` | source, kind, target, `time_col` as passed (a name or `false`, never null: D63), task requested, gap, rows, columns, duplicate rows, the `duplicates` argument (D49), `group_col` as passed (a name or `false`, never null: D63) | `to_dict()` |
 | `rows` | seven counts: loaded, four `dropped_` reasons, training, holdout | `.rows` |
-| `columns` | one record per input column: role (`target`, `time`, `group`, `feature`, `excluded`), kind, reason, leak rule, four counts (`n_infinite` also counts feature values too large for the tree models, above 3.4028234663852886e+38: D48; and the infinite cells of the target and of the time column: D57). `dtype` is the type as loaded: `object` for an object column read as numbers (D51) | `.columns` |
+| `columns` | one record per input column: role (`target`, `time`, `group`, `feature`, `excluded`), kind, reason, leak rule, `shuffled_score`, `shuffled_skill` and `skill_fall` (null for a column that reached no model: D77), four counts (`n_infinite` also counts feature values too large for the tree models, above 3.4028234663852886e+38: D48; and the infinite cells of the target and of the time column: D57). `dtype` is the type as loaded: `object` for an object column read as numbers (D51) | `.columns` |
 | `task` | type, decided by rule or declared, distinct values, classes, positive class (a text target is read without the white space round it: D46; a class value is written as a boolean, a number or text: D53) | `to_dict()` |
 | `validation` | scheme (`random`, `grouped`, `time_ordered`), holdout share, folds, gap, time form, last training and first holdout timestamp (an exact whole number for integer keys above 2**53: D50), caveat, and with no time column the holdout rows with a copy among the training rows and their share (D49); the entity column, the entities on each side, the holdout rows with no previous value, and under `duplicates="group"` the rows that agree with another in every feature, `n_rows_same_features` (D62, D66) | `to_dict()` |
-| `headline` | metric, score, model, baseline and its score, skill (null when the baseline's error is zero), the interval on the score and on skill (`bootstrap_rows`, `bootstrap_groups` or `bootstrap_blocks`), the resamples used for each, p-value (random scheme only), reasons; for a regression the share of the squared error that the largest holdout row carries and that row, for the model and for the baseline (`largest_row_share`, `largest_row`, `baseline_largest_row_share`, `baseline_largest_row`: D74), null for classification and where the error is zero | `.headline` |
+| `headline` | metric, score, model, baseline and its score, skill (null when the baseline's error is zero), the interval on the score and on skill (`bootstrap_rows`, `bootstrap_groups` or `bootstrap_blocks`), the resamples used for each, p-value (random scheme only), reasons; for a regression the share of the squared error that the largest holdout row carries and that row, for the model and for the baseline (`largest_row_share`, `largest_row`, `baseline_largest_row_share`, `baseline_largest_row`: D74), null for classification and where the error is zero; `rests_on`, the columns whose fall is at least `rests_on_floor` (D78, D80) | `.headline` |
 | `baselines` | each baseline scored on the holdout, and which one was used; a regression under time order always has both `training_mean` and `previous_value` (D74) | `to_dict()` |
 | `cv` | metric, folds scored, configurations, the chosen one, its mean and spread; the same four largest-row keys over the selection folds, for the chosen configuration and for the headline baseline (D74) | `to_dict()` |
 | `models` | one record per configuration: params, status, error, fold scores, mean, spread, chosen, and for a regression `largest_row_share` and `largest_row` over the selection folds (D74). One that fails after it was chosen keeps its fold scores | `.models` |
@@ -291,19 +333,47 @@ document that holds a float that is not finite, in any part of it.
 | F26 | the largest row's share is taken of the absolute errors, not of the squared errors (D74) | result.largest_row_reported |
 | F27 | the id-like rule for whole numbers is D19's clause alone: an identifier is a feature when the rows are shuffled (D74) | data.identifier_survives_shuffle |
 | F28 | under the grouped scheme the choice between configurations is made however few rows the folds validate on (D74) | groups.choice_not_made |
+| F29 | what the headline rests on is not of a shuffle of the holdout: every feature's holdout values are left in place (D77) | result.rests_on_recomputed |
+| F30 | a headline skill of 0.98 or more carries no `near_perfect_headline` warning (D77) | rests_on.near_perfect_named |
+| F31 | columns that are copies of one another as the models receive them are shuffled one at a time (D78, D80) | result.copies_share_a_fall |
+| F32 | the leak screen does not read a column by its levels: a coded copy of the target is a feature (D77, D78) | leak.coded_copy_excluded |
+| F33 | the order reading puts rows of equal column value in the target's order: noise with repeated values is warned about (D77) | leak.tied_noise_quiet |
+| F34 | where more training rows are marked than may be set aside, rule 2 scores every row: a copy with five cells moved is kept (D77, D78) | leak.changed_cells_excluded |
+| F35 | under time order a holdout of half of the rows or more is not named (D77, D78) | time.large_holdout_named |
 
 F6b, F6c, F6d, F7b, F7c, F7d, F8b, F12b and F14b are the other forms of F6,
 F7, F8, F12 and F14, each with a broken copy of the reference of its own (D46,
 D50, D57, D58, D69). F16 to F22 are one broken copy for each of the seven
 checks that used to give a reason in place of a failure mode and had never
 been seen to fail (D64, D71): each is the fault its own check's message names.
-F23 to F28 are the faults the judge's two other tools found on their first
+F29 to F35 are the rules of the ninth pass, each taken out of a broken copy
+(D77, D78, D80). F23 to F28 are the faults the judge's two other tools found on their first
 run (D73), each with a broken copy, a gate run and a check of its own (D74).
 **Every check in this table is seen to fail on the broken copy of the mode it
 names**, in every run of the gate's self-test (`verify/smoke_test.py
---selftest`: thirty-seven broken copies and 51 pairs of a check and its mode,
-among 53 checks; it takes about twenty minutes), which
+--selftest`: forty-four broken copies and 58 pairs of a check and its mode,
+among 60 checks; it takes about 26 minutes), which
 prints the table that proves it and fails if one pair is missing.
+
+Seven checks came with the ninth pass. `result.rests_on_recomputed` reads
+`random_walk`, which has one feature: moving its holdout values moves the
+predictions with them, so the gate computes the exact mean and spread of a
+shuffle's squared error from `predictions.csv` and holds the reported
+`shuffled_score` of `level_prev` within five standard deviations of it, and
+checks every record's three keys, the floor, the list and the console line.
+`rests_on.near_perfect_named` runs `pair_together`, `signal_reg` with
+`pair_a` (the target plus a noise) and `pair_b` (that noise): skill 1.000 and
+one `near_perfect_headline` warning that names both.
+`result.copies_share_a_fall` runs `signal_reg_copied`, with `f1_scaled` = 2 ×
+f1 + 3: the two records hold the same three numbers. `leak.coded_copy_excluded`
+runs `leak_reg_coded`, with the target in 30 bands of random labels: excluded,
+and the message names `group_col`. `leak.tied_noise_quiet` runs `noise_tied`,
+with a whole number from 1 to 40 and noise rounded to one place: no warning
+names either. `leak.changed_cells_excluded` runs `skewed_copy`, a log-normal
+target and a copy with five cells moved by 20 spreads: excluded.
+`time.large_holdout_named` runs `last_stamp`, 600 of 1,000 rows on the last
+date: one `holdout_far_above_quarter` warning that says `600 of the 1000
+rows`. All seven assert no band.
 
 Six checks came with the eighth pass. `time.previous_value_at_repeats` runs
 `walk_repeated`, the random walk with one row written twice, under
@@ -335,10 +405,10 @@ under the fast profile: exit 3, `fast_profile_group_too_large`, the full
 profile named. `fast.large_entity_kept` runs one entity of 1,200 rows beside
 300 of five: the cap keeps it, so 2,000 rows are kept and 700 left out, by the
 gate's own count. **The gate starts its runs 0.25 seconds apart, 16 side by
-side (D72):** from the command line a per-edit run takes about 15 seconds and
-a full one about 21 (three rounds on a quiet machine, 2026-11-25; 14 and 18
-before the eighth pass). The loop's `doctor`, which times the gate inside the
-self-test, reports 12.8 and 17.4.
+side (D72):** from the command line a per-edit run takes about 14 seconds and
+a full one about 25 (on a quiet machine, 2026-11-26, with the six runs of the
+ninth pass; 15 and 21 before it). The loop's `doctor`, which times the gate
+inside the self-test, reports 14.1 and 16.6.
 
 Six checks came with the sixth pass. `statements.time_order_asked` runs
 `signal_clf` with nothing said at all: exit 3, `time_order_undeclared`, all
@@ -383,7 +453,7 @@ the holdout, where skill has no value and must be reported as null. Each is
 seen to fail on another mode's broken copy in every self-test: its list of
 checks never seen to fail is empty.
 
-## The judge's two other tools (D56, D71, D72, D73, D74, D76)
+## The judge's two other tools (D56, D71, D72, D73, D74, D76, D77, D78, D80, D81)
 
 Neither is part of the gate, so neither runs on an edit. Each has its own
 command, the gate's exit codes, and writes under `verify/artifacts/` only.
@@ -414,12 +484,23 @@ E:\CODE\ml-professor\mlprof_env\Scripts\python.exe verify/generated_tables.py ml
 - **Three classes.** Each prints the count of what holds (or agrees), of what
   is a stated limit, with its decision number, and of what is open. **Nothing
   is open since the eighth pass (D73, D74):** both open lists are empty, and
-  the count, 0, is still printed. The battery's stated limits are exactly
-  four kinds (D76): a copy of a row that differs by an added column (D60), a
+  the count, 0, is still printed. The battery's stated limits are the four
+  kinds of D76, a copy of a row that differs by an added column (D60), a
   whole-number time column with an empty cell (D55), a distinct whole-number
   measure in a table sorted by it (D31), and under time order a copy of the
-  target with noise above 1% of the target's spread (D76). The generated
-  tables list none. The lists are fixed in the judge. A failure on neither
+  target with noise above 1% of the target's spread (D76), and one pair where
+  the headline skill has no value (D36, D80). The generated tables list none.
+- **A carrier of the target (D77 point 9, D78, D80, D81).** Since the ninth
+  pass the battery also adds noise with repeated values, the target as a
+  code, two columns that give the target only together, copies with five
+  cells moved by several sizes, features put into bands and a feature written
+  twice. A pair that plants a carrier holds when a planted column is
+  excluded, warned about by name, named by the near-perfect warning or named
+  in `headline.rests_on`; or when its headline skill is no more than the
+  unperturbed run's `rests_on_floor` above the unperturbed run's (`within`,
+  or `lowered` by more). It prints the six counts. The generated tables gain
+  200 tables of the ninth pass's series (numbered from 1,000,000) with
+  columns of those kinds. The lists are fixed in the judge. A failure on neither
   list fails the tool, and a pair that asserts an outcome known to be wrong
   is never counted as holding. Spec 8.2 has both lists.
 - **One extreme cell.** The battery's claim for it (D74): skill in the run's
@@ -428,9 +509,12 @@ E:\CODE\ml-professor\mlprof_env\Scripts\python.exe verify/generated_tables.py ml
   call itself.
 - **Who runs them.** A builder, when a task says so. The loop, once a pass's
   last task is reached: `tests/test_judge_tools.py` runs both on the
-  application, and from then on they are part of the full suite. For the
-  eighth pass that file accepts exactly the failures the pass's plan lists,
-  and a strict test of both tools is owned by the pass's last task (D74). The
+  application, and from then on they are part of the full suite. Each pass
+  keeps its own file (D78 point 8): for the ninth pass `tests/test_judge_tools.py`
+  and `tests/test_judge_tools_pass8.py` accept exactly the failures the pass's
+  plan lists, and the strict test of both tools, `tests/test_judge_tools_pass9.py`,
+  is owned by the pass's last task. Both older files are in the loop's
+  ratchet, so neither can be strict while the build is under way. The
   lead, by hand before a review, with the mutation check. **No review is run
   while either lists something as open (D73).**
 
@@ -499,6 +583,24 @@ suite, each in the way that can see it:
 | M49 | under time order the rows of a fit are handed over in file order, not in time order | `test_fit_order.py::test_every_fit_is_handed_its_rows_in_time_order` |
 | M50 | the identifier's second clause asks for every value to be distinct: one repeated row makes a shuffled identifier a feature | `test_id_dense.py::test_the_id_like_rule_for_whole_numbers` |
 | M51 | the panel warning names the training mean, whatever baseline the run used | `test_repeated_stamps.py::test_the_panel_warning_names_the_baseline_the_run_used` |
+| M52 | the shuffles of the statement are drawn from a stream that depends on the number of cores | `test_rests_on.py::test_the_statement_is_the_same_at_any_n_jobs` |
+| M53 | a column that reached no model is given a statement as well | `test_rests_on.py::test_every_feature_has_a_statement_and_no_other_column_has_one` |
+| M54 | the list takes the largest falls whatever their size: no floor | `test_rests_on.py::test_the_list_holds_the_columns_whose_fall_reaches_the_floor` |
+| M55 | among equal falls the list goes by name, not by file order | `test_rests_on.py::test_equal_falls_go_in_file_order` |
+| M56 | copies are found by their loaded values: a rescaled copy is shuffled alone | `test_rests_on.py::test_copies_are_shuffled_together_and_share_one_fall` |
+| M57 | the near-perfect warning is raised in a classification only | `test_near_perfect.py::test_two_columns_that_give_the_target_together_are_named` |
+| M58 | an unseen level is given the baseline's prediction and scored | `test_screen_levels.py::test_rows_whose_level_the_fold_has_not_seen_are_not_scored` |
+| M59 | the reading by levels has a value on any number of scored rows | `test_screen_levels.py::test_a_reading_by_levels_on_too_few_rows_of_a_class_has_no_value` |
+| M60 | "few" distinct values are counted over every row split, not the training rows | `test_screen_levels.py::test_few_values_are_counted_over_the_training_rows` |
+| M61 | the `suspected_leak` message of a column read by its levels does not name `group_col` | `test_screen_levels.py::test_a_coded_copy_of_the_target_is_excluded` |
+| M62 | the order reading takes one point for each distinct value, the mean target | `test_order_ties.py::test_a_column_whose_means_rise_with_the_target_is_not_named` |
+| M63 | with too many rows marked, rule 2 leaves its rows unscored but is not read against the fold's median | `test_screen_marked.py::test_wild_target_cells_beyond_the_share_make_no_column_a_leak` |
+| M64 | only a time-ordered holdout above one half is named, not one of one half | `test_large_holdout.py::test_a_holdout_of_half_the_rows_or_more_is_named` |
+| M65 | the console summary prints nothing for an empty list | `test_rests_on.py::test_the_summary_prints_one_line_for_the_list` |
+| M66 | a model that cannot predict a shuffled matrix stops the run | `test_rests_on.py::test_a_model_that_cannot_predict_a_shuffled_matrix_leaves_that_column_unstated` |
+| M67 | the floor of the list is 0.05 alone, whatever the headline's uncertainty (D80) | `test_rests_on.py::test_the_floor_is_the_half_width_of_the_skill_interval` |
+| M68 | with no skill interval the floor is 0.05 alone: no stand-in (D80) | `test_rests_on.py::test_where_the_headline_has_no_interval_the_floor_stands_in` |
+| M69 | a negated copy is not a copy, and is shuffled alone (D80) | `test_rests_on.py::test_copies_are_shuffled_together_and_share_one_fall` |
 
 A guard that fails means the application is wrong, not the test. Three more
 tests of that kind hold what was decided and the application already does:
@@ -509,10 +611,11 @@ is never skipped, before a header of two columns as before one of three
 (`test_guard_header_lines.py`, which fails on F6d).
 
 The mutation check runs the whole suite against the reference and against
-each of eighty-eight variants of it: the thirty-seven of the table above and
-M1 to M51. The good reference must fail nothing, and every variant at least
-one test. It leaves out `tests/test_judge_tools.py` and the strict test of
-the eighth pass, which run the judge's two other tools on the application.
+each of one hundred and thirteen variants of it: the forty-four of the table
+above and M1 to M69. The good reference must fail nothing, and every variant
+at least one test. It leaves out `tests/test_judge_tools.py` and each pass's
+own file of that kind (`_pass8`, `_pass9`), which run the judge's two other
+tools on the application. `--only` runs some cases alone.
 
 Eleven of these faults were each held by one test until the seventh pass (M1,
 M5, M6, M8, M10, M11, M12, M17, M21, M23, M28). Each has a second, by another
@@ -536,7 +639,10 @@ accepts the column as it was built or as D69 decides it, and
 The eighth pass loosens seven cases in the same way (D59, D74): those that
 pinned the previous value as it was at repeated timestamps, where the
 training mean was the only baseline and `stages.previous_value` refused
-repeated keys.
+repeated keys. The ninth pass loosens five (D59, D77): two that pinned the
+holdout reaching the chosen model once, which the statement of what the
+headline rests on now asks again, and three that pinned rule 2 scoring every
+row when too many rows are marked (D77 point 5).
 
 **The type matrix (D52).** `tests/test_type_matrix.py` runs `profile()` on
 about 800 small tables: every kind of pandas column (each integer and float
@@ -629,9 +735,9 @@ same for a fourth role, the entity column: 353 tables.
 - Do not edit the harness: `verify/`, `plan/`, `spec.md`, `CLAUDE.md`,
   `tests/`, `loop/`, `.claude/`. If a check, a test or the spec looks wrong,
   stop and say so plainly, with the evidence. Never widen a band.
-- `verify/reference/` is the judge's own fixture, with eighty-eight deliberate
-  faults wired into it (thirty-seven the gate catches, fifty-one only the
-  tests are relied on for). It is not a starting point: do not copy from it.
+- `verify/reference/` is the judge's own fixture, with one hundred and
+  thirteen deliberate faults wired into it (forty-four the gate catches,
+  sixty-nine only the tests are relied on for). It is not a starting point: do not copy from it.
 - `verify/battery.py` and `verify/generated_tables.py` are the judge's too.
   Run them; never edit them, and never add a pair or a finding to their lists.
 - Application code never mentions the gate, the tests or the loop.

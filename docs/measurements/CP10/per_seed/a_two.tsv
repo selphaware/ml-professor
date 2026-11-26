@@ -1,0 +1,601 @@
+case	k	skill	model	columns: role/reason/rule fall	rests_on	floor	warnings
+signal_reg | two	0	0.9999	linear-0	f1: feature/-/- 0.0004214; pair_a: feature/-/- 3.614; pair_b: feature/-/- 1.974	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	1	1	linear-0	f1: feature/-/- 0.0002747; pair_a: feature/-/- 3.761; pair_b: feature/-/- 1.89	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	2	1	linear-0	f1: feature/-/- 0.0003593; pair_a: feature/-/- 3.655; pair_b: feature/-/- 2.015	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	3	0.9999	linear-0	f1: feature/-/- 0.0004492; pair_a: feature/-/- 4.011; pair_b: feature/-/- 2.114	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	4	1	linear-0	f1: feature/-/- 0.0002718; pair_a: feature/-/- 4.201; pair_b: feature/-/- 2.061	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	5	1	linear-0	f1: feature/-/- 0.0003971; pair_a: feature/-/- 3.495; pair_b: feature/-/- 1.579	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	6	1	linear-0	f1: feature/-/- 0.0002826; pair_a: feature/-/- 3.818; pair_b: feature/-/- 1.87	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	7	1	linear-0	f1: feature/-/- 0.0003831; pair_a: feature/-/- 3.497; pair_b: feature/-/- 1.931	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	8	1	linear-0	f1: feature/-/- 0.0003056; pair_a: feature/-/- 3.567; pair_b: feature/-/- 2.003	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	9	1	linear-0	f1: feature/-/- 0.0003328; pair_a: feature/-/- 3.919; pair_b: feature/-/- 2.152	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	10	1	linear-0	f1: feature/-/- 0.0003625; pair_a: feature/-/- 3.964; pair_b: feature/-/- 2.022	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	11	1	linear-0	f1: feature/-/- 0.0003207; pair_a: feature/-/- 3.315; pair_b: feature/-/- 1.671	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	12	1	linear-0	f1: feature/-/- 0.0004425; pair_a: feature/-/- 3.958; pair_b: feature/-/- 1.694	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	13	1	linear-0	f1: feature/-/- 0.0003186; pair_a: feature/-/- 3.821; pair_b: feature/-/- 1.963	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	14	1	linear-0	f1: feature/-/- 0.0004017; pair_a: feature/-/- 3.815; pair_b: feature/-/- 1.892	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	15	0.9999	linear-0	f1: feature/-/- 0.000384; pair_a: feature/-/- 3.663; pair_b: feature/-/- 1.697	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	16	1	linear-0	f1: feature/-/- 0.0003852; pair_a: feature/-/- 4.126; pair_b: feature/-/- 1.874	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	17	1	linear-0	f1: feature/-/- 0.0003861; pair_a: feature/-/- 3.784; pair_b: feature/-/- 1.961	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	18	1	linear-0	f1: feature/-/- 0.0003465; pair_a: feature/-/- 3.483; pair_b: feature/-/- 1.709	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	19	1	linear-0	f1: feature/-/- 0.0003226; pair_a: feature/-/- 3.649; pair_b: feature/-/- 1.924	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	20	1	linear-0	f1: feature/-/- 0.0003603; pair_a: feature/-/- 3.972; pair_b: feature/-/- 1.743	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	21	1	linear-0	f1: feature/-/- 0.0004576; pair_a: feature/-/- 3.807; pair_b: feature/-/- 1.691	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	22	1	linear-0	f1: feature/-/- 0.0003008; pair_a: feature/-/- 3.451; pair_b: feature/-/- 1.951	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	23	1	linear-0	f1: feature/-/- 0.0003721; pair_a: feature/-/- 3.732; pair_b: feature/-/- 1.868	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	24	1	linear-0	f1: feature/-/- 0.0003699; pair_a: feature/-/- 3.395; pair_b: feature/-/- 1.697	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	25	1	linear-0	f1: feature/-/- 0.0003265; pair_a: feature/-/- 3.912; pair_b: feature/-/- 1.781	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	26	1	linear-0	f1: feature/-/- 0.0003783; pair_a: feature/-/- 3.754; pair_b: feature/-/- 1.985	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	27	0.9999	linear-0	f1: feature/-/- 0.0004424; pair_a: feature/-/- 4.041; pair_b: feature/-/- 2.298	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	28	1	linear-0	f1: feature/-/- 0.00031; pair_a: feature/-/- 3.88; pair_b: feature/-/- 1.754	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_reg | two	29	0.9999	linear-0	f1: feature/-/- 0.0003344; pair_a: feature/-/- 3.688; pair_b: feature/-/- 1.85	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_reg | two	0	1	linear-0	pair_a: feature/-/- 3.681; pair_b: feature/-/- 1.717	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_reg | two	1	1	linear-0	pair_a: feature/-/- 3.822; pair_b: feature/-/- 2.33	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_reg | two	2	1	linear-0	pair_a: feature/-/- 3.713; pair_b: feature/-/- 1.99	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_reg | two	3	1	linear-0	pair_a: feature/-/- 3.616; pair_b: feature/-/- 1.999	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_reg | two	4	1	linear-0	pair_a: feature/-/- 4.089; pair_b: feature/-/- 2.189	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_reg | two	5	1	linear-0	pair_a: feature/-/- 3.916; pair_b: feature/-/- 2.232	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_reg | two	6	1	linear-0	pair_a: feature/-/- 3.553; pair_b: feature/-/- 1.663	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_reg | two	7	1	linear-0	pair_a: feature/-/- 4.233; pair_b: feature/-/- 2.305	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_reg | two	8	1	linear-0	pair_a: feature/-/- 3.468; pair_b: feature/-/- 1.934	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_reg | two	9	1	linear-0	pair_a: feature/-/- 3.625; pair_b: feature/-/- 1.766	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_reg | two	10	1	linear-0	pair_a: feature/-/- 4.473; pair_b: feature/-/- 2.175	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_reg | two	11	1	linear-0	pair_a: feature/-/- 3.729; pair_b: feature/-/- 1.776	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_reg | two	12	1	linear-0	pair_a: feature/-/- 3.826; pair_b: feature/-/- 1.53	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_reg | two	13	1	linear-0	pair_a: feature/-/- 4.263; pair_b: feature/-/- 2.198	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_reg | two	14	1	linear-0	pair_a: feature/-/- 3.713; pair_b: feature/-/- 1.908	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_reg | two	15	1	linear-0	pair_a: feature/-/- 4.078; pair_b: feature/-/- 2.217	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_reg | two	16	1	linear-0	pair_a: feature/-/- 4.52; pair_b: feature/-/- 2.135	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_reg | two	17	1	linear-0	pair_a: feature/-/- 4.294; pair_b: feature/-/- 1.949	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_reg | two	18	1	linear-0	pair_a: feature/-/- 3.851; pair_b: feature/-/- 1.744	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_reg | two	19	1	linear-0	pair_a: feature/-/- 4.084; pair_b: feature/-/- 1.877	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_reg | two	20	1	linear-0	pair_a: feature/-/- 4.165; pair_b: feature/-/- 1.996	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_reg | two	21	1	linear-0	pair_a: feature/-/- 3.898; pair_b: feature/-/- 1.878	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_reg | two	22	1	linear-0	pair_a: feature/-/- 3.698; pair_b: feature/-/- 1.732	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_reg | two	23	1	linear-0	pair_a: feature/-/- 4.197; pair_b: feature/-/- 2.051	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_reg | two	24	1	linear-0	pair_a: feature/-/- 3.707; pair_b: feature/-/- 1.927	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_reg | two	25	1	linear-0	pair_a: feature/-/- 4.205; pair_b: feature/-/- 2.011	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_reg | two	26	1	linear-0	pair_a: feature/-/- 3.471; pair_b: feature/-/- 1.92	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_reg | two	27	1	linear-0	pair_a: feature/-/- 3.812; pair_b: feature/-/- 1.597	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_reg | two	28	1	linear-0	pair_a: feature/-/- 3.477; pair_b: feature/-/- 2.003	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_reg | two	29	1	linear-0	pair_a: feature/-/- 4.298; pair_b: feature/-/- 2.111	pair_a,pair_b	0.05	near_perfect_headline[None]
+leak_reg | two	0	1	linear-0	f1: feature/-/- 0.00029; pair_a: feature/-/- 3.794; pair_b: feature/-/- 1.711	pair_a,pair_b	0.05	suspected_leak[amount_scaled],near_perfect_headline[None]
+leak_reg | two	1	1	linear-0	f1: feature/-/- 0.0003736; pair_a: feature/-/- 3.77; pair_b: feature/-/- 1.757	pair_a,pair_b	0.05	suspected_leak[amount_scaled],near_perfect_headline[None]
+leak_reg | two	2	0.9999	linear-0	f1: feature/-/- 0.0004083; pair_a: feature/-/- 3.979; pair_b: feature/-/- 1.889	pair_a,pair_b	0.05	suspected_leak[amount_scaled],near_perfect_headline[None]
+leak_reg | two	3	0.9999	linear-0	f1: feature/-/- 0.0003611; pair_a: feature/-/- 3.792; pair_b: feature/-/- 1.91	pair_a,pair_b	0.05	suspected_leak[amount_scaled],near_perfect_headline[None]
+leak_reg | two	4	1	linear-0	f1: feature/-/- 0.000404; pair_a: feature/-/- 4.221; pair_b: feature/-/- 1.927	pair_a,pair_b	0.05	suspected_leak[amount_scaled],near_perfect_headline[None]
+leak_reg | two	5	1	linear-0	f1: feature/-/- 0.000303; pair_a: feature/-/- 3.595; pair_b: feature/-/- 1.75	pair_a,pair_b	0.05	suspected_leak[amount_scaled],near_perfect_headline[None]
+leak_reg | two	6	1	linear-0	f1: feature/-/- 0.0002782; pair_a: feature/-/- 3.562; pair_b: feature/-/- 2.116	pair_a,pair_b	0.05	suspected_leak[amount_scaled],near_perfect_headline[None]
+leak_reg | two	7	0.9999	linear-0	f1: feature/-/- 0.0003445; pair_a: feature/-/- 3.861; pair_b: feature/-/- 2.02	pair_a,pair_b	0.05	suspected_leak[amount_scaled],near_perfect_headline[None]
+leak_reg | two	8	0.9999	linear-0	f1: feature/-/- 0.0004521; pair_a: feature/-/- 4.012; pair_b: feature/-/- 1.907	pair_a,pair_b	0.05	suspected_leak[amount_scaled],near_perfect_headline[None]
+leak_reg | two	9	1	linear-0	f1: feature/-/- 0.0003119; pair_a: feature/-/- 3.721; pair_b: feature/-/- 1.797	pair_a,pair_b	0.05	suspected_leak[amount_scaled],near_perfect_headline[None]
+leak_reg | two	10	1	linear-0	f1: feature/-/- 0.0002827; pair_a: feature/-/- 3.936; pair_b: feature/-/- 1.87	pair_a,pair_b	0.05	suspected_leak[amount_scaled],near_perfect_headline[None]
+leak_reg | two	11	1	linear-0	f1: feature/-/- 0.0003143; pair_a: feature/-/- 4.088; pair_b: feature/-/- 1.921	pair_a,pair_b	0.05	suspected_leak[amount_scaled],near_perfect_headline[None]
+leak_reg | two	12	0.9999	linear-0	f1: feature/-/- 0.0003925; pair_a: feature/-/- 4.248; pair_b: feature/-/- 2.084	pair_a,pair_b	0.05	suspected_leak[amount_scaled],near_perfect_headline[None]
+leak_reg | two	13	0.9999	linear-0	f1: feature/-/- 0.0003329; pair_a: feature/-/- 3.591; pair_b: feature/-/- 2.168	pair_a,pair_b	0.05	suspected_leak[amount_scaled],near_perfect_headline[None]
+leak_reg | two	14	1	linear-0	f1: feature/-/- 0.0003142; pair_a: feature/-/- 4.118; pair_b: feature/-/- 2.179	pair_a,pair_b	0.05	suspected_leak[amount_scaled],near_perfect_headline[None]
+leak_reg | two	15	1	linear-0	f1: feature/-/- 0.0003834; pair_a: feature/-/- 3.678; pair_b: feature/-/- 1.913	pair_a,pair_b	0.05	suspected_leak[amount_scaled],near_perfect_headline[None]
+leak_reg | two	16	0.9999	linear-0	f1: feature/-/- 0.0004289; pair_a: feature/-/- 3.791; pair_b: feature/-/- 2.038	pair_a,pair_b	0.05	suspected_leak[amount_scaled],near_perfect_headline[None]
+leak_reg | two	17	1	linear-0	f1: feature/-/- 0.0003447; pair_a: feature/-/- 4.118; pair_b: feature/-/- 2.055	pair_a,pair_b	0.05	suspected_leak[amount_scaled],near_perfect_headline[None]
+leak_reg | two	18	1	linear-0	f1: feature/-/- 0.0003274; pair_a: feature/-/- 3.998; pair_b: feature/-/- 1.861	pair_a,pair_b	0.05	suspected_leak[amount_scaled],near_perfect_headline[None]
+leak_reg | two	19	1	linear-0	f1: feature/-/- 0.0003218; pair_a: feature/-/- 3.566; pair_b: feature/-/- 1.798	pair_a,pair_b	0.05	suspected_leak[amount_scaled],near_perfect_headline[None]
+leak_reg | two	20	1	linear-0	f1: feature/-/- 0.0003486; pair_a: feature/-/- 3.995; pair_b: feature/-/- 1.788	pair_a,pair_b	0.05	suspected_leak[amount_scaled],near_perfect_headline[None]
+leak_reg | two	21	1	linear-0	f1: feature/-/- 0.0003758; pair_a: feature/-/- 3.699; pair_b: feature/-/- 1.909	pair_a,pair_b	0.05	suspected_leak[amount_scaled],near_perfect_headline[None]
+leak_reg | two	22	1	linear-0	f1: feature/-/- 0.0003521; pair_a: feature/-/- 4.313; pair_b: feature/-/- 2.011	pair_a,pair_b	0.05	suspected_leak[amount_scaled],near_perfect_headline[None]
+leak_reg | two	23	0.9999	linear-0	f1: feature/-/- 0.0003995; pair_a: feature/-/- 4.079; pair_b: feature/-/- 2.072	pair_a,pair_b	0.05	suspected_leak[amount_scaled],near_perfect_headline[None]
+leak_reg | two	24	1	linear-0	f1: feature/-/- 0.0003474; pair_a: feature/-/- 4.068; pair_b: feature/-/- 1.932	pair_a,pair_b	0.05	suspected_leak[amount_scaled],near_perfect_headline[None]
+leak_reg | two	25	0.9999	linear-0	f1: feature/-/- 0.0004188; pair_a: feature/-/- 4.417; pair_b: feature/-/- 2.342	pair_a,pair_b	0.05	suspected_leak[amount_scaled],near_perfect_headline[None]
+leak_reg | two	26	1	linear-0	f1: feature/-/- 0.0003148; pair_a: feature/-/- 3.854; pair_b: feature/-/- 1.94	pair_a,pair_b	0.05	suspected_leak[amount_scaled],near_perfect_headline[None]
+leak_reg | two	27	1	linear-0	f1: feature/-/- 0.0003497; pair_a: feature/-/- 3.904; pair_b: feature/-/- 1.557	pair_a,pair_b	0.05	suspected_leak[amount_scaled],near_perfect_headline[None]
+leak_reg | two	28	1	linear-0	f1: feature/-/- 0.000343; pair_a: feature/-/- 3.256; pair_b: feature/-/- 1.756	pair_a,pair_b	0.05	suspected_leak[amount_scaled],near_perfect_headline[None]
+leak_reg | two	29	1	linear-0	f1: feature/-/- 0.0003083; pair_a: feature/-/- 3.577; pair_b: feature/-/- 1.814	pair_a,pair_b	0.05	suspected_leak[amount_scaled],near_perfect_headline[None]
+quarter_entity | two	0	1	linear-0	pair_a: feature/-/- 4.015; pair_b: feature/-/- 2.049	pair_a,pair_b	0.05	near_perfect_headline[None]
+quarter_entity | two	1	1	linear-0	pair_a: feature/-/- 3.592; pair_b: feature/-/- 2.01	pair_a,pair_b	0.05	near_perfect_headline[None]
+quarter_entity | two	2	1	linear-0	pair_a: feature/-/- 3.95; pair_b: feature/-/- 1.946	pair_a,pair_b	0.05	near_perfect_headline[None]
+quarter_entity | two	3	1	linear-0	pair_a: feature/-/- 3.83; pair_b: feature/-/- 1.741	pair_a,pair_b	0.05	near_perfect_headline[None]
+quarter_entity | two	4	1	linear-0	pair_a: feature/-/- 4.195; pair_b: feature/-/- 2.203	pair_a,pair_b	0.05	near_perfect_headline[None]
+quarter_entity | two	5	1	linear-0	pair_a: feature/-/- 4.29; pair_b: feature/-/- 2.494	pair_a,pair_b	0.05	near_perfect_headline[None]
+quarter_entity | two	6	1	linear-0	pair_a: feature/-/- 3.79; pair_b: feature/-/- 1.812	pair_a,pair_b	0.05	near_perfect_headline[None]
+quarter_entity | two	7	1	linear-0	pair_a: feature/-/- 3.85; pair_b: feature/-/- 1.703	pair_a,pair_b	0.05	near_perfect_headline[None]
+quarter_entity | two	8	1	linear-0	pair_a: feature/-/- 3.915; pair_b: feature/-/- 1.901	pair_a,pair_b	0.05	near_perfect_headline[None]
+quarter_entity | two	9	1	linear-0	pair_a: feature/-/- 4.237; pair_b: feature/-/- 2.231	pair_a,pair_b	0.05	near_perfect_headline[None]
+quarter_entity | two	10	1	linear-0	pair_a: feature/-/- 3.78; pair_b: feature/-/- 2.095	pair_a,pair_b	0.05	near_perfect_headline[None]
+quarter_entity | two	11	1	linear-0	pair_a: feature/-/- 4.124; pair_b: feature/-/- 2.207	pair_a,pair_b	0.05	near_perfect_headline[None]
+quarter_entity | two	12	1	linear-0	pair_a: feature/-/- 3.908; pair_b: feature/-/- 2.008	pair_a,pair_b	0.05	near_perfect_headline[None]
+quarter_entity | two	13	1	linear-0	pair_a: feature/-/- 3.831; pair_b: feature/-/- 2.056	pair_a,pair_b	0.05	near_perfect_headline[None]
+quarter_entity | two	14	1	linear-0	pair_a: feature/-/- 3.976; pair_b: feature/-/- 2.12	pair_a,pair_b	0.05	near_perfect_headline[None]
+quarter_entity | two	15	1	linear-0	pair_a: feature/-/- 3.915; pair_b: feature/-/- 1.945	pair_a,pair_b	0.05	near_perfect_headline[None]
+quarter_entity | two	16	1	linear-0	pair_a: feature/-/- 3.842; pair_b: feature/-/- 1.738	pair_a,pair_b	0.05	near_perfect_headline[None]
+quarter_entity | two	17	1	linear-0	pair_a: feature/-/- 3.813; pair_b: feature/-/- 1.921	pair_a,pair_b	0.05	near_perfect_headline[None]
+quarter_entity | two	18	1	linear-0	pair_a: feature/-/- 3.589; pair_b: feature/-/- 1.67	pair_a,pair_b	0.05	near_perfect_headline[None]
+quarter_entity | two	19	1	linear-0	pair_a: feature/-/- 3.995; pair_b: feature/-/- 2.12	pair_a,pair_b	0.05	near_perfect_headline[None]
+quarter_entity | two	20	1	linear-0	pair_a: feature/-/- 4.416; pair_b: feature/-/- 2.375	pair_a,pair_b	0.05	near_perfect_headline[None]
+quarter_entity | two	21	1	linear-0	pair_a: feature/-/- 3.742; pair_b: feature/-/- 1.746	pair_a,pair_b	0.05	near_perfect_headline[None]
+quarter_entity | two	22	1	linear-0	pair_a: feature/-/- 4.184; pair_b: feature/-/- 2.175	pair_a,pair_b	0.05	near_perfect_headline[None]
+quarter_entity | two	23	1	linear-0	pair_a: feature/-/- 4.213; pair_b: feature/-/- 2.173	pair_a,pair_b	0.05	near_perfect_headline[None]
+quarter_entity | two	24	1	linear-0	pair_a: feature/-/- 4.017; pair_b: feature/-/- 1.953	pair_a,pair_b	0.05	near_perfect_headline[None]
+quarter_entity | two	25	1	linear-0	pair_a: feature/-/- 3.965; pair_b: feature/-/- 1.792	pair_a,pair_b	0.05	near_perfect_headline[None]
+quarter_entity | two	26	1	linear-0	pair_a: feature/-/- 3.774; pair_b: feature/-/- 2.026	pair_a,pair_b	0.05	near_perfect_headline[None]
+quarter_entity | two	27	1	linear-0	pair_a: feature/-/- 3.693; pair_b: feature/-/- 1.779	pair_a,pair_b	0.05	near_perfect_headline[None]
+quarter_entity | two	28	1	linear-0	pair_a: feature/-/- 3.898; pair_b: feature/-/- 1.978	pair_a,pair_b	0.05	near_perfect_headline[None]
+quarter_entity | two	29	1	linear-0	pair_a: feature/-/- 4.285; pair_b: feature/-/- 2.234	pair_a,pair_b	0.05	near_perfect_headline[None]
+dominant_entity | two	0	1	linear-0	pair_a: feature/-/- 3.884; pair_b: feature/-/- 2.022	pair_a,pair_b	0.05	near_perfect_headline[None]
+dominant_entity | two	1	1	linear-0	pair_a: feature/-/- 4.249; pair_b: feature/-/- 2.228	pair_a,pair_b	0.05	near_perfect_headline[None]
+dominant_entity | two	2	1	linear-0	pair_a: feature/-/- 3.896; pair_b: feature/-/- 1.955	pair_a,pair_b	0.05	near_perfect_headline[None]
+dominant_entity | two	3	1	linear-0	pair_a: feature/-/- 3.958; pair_b: feature/-/- 1.793	pair_a,pair_b	0.05	near_perfect_headline[None]
+dominant_entity | two	4	1	linear-0	pair_a: feature/-/- 4.275; pair_b: feature/-/- 2.24	pair_a,pair_b	0.05	near_perfect_headline[None]
+dominant_entity | two	5	1	linear-0	pair_a: feature/-/- 4.127; pair_b: feature/-/- 2.251	pair_a,pair_b	0.05	near_perfect_headline[None]
+dominant_entity | two	6	1	linear-0	pair_a: feature/-/- 4.068; pair_b: feature/-/- 2.045	pair_a,pair_b	0.05	near_perfect_headline[None]
+dominant_entity | two	7	1	linear-0	pair_a: feature/-/- 4.004; pair_b: feature/-/- 1.99	pair_a,pair_b	0.05	near_perfect_headline[None]
+dominant_entity | two	8	1	linear-0	pair_a: feature/-/- 3.859; pair_b: feature/-/- 1.931	pair_a,pair_b	0.05	near_perfect_headline[None]
+dominant_entity | two	9	1	linear-0	pair_a: feature/-/- 4.456; pair_b: feature/-/- 2.031	pair_a,pair_b	0.05	near_perfect_headline[None]
+dominant_entity | two	10	1	linear-0	pair_a: feature/-/- 3.878; pair_b: feature/-/- 1.994	pair_a,pair_b	0.05	near_perfect_headline[None]
+dominant_entity | two	11	1	linear-0	pair_a: feature/-/- 4.041; pair_b: feature/-/- 1.84	pair_a,pair_b	0.05	near_perfect_headline[None]
+dominant_entity | two	12	1	linear-0	pair_a: feature/-/- 3.715; pair_b: feature/-/- 2.024	pair_a,pair_b	0.05	near_perfect_headline[None]
+dominant_entity | two	13	1	linear-0	pair_a: feature/-/- 4.093; pair_b: feature/-/- 2.144	pair_a,pair_b	0.05	near_perfect_headline[None]
+dominant_entity | two	14	1	linear-0	pair_a: feature/-/- 4.313; pair_b: feature/-/- 2.283	pair_a,pair_b	0.05	near_perfect_headline[None]
+dominant_entity | two	15	1	linear-0	pair_a: feature/-/- 4.095; pair_b: feature/-/- 1.775	pair_a,pair_b	0.05	near_perfect_headline[None]
+dominant_entity | two	16	1	linear-0	pair_a: feature/-/- 4.081; pair_b: feature/-/- 2.076	pair_a,pair_b	0.05	near_perfect_headline[None]
+dominant_entity | two	17	1	linear-0	pair_a: feature/-/- 4.378; pair_b: feature/-/- 1.85	pair_a,pair_b	0.05	near_perfect_headline[None]
+dominant_entity | two	18	1	linear-0	pair_a: feature/-/- 4.192; pair_b: feature/-/- 2.119	pair_a,pair_b	0.05	near_perfect_headline[None]
+dominant_entity | two	19	1	linear-0	pair_a: feature/-/- 3.613; pair_b: feature/-/- 1.895	pair_a,pair_b	0.05	near_perfect_headline[None]
+dominant_entity | two	20	1	linear-0	pair_a: feature/-/- 4.275; pair_b: feature/-/- 2.304	pair_a,pair_b	0.05	near_perfect_headline[None]
+dominant_entity | two	21	1	linear-0	pair_a: feature/-/- 4.04; pair_b: feature/-/- 1.894	pair_a,pair_b	0.05	near_perfect_headline[None]
+dominant_entity | two	22	1	linear-0	pair_a: feature/-/- 4.41; pair_b: feature/-/- 1.839	pair_a,pair_b	0.05	near_perfect_headline[None]
+dominant_entity | two	23	1	linear-0	pair_a: feature/-/- 4.124; pair_b: feature/-/- 1.867	pair_a,pair_b	0.05	near_perfect_headline[None]
+dominant_entity | two	24	1	linear-0	pair_a: feature/-/- 3.913; pair_b: feature/-/- 1.769	pair_a,pair_b	0.05	near_perfect_headline[None]
+dominant_entity | two	25	1	linear-0	pair_a: feature/-/- 3.988; pair_b: feature/-/- 1.968	pair_a,pair_b	0.05	near_perfect_headline[None]
+dominant_entity | two	26	1	linear-0	pair_a: feature/-/- 3.665; pair_b: feature/-/- 2.051	pair_a,pair_b	0.05	near_perfect_headline[None]
+dominant_entity | two	27	1	linear-0	pair_a: feature/-/- 4.209; pair_b: feature/-/- 1.996	pair_a,pair_b	0.05	near_perfect_headline[None]
+dominant_entity | two	28	1	linear-0	pair_a: feature/-/- 3.943; pair_b: feature/-/- 2	pair_a,pair_b	0.05	near_perfect_headline[None]
+dominant_entity | two	29	1	linear-0	pair_a: feature/-/- 3.65; pair_b: feature/-/- 2.109	pair_a,pair_b	0.05	near_perfect_headline[None]
+random_walk | two	0	0.8449	linear-0	level: target/-/- -; pair_a: feature/-/- 275.5; pair_b: feature/-/- 259.7	pair_a,pair_b,level_prev	0.05	-
+random_walk | two	1	0.9308	linear-0	level: target/-/- -; pair_a: feature/-/- 197.8; pair_b: feature/-/- 192.2	pair_a,pair_b,level_prev	0.05	-
+random_walk | two	2	0.8576	linear-0	level: target/-/- -; pair_a: feature/-/- 224.3; pair_b: feature/-/- 199.3	pair_a,pair_b,level_prev	0.05	-
+random_walk | two	3	0.8586	linear-0	level: target/-/- -; pair_a: feature/-/- 270.6; pair_b: feature/-/- 250.3	pair_a,pair_b,level_prev	0.05	-
+random_walk | two	4	0.9684	linear-0	level: target/-/- -; pair_a: feature/-/- 150; pair_b: feature/-/- 98.21	pair_a,pair_b,level_prev	0.05	-
+random_walk | two	5	0.8277	linear-0	level: target/-/- -; pair_a: feature/-/- 273.1; pair_b: feature/-/- 251.8	pair_a,pair_b,level_prev	0.05	-
+random_walk | two	6	0.9868	linear-0	level: target/-/- -; pair_a: feature/-/- 209.2; pair_b: feature/-/- 71.47	pair_a,pair_b,level_prev	0.05	near_perfect_headline[None]
+random_walk | two	7	0.9947	linear-0	level: target/-/- -; pair_a: feature/-/- 94.43; pair_b: feature/-/- 56.23	pair_a,pair_b,level_prev	0.05	near_perfect_headline[None]
+random_walk | two	8	0.7127	linear-0	level: target/-/- -; pair_a: feature/-/- 342.2; pair_b: feature/-/- 276.4	pair_a,pair_b,level_prev	0.05	-
+random_walk | two	9	0.8864	linear-0	level: target/-/- -; pair_a: feature/-/- 223.5; pair_b: feature/-/- 175.5	pair_a,pair_b,level_prev	0.05	-
+random_walk | two	10	0.9352	linear-0	level: target/-/- -; pair_a: feature/-/- 236.3; pair_b: feature/-/- 169.2	pair_a,pair_b,level_prev	0.05	-
+random_walk | two	11	0.8484	linear-0	level: target/-/- -; pair_a: feature/-/- 282.4; pair_b: feature/-/- 244.5	pair_a,pair_b,level_prev	0.05	-
+random_walk | two	12	0.9117	linear-0	level: target/-/- -; pair_a: feature/-/- 220.7; pair_b: feature/-/- 174.5	pair_a,pair_b,level_prev	0.05	-
+random_walk | two	13	0.9565	linear-0	level: target/-/- -; pair_a: feature/-/- 222.9; pair_b: feature/-/- 147.7	pair_a,pair_b,level_prev	0.05	-
+random_walk | two	14	0.9618	linear-0	level: target/-/- -; pair_a: feature/-/- 155.2; pair_b: feature/-/- 114.6	pair_a,pair_b,level_prev	0.05	-
+random_walk | two	15	0.7749	linear-0	level: target/-/- -; pair_a: feature/-/- 282.5; pair_b: feature/-/- 261.3	pair_a,pair_b,level_prev	0.05	-
+random_walk | two	16	0.8835	linear-0	level: target/-/- -; pair_a: feature/-/- 224.8; pair_b: feature/-/- 192.7	pair_a,pair_b,level_prev	0.05	-
+random_walk | two	17	0.8946	linear-0	level: target/-/- -; pair_a: feature/-/- 323.3; pair_b: feature/-/- 206.4	pair_a,pair_b,level_prev	0.05	-
+random_walk | two	18	0.9619	linear-0	level: target/-/- -; pair_a: feature/-/- 167.2; pair_b: feature/-/- 132.5	pair_a,pair_b,level_prev	0.05	-
+random_walk | two	19	0.8854	linear-0	level: target/-/- -; pair_a: feature/-/- 387.9; pair_b: feature/-/- 254.1	pair_a,pair_b,level_prev	0.05	-
+random_walk | two	20	0.9501	linear-0	level: target/-/- -; pair_a: feature/-/- 151.1; pair_b: feature/-/- 116.3	pair_a,pair_b,level_prev	0.05	-
+random_walk | two	21	0.974	linear-0	level: target/-/- -; pair_a: feature/-/- 156.5; pair_b: feature/-/- 104.7	pair_a,pair_b,level_prev	0.05	-
+random_walk | two	22	0.9796	linear-0	level: target/-/- -; pair_a: feature/-/- 278; pair_b: feature/-/- 133	pair_a,pair_b,level_prev	0.05	-
+random_walk | two	23	0.926	linear-0	level: target/-/- -; pair_a: feature/-/- 198.3; pair_b: feature/-/- 164	pair_a,pair_b,level_prev	0.05	-
+random_walk | two	24	0.9305	linear-0	level: target/-/- -; pair_a: feature/-/- 271.3; pair_b: feature/-/- 142.4	pair_a,pair_b,level_prev	0.05	-
+random_walk | two	25	0.9693	linear-0	level: target/-/- -; pair_a: feature/-/- 319.4; pair_b: feature/-/- 136.6	pair_a,pair_b,level_prev	0.05	-
+random_walk | two	26	0.8247	linear-0	level: target/-/- -; pair_a: feature/-/- 296.7; pair_b: feature/-/- 232.8	pair_a,pair_b,level_prev	0.05	-
+random_walk | two	27	0.7527	linear-0	level: target/-/- -; pair_a: feature/-/- 275; pair_b: feature/-/- 239.1	pair_a,pair_b,level_prev	0.05	-
+random_walk | two	28	0.9747	linear-0	level: target/-/- -; pair_a: feature/-/- 139.6; pair_b: feature/-/- 92.35	pair_a,pair_b,level_prev	0.05	-
+random_walk | two	29	0.9724	linear-0	level: target/-/- -; pair_a: feature/-/- 389.7; pair_b: feature/-/- 149.2	pair_a,pair_b,level_prev	0.05	-
+int_stamps | two	0	0.9639	linear-0	level: target/-/- -; pair_a: feature/-/- 179.4; pair_b: feature/-/- 147.1	pair_a,pair_b,level_prev	0.05	-
+int_stamps | two	1	0.7198	linear-0	level: target/-/- -; pair_a: feature/-/- 349.5; pair_b: feature/-/- 249.4	pair_a,pair_b,level_prev	0.05	-
+int_stamps | two	2	0.9134	linear-0	level: target/-/- -; pair_a: feature/-/- 204.7; pair_b: feature/-/- 183.8	pair_a,pair_b,level_prev	0.05	-
+int_stamps | two	3	0.954	linear-0	level: target/-/- -; pair_a: feature/-/- 164.6; pair_b: feature/-/- 136.6	pair_a,pair_b,level_prev	0.05	-
+int_stamps | two	4	0.7831	linear-0	level: target/-/- -; pair_a: feature/-/- 463.9; pair_b: feature/-/- 269.2	pair_a,pair_b,level_prev	0.05	-
+int_stamps | two	5	0.9374	linear-0	level: target/-/- -; pair_a: feature/-/- 322.4; pair_b: feature/-/- 207.7	pair_a,pair_b,level_prev	0.05	-
+int_stamps | two	6	0.7808	linear-0	level: target/-/- -; pair_a: feature/-/- 251.6; pair_b: feature/-/- 243	pair_a,pair_b,level_prev	0.05	-
+int_stamps | two	7	0.8075	linear-0	level: target/-/- -; pair_a: feature/-/- 212.3; pair_b: feature/-/- 217.7	pair_b,pair_a,level_prev	0.05	-
+int_stamps | two	8	0.9492	linear-0	level: target/-/- -; pair_a: feature/-/- 264.2; pair_b: feature/-/- 139.3	pair_a,pair_b,level_prev	0.05	-
+int_stamps | two	9	0.9039	linear-0	level: target/-/- -; pair_a: feature/-/- 300.4; pair_b: feature/-/- 197.3	pair_a,pair_b,level_prev	0.05	-
+int_stamps | two	10	0.9473	linear-0	level: target/-/- -; pair_a: feature/-/- 202.9; pair_b: feature/-/- 128.3	pair_a,pair_b,level_prev	0.05	-
+int_stamps | two	11	0.8942	linear-0	level: target/-/- -; pair_a: feature/-/- 372.9; pair_b: feature/-/- 256.2	pair_a,pair_b,level_prev	0.05	-
+int_stamps | two	12	0.8821	linear-0	level: target/-/- -; pair_a: feature/-/- 301.5; pair_b: feature/-/- 237.1	pair_a,pair_b,level_prev	0.05	-
+int_stamps | two	13	0.9559	linear-0	level: target/-/- -; pair_a: feature/-/- 233.4; pair_b: feature/-/- 154.3	pair_a,pair_b,level_prev	0.05	-
+int_stamps | two	14	0.9729	linear-0	level: target/-/- -; pair_a: feature/-/- 198.4; pair_b: feature/-/- 135.8	pair_a,pair_b,level_prev	0.05	-
+int_stamps | two	15	0.9614	linear-0	level: target/-/- -; pair_a: feature/-/- 248.8; pair_b: feature/-/- 127.7	pair_a,pair_b,level_prev	0.05	-
+int_stamps | two	16	0.8067	linear-0	level: target/-/- -; pair_a: feature/-/- 280.5; pair_b: feature/-/- 219.1	pair_a,pair_b,level_prev	0.05	-
+int_stamps | two	17	0.9202	linear-0	level: target/-/- -; pair_a: feature/-/- 239.1; pair_b: feature/-/- 222	pair_a,pair_b,level_prev	0.05	-
+int_stamps | two	18	0.9554	linear-0	level: target/-/- -; pair_a: feature/-/- 222.6; pair_b: feature/-/- 136.9	pair_a,pair_b,level_prev	0.05	-
+int_stamps | two	19	0.8866	linear-0	level: target/-/- -; pair_a: feature/-/- 282.1; pair_b: feature/-/- 252.8	pair_a,pair_b,level_prev	0.05	-
+int_stamps | two	20	0.9641	linear-0	level: target/-/- -; pair_a: feature/-/- 220.3; pair_b: feature/-/- 164	pair_a,pair_b,level_prev	0.05	-
+int_stamps | two	21	0.9091	linear-0	level: target/-/- -; pair_a: feature/-/- 223.3; pair_b: feature/-/- 193.4	pair_a,pair_b,level_prev	0.05	-
+int_stamps | two	22	0.9417	linear-0	level: target/-/- -; pair_a: feature/-/- 287.4; pair_b: feature/-/- 207.8	pair_a,pair_b,level_prev	0.05	-
+int_stamps | two	23	0.9806	linear-0	level: target/-/- -; pair_a: feature/-/- 135.3; pair_b: feature/-/- 106.4	pair_a,pair_b,level_prev	0.05	near_perfect_headline[None]
+int_stamps | two	24	0.9239	linear-0	level: target/-/- -; pair_a: feature/-/- 247.1; pair_b: feature/-/- 182.5	pair_a,pair_b,level_prev	0.05	-
+int_stamps | two	25	0.9655	linear-0	level: target/-/- -; pair_a: feature/-/- 144.9; pair_b: feature/-/- 132.8	pair_a,pair_b,level_prev	0.05	-
+int_stamps | two	26	0.7691	linear-0	level: target/-/- -; pair_a: feature/-/- 329.1; pair_b: feature/-/- 269.9	pair_a,pair_b,level_prev	0.05	-
+int_stamps | two	27	0.8381	linear-0	level: target/-/- -; pair_a: feature/-/- 192.1; pair_b: feature/-/- 190.9	pair_a,pair_b,level_prev	0.05	-
+int_stamps | two	28	0.97	linear-0	level: target/-/- -; pair_a: feature/-/- 204.2; pair_b: feature/-/- 110.1	pair_a,pair_b,level_prev	0.05	-
+int_stamps | two	29	0.8623	linear-0	level: target/-/- -; pair_a: feature/-/- 315.5; pair_b: feature/-/- 206.8	pair_a,pair_b,level_prev	0.05	-
+flat_tail | two	0	-	linear-0	pair_a: feature/-/- -; pair_b: feature/-/- -	-	-	-
+flat_tail | two	1	-	linear-0	pair_a: feature/-/- -; pair_b: feature/-/- -	-	-	-
+flat_tail | two	2	-	linear-0	pair_a: feature/-/- -; pair_b: feature/-/- -	-	-	-
+flat_tail | two	3	-	linear-0	pair_a: feature/-/- -; pair_b: feature/-/- -	-	-	-
+flat_tail | two	4	-	linear-0	pair_a: feature/-/- -; pair_b: feature/-/- -	-	-	-
+flat_tail | two	5	-	linear-0	pair_a: feature/-/- -; pair_b: feature/-/- -	-	-	-
+flat_tail | two	6	-	linear-0	pair_a: feature/-/- -; pair_b: feature/-/- -	-	-	-
+flat_tail | two	7	-	linear-0	pair_a: feature/-/- -; pair_b: feature/-/- -	-	-	-
+flat_tail | two	8	-	linear-0	pair_a: feature/-/- -; pair_b: feature/-/- -	-	-	-
+flat_tail | two	9	-	linear-0	pair_a: feature/-/- -; pair_b: feature/-/- -	-	-	-
+flat_tail | two	10	-	linear-0	pair_a: feature/-/- -; pair_b: feature/-/- -	-	-	-
+flat_tail | two	11	-	linear-0	pair_a: feature/-/- -; pair_b: feature/-/- -	-	-	-
+flat_tail | two	12	-	linear-0	pair_a: feature/-/- -; pair_b: feature/-/- -	-	-	-
+flat_tail | two	13	-	linear-0	pair_a: feature/-/- -; pair_b: feature/-/- -	-	-	-
+flat_tail | two	14	-	linear-0	pair_a: feature/-/- -; pair_b: feature/-/- -	-	-	-
+flat_tail | two	15	-	linear-0	pair_a: feature/-/- -; pair_b: feature/-/- -	-	-	-
+flat_tail | two	16	-	linear-0	pair_a: feature/-/- -; pair_b: feature/-/- -	-	-	-
+flat_tail | two	17	-	linear-0	pair_a: feature/-/- -; pair_b: feature/-/- -	-	-	-
+flat_tail | two	18	-	linear-0	pair_a: feature/-/- -; pair_b: feature/-/- -	-	-	-
+flat_tail | two	19	-	linear-0	pair_a: feature/-/- -; pair_b: feature/-/- -	-	-	-
+flat_tail | two	20	-	linear-0	pair_a: feature/-/- -; pair_b: feature/-/- -	-	-	-
+flat_tail | two	21	-	linear-0	pair_a: feature/-/- -; pair_b: feature/-/- -	-	-	-
+flat_tail | two	22	-	linear-0	pair_a: feature/-/- -; pair_b: feature/-/- -	-	-	-
+flat_tail | two	23	-	linear-0	pair_a: feature/-/- -; pair_b: feature/-/- -	-	-	-
+flat_tail | two	24	-	linear-0	pair_a: feature/-/- -; pair_b: feature/-/- -	-	-	-
+flat_tail | two	25	-	linear-0	pair_a: feature/-/- -; pair_b: feature/-/- -	-	-	-
+flat_tail | two	26	-	linear-0	pair_a: feature/-/- -; pair_b: feature/-/- -	-	-	-
+flat_tail | two	27	-	linear-0	pair_a: feature/-/- -; pair_b: feature/-/- -	-	-	-
+flat_tail | two	28	-	linear-0	pair_a: feature/-/- -; pair_b: feature/-/- -	-	-	-
+flat_tail | two	29	-	linear-0	pair_a: feature/-/- -; pair_b: feature/-/- -	-	-	-
+panel | two	0	0.7643	linear-0	level: target/-/- -; pair_a: feature/-/- 699.2; pair_b: feature/-/- 292.6	pair_a,level_prev,pair_b	0.05	-
+panel | two	1	0.7965	linear-0	level: target/-/- -; pair_a: feature/-/- 540; pair_b: feature/-/- 257.1	pair_a,pair_b,level_prev	0.05	-
+panel | two	2	0.8561	linear-0	level: target/-/- -; pair_a: feature/-/- 462.4; pair_b: feature/-/- 210.4	pair_a,pair_b,level_prev	0.05	-
+panel | two	3	0.7724	linear-0	level: target/-/- -; pair_a: feature/-/- 580.9; pair_b: feature/-/- 285	pair_a,pair_b,level_prev	0.05	-
+panel | two	4	0.8549	linear-0	level: target/-/- -; pair_a: feature/-/- 426.9; pair_b: feature/-/- 257.6	pair_a,pair_b,level_prev	0.05	-
+panel | two	5	0.7491	linear-0	level: target/-/- -; pair_a: feature/-/- 493.3; pair_b: feature/-/- 229.9	pair_a,level_prev,pair_b	0.05	-
+panel | two	6	0.7761	linear-0	level: target/-/- -; pair_a: feature/-/- 560.4; pair_b: feature/-/- 241.6	pair_a,level_prev,pair_b	0.05	-
+panel | two	7	0.9252	linear-0	level: target/-/- -; pair_a: feature/-/- 406.9; pair_b: feature/-/- 194.9	pair_a,pair_b,level_prev	0.05	-
+panel | two	8	0.7763	linear-0	level: target/-/- -; pair_a: feature/-/- 512.7; pair_b: feature/-/- 258.9	pair_a,pair_b,level_prev	0.05	-
+panel | two	9	0.7717	linear-0	level: target/-/- -; pair_a: feature/-/- 716.3; pair_b: feature/-/- 291.4	pair_a,level_prev,pair_b	0.05	-
+panel | two	10	0.7901	linear-0	level: target/-/- -; pair_a: feature/-/- 591.5; pair_b: feature/-/- 267.2	pair_a,pair_b,level_prev	0.05	-
+panel | two	11	0.7754	linear-0	level: target/-/- -; pair_a: feature/-/- 565; pair_b: feature/-/- 244.1	pair_a,level_prev,pair_b	0.05	-
+panel | two	12	0.7893	linear-0	level: target/-/- -; pair_a: feature/-/- 491.6; pair_b: feature/-/- 265.8	pair_a,pair_b,level_prev	0.05	-
+panel | two	13	0.7484	linear-0	level: target/-/- -; pair_a: feature/-/- 686.7; pair_b: feature/-/- 302.2	pair_a,level_prev,pair_b	0.05	-
+panel | two	14	0.7841	linear-0	level: target/-/- -; pair_a: feature/-/- 520.3; pair_b: feature/-/- 249.9	pair_a,pair_b,level_prev	0.05	-
+panel | two	15	0.6842	linear-0	level: target/-/- -; pair_a: feature/-/- 658.5; pair_b: feature/-/- 280.2	pair_a,level_prev,pair_b	0.05	-
+panel | two	16	0.8151	linear-0	level: target/-/- -; pair_a: feature/-/- 560.6; pair_b: feature/-/- 284.9	pair_a,pair_b,level_prev	0.05	-
+panel | two	17	0.6825	linear-0	level: target/-/- -; pair_a: feature/-/- 625.3; pair_b: feature/-/- 340.5	pair_a,level_prev,pair_b	0.05	-
+panel | two	18	0.8475	linear-0	level: target/-/- -; pair_a: feature/-/- 531.7; pair_b: feature/-/- 280	pair_a,pair_b,level_prev	0.05	-
+panel | two	19	0.7961	linear-0	level: target/-/- -; pair_a: feature/-/- 614; pair_b: feature/-/- 293	pair_a,pair_b,level_prev	0.05	-
+panel | two	20	0.8312	linear-0	level: target/-/- -; pair_a: feature/-/- 432; pair_b: feature/-/- 223.1	pair_a,pair_b,level_prev	0.05	-
+panel | two	21	0.6979	linear-0	level: target/-/- -; pair_a: feature/-/- 680.8; pair_b: feature/-/- 332.1	pair_a,level_prev,pair_b	0.05	-
+panel | two	22	0.8205	linear-0	level: target/-/- -; pair_a: feature/-/- 509.4; pair_b: feature/-/- 263.3	pair_a,pair_b,level_prev	0.05	-
+panel | two	23	0.7739	linear-0	level: target/-/- -; pair_a: feature/-/- 525.6; pair_b: feature/-/- 259.6	pair_a,pair_b,level_prev	0.05	-
+panel | two	24	0.8273	linear-0	level: target/-/- -; pair_a: feature/-/- 532.5; pair_b: feature/-/- 213.8	pair_a,pair_b,level_prev	0.05	-
+panel | two	25	0.8086	linear-0	level: target/-/- -; pair_a: feature/-/- 393.8; pair_b: feature/-/- 198.5	pair_a,pair_b,level_prev	0.05	-
+panel | two	26	0.8915	linear-0	level: target/-/- -; pair_a: feature/-/- 373.8; pair_b: feature/-/- 152.5	pair_a,pair_b,level_prev	0.05	-
+panel | two	27	0.8919	linear-0	level: target/-/- -; pair_a: feature/-/- 444.8; pair_b: feature/-/- 187.3	pair_a,pair_b,level_prev	0.05	-
+panel | two	28	0.7555	linear-0	level: target/-/- -; pair_a: feature/-/- 536.2; pair_b: feature/-/- 289.7	pair_a,pair_b,level_prev	0.05	-
+panel | two	29	0.7523	linear-0	level: target/-/- -; pair_a: feature/-/- 537.9; pair_b: feature/-/- 243.8	pair_a,level_prev,pair_b	0.05	-
+signal_clf | two	0	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8681; pair_b: feature/-/- 0.2341	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_clf | two	1	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8741; pair_b: feature/-/- 0.2902	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_clf | two	2	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.926; pair_b: feature/-/- 0.2286	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_clf | two	3	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 1.003; pair_b: feature/-/- 0.1868	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_clf | two	4	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.963; pair_b: feature/-/- 0.256	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_clf | two	5	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.937; pair_b: feature/-/- 0.2158	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_clf | two	6	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9177; pair_b: feature/-/- 0.2411	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_clf | two	7	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8621; pair_b: feature/-/- 0.26	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_clf | two	8	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8991; pair_b: feature/-/- 0.2626	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_clf | two	9	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9283; pair_b: feature/-/- 0.2268	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_clf | two	10	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8872; pair_b: feature/-/- 0.283	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_clf | two	11	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8864; pair_b: feature/-/- 0.2635	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_clf | two	12	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8466; pair_b: feature/-/- 0.2939	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_clf | two	13	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9324; pair_b: feature/-/- 0.2636	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_clf | two	14	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8991; pair_b: feature/-/- 0.237	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_clf | two	15	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9297; pair_b: feature/-/- 0.2251	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_clf | two	16	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8983; pair_b: feature/-/- 0.224	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_clf | two	17	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8331; pair_b: feature/-/- 0.2853	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_clf | two	18	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8201; pair_b: feature/-/- 0.2863	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_clf | two	19	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8563; pair_b: feature/-/- 0.2445	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_clf | two	20	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8827; pair_b: feature/-/- 0.2945	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_clf | two	21	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9056; pair_b: feature/-/- 0.2125	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_clf | two	22	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9593; pair_b: feature/-/- 0.1806	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_clf | two	23	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8886; pair_b: feature/-/- 0.2392	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_clf | two	24	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9237; pair_b: feature/-/- 0.2356	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_clf | two	25	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9509; pair_b: feature/-/- 0.2331	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_clf | two	26	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9061; pair_b: feature/-/- 0.2394	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_clf | two	27	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8987; pair_b: feature/-/- 0.2337	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_clf | two	28	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8771; pair_b: feature/-/- 0.2449	pair_a,pair_b	0.05	near_perfect_headline[None]
+signal_clf | two	29	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8388; pair_b: feature/-/- 0.2563	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_clf | two	0	1	linear-0	pair_a: feature/-/- 1.097; pair_b: feature/-/- 0.2712	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_clf | two	1	1	linear-0	pair_a: feature/-/- 1.058; pair_b: feature/-/- 0.2797	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_clf | two	2	1	linear-0	pair_a: feature/-/- 1.044; pair_b: feature/-/- 0.251	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_clf | two	3	1	linear-0	pair_a: feature/-/- 0.9608; pair_b: feature/-/- 0.3242	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_clf | two	4	1	linear-0	pair_a: feature/-/- 0.9361; pair_b: feature/-/- 0.3131	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_clf | two	5	1	linear-0	pair_a: feature/-/- 1.002; pair_b: feature/-/- 0.2935	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_clf | two	6	1	linear-0	pair_a: feature/-/- 0.9983; pair_b: feature/-/- 0.3072	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_clf | two	7	1	linear-0	pair_a: feature/-/- 0.9811; pair_b: feature/-/- 0.3353	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_clf | two	8	1	linear-0	pair_a: feature/-/- 0.8911; pair_b: feature/-/- 0.3822	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_clf | two	9	1	linear-0	pair_a: feature/-/- 1.029; pair_b: feature/-/- 0.2878	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_clf | two	10	1	linear-0	pair_a: feature/-/- 0.934; pair_b: feature/-/- 0.32	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_clf | two	11	1	linear-0	pair_a: feature/-/- 0.9966; pair_b: feature/-/- 0.2509	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_clf | two	12	1	linear-0	pair_a: feature/-/- 0.9309; pair_b: feature/-/- 0.3162	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_clf | two	13	1	linear-0	pair_a: feature/-/- 0.9836; pair_b: feature/-/- 0.3076	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_clf | two	14	1	linear-0	pair_a: feature/-/- 0.9817; pair_b: feature/-/- 0.3198	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_clf | two	15	1	linear-0	pair_a: feature/-/- 1.039; pair_b: feature/-/- 0.269	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_clf | two	16	1	linear-0	pair_a: feature/-/- 1.022; pair_b: feature/-/- 0.2834	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_clf | two	17	1	linear-0	pair_a: feature/-/- 0.9451; pair_b: feature/-/- 0.3615	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_clf | two	18	1	linear-0	pair_a: feature/-/- 0.9971; pair_b: feature/-/- 0.3215	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_clf | two	19	1	linear-0	pair_a: feature/-/- 0.9293; pair_b: feature/-/- 0.3163	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_clf | two	20	1	linear-0	pair_a: feature/-/- 1.005; pair_b: feature/-/- 0.2876	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_clf | two	21	1	linear-0	pair_a: feature/-/- 0.9982; pair_b: feature/-/- 0.2654	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_clf | two	22	1	linear-0	pair_a: feature/-/- 0.997; pair_b: feature/-/- 0.2432	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_clf | two	23	1	linear-0	pair_a: feature/-/- 1.055; pair_b: feature/-/- 0.231	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_clf | two	24	1	linear-0	pair_a: feature/-/- 0.9605; pair_b: feature/-/- 0.3456	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_clf | two	25	1	linear-0	pair_a: feature/-/- 0.9457; pair_b: feature/-/- 0.3296	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_clf | two	26	1	linear-0	pair_a: feature/-/- 0.9518; pair_b: feature/-/- 0.313	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_clf | two	27	1	linear-0	pair_a: feature/-/- 1.013; pair_b: feature/-/- 0.2913	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_clf | two	28	1	linear-0	pair_a: feature/-/- 0.9001; pair_b: feature/-/- 0.3521	pair_a,pair_b	0.05	near_perfect_headline[None]
+noise_clf | two	29	1	linear-0	pair_a: feature/-/- 0.9947; pair_b: feature/-/- 0.2491	pair_a,pair_b	0.05	near_perfect_headline[None]
+imbalanced | two	0	1	linear-0	pair_a: feature/-/- 0.9766; pair_b: feature/-/- 0.006636	pair_a	0.05	strong_single_column[pair_a],near_perfect_headline[None]
+imbalanced | two	1	1	linear-0	pair_a: feature/-/- 1.041; pair_b: feature/-/- 0.005542	pair_a	0.05	strong_single_column[pair_a],near_perfect_headline[None]
+imbalanced | two	2	-0.0592	tree-0	pair_a: excluded/suspected_leak/predicts_target -; pair_b: feature/-/- -0.02963	-	0.05	suspected_leak[pair_a]
+imbalanced | two	3	1	linear-0	pair_a: feature/-/- 1.02; pair_b: feature/-/- 0.01362	pair_a	0.05	strong_single_column[pair_a],near_perfect_headline[None]
+imbalanced | two	4	0.1124	linear-0	pair_a: excluded/suspected_leak/predicts_target -; pair_b: feature/-/- -0.01098	-	0.2302	suspected_leak[pair_a]
+imbalanced | two	5	-0.04	tree-0	pair_a: excluded/suspected_leak/predicts_target -; pair_b: feature/-/- 0.01895	-	0.07013	suspected_leak[pair_a]
+imbalanced | two	6	1	linear-0	pair_a: feature/-/- 1.038; pair_b: feature/-/- 0.004686	pair_a	0.05	strong_single_column[pair_a],near_perfect_headline[None]
+imbalanced | two	7	1	linear-0	pair_a: feature/-/- 0.9735; pair_b: feature/-/- 0.03041	pair_a	0.05	strong_single_column[pair_a],near_perfect_headline[None]
+imbalanced | two	8	1	linear-0	pair_a: feature/-/- 1.06; pair_b: feature/-/- 0.007633	pair_a	0.05	strong_single_column[pair_a],near_perfect_headline[None]
+imbalanced | two	9	1	linear-0	pair_a: feature/-/- 0.9714; pair_b: feature/-/- 0.004717	pair_a	0.05	strong_single_column[pair_a],near_perfect_headline[None]
+imbalanced | two	10	-0.1014	linear-0	pair_a: excluded/suspected_leak/predicts_target -; pair_b: feature/-/- 0.02054	-	0.2231	suspected_leak[pair_a]
+imbalanced | two	11	1	linear-0	pair_a: feature/-/- 0.8861; pair_b: feature/-/- 0.006568	pair_a	0.05	strong_single_column[pair_a],near_perfect_headline[None]
+imbalanced | two	12	1	linear-0	pair_a: feature/-/- 0.9162; pair_b: feature/-/- 0.006688	pair_a	0.05	strong_single_column[pair_a],near_perfect_headline[None]
+imbalanced | two	13	1	linear-0	pair_a: feature/-/- 1.02; pair_b: feature/-/- 0.002337	pair_a	0.05	strong_single_column[pair_a],near_perfect_headline[None]
+imbalanced | two	14	0.04083	tree-0	pair_a: excluded/suspected_leak/predicts_target -; pair_b: feature/-/- -0.001258	-	0.1185	suspected_leak[pair_a]
+imbalanced | two	15	0.3337	linear-0	pair_a: excluded/suspected_leak/predicts_target -; pair_b: feature/-/- -0.01412	-	0.2227	suspected_leak[pair_a]
+imbalanced | two	16	1	linear-0	pair_a: feature/-/- 0.9428; pair_b: feature/-/- 0.003026	pair_a	0.05	strong_single_column[pair_a],near_perfect_headline[None]
+imbalanced | two	17	1	linear-0	pair_a: feature/-/- 1.019; pair_b: feature/-/- 0.01243	pair_a	0.05	strong_single_column[pair_a],near_perfect_headline[None]
+imbalanced | two	18	1	linear-0	pair_a: feature/-/- 1.026; pair_b: feature/-/- 0.01633	pair_a	0.05	strong_single_column[pair_a],near_perfect_headline[None]
+imbalanced | two	19	0.03455	linear-0	pair_a: excluded/suspected_leak/predicts_target -; pair_b: feature/-/- 0.08495	-	0.2463	suspected_leak[pair_a]
+imbalanced | two	20	1	linear-0	pair_a: feature/-/- 0.8659; pair_b: feature/-/- 0.009839	pair_a	0.05	strong_single_column[pair_a],near_perfect_headline[None]
+imbalanced | two	21	1	linear-0	pair_a: feature/-/- 0.9664; pair_b: feature/-/- 0.003404	pair_a	0.05	strong_single_column[pair_a],near_perfect_headline[None]
+imbalanced | two	22	1	linear-0	pair_a: feature/-/- 0.8484; pair_b: feature/-/- 0.01613	pair_a	0.05	strong_single_column[pair_a],near_perfect_headline[None]
+imbalanced | two	23	1	linear-0	pair_a: feature/-/- 0.9646; pair_b: feature/-/- 0.008844	pair_a	0.05	strong_single_column[pair_a],near_perfect_headline[None]
+imbalanced | two	24	1	linear-0	pair_a: feature/-/- 1.045; pair_b: feature/-/- 0.004933	pair_a	0.05	strong_single_column[pair_a],near_perfect_headline[None]
+imbalanced | two	25	-0.02149	tree-0	pair_a: excluded/suspected_leak/predicts_target -; pair_b: feature/-/- -0.05508	-	0.07217	suspected_leak[pair_a]
+imbalanced | two	26	1	linear-0	pair_a: feature/-/- 0.953; pair_b: feature/-/- 0.002556	pair_a	0.05	strong_single_column[pair_a],near_perfect_headline[None]
+imbalanced | two	27	-0.02556	linear-0	pair_a: excluded/suspected_leak/predicts_target -; pair_b: feature/-/- 0.001015	-	0.2085	suspected_leak[pair_a]
+imbalanced | two	28	1	linear-0	pair_a: feature/-/- 0.9807; pair_b: feature/-/- 0.006014	pair_a	0.05	strong_single_column[pair_a],near_perfect_headline[None]
+imbalanced | two	29	1	linear-0	pair_a: feature/-/- 0.9151; pair_b: feature/-/- 0.01331	pair_a	0.05	strong_single_column[pair_a],near_perfect_headline[None]
+binary_numeric | two	0	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8406; pair_b: feature/-/- 0.2576	pair_a,pair_b	0.05	near_perfect_headline[None]
+binary_numeric | two	1	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9242; pair_b: feature/-/- 0.2823	pair_a,pair_b	0.05	near_perfect_headline[None]
+binary_numeric | two	2	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8239; pair_b: feature/-/- 0.2723	pair_a,pair_b	0.05	near_perfect_headline[None]
+binary_numeric | two	3	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8968; pair_b: feature/-/- 0.2728	pair_a,pair_b	0.05	near_perfect_headline[None]
+binary_numeric | two	4	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8635; pair_b: feature/-/- 0.2992	pair_a,pair_b	0.05	near_perfect_headline[None]
+binary_numeric | two	5	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9299; pair_b: feature/-/- 0.2396	pair_a,pair_b	0.05	near_perfect_headline[None]
+binary_numeric | two	6	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9011; pair_b: feature/-/- 0.2506	pair_a,pair_b	0.05	near_perfect_headline[None]
+binary_numeric | two	7	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9116; pair_b: feature/-/- 0.2574	pair_a,pair_b	0.05	near_perfect_headline[None]
+binary_numeric | two	8	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9098; pair_b: feature/-/- 0.2312	pair_a,pair_b	0.05	near_perfect_headline[None]
+binary_numeric | two	9	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8654; pair_b: feature/-/- 0.2404	pair_a,pair_b	0.05	near_perfect_headline[None]
+binary_numeric | two	10	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.922; pair_b: feature/-/- 0.2484	pair_a,pair_b	0.05	near_perfect_headline[None]
+binary_numeric | two	11	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9168; pair_b: feature/-/- 0.2387	pair_a,pair_b	0.05	near_perfect_headline[None]
+binary_numeric | two	12	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9531; pair_b: feature/-/- 0.1981	pair_a,pair_b	0.05	near_perfect_headline[None]
+binary_numeric | two	13	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9307; pair_b: feature/-/- 0.1919	pair_a,pair_b	0.05	near_perfect_headline[None]
+binary_numeric | two	14	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8639; pair_b: feature/-/- 0.2058	pair_a,pair_b	0.05	near_perfect_headline[None]
+binary_numeric | two	15	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8889; pair_b: feature/-/- 0.2395	pair_a,pair_b	0.05	near_perfect_headline[None]
+binary_numeric | two	16	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8899; pair_b: feature/-/- 0.2659	pair_a,pair_b	0.05	near_perfect_headline[None]
+binary_numeric | two	17	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8944; pair_b: feature/-/- 0.2438	pair_a,pair_b	0.05	near_perfect_headline[None]
+binary_numeric | two	18	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9291; pair_b: feature/-/- 0.2267	pair_a,pair_b	0.05	near_perfect_headline[None]
+binary_numeric | two	19	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8922; pair_b: feature/-/- 0.2348	pair_a,pair_b	0.05	near_perfect_headline[None]
+binary_numeric | two	20	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8969; pair_b: feature/-/- 0.2785	pair_a,pair_b	0.05	near_perfect_headline[None]
+binary_numeric | two	21	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8851; pair_b: feature/-/- 0.2784	pair_a,pair_b	0.05	near_perfect_headline[None]
+binary_numeric | two	22	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9183; pair_b: feature/-/- 0.2772	pair_a,pair_b	0.05	near_perfect_headline[None]
+binary_numeric | two	23	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8359; pair_b: feature/-/- 0.3014	pair_a,pair_b	0.05	near_perfect_headline[None]
+binary_numeric | two	24	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.888; pair_b: feature/-/- 0.244	pair_a,pair_b	0.05	near_perfect_headline[None]
+binary_numeric | two	25	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8295; pair_b: feature/-/- 0.2799	pair_a,pair_b	0.05	near_perfect_headline[None]
+binary_numeric | two	26	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9659; pair_b: feature/-/- 0.1985	pair_a,pair_b	0.05	near_perfect_headline[None]
+binary_numeric | two	27	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9214; pair_b: feature/-/- 0.2783	pair_a,pair_b	0.05	near_perfect_headline[None]
+binary_numeric | two	28	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9257; pair_b: feature/-/- 0.2522	pair_a,pair_b	0.05	near_perfect_headline[None]
+binary_numeric | two	29	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9025; pair_b: feature/-/- 0.2748	pair_a,pair_b	0.05	near_perfect_headline[None]
+messy | two	0	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9126; pair_b: feature/-/- 0.236	pair_a,pair_b	0.05	near_perfect_headline[None]
+messy | two	1	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8516; pair_b: feature/-/- 0.2903	pair_a,pair_b	0.05	near_perfect_headline[None]
+messy | two	2	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 1.007; pair_b: feature/-/- 0.2235	pair_a,pair_b	0.05	near_perfect_headline[None]
+messy | two	3	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8897; pair_b: feature/-/- 0.2564	pair_a,pair_b	0.05	near_perfect_headline[None]
+messy | two	4	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8886; pair_b: feature/-/- 0.239	pair_a,pair_b	0.05	near_perfect_headline[None]
+messy | two	5	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9088; pair_b: feature/-/- 0.2496	pair_a,pair_b	0.05	near_perfect_headline[None]
+messy | two	6	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9556; pair_b: feature/-/- 0.2159	pair_a,pair_b	0.05	near_perfect_headline[None]
+messy | two	7	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9077; pair_b: feature/-/- 0.2409	pair_a,pair_b	0.05	near_perfect_headline[None]
+messy | two	8	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9611; pair_b: feature/-/- 0.198	pair_a,pair_b	0.05	near_perfect_headline[None]
+messy | two	9	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9261; pair_b: feature/-/- 0.2636	pair_a,pair_b	0.05	near_perfect_headline[None]
+messy | two	10	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9079; pair_b: feature/-/- 0.2031	pair_a,pair_b	0.05	near_perfect_headline[None]
+messy | two	11	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9789; pair_b: feature/-/- 0.2427	pair_a,pair_b	0.05	near_perfect_headline[None]
+messy | two	12	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8843; pair_b: feature/-/- 0.2352	pair_a,pair_b	0.05	near_perfect_headline[None]
+messy | two	13	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9439; pair_b: feature/-/- 0.2303	pair_a,pair_b	0.05	near_perfect_headline[None]
+messy | two	14	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9039; pair_b: feature/-/- 0.2271	pair_a,pair_b	0.05	near_perfect_headline[None]
+messy | two	15	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8219; pair_b: feature/-/- 0.3185	pair_a,pair_b	0.05	near_perfect_headline[None]
+messy | two	16	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9726; pair_b: feature/-/- 0.2761	pair_a,pair_b	0.05	near_perfect_headline[None]
+messy | two	17	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8809; pair_b: feature/-/- 0.2688	pair_a,pair_b	0.05	near_perfect_headline[None]
+messy | two	18	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9157; pair_b: feature/-/- 0.2289	pair_a,pair_b	0.05	near_perfect_headline[None]
+messy | two	19	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 1.006; pair_b: feature/-/- 0.1912	pair_a,pair_b	0.05	near_perfect_headline[None]
+messy | two	20	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9289; pair_b: feature/-/- 0.2305	pair_a,pair_b	0.05	near_perfect_headline[None]
+messy | two	21	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9341; pair_b: feature/-/- 0.1749	pair_a,pair_b	0.05	near_perfect_headline[None]
+messy | two	22	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9069; pair_b: feature/-/- 0.271	pair_a,pair_b	0.05	near_perfect_headline[None]
+messy | two	23	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8382; pair_b: feature/-/- 0.2707	pair_a,pair_b	0.05	near_perfect_headline[None]
+messy | two	24	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9664; pair_b: feature/-/- 0.2245	pair_a,pair_b	0.05	near_perfect_headline[None]
+messy | two	25	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9683; pair_b: feature/-/- 0.1739	pair_a,pair_b	0.05	near_perfect_headline[None]
+messy | two	26	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9138; pair_b: feature/-/- 0.2524	pair_a,pair_b	0.05	near_perfect_headline[None]
+messy | two	27	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.886; pair_b: feature/-/- 0.2814	pair_a,pair_b	0.05	near_perfect_headline[None]
+messy | two	28	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8914; pair_b: feature/-/- 0.2503	pair_a,pair_b	0.05	near_perfect_headline[None]
+messy | two	29	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.922; pair_b: feature/-/- 0.2524	pair_a,pair_b	0.05	near_perfect_headline[None]
+entities | two	0	1	linear-0	pair_a: feature/-/- 1.009; pair_b: feature/-/- 0.246	pair_a,pair_b	0.05	near_perfect_headline[None]
+entities | two	1	1	linear-0	pair_a: feature/-/- 0.95; pair_b: feature/-/- 0.3284	pair_a,pair_b	0.05	near_perfect_headline[None]
+entities | two	2	1	linear-0	pair_a: feature/-/- 1.022; pair_b: feature/-/- 0.3163	pair_a,pair_b	0.05	near_perfect_headline[None]
+entities | two	3	1	linear-0	pair_a: feature/-/- 1.021; pair_b: feature/-/- 0.2473	pair_a,pair_b	0.05	near_perfect_headline[None]
+entities | two	4	1	linear-0	pair_a: feature/-/- 1.041; pair_b: feature/-/- 0.242	pair_a,pair_b	0.05	near_perfect_headline[None]
+entities | two	5	1	linear-0	pair_a: feature/-/- 0.8848; pair_b: feature/-/- 0.3381	pair_a,pair_b	0.05	near_perfect_headline[None]
+entities | two	6	1	linear-0	pair_a: feature/-/- 0.9506; pair_b: feature/-/- 0.289	pair_a,pair_b	0.05	near_perfect_headline[None]
+entities | two	7	1	linear-0	pair_a: feature/-/- 1.024; pair_b: feature/-/- 0.3098	pair_a,pair_b	0.05	near_perfect_headline[None]
+entities | two	8	1	linear-0	pair_a: feature/-/- 1.027; pair_b: feature/-/- 0.3158	pair_a,pair_b	0.05	near_perfect_headline[None]
+entities | two	9	1	linear-0	pair_a: feature/-/- 1.008; pair_b: feature/-/- 0.3398	pair_a,pair_b	0.05	near_perfect_headline[None]
+entities | two	10	1	linear-0	pair_a: feature/-/- 0.9332; pair_b: feature/-/- 0.3748	pair_a,pair_b	0.05	near_perfect_headline[None]
+entities | two	11	1	linear-0	pair_a: feature/-/- 1.053; pair_b: feature/-/- 0.2965	pair_a,pair_b	0.05	near_perfect_headline[None]
+entities | two	12	1	linear-0	pair_a: feature/-/- 0.9803; pair_b: feature/-/- 0.3523	pair_a,pair_b	0.05	near_perfect_headline[None]
+entities | two	13	1	linear-0	pair_a: feature/-/- 0.9042; pair_b: feature/-/- 0.3964	pair_a,pair_b	0.05	near_perfect_headline[None]
+entities | two	14	1	linear-0	pair_a: feature/-/- 0.981; pair_b: feature/-/- 0.2906	pair_a,pair_b	0.05	near_perfect_headline[None]
+entities | two	15	1	linear-0	pair_a: feature/-/- 0.9573; pair_b: feature/-/- 0.3098	pair_a,pair_b	0.05	near_perfect_headline[None]
+entities | two	16	1	linear-0	pair_a: feature/-/- 0.9547; pair_b: feature/-/- 0.3054	pair_a,pair_b	0.05	near_perfect_headline[None]
+entities | two	17	1	linear-0	pair_a: feature/-/- 0.9986; pair_b: feature/-/- 0.3018	pair_a,pair_b	0.05	near_perfect_headline[None]
+entities | two	18	1	linear-0	pair_a: feature/-/- 0.9822; pair_b: feature/-/- 0.2453	pair_a,pair_b	0.05	near_perfect_headline[None]
+entities | two	19	1	linear-0	pair_a: feature/-/- 0.9398; pair_b: feature/-/- 0.3178	pair_a,pair_b	0.05	near_perfect_headline[None]
+entities | two	20	1	linear-0	pair_a: feature/-/- 1.082; pair_b: feature/-/- 0.2649	pair_a,pair_b	0.05	near_perfect_headline[None]
+entities | two	21	1	linear-0	pair_a: feature/-/- 0.9452; pair_b: feature/-/- 0.3148	pair_a,pair_b	0.05	near_perfect_headline[None]
+entities | two	22	1	linear-0	pair_a: feature/-/- 1.027; pair_b: feature/-/- 0.3061	pair_a,pair_b	0.05	near_perfect_headline[None]
+entities | two	23	1	linear-0	pair_a: feature/-/- 0.9777; pair_b: feature/-/- 0.2836	pair_a,pair_b	0.05	near_perfect_headline[None]
+entities | two	24	1	linear-0	pair_a: feature/-/- 0.9622; pair_b: feature/-/- 0.2797	pair_a,pair_b	0.05	near_perfect_headline[None]
+entities | two	25	1	linear-0	pair_a: feature/-/- 1.054; pair_b: feature/-/- 0.2446	pair_a,pair_b	0.05	near_perfect_headline[None]
+entities | two	26	1	linear-0	pair_a: feature/-/- 0.9729; pair_b: feature/-/- 0.3242	pair_a,pair_b	0.05	near_perfect_headline[None]
+entities | two	27	1	linear-0	pair_a: feature/-/- 1.029; pair_b: feature/-/- 0.2727	pair_a,pair_b	0.05	near_perfect_headline[None]
+entities | two	28	1	linear-0	pair_a: feature/-/- 1.046; pair_b: feature/-/- 0.287	pair_a,pair_b	0.05	near_perfect_headline[None]
+entities | two	29	1	linear-0	pair_a: feature/-/- 1.006; pair_b: feature/-/- 0.3138	pair_a,pair_b	0.05	near_perfect_headline[None]
+time_blocks | two	0	1	linear-0	pair_a: feature/-/- 1.011; pair_b: feature/-/- 0.248	pair_a,pair_b	0.05	near_perfect_headline[None]
+time_blocks | two	1	1	linear-0	pair_a: feature/-/- 1.005; pair_b: feature/-/- 0.2891	pair_a,pair_b	0.05	near_perfect_headline[None]
+time_blocks | two	2	1	linear-0	pair_a: feature/-/- 0.9574; pair_b: feature/-/- 0.2945	pair_a,pair_b	0.05	near_perfect_headline[None]
+time_blocks | two	3	1	linear-0	pair_a: feature/-/- 0.9955; pair_b: feature/-/- 0.297	pair_a,pair_b	0.05	near_perfect_headline[None]
+time_blocks | two	4	1	linear-0	pair_a: feature/-/- 0.9922; pair_b: feature/-/- 0.2933	pair_a,pair_b	0.05	near_perfect_headline[None]
+time_blocks | two	5	1	linear-0	pair_a: feature/-/- 0.9531; pair_b: feature/-/- 0.3269	pair_a,pair_b	0.05	near_perfect_headline[None]
+time_blocks | two	6	1	linear-0	pair_a: feature/-/- 0.9995; pair_b: feature/-/- 0.3133	pair_a,pair_b	0.05	near_perfect_headline[None]
+time_blocks | two	7	1	linear-0	pair_a: feature/-/- 0.8985; pair_b: feature/-/- 0.3339	pair_a,pair_b	0.05	near_perfect_headline[None]
+time_blocks | two	8	1	linear-0	pair_a: feature/-/- 1.018; pair_b: feature/-/- 0.3183	pair_a,pair_b	0.05	near_perfect_headline[None]
+time_blocks | two	9	1	linear-0	pair_a: feature/-/- 0.994; pair_b: feature/-/- 0.328	pair_a,pair_b	0.05	near_perfect_headline[None]
+time_blocks | two	10	1	linear-0	pair_a: feature/-/- 1.035; pair_b: feature/-/- 0.2631	pair_a,pair_b	0.05	near_perfect_headline[None]
+time_blocks | two	11	1	linear-0	pair_a: feature/-/- 0.9946; pair_b: feature/-/- 0.3018	pair_a,pair_b	0.05	near_perfect_headline[None]
+time_blocks | two	12	1	linear-0	pair_a: feature/-/- 1.014; pair_b: feature/-/- 0.2739	pair_a,pair_b	0.05	near_perfect_headline[None]
+time_blocks | two	13	1	linear-0	pair_a: feature/-/- 1.001; pair_b: feature/-/- 0.2772	pair_a,pair_b	0.05	near_perfect_headline[None]
+time_blocks | two	14	1	linear-0	pair_a: feature/-/- 0.9986; pair_b: feature/-/- 0.2877	pair_a,pair_b	0.05	near_perfect_headline[None]
+time_blocks | two	15	1	linear-0	pair_a: feature/-/- 0.9983; pair_b: feature/-/- 0.3006	pair_a,pair_b	0.05	near_perfect_headline[None]
+time_blocks | two	16	1	linear-0	pair_a: feature/-/- 0.9948; pair_b: feature/-/- 0.3156	pair_a,pair_b	0.05	near_perfect_headline[None]
+time_blocks | two	17	1	linear-0	pair_a: feature/-/- 0.9464; pair_b: feature/-/- 0.2818	pair_a,pair_b	0.05	near_perfect_headline[None]
+time_blocks | two	18	1	linear-0	pair_a: feature/-/- 1.002; pair_b: feature/-/- 0.2932	pair_a,pair_b	0.05	near_perfect_headline[None]
+time_blocks | two	19	1	linear-0	pair_a: feature/-/- 0.9826; pair_b: feature/-/- 0.3011	pair_a,pair_b	0.05	near_perfect_headline[None]
+time_blocks | two	20	1	linear-0	pair_a: feature/-/- 1.002; pair_b: feature/-/- 0.319	pair_a,pair_b	0.05	near_perfect_headline[None]
+time_blocks | two	21	1	linear-0	pair_a: feature/-/- 1.032; pair_b: feature/-/- 0.2839	pair_a,pair_b	0.05	near_perfect_headline[None]
+time_blocks | two	22	1	linear-0	pair_a: feature/-/- 1.009; pair_b: feature/-/- 0.2605	pair_a,pair_b	0.05	near_perfect_headline[None]
+time_blocks | two	23	1	linear-0	pair_a: feature/-/- 0.9826; pair_b: feature/-/- 0.3217	pair_a,pair_b	0.05	near_perfect_headline[None]
+time_blocks | two	24	1	linear-0	pair_a: feature/-/- 0.985; pair_b: feature/-/- 0.3268	pair_a,pair_b	0.05	near_perfect_headline[None]
+time_blocks | two	25	1	linear-0	pair_a: feature/-/- 1.024; pair_b: feature/-/- 0.2837	pair_a,pair_b	0.05	near_perfect_headline[None]
+time_blocks | two	26	1	linear-0	pair_a: feature/-/- 1.021; pair_b: feature/-/- 0.3245	pair_a,pair_b	0.05	near_perfect_headline[None]
+time_blocks | two	27	1	linear-0	pair_a: feature/-/- 1.019; pair_b: feature/-/- 0.2452	pair_a,pair_b	0.05	near_perfect_headline[None]
+time_blocks | two	28	1	linear-0	pair_a: feature/-/- 1.018; pair_b: feature/-/- 0.2921	pair_a,pair_b	0.05	near_perfect_headline[None]
+time_blocks | two	29	1	linear-0	pair_a: feature/-/- 0.9806; pair_b: feature/-/- 0.2731	pair_a,pair_b	0.05	near_perfect_headline[None]
+walk_repeated | two	0	0.9497	linear-0	level: target/-/- -; pair_a: feature/-/- 184.8; pair_b: feature/-/- 146.4	pair_a,pair_b,level_prev	0.05	-
+walk_repeated | two	1	0.9054	linear-0	level: target/-/- -; pair_a: feature/-/- 324.8; pair_b: feature/-/- 208.1	pair_a,pair_b,level_prev	0.05	-
+walk_repeated | two	2	0.9294	linear-0	level: target/-/- -; pair_a: feature/-/- 185.7; pair_b: feature/-/- 168.8	pair_a,pair_b,level_prev	0.05	-
+walk_repeated | two	3	0.8122	linear-0	level: target/-/- -; pair_a: feature/-/- 322.5; pair_b: feature/-/- 236.7	pair_a,pair_b,level_prev	0.05	-
+walk_repeated | two	4	0.9612	linear-0	level: target/-/- -; pair_a: feature/-/- 219.1; pair_b: feature/-/- 133.5	pair_a,pair_b,level_prev	0.05	-
+walk_repeated | two	5	0.9327	linear-0	level: target/-/- -; pair_a: feature/-/- 184.7; pair_b: feature/-/- 134.8	pair_a,pair_b,level_prev	0.05	-
+walk_repeated | two	6	0.8949	linear-0	level: target/-/- -; pair_a: feature/-/- 225.1; pair_b: feature/-/- 182.4	pair_a,pair_b,level_prev	0.05	-
+walk_repeated | two	7	0.9575	linear-0	level: target/-/- -; pair_a: feature/-/- 167; pair_b: feature/-/- 136.5	pair_a,pair_b,level_prev	0.05	-
+walk_repeated | two	8	0.9533	linear-0	level: target/-/- -; pair_a: feature/-/- 244.3; pair_b: feature/-/- 146.1	pair_a,pair_b,level_prev	0.05	-
+walk_repeated | two	9	0.7648	linear-0	level: target/-/- -; pair_a: feature/-/- 290.2; pair_b: feature/-/- 258.4	pair_a,pair_b,level_prev	0.05	-
+walk_repeated | two	10	0.9753	linear-0	level: target/-/- -; pair_a: feature/-/- 171.8; pair_b: feature/-/- 97.37	pair_a,pair_b,level_prev	0.05	-
+walk_repeated | two	11	0.8277	linear-0	level: target/-/- -; pair_a: feature/-/- 301.8; pair_b: feature/-/- 276.3	pair_a,pair_b,level_prev	0.05	-
+walk_repeated | two	12	0.9428	linear-0	level: target/-/- -; pair_a: feature/-/- 232.6; pair_b: feature/-/- 136.6	pair_a,pair_b,level_prev	0.05	-
+walk_repeated | two	13	0.964	linear-0	level: target/-/- -; pair_a: feature/-/- 228.8; pair_b: feature/-/- 129.7	pair_a,pair_b,level_prev	0.05	-
+walk_repeated | two	14	0.8821	linear-0	level: target/-/- -; pair_a: feature/-/- 247.7; pair_b: feature/-/- 217.8	pair_a,pair_b,level_prev	0.05	-
+walk_repeated | two	15	0.928	linear-0	level: target/-/- -; pair_a: feature/-/- 249.9; pair_b: feature/-/- 186	pair_a,pair_b,level_prev	0.05	-
+walk_repeated | two	16	0.8113	linear-0	level: target/-/- -; pair_a: feature/-/- 374.6; pair_b: feature/-/- 313.5	pair_a,pair_b,level_prev	0.05	-
+walk_repeated | two	17	0.9736	linear-0	level: target/-/- -; pair_a: feature/-/- 151.8; pair_b: feature/-/- 87.56	pair_a,pair_b,level_prev	0.05	-
+walk_repeated | two	18	0.9389	linear-0	level: target/-/- -; pair_a: feature/-/- 196.5; pair_b: feature/-/- 166.1	pair_a,pair_b,level_prev	0.05	-
+walk_repeated | two	19	0.9948	linear-0	level: target/-/- -; pair_a: feature/-/- 91.66; pair_b: feature/-/- 54.89	pair_a,pair_b,level_prev	0.05	near_perfect_headline[None]
+walk_repeated | two	20	0.9792	linear-0	level: target/-/- -; pair_a: feature/-/- 125.3; pair_b: feature/-/- 79.9	pair_a,pair_b,level_prev	0.05	-
+walk_repeated | two	21	0.9774	linear-0	level: target/-/- -; pair_a: feature/-/- 148.8; pair_b: feature/-/- 112.1	pair_a,pair_b,level_prev	0.05	-
+walk_repeated | two	22	0.6984	linear-0	level: target/-/- -; pair_a: feature/-/- 409.5; pair_b: feature/-/- 324.3	pair_a,pair_b,level_prev	0.05	-
+walk_repeated | two	23	0.8993	linear-0	level: target/-/- -; pair_a: feature/-/- 240.1; pair_b: feature/-/- 197.9	pair_a,pair_b,level_prev	0.05	-
+walk_repeated | two	24	0.7608	linear-0	level: target/-/- -; pair_a: feature/-/- 330.7; pair_b: feature/-/- 251	pair_a,pair_b,level_prev	0.05	-
+walk_repeated | two	25	0.9677	linear-0	level: target/-/- -; pair_a: feature/-/- 146.1; pair_b: feature/-/- 117.8	pair_a,pair_b,level_prev	0.05	-
+walk_repeated | two	26	0.9606	linear-0	level: target/-/- -; pair_a: feature/-/- 148; pair_b: feature/-/- 128.8	pair_a,pair_b,level_prev	0.05	-
+walk_repeated | two	27	0.7886	linear-0	level: target/-/- -; pair_a: feature/-/- 277.3; pair_b: feature/-/- 270.5	pair_a,pair_b,level_prev	0.05	-
+walk_repeated | two	28	0.9642	linear-0	level: target/-/- -; pair_a: feature/-/- 146.2; pair_b: feature/-/- 91.73	pair_a,pair_b,level_prev	0.05	-
+walk_repeated | two	29	0.9341	linear-0	level: target/-/- -; pair_a: feature/-/- 340.1; pair_b: feature/-/- 172.5	pair_a,pair_b,level_prev	0.05	-
+full_signal_reg_j1 | two	0	1	linear-1	f1: feature/-/- 2.801e-07; pair_a: feature/-/- 3.384; pair_b: feature/-/- 2.158	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_reg_j1 | two	1	1	linear-1	f1: feature/-/- 3.118e-07; pair_a: feature/-/- 4.408; pair_b: feature/-/- 1.978	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_reg_j1 | two	2	1	linear-1	f1: feature/-/- 4.2e-07; pair_a: feature/-/- 3.241; pair_b: feature/-/- 1.875	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_reg_j1 | two	3	1	linear-1	f1: feature/-/- 4.775e-07; pair_a: feature/-/- 4.858; pair_b: feature/-/- 2.504	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_reg_j1 | two	4	1	linear-1	f1: feature/-/- 3.866e-07; pair_a: feature/-/- 3.469; pair_b: feature/-/- 2.149	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_reg_j1 | two	5	1	linear-1	f1: feature/-/- 2.215e-07; pair_a: feature/-/- 3.754; pair_b: feature/-/- 1.92	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_reg_j1 | two	6	1	linear-1	f1: feature/-/- 4.65e-07; pair_a: feature/-/- 3.826; pair_b: feature/-/- 1.892	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_reg_j1 | two	7	1	linear-1	f1: feature/-/- 2.652e-07; pair_a: feature/-/- 3.658; pair_b: feature/-/- 2.105	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_reg_j1 | two	8	1	linear-1	f1: feature/-/- 2.836e-07; pair_a: feature/-/- 3.955; pair_b: feature/-/- 1.507	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_reg_j1 | two	9	1	linear-1	f1: feature/-/- 3.147e-07; pair_a: feature/-/- 3.743; pair_b: feature/-/- 1.523	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_reg_j1 | two	10	1	linear-1	f1: feature/-/- 3.387e-07; pair_a: feature/-/- 4.192; pair_b: feature/-/- 1.85	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_reg_j1 | two	11	1	linear-1	f1: feature/-/- 4.223e-07; pair_a: feature/-/- 4.287; pair_b: feature/-/- 1.648	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_reg_j1 | two	12	1	linear-1	f1: feature/-/- 4.544e-07; pair_a: feature/-/- 3.172; pair_b: feature/-/- 1.911	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_reg_j1 | two	13	1	linear-1	f1: feature/-/- 3.943e-07; pair_a: feature/-/- 4.72; pair_b: feature/-/- 2.11	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_reg_j1 | two	14	1	linear-1	f1: feature/-/- 3.149e-07; pair_a: feature/-/- 3.877; pair_b: feature/-/- 2.118	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_reg_j1 | two	15	1	linear-1	f1: feature/-/- 3.895e-07; pair_a: feature/-/- 5.323; pair_b: feature/-/- 2.788	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_reg_j1 | two	16	1	linear-1	f1: feature/-/- 4.345e-07; pair_a: feature/-/- 3.401; pair_b: feature/-/- 2.057	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_reg_j1 | two	17	1	linear-1	f1: feature/-/- 2.72e-07; pair_a: feature/-/- 3.681; pair_b: feature/-/- 2.108	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_reg_j1 | two	18	1	linear-1	f1: feature/-/- 3.344e-07; pair_a: feature/-/- 3.094; pair_b: feature/-/- 1.402	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_reg_j1 | two	19	1	linear-1	f1: feature/-/- 4.683e-07; pair_a: feature/-/- 3.994; pair_b: feature/-/- 1.713	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_reg_j1 | two	20	1	linear-1	f1: feature/-/- 3.607e-07; pair_a: feature/-/- 3.886; pair_b: feature/-/- 2.254	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_reg_j1 | two	21	1	linear-1	f1: feature/-/- 3.248e-07; pair_a: feature/-/- 4.117; pair_b: feature/-/- 2.186	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_reg_j1 | two	22	1	linear-1	f1: feature/-/- 4.939e-07; pair_a: feature/-/- 3.809; pair_b: feature/-/- 1.934	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_reg_j1 | two	23	1	linear-1	f1: feature/-/- 2.45e-07; pair_a: feature/-/- 4.509; pair_b: feature/-/- 2.261	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_reg_j1 | two	24	1	linear-1	f1: feature/-/- 3.502e-07; pair_a: feature/-/- 4.027; pair_b: feature/-/- 1.614	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_reg_j1 | two	25	1	linear-1	f1: feature/-/- 3.631e-07; pair_a: feature/-/- 2.894; pair_b: feature/-/- 1.989	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_reg_j1 | two	26	1	linear-1	f1: feature/-/- 2.618e-07; pair_a: feature/-/- 4.609; pair_b: feature/-/- 2.365	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_reg_j1 | two	27	1	linear-1	f1: feature/-/- 1.754e-07; pair_a: feature/-/- 3.66; pair_b: feature/-/- 1.577	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_reg_j1 | two	28	1	linear-1	f1: feature/-/- 3.349e-07; pair_a: feature/-/- 3.465; pair_b: feature/-/- 1.979	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_reg_j1 | two	29	1	linear-1	f1: feature/-/- 2.728e-07; pair_a: feature/-/- 3.26; pair_b: feature/-/- 2.301	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_clf_j1 | two	0	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8363; pair_b: feature/-/- 0.2894	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_clf_j1 | two	1	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9001; pair_b: feature/-/- 0.1473	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_clf_j1 | two	2	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9057; pair_b: feature/-/- 0.2117	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_clf_j1 | two	3	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8672; pair_b: feature/-/- 0.1873	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_clf_j1 | two	4	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.7095; pair_b: feature/-/- 0.2662	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_clf_j1 | two	5	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.7364; pair_b: feature/-/- 0.2877	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_clf_j1 | two	6	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9519; pair_b: feature/-/- 0.1244	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_clf_j1 | two	7	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9688; pair_b: feature/-/- 0.2292	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_clf_j1 | two	8	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9068; pair_b: feature/-/- 0.1774	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_clf_j1 | two	9	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9785; pair_b: feature/-/- 0.09576	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_clf_j1 | two	10	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8719; pair_b: feature/-/- 0.2314	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_clf_j1 | two	11	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8293; pair_b: feature/-/- 0.2496	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_clf_j1 | two	12	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8736; pair_b: feature/-/- 0.3001	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_clf_j1 | two	13	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 1.018; pair_b: feature/-/- 0.1996	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_clf_j1 | two	14	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9514; pair_b: feature/-/- 0.204	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_clf_j1 | two	15	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8589; pair_b: feature/-/- 0.2143	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_clf_j1 | two	16	1	linear-0	f1: feature/-/- 0.000207; pair_a: feature/-/- 0.748; pair_b: feature/-/- 0.3006	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_clf_j1 | two	17	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8838; pair_b: feature/-/- 0.1893	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_clf_j1 | two	18	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.7977; pair_b: feature/-/- 0.2465	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_clf_j1 | two	19	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9354; pair_b: feature/-/- 0.215	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_clf_j1 | two	20	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9266; pair_b: feature/-/- 0.1788	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_clf_j1 | two	21	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9039; pair_b: feature/-/- 0.2342	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_clf_j1 | two	22	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9712; pair_b: feature/-/- 0.1547	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_clf_j1 | two	23	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9386; pair_b: feature/-/- 0.2585	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_clf_j1 | two	24	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9389; pair_b: feature/-/- 0.2757	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_clf_j1 | two	25	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9281; pair_b: feature/-/- 0.2031	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_clf_j1 | two	26	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.7659; pair_b: feature/-/- 0.2721	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_clf_j1 | two	27	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8525; pair_b: feature/-/- 0.3355	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_clf_j1 | two	28	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8614; pair_b: feature/-/- 0.2315	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_signal_clf_j1 | two	29	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9527; pair_b: feature/-/- 0.2025	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_noise_small | two	0	1	linear-0	pair_a: feature/-/- 1.141; pair_b: feature/-/- 0.2684	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_noise_small | two	1	1	linear-0	pair_a: feature/-/- 0.9287; pair_b: feature/-/- 0.3004	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_noise_small | two	2	1	linear-0	pair_a: feature/-/- 0.933; pair_b: feature/-/- 0.2574	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_noise_small | two	3	1	linear-0	pair_a: feature/-/- 0.993; pair_b: feature/-/- 0.3861	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_noise_small | two	4	1	linear-0	pair_a: feature/-/- 1.091; pair_b: feature/-/- 0.2791	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_noise_small | two	5	1	linear-0	pair_a: feature/-/- 0.9968; pair_b: feature/-/- 0.2862	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_noise_small | two	6	1	linear-0	pair_a: feature/-/- 1.058; pair_b: feature/-/- 0.2377	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_noise_small | two	7	1	linear-0	pair_a: feature/-/- 0.9702; pair_b: feature/-/- 0.2861	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_noise_small | two	8	1	linear-0	pair_a: feature/-/- 1.062; pair_b: feature/-/- 0.2521	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_noise_small | two	9	1	linear-0	pair_a: feature/-/- 0.9206; pair_b: feature/-/- 0.3531	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_noise_small | two	10	1	linear-0	pair_a: feature/-/- 0.9546; pair_b: feature/-/- 0.2673	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_noise_small | two	11	1	linear-0	pair_a: feature/-/- 0.9853; pair_b: feature/-/- 0.3263	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_noise_small | two	12	1	linear-0	pair_a: feature/-/- 0.9695; pair_b: feature/-/- 0.2595	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_noise_small | two	13	1	linear-0	pair_a: feature/-/- 0.951; pair_b: feature/-/- 0.3043	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_noise_small | two	14	1	linear-0	pair_a: feature/-/- 0.9955; pair_b: feature/-/- 0.3266	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_noise_small | two	15	1	linear-0	pair_a: feature/-/- 1.015; pair_b: feature/-/- 0.263	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_noise_small | two	16	1	linear-0	pair_a: feature/-/- 0.953; pair_b: feature/-/- 0.3389	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_noise_small | two	17	1	linear-0	pair_a: feature/-/- 1.076; pair_b: feature/-/- 0.2725	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_noise_small | two	18	1	linear-0	pair_a: feature/-/- 0.9349; pair_b: feature/-/- 0.4437	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_noise_small | two	19	1	linear-0	pair_a: feature/-/- 0.9347; pair_b: feature/-/- 0.2701	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_noise_small | two	20	1	linear-0	pair_a: feature/-/- 1.052; pair_b: feature/-/- 0.2181	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_noise_small | two	21	1	linear-0	pair_a: feature/-/- 0.9782; pair_b: feature/-/- 0.3505	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_noise_small | two	22	1	linear-0	pair_a: feature/-/- 0.9313; pair_b: feature/-/- 0.2524	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_noise_small | two	23	1	linear-0	pair_a: feature/-/- 0.8711; pair_b: feature/-/- 0.3128	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_noise_small | two	24	1	linear-0	pair_a: feature/-/- 0.9734; pair_b: feature/-/- 0.3053	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_noise_small | two	25	1	linear-0	pair_a: feature/-/- 0.826; pair_b: feature/-/- 0.3644	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_noise_small | two	26	1	linear-0	pair_a: feature/-/- 1.097; pair_b: feature/-/- 0.2373	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_noise_small | two	27	1	linear-0	pair_a: feature/-/- 1.131; pair_b: feature/-/- 0.2458	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_noise_small | two	28	1	linear-0	pair_a: feature/-/- 1.019; pair_b: feature/-/- 0.3942	pair_a,pair_b	0.05	near_perfect_headline[None]
+full_noise_small | two	29	1	linear-0	pair_a: feature/-/- 0.9361; pair_b: feature/-/- 0.3397	pair_a,pair_b	0.05	near_perfect_headline[None]

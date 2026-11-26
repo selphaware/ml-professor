@@ -1,0 +1,27 @@
+| run | the copy | family | tables | fall of the column | of its copy | one fall on | share of the fall alone | both named |
+|---|---|---|---|---|---|---|---|---|
+| curved, full | exact x1 | boosting | 8 | +1.492 to +1.673 (mean +1.592) | +1.492 to +1.673 (mean +1.592) | 8 | +1.00 to +1.00 (mean +1.00) | 8 |
+| curved, full | exact x1 | forest | 52 | +1.520 to +1.966 (mean +1.674) | +1.520 to +1.966 (mean +1.674) | 52 | +1.00 to +1.09 (mean +1.04) | 52 |
+| curved, full | exact x2 | boosting | 11 | +1.485 to +1.912 (mean +1.611) | +1.485 to +1.912 (mean +1.611) | 11 | +1.00 to +1.00 (mean +1.00) | 11 |
+| curved, full | exact x2 | forest | 19 | +1.562 to +1.847 (mean +1.704) | +1.562 to +1.847 (mean +1.704) | 19 | +1.01 to +1.12 (mean +1.06) | 19 |
+| curved, full | negated x1 | boosting | 5 | +1.499 to +1.658 (mean +1.587) | +1.499 to +1.658 (mean +1.587) | 5 | +0.99 to +1.00 (mean +1.00) | 5 |
+| curved, full | negated x1 | forest | 25 | +1.520 to +1.967 (mean +1.679) | +1.520 to +1.967 (mean +1.679) | 25 | +1.00 to +1.09 (mean +1.04) | 25 |
+| full_signal_clf_j1 | dup:f1 | forest | 2 | +0.404 to +0.404 (mean +0.404) | +0.404 to +0.404 (mean +0.404) | 2 | +1.14 to +1.14 (mean +1.14) | 2 |
+| full_signal_clf_j1 | dup:f1 | linear | 58 | +0.254 to +0.571 (mean +0.438) | +0.254 to +0.571 (mean +0.438) | 58 | +0.97 to +1.05 (mean +1.01) | 58 |
+| full_signal_clf_j1 | dupneg:f1 | forest | 1 | +0.395 to +0.395 (mean +0.395) | +0.395 to +0.395 (mean +0.395) | 1 | +1.11 to +1.11 (mean +1.11) | 1 |
+| full_signal_clf_j1 | dupneg:f1 | linear | 29 | +0.254 to +0.571 (mean +0.438) | +0.254 to +0.571 (mean +0.438) | 29 | +0.97 to +1.05 (mean +1.01) | 29 |
+| full_signal_clf_j1 | duprelabel:seg | linear | 30 | +0.011 to +0.163 (mean +0.087) | +0.011 to +0.163 (mean +0.087) | 30 | +0.78 to +1.63 (mean +1.02) | 5 |
+| full_signal_clf_j1 | dupscaled:f1 | forest | 2 | +0.404 to +0.404 (mean +0.404) | +0.404 to +0.404 (mean +0.404) | 2 | +1.14 to +1.14 (mean +1.14) | 2 |
+| full_signal_clf_j1 | dupscaled:f1 | linear | 58 | +0.254 to +0.571 (mean +0.438) | +0.254 to +0.571 (mean +0.438) | 58 | +0.97 to +1.05 (mean +1.01) | 58 |
+| full_signal_reg_j1 | dup:f1 | linear | 60 | +1.002 to +1.494 (mean +1.222) | +1.002 to +1.494 (mean +1.222) | 60 | +0.99 to +1.01 (mean +1.00) | 60 |
+| full_signal_reg_j1 | dupneg:f1 | linear | 30 | +1.002 to +1.494 (mean +1.222) | +1.002 to +1.494 (mean +1.222) | 30 | +0.99 to +1.01 (mean +1.00) | 30 |
+| full_signal_reg_j1 | duprelabel:region | linear | 30 | -0.015 to +0.006 (mean -0.000) | -0.015 to +0.006 (mean -0.000) | 30 | +0.89 to +1.03 (mean +1.00) | 0 |
+| full_signal_reg_j1 | dupscaled:f1 | linear | 60 | +1.002 to +1.494 (mean +1.222) | +1.002 to +1.494 (mean +1.222) | 60 | +0.99 to +1.01 (mean +1.00) | 60 |
+| signal_clf | dup:f1 | linear | 60 | +0.343 to +0.506 (mean +0.422) | +0.343 to +0.506 (mean +0.422) | 60 | +1.00 to +1.00 (mean +1.00) | 60 |
+| signal_clf | dupneg:f1 | linear | 30 | +0.343 to +0.506 (mean +0.422) | +0.343 to +0.506 (mean +0.422) | 30 | +1.00 to +1.00 (mean +1.00) | 30 |
+| signal_clf | duprelabel:seg | linear | 30 | +0.062 to +0.167 (mean +0.109) | +0.062 to +0.167 (mean +0.109) | 30 | +1.00 to +1.02 (mean +1.01) | 26 |
+| signal_clf | dupscaled:f1 | linear | 60 | +0.343 to +0.506 (mean +0.422) | +0.343 to +0.506 (mean +0.422) | 60 | +1.00 to +1.00 (mean +1.00) | 60 |
+| signal_reg | dup:f1 | linear | 60 | +1.057 to +1.399 (mean +1.239) | +1.057 to +1.399 (mean +1.239) | 60 | +1.00 to +1.00 (mean +1.00) | 60 |
+| signal_reg | dupneg:f1 | linear | 30 | +1.057 to +1.399 (mean +1.239) | +1.057 to +1.399 (mean +1.239) | 30 | +1.00 to +1.00 (mean +1.00) | 30 |
+| signal_reg | duprelabel:region | linear | 30 | -0.001 to +0.002 (mean +0.000) | -0.001 to +0.002 (mean +0.000) | 30 | +1.00 to +1.00 (mean +1.00) | 0 |
+| signal_reg | dupscaled:f1 | linear | 60 | +1.057 to +1.399 (mean +1.239) | +1.057 to +1.399 (mean +1.239) | 60 | +1.00 to +1.00 (mean +1.00) | 60 |

@@ -1,0 +1,25 @@
+| run | seeds | skill | at 0.98 or more | warned | both in the warning | both in the list |
+|---|---|---|---|---|---|---|
+| signal_reg | 30 | +1.000 to +1.000 (mean +1.000) | 30 | 30 | 30 | 30 |
+| noise_reg | 30 | +1.000 to +1.000 (mean +1.000) | 30 | 30 | 30 | 30 |
+| leak_reg | 30 | +1.000 to +1.000 (mean +1.000) | 30 | 30 | 30 | 30 |
+| quarter_entity | 30 | +1.000 to +1.000 (mean +1.000) | 30 | 30 | 30 | 30 |
+| dominant_entity | 30 | +1.000 to +1.000 (mean +1.000) | 30 | 30 | 30 | 30 |
+| random_walk | 30 | +0.713 to +0.995 (mean +0.905) | 2 | 2 | 2 | 30 |
+| int_stamps | 30 | +0.720 to +0.981 (mean +0.901) | 1 | 1 | 1 | 30 |
+| flat_tail | 30 | - | 0 | 0 | 0 | 0 |
+| panel | 30 | +0.683 to +0.925 (mean +0.794) | 0 | 0 | 0 | 30 |
+| signal_clf | 30 | +1.000 to +1.000 (mean +1.000) | 30 | 30 | 30 | 30 |
+| noise_clf | 30 | +1.000 to +1.000 (mean +1.000) | 30 | 30 | 30 | 30 |
+| imbalanced | 30 | -0.101 to +1.000 (mean +0.709) | 21 | 21 | 0 | 0 |
+| binary_numeric | 30 | +1.000 to +1.000 (mean +1.000) | 30 | 30 | 30 | 30 |
+| messy | 30 | +1.000 to +1.000 (mean +1.000) | 30 | 30 | 30 | 30 |
+| entities | 30 | +1.000 to +1.000 (mean +1.000) | 30 | 30 | 30 | 30 |
+| time_blocks | 30 | +1.000 to +1.000 (mean +1.000) | 30 | 30 | 30 | 30 |
+| walk_repeated | 30 | +0.698 to +0.995 (mean +0.908) | 1 | 1 | 1 | 30 |
+| full_signal_reg_j1 | 30 | +1.000 to +1.000 (mean +1.000) | 30 | 30 | 30 | 30 |
+| full_signal_clf_j1 | 30 | +1.000 to +1.000 (mean +1.000) | 30 | 30 | 30 | 30 |
+| full_noise_small | 30 | +1.000 to +1.000 (mean +1.000) | 30 | 30 | 30 | 30 |
+| random_walk | 30 | +1.000 to +1.000 (mean +1.000) | 30 | 30 | 30 | 30 |
+| int_stamps | 30 | +1.000 to +1.000 (mean +1.000) | 30 | 30 | 30 | 30 |
+| panel | 30 | +1.000 to +1.000 (mean +1.000) | 30 | 30 | 30 | 30 |

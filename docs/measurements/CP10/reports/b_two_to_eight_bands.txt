@@ -1,0 +1,30 @@
+| scheme | bands | excluded / warned / named / listed / none | headline |
+|---|---|---|---|
+| dominant_entity | 2 | 0 / 0 / 0 / 60 / 0 | +0.604 to +0.662 (mean +0.641) |
+| dominant_entity | 3 | 0 / 0 / 0 / 60 / 0 | +0.178 to +0.822 (mean +0.627) |
+| dominant_entity | 4 | 0 / 0 / 0 / 59 / 1 | +0.002 to +0.886 (mean +0.602) |
+| dominant_entity | 5 | 0 / 0 / 0 / 54 / 6 | -0.005 to +0.918 (mean +0.551) |
+| dominant_entity | 6 | 0 / 22 / 0 / 32 / 6 | -0.009 to +0.935 (mean +0.526) |
+| dominant_entity | 7 | 0 / 46 / 0 / 12 / 2 | -0.011 to +0.948 (mean +0.538) |
+| dominant_entity | 8 | 0 / 52 / 0 / 6 / 2 | -0.014 to +0.958 (mean +0.536) |
+| quarter_entity | 2 | 0 / 0 / 0 / 60 / 0 | +0.608 to +0.677 (mean +0.636) |
+| quarter_entity | 3 | 0 / 0 / 0 / 60 / 0 | +0.538 to +0.813 (mean +0.724) |
+| quarter_entity | 4 | 0 / 0 / 0 / 60 / 0 | +0.654 to +0.878 (mean +0.787) |
+| quarter_entity | 5 | 0 / 16 / 0 / 44 / 0 | +0.731 to +0.913 (mean +0.842) |
+| quarter_entity | 6 | 0 / 60 / 0 / 0 / 0 | +0.794 to +0.936 (mean +0.876) |
+| quarter_entity | 7 | 0 / 60 / 0 / 0 / 0 | +0.823 to +0.948 (mean +0.899) |
+| quarter_entity | 8 | 0 / 60 / 0 / 0 / 0 | +0.853 to +0.959 (mean +0.915) |
+| random scheme (3 runs) | 2 | 0 / 0 / 0 / 180 / 0 | +0.400 to +0.907 (mean +0.752) |
+| random scheme (3 runs) | 3 | 0 / 0 / 0 / 134 / 46 | +0.463 to +0.928 (mean +0.808) |
+| random scheme (3 runs) | 4 | 0 / 0 / 0 / 172 / 8 | +0.643 to +0.931 (mean +0.850) |
+| random scheme (3 runs) | 5 | 0 / 58 / 0 / 122 / 0 | +0.746 to +0.946 (mean +0.882) |
+| random scheme (3 runs) | 6 | 0 / 180 / 0 / 0 / 0 | +0.767 to +0.955 (mean +0.904) |
+| random scheme (3 runs) | 7 | 0 / 180 / 0 / 0 / 0 | +0.820 to +0.962 (mean +0.919) |
+| random scheme (3 runs) | 8 | 0 / 180 / 0 / 0 / 0 | +0.839 to +0.967 (mean +0.929) |
+| walks (3 runs) | 2 | 0 / 0 / 0 / 81 / 99 | -1.007 to +0.075 (mean -0.043) |
+| walks (3 runs) | 3 | 0 / 0 / 0 / 98 / 82 | -2.961 to +0.202 (mean -0.086) |
+| walks (3 runs) | 4 | 0 / 0 / 0 / 99 / 81 | -4.286 to +0.205 (mean -0.112) |
+| walks (3 runs) | 5 | 0 / 0 / 0 / 89 / 91 | -29.897 to +0.292 (mean -0.429) |
+| walks (3 runs) | 6 | 0 / 0 / 0 / 84 / 96 | -44.693 to +0.382 (mean -0.882) |
+| walks (3 runs) | 7 | 0 / 0 / 0 / 76 / 104 | -50.175 to +0.406 (mean -1.418) |
+| walks (3 runs) | 8 | 0 / 0 / 0 / 75 / 105 | -55.598 to +0.397 (mean -1.810) |

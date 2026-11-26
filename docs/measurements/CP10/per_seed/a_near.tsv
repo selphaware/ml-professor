@@ -1,0 +1,361 @@
+case	k	skill	model	columns: role/reason/rule fall	rests_on	floor	warnings
+signal_reg	0	0.8307	linear-0	f1: feature/-/- 1.399	f1,f2	0.05	-
+signal_reg	1	0.839	linear-0	f1: feature/-/- 1.169	f1,f2	0.05	-
+signal_reg	2	0.8435	linear-0	f1: feature/-/- 1.325	f1,f2	0.05	-
+signal_reg	3	0.8634	linear-0	f1: feature/-/- 1.213	f1,f2	0.05	-
+signal_reg	4	0.8463	linear-0	f1: feature/-/- 1.115	f1,f2	0.05	-
+signal_reg	5	0.8914	linear-0	f1: feature/-/- 1.218	f1,f2	0.05	-
+signal_reg	6	0.8504	linear-0	f1: feature/-/- 1.112	f1,f2	0.05	-
+signal_reg	7	0.8488	linear-0	f1: feature/-/- 1.261	f1,f2	0.05	-
+signal_reg	8	0.8191	linear-0	f1: feature/-/- 1.27	f1,f2	0.05	-
+signal_reg	9	0.8327	linear-0	f1: feature/-/- 1.252	f1,f2	0.05	-
+signal_reg	10	0.8348	linear-0	f1: feature/-/- 1.255	f1,f2	0.05	-
+signal_reg	11	0.854	linear-0	f1: feature/-/- 1.239	f1,f2	0.05	-
+signal_reg	12	0.8544	linear-0	f1: feature/-/- 1.304	f1,f2	0.05	-
+signal_reg	13	0.8474	linear-0	f1: feature/-/- 1.247	f1,f2	0.05	-
+signal_reg	14	0.8612	linear-0	f1: feature/-/- 1.256	f1,f2	0.05	-
+signal_reg	15	0.8402	linear-0	f1: feature/-/- 1.236	f1,f2	0.05	-
+signal_reg	16	0.8568	linear-0	f1: feature/-/- 1.321	f1,f2	0.05	-
+signal_reg	17	0.8449	linear-0	f1: feature/-/- 1.245	f1,f2	0.05	-
+signal_reg	18	0.8707	linear-0	f1: feature/-/- 1.12	f1,f2	0.05	-
+signal_reg	19	0.8591	linear-0	f1: feature/-/- 1.245	f1,f2	0.05	-
+signal_reg	20	0.8678	linear-0	f1: feature/-/- 1.316	f1,f2	0.05	-
+signal_reg	21	0.8758	linear-0	f1: feature/-/- 1.211	f1,f2	0.05	-
+signal_reg	22	0.8303	linear-0	f1: feature/-/- 1.105	f1,f2	0.05	-
+signal_reg	23	0.8323	linear-0	f1: feature/-/- 1.27	f1,f2	0.05	-
+signal_reg	24	0.835	linear-0	f1: feature/-/- 1.318	f1,f2	0.05	-
+signal_reg	25	0.8674	linear-0	f1: feature/-/- 1.145	f1,f2	0.05	-
+signal_reg	26	0.8558	linear-0	f1: feature/-/- 1.306	f1,f2	0.05	-
+signal_reg	27	0.825	linear-0	f1: feature/-/- 1.33	f1,f2	0.05	-
+signal_reg	28	0.8476	linear-0	f1: feature/-/- 1.279	f1,f2	0.05	-
+signal_reg	29	0.8263	linear-0	f1: feature/-/- 1.057	f1,f2	0.05	-
+signal_reg | dupnoise:f1:0.05	0	0.8305	linear-0	f1: feature/-/- 0.5438; f1_near: feature/-/- 0.189	f2,f1,f1_near	0.05	-
+signal_reg | dupnoise:f1:0.05	1	0.8389	linear-0	f1: feature/-/- 0.8074; f1_near: feature/-/- 0.03337	f1,f2	0.05	-
+signal_reg | dupnoise:f1:0.05	2	0.8434	linear-0	f1: feature/-/- 0.9028; f1_near: feature/-/- 0.05319	f1,f2,f1_near	0.05	-
+signal_reg | dupnoise:f1:0.05	3	0.8633	linear-0	f1: feature/-/- 1.016; f1_near: feature/-/- 0.005555	f1,f2	0.05	-
+signal_reg | dupnoise:f1:0.05	4	0.8466	linear-0	f1: feature/-/- 0.2374; f1_near: feature/-/- 0.3428	f2,f1_near,f1	0.05	-
+signal_reg | dupnoise:f1:0.05	5	0.8914	linear-0	f1: feature/-/- 1.249; f1_near: feature/-/- -0.0008665	f1,f2	0.05	-
+signal_reg | dupnoise:f1:0.05	6	0.8504	linear-0	f1: feature/-/- 0.9369; f1_near: feature/-/- 0.01297	f1,f2	0.05	-
+signal_reg | dupnoise:f1:0.05	7	0.8491	linear-0	f1: feature/-/- 0.6296; f1_near: feature/-/- 0.1322	f1,f2,f1_near	0.05	-
+signal_reg | dupnoise:f1:0.05	8	0.8192	linear-0	f1: feature/-/- 1.146; f1_near: feature/-/- 0.0007489	f1,f2	0.05	-
+signal_reg | dupnoise:f1:0.05	9	0.8327	linear-0	f1: feature/-/- 0.9704; f1_near: feature/-/- 0.02098	f1,f2	0.05	-
+signal_reg | dupnoise:f1:0.05	10	0.8346	linear-0	f1: feature/-/- 0.4101; f1_near: feature/-/- 0.2259	f1,f2,f1_near	0.05	-
+signal_reg | dupnoise:f1:0.05	11	0.8543	linear-0	f1: feature/-/- 0.9564; f1_near: feature/-/- 0.02715	f1,f2	0.05	-
+signal_reg | dupnoise:f1:0.05	12	0.8545	linear-0	f1: feature/-/- 1.077; f1_near: feature/-/- 0.01031	f1,f2	0.05	-
+signal_reg | dupnoise:f1:0.05	13	0.8479	linear-0	f1: feature/-/- 0.1894; f1_near: feature/-/- 0.4338	f2,f1_near,f1	0.05	-
+signal_reg | dupnoise:f1:0.05	14	0.8611	linear-0	f1: feature/-/- 0.9902; f1_near: feature/-/- 0.01601	f1,f2	0.05	-
+signal_reg | dupnoise:f1:0.05	15	0.8399	linear-0	f1: feature/-/- 0.6533; f1_near: feature/-/- 0.0847	f1,f2,f1_near	0.05	-
+signal_reg | dupnoise:f1:0.05	16	0.8568	linear-0	f1: feature/-/- 1.345; f1_near: feature/-/- 0.0004746	f1,f2	0.05	-
+signal_reg | dupnoise:f1:0.05	17	0.8447	linear-0	f1: feature/-/- 0.7832; f1_near: feature/-/- 0.04907	f1,f2	0.05	-
+signal_reg | dupnoise:f1:0.05	18	0.8707	linear-0	f1: feature/-/- 0.5443; f1_near: feature/-/- 0.1057	f1,f2,f1_near	0.05	-
+signal_reg | dupnoise:f1:0.05	19	0.859	linear-0	f1: feature/-/- 0.6886; f1_near: feature/-/- 0.08645	f1,f2,f1_near	0.05	-
+signal_reg | dupnoise:f1:0.05	20	0.8682	linear-0	f1: feature/-/- 0.2758; f1_near: feature/-/- 0.3797	f2,f1_near,f1	0.05	-
+signal_reg | dupnoise:f1:0.05	21	0.8763	linear-0	f1: feature/-/- 0.4344; f1_near: feature/-/- 0.1834	f1,f2,f1_near	0.05	-
+signal_reg | dupnoise:f1:0.05	22	0.8303	linear-0	f1: feature/-/- 1.092; f1_near: feature/-/- 0.0004987	f1,f2	0.05	-
+signal_reg | dupnoise:f1:0.05	23	0.8317	linear-0	f1: feature/-/- 0.8027; f1_near: feature/-/- 0.05347	f1,f2,f1_near	0.05	-
+signal_reg | dupnoise:f1:0.05	24	0.834	linear-0	f1: feature/-/- 0.4591; f1_near: feature/-/- 0.2066	f1,f2,f1_near	0.05	-
+signal_reg | dupnoise:f1:0.05	25	0.8674	linear-0	f1: feature/-/- 0.9763; f1_near: feature/-/- 0.01028	f1,f2	0.05	-
+signal_reg | dupnoise:f1:0.05	26	0.8551	linear-0	f1: feature/-/- 0.5473; f1_near: feature/-/- 0.1764	f1,f2,f1_near	0.05	-
+signal_reg | dupnoise:f1:0.05	27	0.8245	linear-0	f1: feature/-/- 0.6522; f1_near: feature/-/- 0.1166	f1,f2,f1_near	0.05	-
+signal_reg | dupnoise:f1:0.05	28	0.8478	linear-0	f1: feature/-/- 1.715; f1_near: feature/-/- 0.0308	f1,f2	0.05	-
+signal_reg | dupnoise:f1:0.05	29	0.8264	linear-0	f1: feature/-/- 1.318; f1_near: feature/-/- 0.01823	f1,f2	0.05	-
+signal_reg | dupnoise:f1:0.2	0	0.8309	linear-0	f1: feature/-/- 1.182; f1_near: feature/-/- 0.008044	f1,f2	0.05	-
+signal_reg | dupnoise:f1:0.2	1	0.8379	linear-0	f1: feature/-/- 0.7722; f1_near: feature/-/- 0.04118	f1,f2	0.05	-
+signal_reg | dupnoise:f1:0.2	2	0.8437	linear-0	f1: feature/-/- 1.463; f1_near: feature/-/- -0.001063	f1,f2	0.05	-
+signal_reg | dupnoise:f1:0.2	3	0.8649	linear-0	f1: feature/-/- 0.9108; f1_near: feature/-/- 0.01898	f1,f2	0.05	-
+signal_reg | dupnoise:f1:0.2	4	0.845	linear-0	f1: feature/-/- 0.8647; f1_near: feature/-/- 0.01664	f1,f2	0.05	-
+signal_reg | dupnoise:f1:0.2	5	0.8914	linear-0	f1: feature/-/- 1.228; f1_near: feature/-/- -0.0003183	f1,f2	0.05	-
+signal_reg | dupnoise:f1:0.2	6	0.8497	linear-0	f1: feature/-/- 1.331; f1_near: feature/-/- 0.002502	f1,f2	0.05	-
+signal_reg | dupnoise:f1:0.2	7	0.8485	linear-0	f1: feature/-/- 1.43; f1_near: feature/-/- -0.0004865	f1,f2	0.05	-
+signal_reg | dupnoise:f1:0.2	8	0.8187	linear-0	f1: feature/-/- 1.372; f1_near: feature/-/- 0.003722	f1,f2	0.05	-
+signal_reg | dupnoise:f1:0.2	9	0.8327	linear-0	f1: feature/-/- 1.331; f1_near: feature/-/- 0.0004993	f1,f2	0.05	-
+signal_reg | dupnoise:f1:0.2	10	0.8342	linear-0	f1: feature/-/- 1.412; f1_near: feature/-/- 0.004073	f1,f2	0.05	-
+signal_reg | dupnoise:f1:0.2	11	0.854	linear-0	f1: feature/-/- 1.215; f1_near: feature/-/- 0.0008197	f1,f2	0.05	-
+signal_reg | dupnoise:f1:0.2	12	0.8545	linear-0	f1: feature/-/- 1.196; f1_near: feature/-/- 0.002445	f1,f2	0.05	-
+signal_reg | dupnoise:f1:0.2	13	0.8474	linear-0	f1: feature/-/- 1.248; f1_near: feature/-/- 2.702e-05	f1,f2	0.05	-
+signal_reg | dupnoise:f1:0.2	14	0.8614	linear-0	f1: feature/-/- 1.132; f1_near: feature/-/- 0.003748	f1,f2	0.05	-
+signal_reg | dupnoise:f1:0.2	15	0.8399	linear-0	f1: feature/-/- 1.095; f1_near: feature/-/- 0.002843	f1,f2	0.05	-
+signal_reg | dupnoise:f1:0.2	16	0.8569	linear-0	f1: feature/-/- 1.121; f1_near: feature/-/- 0.005257	f1,f2	0.05	-
+signal_reg | dupnoise:f1:0.2	17	0.8441	linear-0	f1: feature/-/- 0.8799; f1_near: feature/-/- 0.02882	f1,f2	0.05	-
+signal_reg | dupnoise:f1:0.2	18	0.8707	linear-0	f1: feature/-/- 1.168; f1_near: feature/-/- 0.0001627	f1,f2	0.05	-
+signal_reg | dupnoise:f1:0.2	19	0.8589	linear-0	f1: feature/-/- 0.9269; f1_near: feature/-/- 0.0262	f1,f2	0.05	-
+signal_reg | dupnoise:f1:0.2	20	0.8678	linear-0	f1: feature/-/- 1.335; f1_near: feature/-/- 0.0001768	f1,f2	0.05	-
+signal_reg | dupnoise:f1:0.2	21	0.876	linear-0	f1: feature/-/- 1.093; f1_near: feature/-/- 0.001364	f1,f2	0.05	-
+signal_reg | dupnoise:f1:0.2	22	0.8308	linear-0	f1: feature/-/- 1.324; f1_near: feature/-/- 0.004017	f1,f2	0.05	-
+signal_reg | dupnoise:f1:0.2	23	0.8317	linear-0	f1: feature/-/- 1.359; f1_near: feature/-/- 0.0008058	f1,f2	0.05	-
+signal_reg | dupnoise:f1:0.2	24	0.8347	linear-0	f1: feature/-/- 1.07; f1_near: feature/-/- 0.009162	f1,f2	0.05	-
+signal_reg | dupnoise:f1:0.2	25	0.8665	linear-0	f1: feature/-/- 1.611; f1_near: feature/-/- 0.03144	f1,f2	0.05	-
+signal_reg | dupnoise:f1:0.2	26	0.856	linear-0	f1: feature/-/- 1.387; f1_near: feature/-/- 0.0002686	f1,f2	0.05	-
+signal_reg | dupnoise:f1:0.2	27	0.8254	linear-0	f1: feature/-/- 1.4; f1_near: feature/-/- 0.001717	f1,f2	0.05	-
+signal_reg | dupnoise:f1:0.2	28	0.8472	linear-0	f1: feature/-/- 1.14; f1_near: feature/-/- 0.003584	f1,f2	0.05	-
+signal_reg | dupnoise:f1:0.2	29	0.8263	linear-0	f1: feature/-/- 1.173; f1_near: feature/-/- 0.004746	f1,f2	0.05	-
+signal_clf	0	0.7417	linear-0	f1: feature/-/- 0.3423	f1,f2,seg	0.07286	-
+signal_clf	1	0.7083	linear-0	f1: feature/-/- 0.41	f1,f2,seg	0.0682	-
+signal_clf	2	0.6972	linear-0	f1: feature/-/- 0.4278	f1,f2,seg	0.07508	-
+signal_clf	3	0.7344	linear-0	f1: feature/-/- 0.3985	f1,f2,seg	0.06791	-
+signal_clf	4	0.7483	linear-0	f1: feature/-/- 0.3902	f1,f2,seg	0.06481	-
+signal_clf	5	0.7026	linear-0	f1: feature/-/- 0.4647	f1,f2	0.07748	-
+signal_clf	6	0.6898	linear-0	f1: feature/-/- 0.3669	f1,f2,seg	0.07856	-
+signal_clf	7	0.7912	linear-0	f1: feature/-/- 0.4477	f1,f2,seg	0.05871	-
+signal_clf	8	0.6719	linear-0	f1: feature/-/- 0.3453	f1,f2	0.08424	-
+signal_clf	9	0.7258	linear-0	f1: feature/-/- 0.4146	f1,f2,seg	0.06275	-
+signal_clf	10	0.7526	linear-0	f1: feature/-/- 0.4259	f1,f2,seg	0.05969	-
+signal_clf	11	0.744	linear-0	f1: feature/-/- 0.4133	f1,f2,seg	0.06428	-
+signal_clf	12	0.7364	linear-0	f1: feature/-/- 0.3766	f1,f2,seg	0.0674	-
+signal_clf	13	0.7713	linear-0	f1: feature/-/- 0.4967	f1,f2,seg	0.05935	-
+signal_clf	14	0.7289	linear-0	f1: feature/-/- 0.4406	f1,f2	0.07896	-
+signal_clf	15	0.7785	linear-0	f1: feature/-/- 0.4741	f1,f2,seg	0.06168	-
+signal_clf	16	0.7563	linear-0	f1: feature/-/- 0.4337	f1,f2,seg	0.05997	-
+signal_clf	17	0.8005	linear-0	f1: feature/-/- 0.4133	f1,f2,seg	0.06148	-
+signal_clf	18	0.7378	linear-0	f1: feature/-/- 0.4088	f1,f2,seg	0.0681	-
+signal_clf	19	0.7558	linear-0	f1: feature/-/- 0.3863	f1,f2,seg	0.06345	-
+signal_clf	20	0.7229	linear-0	f1: feature/-/- 0.45	f1,f2	0.0788	-
+signal_clf	21	0.779	linear-0	f1: feature/-/- 0.5053	f1,f2,seg	0.06971	-
+signal_clf	22	0.7397	linear-0	f1: feature/-/- 0.3615	f1,f2,seg	0.06482	-
+signal_clf	23	0.7605	linear-0	f1: feature/-/- 0.4739	f1,f2,seg	0.06865	-
+signal_clf	24	0.7932	linear-0	f1: feature/-/- 0.3755	f1,f2,seg	0.05972	-
+signal_clf	25	0.6962	linear-0	f1: feature/-/- 0.4186	f1,f2,seg	0.0717	-
+signal_clf	26	0.7261	linear-0	f1: feature/-/- 0.4391	f1,f2,seg	0.07416	-
+signal_clf	27	0.7537	linear-0	f1: feature/-/- 0.4146	f1,f2,seg	0.06143	-
+signal_clf	28	0.779	linear-0	f1: feature/-/- 0.4641	f1,f2,seg	0.06277	-
+signal_clf	29	0.7186	linear-0	f1: feature/-/- 0.4603	f1,f2,seg	0.06096	-
+signal_clf | dupnoise:f1:0.05	0	0.7407	linear-0	f1: feature/-/- 0.1967; f1_near: feature/-/- 0.02273	f2,f1,seg	0.07282	-
+signal_clf | dupnoise:f1:0.05	1	0.7093	linear-0	f1: feature/-/- 0.2706; f1_near: feature/-/- 0.02499	f1,f2,seg	0.06885	-
+signal_clf | dupnoise:f1:0.05	2	0.6953	linear-0	f1: feature/-/- 0.2281; f1_near: feature/-/- 0.07559	f1,f2,seg,f1_near	0.07444	-
+signal_clf | dupnoise:f1:0.05	3	0.7326	linear-0	f1: feature/-/- 0.02082; f1_near: feature/-/- 0.2595	f1_near,f2,seg	0.06816	-
+signal_clf | dupnoise:f1:0.05	4	0.75	linear-0	f1: feature/-/- 0.09982; f1_near: feature/-/- 0.1202	f2,f1_near,f1,seg	0.06513	-
+signal_clf | dupnoise:f1:0.05	5	0.702	linear-0	f1: feature/-/- 0.1331; f1_near: feature/-/- 0.1199	f2,f1,f1_near	0.07791	-
+signal_clf | dupnoise:f1:0.05	6	0.6891	linear-0	f1: feature/-/- 0.1428; f1_near: feature/-/- 0.05671	f2,f1,seg	0.07795	-
+signal_clf | dupnoise:f1:0.05	7	0.7913	linear-0	f1: feature/-/- 0.3283; f1_near: feature/-/- 0.01218	f1,f2,seg	0.05848	-
+signal_clf | dupnoise:f1:0.05	8	0.6714	linear-0	f1: feature/-/- 0.09977; f1_near: feature/-/- 0.09277	f2,f1,f1_near	0.08249	-
+signal_clf | dupnoise:f1:0.05	9	0.7245	linear-0	f1: feature/-/- 0.1308; f1_near: feature/-/- 0.1058	f2,seg,f1,f1_near	0.06317	-
+signal_clf | dupnoise:f1:0.05	10	0.7528	linear-0	f1: feature/-/- 0.1989; f1_near: feature/-/- 0.04449	f2,f1,seg	0.06043	-
+signal_clf | dupnoise:f1:0.05	11	0.7442	linear-0	f1: feature/-/- 0.1465; f1_near: feature/-/- 0.07124	f2,f1,seg,f1_near	0.06357	-
+signal_clf | dupnoise:f1:0.05	12	0.7354	linear-0	f1: feature/-/- 0.05877; f1_near: feature/-/- 0.1629	f2,f1_near,seg	0.0671	-
+signal_clf | dupnoise:f1:0.05	13	0.7715	linear-0	f1: feature/-/- 0.3017; f1_near: feature/-/- 0.05099	f1,f2,seg	0.06002	-
+signal_clf | dupnoise:f1:0.05	14	0.7295	linear-0	f1: feature/-/- 0.2114; f1_near: feature/-/- 0.06272	f1,f2	0.07921	-
+signal_clf | dupnoise:f1:0.05	15	0.7787	linear-0	f1: feature/-/- 0.0673; f1_near: feature/-/- 0.1914	f2,f1_near,seg,f1	0.06089	-
+signal_clf | dupnoise:f1:0.05	16	0.7581	linear-0	f1: feature/-/- 0.1191; f1_near: feature/-/- 0.1849	f2,f1_near,seg,f1	0.06106	-
+signal_clf | dupnoise:f1:0.05	17	0.8021	linear-0	f1: feature/-/- 0.164; f1_near: feature/-/- 0.09993	f2,f1,seg,f1_near	0.06018	-
+signal_clf | dupnoise:f1:0.05	18	0.7367	linear-0	f1: feature/-/- 0.2699; f1_near: feature/-/- 0.003967	f2,f1,seg	0.06792	-
+signal_clf | dupnoise:f1:0.05	19	0.7546	linear-0	f1: feature/-/- 0.0943; f1_near: feature/-/- 0.1212	f2,f1_near,seg,f1	0.06416	-
+signal_clf | dupnoise:f1:0.05	20	0.7227	linear-0	f1: feature/-/- 0.1433; f1_near: feature/-/- 0.1389	f2,f1,f1_near	0.07766	-
+signal_clf | dupnoise:f1:0.05	21	0.7807	linear-0	f1: feature/-/- 0.09777; f1_near: feature/-/- 0.1999	f2,f1_near,seg,f1	0.06869	-
+signal_clf | dupnoise:f1:0.05	22	0.7393	linear-0	f1: feature/-/- 0.08942; f1_near: feature/-/- 0.09425	f2,seg,f1_near,f1	0.06532	-
+signal_clf | dupnoise:f1:0.05	23	0.7583	linear-0	f1: feature/-/- 0.09045; f1_near: feature/-/- 0.2173	f1_near,f2,seg,f1	0.06857	-
+signal_clf | dupnoise:f1:0.05	24	0.7924	linear-0	f1: feature/-/- 0.1771; f1_near: feature/-/- 0.01747	f2,f1,seg	0.05883	-
+signal_clf | dupnoise:f1:0.05	25	0.6946	linear-0	f1: feature/-/- 0.1597; f1_near: feature/-/- 0.0676	f2,f1,seg	0.07257	-
+signal_clf | dupnoise:f1:0.05	26	0.7268	linear-0	f1: feature/-/- 0.0761; f1_near: feature/-/- 0.1744	f2,f1_near,seg,f1	0.07186	-
+signal_clf | dupnoise:f1:0.05	27	0.7548	linear-0	f1: feature/-/- 0.1186; f1_near: feature/-/- 0.1175	f2,seg,f1,f1_near	0.05983	-
+signal_clf | dupnoise:f1:0.05	28	0.7786	linear-0	f1: feature/-/- 0.3781; f1_near: feature/-/- 0.004326	f1,f2,seg	0.0625	-
+signal_clf | dupnoise:f1:0.05	29	0.7182	linear-0	f1: feature/-/- 0.06049; f1_near: feature/-/- 0.2651	f1_near,f2,seg	0.06098	-
+signal_clf | dupnoise:f1:0.2	0	0.743	linear-0	f1: feature/-/- 0.2331; f1_near: feature/-/- 0.01435	f2,f1,seg	0.07329	-
+signal_clf | dupnoise:f1:0.2	1	0.7102	linear-0	f1: feature/-/- 0.4729; f1_near: feature/-/- 0.002116	f1,f2,seg	0.06741	-
+signal_clf | dupnoise:f1:0.2	2	0.6956	linear-0	f1: feature/-/- 0.3769; f1_near: feature/-/- 0.007518	f1,f2,seg	0.07533	-
+signal_clf | dupnoise:f1:0.2	3	0.736	linear-0	f1: feature/-/- 0.2684; f1_near: feature/-/- 0.01894	f1,f2,seg	0.068	-
+signal_clf | dupnoise:f1:0.2	4	0.7489	linear-0	f1: feature/-/- 0.3794; f1_near: feature/-/- 0.001149	f1,f2,seg	0.06506	-
+signal_clf | dupnoise:f1:0.2	5	0.7033	linear-0	f1: feature/-/- 0.3318; f1_near: feature/-/- 0.01101	f1,f2	0.07689	-
+signal_clf | dupnoise:f1:0.2	6	0.6868	linear-0	f1: feature/-/- 0.1887; f1_near: feature/-/- 0.03171	f2,f1,seg	0.07944	-
+signal_clf | dupnoise:f1:0.2	7	0.7879	linear-0	f1: feature/-/- 0.1937; f1_near: feature/-/- 0.063	f2,f1,seg,f1_near	0.06202	-
+signal_clf | dupnoise:f1:0.2	8	0.6704	linear-0	f1: feature/-/- 0.4258; f1_near: feature/-/- 0.004204	f1,f2	0.08516	-
+signal_clf | dupnoise:f1:0.2	9	0.7264	linear-0	f1: feature/-/- 0.3931; f1_near: feature/-/- 0.001334	f1,f2,seg	0.0627	-
+signal_clf | dupnoise:f1:0.2	10	0.7526	linear-0	f1: feature/-/- 0.4131; f1_near: feature/-/- 0.0003657	f1,f2,seg	0.05983	-
+signal_clf | dupnoise:f1:0.2	11	0.7403	linear-0	f1: feature/-/- 0.2814; f1_near: feature/-/- 0.005604	f1,f2,seg	0.06439	-
+signal_clf | dupnoise:f1:0.2	12	0.735	linear-0	f1: feature/-/- 0.3412; f1_near: feature/-/- 0.001403	f1,f2,seg	0.0667	-
+signal_clf | dupnoise:f1:0.2	13	0.7714	linear-0	f1: feature/-/- 0.5138; f1_near: feature/-/- -0.0002622	f1,f2,seg	0.05955	-
+signal_clf | dupnoise:f1:0.2	14	0.7255	linear-0	f1: feature/-/- 0.2573; f1_near: feature/-/- 0.03438	f1,f2	0.07954	-
+signal_clf | dupnoise:f1:0.2	15	0.7778	linear-0	f1: feature/-/- 0.3632; f1_near: feature/-/- 0.003393	f1,f2,seg	0.06425	-
+signal_clf | dupnoise:f1:0.2	16	0.7556	linear-0	f1: feature/-/- 0.3941; f1_near: feature/-/- 0.004325	f1,f2,seg	0.06084	-
+signal_clf | dupnoise:f1:0.2	17	0.7997	linear-0	f1: feature/-/- 0.4606; f1_near: feature/-/- -0.000616	f1,f2,seg	0.06143	-
+signal_clf | dupnoise:f1:0.2	18	0.7381	linear-0	f1: feature/-/- 0.4967; f1_near: feature/-/- 0.01641	f1,f2,seg	0.06955	-
+signal_clf | dupnoise:f1:0.2	19	0.7581	linear-0	f1: feature/-/- 0.1021; f1_near: feature/-/- 0.1159	f2,f1_near,f1,seg	0.06107	-
+signal_clf | dupnoise:f1:0.2	20	0.7234	linear-0	f1: feature/-/- 0.3835; f1_near: feature/-/- 0.009094	f1,f2	0.0786	-
+signal_clf | dupnoise:f1:0.2	21	0.7816	linear-0	f1: feature/-/- 0.403; f1_near: feature/-/- 0.009947	f1,f2,seg	0.06873	-
+signal_clf | dupnoise:f1:0.2	22	0.7375	linear-0	f1: feature/-/- 0.2569; f1_near: feature/-/- 0.01012	f2,f1,seg	0.06379	-
+signal_clf | dupnoise:f1:0.2	23	0.7593	linear-0	f1: feature/-/- 0.3558; f1_near: feature/-/- 0.02126	f1,f2,seg	0.06846	-
+signal_clf | dupnoise:f1:0.2	24	0.7926	linear-0	f1: feature/-/- 0.2973; f1_near: feature/-/- -0.003278	f1,f2,seg	0.06012	-
+signal_clf | dupnoise:f1:0.2	25	0.6966	linear-0	f1: feature/-/- 0.4244; f1_near: feature/-/- 0.0007529	f1,f2,seg	0.0717	-
+signal_clf | dupnoise:f1:0.2	26	0.7263	linear-0	f1: feature/-/- 0.4112; f1_near: feature/-/- 0.0003657	f1,f2,seg	0.0738	-
+signal_clf | dupnoise:f1:0.2	27	0.7551	linear-0	f1: feature/-/- 0.2752; f1_near: feature/-/- 0.02694	f1,f2,seg	0.0616	-
+signal_clf | dupnoise:f1:0.2	28	0.7815	linear-0	f1: feature/-/- 0.2394; f1_near: feature/-/- 0.04524	f1,f2,seg	0.06154	-
+signal_clf | dupnoise:f1:0.2	29	0.722	linear-0	f1: feature/-/- 0.2732; f1_near: feature/-/- 0.05723	f1,f2,seg	0.06241	-
+full_signal_reg_j1	0	0.8181	linear-0	f1: feature/-/- 1.218	f1,f2	0.06986	-
+full_signal_reg_j1	1	0.8153	linear-0	f1: feature/-/- 1.135	f1,f2	0.05124	-
+full_signal_reg_j1	2	0.8723	linear-0	f1: feature/-/- 1.403	f1,f2	0.05	-
+full_signal_reg_j1	3	0.8475	linear-0	f1: feature/-/- 1.424	f1,f2	0.05883	-
+full_signal_reg_j1	4	0.8526	linear-0	f1: feature/-/- 1.078	f1,f2	0.05	-
+full_signal_reg_j1	5	0.8354	linear-0	f1: feature/-/- 1.108	f1,f2	0.05	-
+full_signal_reg_j1	6	0.8473	linear-2	f1: feature/-/- 1.496	f1,f2	0.05569	-
+full_signal_reg_j1	7	0.8436	linear-2	f1: feature/-/- 1.16	f1,f2	0.05072	-
+full_signal_reg_j1	8	0.8896	linear-0	f1: feature/-/- 1.151	f1,f2	0.05	-
+full_signal_reg_j1	9	0.8335	linear-0	f1: feature/-/- 1.172	f1,f2	0.05063	-
+full_signal_reg_j1	10	0.8559	linear-3	f1: feature/-/- 1.193	f1,f2	0.05	-
+full_signal_reg_j1	11	0.8401	linear-0	f1: feature/-/- 1.111	f1,f2	0.05866	-
+full_signal_reg_j1	12	0.7708	linear-0	f1: feature/-/- 1.399	f1,f2	0.07383	-
+full_signal_reg_j1	13	0.8424	linear-0	f1: feature/-/- 1.359	f1,f2	0.05	-
+full_signal_reg_j1	14	0.8831	linear-0	f1: feature/-/- 1.24	f1,f2	0.05	-
+full_signal_reg_j1	15	0.8478	linear-0	f1: feature/-/- 1.404	f1,f2	0.05	-
+full_signal_reg_j1	16	0.8634	linear-0	f1: feature/-/- 1.271	f1,f2	0.05	-
+full_signal_reg_j1	17	0.8435	linear-0	f1: feature/-/- 1.088	f1,f2	0.05	-
+full_signal_reg_j1	18	0.8661	linear-3	f1: feature/-/- 1.047	f1,f2	0.05	-
+full_signal_reg_j1	19	0.8446	linear-0	f1: feature/-/- 1.338	f1,f2	0.05	-
+full_signal_reg_j1	20	0.8649	linear-2	f1: feature/-/- 1.174	f1,f2	0.05	-
+full_signal_reg_j1	21	0.8776	linear-0	f1: feature/-/- 1.337	f1,f2	0.05	-
+full_signal_reg_j1	22	0.8566	linear-0	f1: feature/-/- 1.476	f1,f2	0.05	-
+full_signal_reg_j1	23	0.7902	linear-0	f1: feature/-/- 1.234	f1,f2	0.06324	-
+full_signal_reg_j1	24	0.8806	linear-0	f1: feature/-/- 1.218	f1,f2	0.05	-
+full_signal_reg_j1	25	0.8336	linear-0	f1: feature/-/- 1.267	f1,f2	0.0504	-
+full_signal_reg_j1	26	0.7977	linear-0	f1: feature/-/- 1.118	f1,f2	0.0628	-
+full_signal_reg_j1	27	0.8198	linear-0	f1: feature/-/- 1.001	f1,f2	0.05421	-
+full_signal_reg_j1	28	0.8263	linear-0	f1: feature/-/- 1.114	f1,f2	0.05174	-
+full_signal_reg_j1	29	0.831	linear-0	f1: feature/-/- 1.04	f1,f2	0.05877	-
+full_signal_reg_j1 | dupnoise:f1:0.05	0	0.8095	linear-1	f1: feature/-/- 5.249; f1_near: feature/-/- 1.463	f1,f1_near,f2	0.07708	-
+full_signal_reg_j1 | dupnoise:f1:0.05	1	0.8168	linear-3	f1: feature/-/- 0.3132; f1_near: feature/-/- 0.2835	f2,f1,f1_near	0.05	-
+full_signal_reg_j1 | dupnoise:f1:0.05	2	0.8719	linear-3	f1: feature/-/- 0.422; f1_near: feature/-/- 0.2756	f1,f2,f1_near	0.05	-
+full_signal_reg_j1 | dupnoise:f1:0.05	3	0.8481	linear-3	f1: feature/-/- 0.3507; f1_near: feature/-/- 0.3758	f1_near,f2,f1	0.05791	-
+full_signal_reg_j1 | dupnoise:f1:0.05	4	0.8526	linear-3	f1: feature/-/- 0.2661; f1_near: feature/-/- 0.2932	f2,f1_near,f1	0.05	-
+full_signal_reg_j1 | dupnoise:f1:0.05	5	0.8352	linear-3	f1: feature/-/- 0.2645; f1_near: feature/-/- 0.2984	f2,f1_near,f1	0.05	-
+full_signal_reg_j1 | dupnoise:f1:0.05	6	0.8476	linear-2	f1: feature/-/- 2.592; f1_near: feature/-/- 0.1869	f1,f2,f1_near	0.05534	-
+full_signal_reg_j1 | dupnoise:f1:0.05	7	0.8438	linear-2	f1: feature/-/- 1.584; f1_near: feature/-/- 0.02264	f1,f2	0.05072	-
+full_signal_reg_j1 | dupnoise:f1:0.05	8	0.8892	linear-3	f1: feature/-/- 0.2963; f1_near: feature/-/- 0.2702	f2,f1,f1_near	0.05	-
+full_signal_reg_j1 | dupnoise:f1:0.05	9	0.8356	linear-0	f1: feature/-/- 0.4522; f1_near: feature/-/- 0.1908	f1,f2,f1_near	0.05	-
+full_signal_reg_j1 | dupnoise:f1:0.05	10	0.8567	linear-3	f1: feature/-/- 0.3517; f1_near: feature/-/- 0.299	f2,f1,f1_near	0.05	-
+full_signal_reg_j1 | dupnoise:f1:0.05	11	0.8408	linear-0	f1: feature/-/- 0.4738; f1_near: feature/-/- 0.1412	f1,f2,f1_near	0.05765	-
+full_signal_reg_j1 | dupnoise:f1:0.05	12	0.7703	linear-2	f1: feature/-/- 2.188; f1_near: feature/-/- 0.1282	f1,f2,f1_near	0.07358	-
+full_signal_reg_j1 | dupnoise:f1:0.05	13	0.8424	linear-0	f1: feature/-/- 0.6472; f1_near: feature/-/- 0.127	f1,f2,f1_near	0.05	-
+full_signal_reg_j1 | dupnoise:f1:0.05	14	0.8842	linear-2	f1: feature/-/- 0.06966; f1_near: feature/-/- 1.793	f1_near,f2,f1	0.05	-
+full_signal_reg_j1 | dupnoise:f1:0.05	15	0.8483	linear-3	f1: feature/-/- 0.3691; f1_near: feature/-/- 0.3087	f2,f1,f1_near	0.05	-
+full_signal_reg_j1 | dupnoise:f1:0.05	16	0.8617	linear-3	f1: feature/-/- 0.3478; f1_near: feature/-/- 0.2648	f2,f1,f1_near	0.05	-
+full_signal_reg_j1 | dupnoise:f1:0.05	17	0.8445	linear-0	f1: feature/-/- 0.4908; f1_near: feature/-/- 0.1062	f2,f1,f1_near	0.05	-
+full_signal_reg_j1 | dupnoise:f1:0.05	18	0.8689	linear-0	f1: feature/-/- 0.7826; f1_near: feature/-/- 0.03187	f1,f2	0.05	-
+full_signal_reg_j1 | dupnoise:f1:0.05	19	0.844	linear-0	f1: feature/-/- 0.6279; f1_near: feature/-/- 0.136	f1,f2,f1_near	0.05	-
+full_signal_reg_j1 | dupnoise:f1:0.05	20	0.8625	linear-3	f1: feature/-/- 0.3233; f1_near: feature/-/- 0.3222	f2,f1,f1_near	0.05	-
+full_signal_reg_j1 | dupnoise:f1:0.05	21	0.876	linear-3	f1: feature/-/- 0.3141; f1_near: feature/-/- 0.3679	f2,f1_near,f1	0.05	-
+full_signal_reg_j1 | dupnoise:f1:0.05	22	0.8592	linear-1	f1: feature/-/- 4.028; f1_near: feature/-/- 0.5727	f1,f1_near,f2	0.05	-
+full_signal_reg_j1 | dupnoise:f1:0.05	23	0.7898	linear-1	f1: feature/-/- 2.397; f1_near: feature/-/- 0.2502	f1,f2,f1_near	0.0631	-
+full_signal_reg_j1 | dupnoise:f1:0.05	24	0.8793	linear-3	f1: feature/-/- 0.3601; f1_near: feature/-/- 0.2572	f2,f1,f1_near	0.05	-
+full_signal_reg_j1 | dupnoise:f1:0.05	25	0.8336	linear-2	f1: feature/-/- 1.25; f1_near: feature/-/- -7.046e-05	f1,f2	0.05062	-
+full_signal_reg_j1 | dupnoise:f1:0.05	26	0.798	linear-2	f1: feature/-/- 1.853; f1_near: feature/-/- 0.09142	f1,f2,f1_near	0.06236	-
+full_signal_reg_j1 | dupnoise:f1:0.05	27	0.8171	linear-3	f1: feature/-/- 0.2587; f1_near: feature/-/- 0.2405	f2,f1,f1_near	0.05482	-
+full_signal_reg_j1 | dupnoise:f1:0.05	28	0.8268	linear-3	f1: feature/-/- 0.3107; f1_near: feature/-/- 0.252	f2,f1,f1_near	0.05054	-
+full_signal_reg_j1 | dupnoise:f1:0.05	29	0.8265	linear-2	f1: feature/-/- 3.835; f1_near: feature/-/- 0.8365	f1,f1_near,f2	0.0612	-
+full_signal_reg_j1 | dupnoise:f1:0.2	0	0.8162	linear-0	f1: feature/-/- 0.4439; f1_near: feature/-/- 0.1399	f1,f2,f1_near	0.07032	-
+full_signal_reg_j1 | dupnoise:f1:0.2	1	0.8134	linear-0	f1: feature/-/- 0.7806; f1_near: feature/-/- 0.03836	f1,f2	0.05204	-
+full_signal_reg_j1 | dupnoise:f1:0.2	2	0.8677	linear-3	f1: feature/-/- 0.6077; f1_near: feature/-/- 0.1584	f1,f2,f1_near	0.05	-
+full_signal_reg_j1 | dupnoise:f1:0.2	3	0.8475	linear-2	f1: feature/-/- 1.389; f1_near: feature/-/- 0.0006181	f1,f2	0.05911	-
+full_signal_reg_j1 | dupnoise:f1:0.2	4	0.8517	linear-0	f1: feature/-/- 1.475; f1_near: feature/-/- 0.03928	f1,f2	0.05	-
+full_signal_reg_j1 | dupnoise:f1:0.2	5	0.8363	linear-2	f1: feature/-/- 1.641; f1_near: feature/-/- 0.05598	f1,f2,f1_near	0.05	-
+full_signal_reg_j1 | dupnoise:f1:0.2	6	0.8473	linear-0	f1: feature/-/- 1.157; f1_near: feature/-/- 0.014	f1,f2	0.05486	-
+full_signal_reg_j1 | dupnoise:f1:0.2	7	0.843	linear-2	f1: feature/-/- 1.505; f1_near: feature/-/- 0.01412	f1,f2	0.05065	-
+full_signal_reg_j1 | dupnoise:f1:0.2	8	0.8919	linear-2	f1: feature/-/- 1.648; f1_near: feature/-/- 0.04119	f1,f2	0.05	-
+full_signal_reg_j1 | dupnoise:f1:0.2	9	0.8329	linear-0	f1: feature/-/- 0.8063; f1_near: feature/-/- 0.04323	f1,f2	0.05004	-
+full_signal_reg_j1 | dupnoise:f1:0.2	10	0.8558	linear-0	f1: feature/-/- 0.8129; f1_near: feature/-/- 0.05018	f1,f2,f1_near	0.05	-
+full_signal_reg_j1 | dupnoise:f1:0.2	11	0.8406	linear-0	f1: feature/-/- 0.9291; f1_near: feature/-/- 0.01056	f1,f2	0.05854	-
+full_signal_reg_j1 | dupnoise:f1:0.2	12	0.7699	linear-2	f1: feature/-/- 1.523; f1_near: feature/-/- 0.009469	f1,f2	0.07456	-
+full_signal_reg_j1 | dupnoise:f1:0.2	13	0.8426	linear-1	f1: feature/-/- 1.332; f1_near: feature/-/- 0.0001206	f1,f2	0.05	-
+full_signal_reg_j1 | dupnoise:f1:0.2	14	0.8836	linear-0	f1: feature/-/- 1.112; f1_near: feature/-/- 0.00331	f1,f2	0.05	-
+full_signal_reg_j1 | dupnoise:f1:0.2	15	0.848	linear-0	f1: feature/-/- 0.9698; f1_near: feature/-/- 0.0328	f1,f2	0.05	-
+full_signal_reg_j1 | dupnoise:f1:0.2	16	0.8632	linear-2	f1: feature/-/- 1.256; f1_near: feature/-/- -9.981e-05	f1,f2	0.05	-
+full_signal_reg_j1 | dupnoise:f1:0.2	17	0.8391	linear-0	f1: feature/-/- 0.6525; f1_near: feature/-/- 0.045	f1,f2	0.05	-
+full_signal_reg_j1 | dupnoise:f1:0.2	18	0.8694	linear-2	f1: feature/-/- 1.358; f1_near: feature/-/- 0.007618	f1,f2	0.05	-
+full_signal_reg_j1 | dupnoise:f1:0.2	19	0.8427	linear-0	f1: feature/-/- 0.8906; f1_near: feature/-/- 0.04736	f1,f2	0.05	-
+full_signal_reg_j1 | dupnoise:f1:0.2	20	0.8649	linear-0	f1: feature/-/- 0.9553; f1_near: feature/-/- 0.01935	f1,f2	0.05	-
+full_signal_reg_j1 | dupnoise:f1:0.2	21	0.8783	linear-0	f1: feature/-/- 0.9086; f1_near: feature/-/- 0.04796	f1,f2	0.05	-
+full_signal_reg_j1 | dupnoise:f1:0.2	22	0.8569	linear-0	f1: feature/-/- 0.8764; f1_near: feature/-/- 0.06603	f1,f2,f1_near	0.05	-
+full_signal_reg_j1 | dupnoise:f1:0.2	23	0.7889	linear-0	f1: feature/-/- 1.495; f1_near: feature/-/- 0.02662	f1,f2	0.06337	-
+full_signal_reg_j1 | dupnoise:f1:0.2	24	0.8812	linear-0	f1: feature/-/- 1.015; f1_near: feature/-/- 0.01435	f1,f2	0.05	-
+full_signal_reg_j1 | dupnoise:f1:0.2	25	0.8325	linear-0	f1: feature/-/- 1.089; f1_near: feature/-/- 0.00416	f1,f2	0.05019	-
+full_signal_reg_j1 | dupnoise:f1:0.2	26	0.7985	linear-2	f1: feature/-/- 0.7583; f1_near: feature/-/- 0.03527	f1,f2	0.06234	-
+full_signal_reg_j1 | dupnoise:f1:0.2	27	0.818	linear-0	f1: feature/-/- 0.7971; f1_near: feature/-/- 0.005784	f1,f2	0.05641	-
+full_signal_reg_j1 | dupnoise:f1:0.2	28	0.8259	linear-0	f1: feature/-/- 0.8971; f1_near: feature/-/- 0.01132	f1,f2	0.05122	-
+full_signal_reg_j1 | dupnoise:f1:0.2	29	0.8309	linear-0	f1: feature/-/- 1.124; f1_near: feature/-/- 0.00191	f1,f2	0.05901	-
+full_signal_clf_j1	0	0.6452	linear-4	f1: feature/-/- 0.3251	f1,f2	0.1482	-
+full_signal_clf_j1	1	0.7851	linear-3	f1: feature/-/- 0.5457	f1,f2	0.1042	-
+full_signal_clf_j1	2	0.7234	linear-5	f1: feature/-/- 0.4149	f1,f2,seg	0.1305	-
+full_signal_clf_j1	3	0.7966	linear-3	f1: feature/-/- 0.5502	f1,f2	0.1093	-
+full_signal_clf_j1	4	0.7802	linear-0	f1: feature/-/- 0.3228	f1,f2	0.1116	-
+full_signal_clf_j1	5	0.744	linear-2	f1: feature/-/- 0.4666	f1,f2	0.1294	-
+full_signal_clf_j1	6	0.7792	linear-5	f1: feature/-/- 0.4312	f1,f2,seg	0.1121	-
+full_signal_clf_j1	7	0.7523	linear-3	f1: feature/-/- 0.4646	f1,f2	0.116	-
+full_signal_clf_j1	8	0.6594	linear-0	f1: feature/-/- 0.4338	f1,f2	0.1455	-
+full_signal_clf_j1	9	0.6729	linear-3	f1: feature/-/- 0.4795	f1	0.1457	-
+full_signal_clf_j1	10	0.5995	linear-0	f1: feature/-/- 0.3987	f1,f2	0.1611	-
+full_signal_clf_j1	11	0.7619	linear-0	f1: feature/-/- 0.4286	f1,f2,seg	0.1175	-
+full_signal_clf_j1	12	0.6349	linear-3	f1: feature/-/- 0.2513	f1,f2	0.14	-
+full_signal_clf_j1	13	0.7117	linear-3	f1: feature/-/- 0.5353	f1,f2	0.1357	-
+full_signal_clf_j1	14	0.7519	linear-3	f1: feature/-/- 0.5304	f1,f2	0.1165	-
+full_signal_clf_j1	15	0.7334	linear-0	f1: feature/-/- 0.4399	f1,f2	0.1246	-
+full_signal_clf_j1	16	0.7992	linear-0	f1: feature/-/- 0.4551	f1,f2,seg	0.1072	-
+full_signal_clf_j1	17	0.8033	linear-0	f1: feature/-/- 0.4159	f1,f2	0.1086	-
+full_signal_clf_j1	18	0.7054	linear-0	f1: feature/-/- 0.2864	f1,f2	0.1317	-
+full_signal_clf_j1	19	0.8204	linear-3	f1: feature/-/- 0.5457	f1,f2	0.1171	-
+full_signal_clf_j1	20	0.7431	linear-5	f1: feature/-/- 0.3824	f1,f2	0.126	-
+full_signal_clf_j1	21	0.7614	linear-0	f1: feature/-/- 0.5068	f1,f2	0.1184	-
+full_signal_clf_j1	22	0.6744	linear-0	f1: feature/-/- 0.3994	f1,f2	0.1403	-
+full_signal_clf_j1	23	0.6329	linear-3	f1: feature/-/- 0.4318	f1,f2	0.1521	-
+full_signal_clf_j1	24	0.6703	linear-3	f1: feature/-/- 0.5534	f1,f2	0.1359	-
+full_signal_clf_j1	25	0.7564	linear-0	f1: feature/-/- 0.4114	f1,f2	0.1084	-
+full_signal_clf_j1	26	0.6964	linear-4	f1: feature/-/- 0.3966	f1,f2	0.1366	-
+full_signal_clf_j1	27	0.6014	linear-5	f1: feature/-/- 0.3647	f1,f2	0.1554	-
+full_signal_clf_j1	28	0.7764	linear-4	f1: feature/-/- 0.4358	f1,f2	0.1122	-
+full_signal_clf_j1	29	0.6662	forest-3	f1: feature/-/- 0.3546	f1,f2	0.1415	-
+full_signal_clf_j1 | dupnoise:f1:0.05	0	0.6467	linear-0	f1: feature/-/- 0.03338; f1_near: feature/-/- 0.1635	f2,f1_near	0.1475	-
+full_signal_clf_j1 | dupnoise:f1:0.05	1	0.7267	linear-5	f1: feature/-/- 1.029; f1_near: feature/-/- 0.1902	f1,f2,f1_near	0.121	-
+full_signal_clf_j1 | dupnoise:f1:0.05	2	0.7275	linear-0	f1: feature/-/- 0.04518; f1_near: feature/-/- 0.2149	f2,f1_near,seg	0.131	-
+full_signal_clf_j1 | dupnoise:f1:0.05	3	0.8012	linear-0	f1: feature/-/- 0.1506; f1_near: feature/-/- 0.1486	f2,f1,f1_near	0.106	-
+full_signal_clf_j1 | dupnoise:f1:0.05	4	0.7781	linear-0	f1: feature/-/- 0.04838; f1_near: feature/-/- 0.04766	f2	0.1116	-
+full_signal_clf_j1 | dupnoise:f1:0.05	5	0.7558	linear-3	f1: feature/-/- 0.1507; f1_near: feature/-/- 0.1817	f2,f1_near,f1	0.1276	-
+full_signal_clf_j1 | dupnoise:f1:0.05	6	0.7736	linear-0	f1: feature/-/- 0.1925; f1_near: feature/-/- 0.07756	f1,f2,seg	0.1149	-
+full_signal_clf_j1 | dupnoise:f1:0.05	7	0.7508	linear-3	f1: feature/-/- 0.1236; f1_near: feature/-/- 0.07826	f2,f1	0.1158	-
+full_signal_clf_j1 | dupnoise:f1:0.05	8	0.6502	linear-3	f1: feature/-/- 0.1252; f1_near: feature/-/- 0.09907	f2	0.1455	-
+full_signal_clf_j1 | dupnoise:f1:0.05	9	0.6822	linear-0	f1: feature/-/- 0.1189; f1_near: feature/-/- 0.137	-	0.1389	-
+full_signal_clf_j1 | dupnoise:f1:0.05	10	0.6092	linear-3	f1: feature/-/- 0.1474; f1_near: feature/-/- 0.1205	f2	0.1556	-
+full_signal_clf_j1 | dupnoise:f1:0.05	11	0.7645	linear-0	f1: feature/-/- 0.2062; f1_near: feature/-/- 0.09196	f2,f1,seg	0.116	-
+full_signal_clf_j1 | dupnoise:f1:0.05	12	0.6323	linear-3	f1: feature/-/- 0.03785; f1_near: feature/-/- 0.0761	f2	0.1408	-
+full_signal_clf_j1 | dupnoise:f1:0.05	13	0.7046	linear-3	f1: feature/-/- 0.1512; f1_near: feature/-/- 0.2328	f2,f1_near,f1	0.136	-
+full_signal_clf_j1 | dupnoise:f1:0.05	14	0.7499	linear-3	f1: feature/-/- 0.1729; f1_near: feature/-/- 0.1142	f2,f1	0.1158	-
+full_signal_clf_j1 | dupnoise:f1:0.05	15	0.7355	linear-0	f1: feature/-/- 0.1239; f1_near: feature/-/- 0.1933	f2,f1_near,f1	0.1236	-
+full_signal_clf_j1 | dupnoise:f1:0.05	16	0.7987	linear-0	f1: feature/-/- 0.1799; f1_near: feature/-/- 0.06304	f2,f1,seg	0.1083	-
+full_signal_clf_j1 | dupnoise:f1:0.05	17	0.8084	linear-0	f1: feature/-/- 0.09522; f1_near: feature/-/- 0.1587	f2,f1_near	0.1065	-
+full_signal_clf_j1 | dupnoise:f1:0.05	18	0.707	linear-0	f1: feature/-/- 0.1291; f1_near: feature/-/- 0.05492	f2	0.1298	-
+full_signal_clf_j1 | dupnoise:f1:0.05	19	0.8194	linear-5	f1: feature/-/- 1.102; f1_near: feature/-/- 0.165	f1,f2,f1_near	0.1181	-
+full_signal_clf_j1 | dupnoise:f1:0.05	20	0.7415	linear-5	f1: feature/-/- 0.9482; f1_near: feature/-/- 0.1671	f1,f2,f1_near	0.1235	-
+full_signal_clf_j1 | dupnoise:f1:0.05	21	0.764	linear-0	f1: feature/-/- 0.1401; f1_near: feature/-/- 0.2011	f1_near,f2,f1	0.1173	-
+full_signal_clf_j1 | dupnoise:f1:0.05	22	0.679	linear-4	f1: feature/-/- 0.4528; f1_near: feature/-/- 0.01181	f1,f2	0.1399	-
+full_signal_clf_j1 | dupnoise:f1:0.05	23	0.6375	linear-3	f1: feature/-/- 0.1674; f1_near: feature/-/- 0.1519	f2,f1,f1_near	0.1502	-
+full_signal_clf_j1 | dupnoise:f1:0.05	24	0.676	linear-3	f1: feature/-/- 0.1972; f1_near: feature/-/- 0.1428	f2,f1,f1_near	0.1372	-
+full_signal_clf_j1 | dupnoise:f1:0.05	25	0.7544	linear-5	f1: feature/-/- 0.9526; f1_near: feature/-/- 0.2191	f1,f1_near,f2	0.1081	-
+full_signal_clf_j1 | dupnoise:f1:0.05	26	0.6943	linear-0	f1: feature/-/- 0.1662; f1_near: feature/-/- 0.07875	f2,f1	0.1378	-
+full_signal_clf_j1 | dupnoise:f1:0.05	27	0.5999	linear-4	f1: feature/-/- 0.3509; f1_near: feature/-/- -0.00207	f1,f2	0.1562	-
+full_signal_clf_j1 | dupnoise:f1:0.05	28	0.7764	linear-4	f1: feature/-/- 0.3887; f1_near: feature/-/- 0.001128	f1,f2	0.1122	-
+full_signal_clf_j1 | dupnoise:f1:0.05	29	0.6436	forest-2	f1: feature/-/- 0.122; f1_near: feature/-/- 0.05619	f2	0.1485	-
+full_signal_clf_j1 | dupnoise:f1:0.2	0	0.6329	linear-3	f1: feature/-/- 0.1153; f1_near: feature/-/- 0.07762	f2	0.1465	-
+full_signal_clf_j1 | dupnoise:f1:0.2	1	0.779	linear-3	f1: feature/-/- 0.2016; f1_near: feature/-/- 0.1312	f2,f1,f1_near	0.106	-
+full_signal_clf_j1 | dupnoise:f1:0.2	2	0.7275	linear-0	f1: feature/-/- 0.43; f1_near: feature/-/- -0.0001025	f1,f2,seg	0.1298	-
+full_signal_clf_j1 | dupnoise:f1:0.2	3	0.7971	linear-5	f1: feature/-/- 0.7614; f1_near: feature/-/- 0.03176	f1,f2	0.1061	-
+full_signal_clf_j1 | dupnoise:f1:0.2	4	0.7781	linear-4	f1: feature/-/- 0.3887; f1_near: feature/-/- 0.008937	f1,f2	0.1134	-
+full_signal_clf_j1 | dupnoise:f1:0.2	5	0.7624	linear-3	f1: feature/-/- 0.1891; f1_near: feature/-/- 0.1533	f2,f1,f1_near	0.1268	-
+full_signal_clf_j1 | dupnoise:f1:0.2	6	0.7751	linear-0	f1: feature/-/- 0.4276; f1_near: feature/-/- 0.0005123	f1,f2,seg	0.1151	-
+full_signal_clf_j1 | dupnoise:f1:0.2	7	0.7462	linear-3	f1: feature/-/- 0.1797; f1_near: feature/-/- 0.04482	f2,f1	0.1172	-
+full_signal_clf_j1 | dupnoise:f1:0.2	8	0.6538	linear-4	f1: feature/-/- 0.5086; f1_near: feature/-/- 0.01373	f1,f2	0.1449	-
+full_signal_clf_j1 | dupnoise:f1:0.2	9	0.6755	linear-4	f1: feature/-/- 0.6108; f1_near: feature/-/- 0.0234	f1	0.1403	-
+full_signal_clf_j1 | dupnoise:f1:0.2	10	0.5969	linear-0	f1: feature/-/- 0.08831; f1_near: feature/-/- 0.1961	f1_near,f2	0.1606	-
+full_signal_clf_j1 | dupnoise:f1:0.2	11	0.7716	linear-5	f1: feature/-/- 0.7626; f1_near: feature/-/- 0.07271	f1,f2,seg	0.1165	-
+full_signal_clf_j1 | dupnoise:f1:0.2	12	0.6272	linear-5	f1: feature/-/- 0.4317; f1_near: feature/-/- 0.07118	f1,f2,seg	0.1442	-
+full_signal_clf_j1 | dupnoise:f1:0.2	13	0.7143	linear-3	f1: feature/-/- 0.1796; f1_near: feature/-/- 0.2228	f2,f1_near,f1	0.1316	-
+full_signal_clf_j1 | dupnoise:f1:0.2	14	0.755	linear-3	f1: feature/-/- 0.2428; f1_near: feature/-/- 0.0641	f2,f1	0.1164	-
+full_signal_clf_j1 | dupnoise:f1:0.2	15	0.7329	linear-0	f1: feature/-/- 0.2643; f1_near: feature/-/- 0.07411	f1,f2	0.1244	-
+full_signal_clf_j1 | dupnoise:f1:0.2	16	0.7184	forest-2	f1: feature/-/- 0.1097; f1_near: feature/-/- 0.1051	f2	0.1333	-
+full_signal_clf_j1 | dupnoise:f1:0.2	17	0.8084	linear-5	f1: feature/-/- 0.6325; f1_near: feature/-/- 0.03636	f1,f2,seg	0.1054	-
+full_signal_clf_j1 | dupnoise:f1:0.2	18	0.6983	linear-0	f1: feature/-/- 0.1163; f1_near: feature/-/- 0.06455	f2	0.1329	-
+full_signal_clf_j1 | dupnoise:f1:0.2	19	0.824	linear-5	f1: feature/-/- 0.9669; f1_near: feature/-/- 0.08793	f1,f2	0.1142	-
+full_signal_clf_j1 | dupnoise:f1:0.2	20	0.7487	linear-0	f1: feature/-/- 0.199; f1_near: feature/-/- 0.05149	f2,f1	0.1241	-
+full_signal_clf_j1 | dupnoise:f1:0.2	21	0.7619	linear-0	f1: feature/-/- 0.5361; f1_near: feature/-/- -0.0003106	f1,f2	0.119	-
+full_signal_clf_j1 | dupnoise:f1:0.2	22	0.679	linear-0	f1: feature/-/- 0.2417; f1_near: feature/-/- 0.02352	f1,f2	0.1391	-
+full_signal_clf_j1 | dupnoise:f1:0.2	23	0.6416	linear-5	f1: feature/-/- 0.7001; f1_near: feature/-/- 0.01116	f1,f2	0.1536	-
+full_signal_clf_j1 | dupnoise:f1:0.2	24	0.6667	linear-3	f1: feature/-/- 0.2302; f1_near: feature/-/- 0.1077	f1,f2	0.1387	-
+full_signal_clf_j1 | dupnoise:f1:0.2	25	0.7585	linear-0	f1: feature/-/- 0.2374; f1_near: feature/-/- 0.04913	f1,f2	0.1073	-
+full_signal_clf_j1 | dupnoise:f1:0.2	26	0.6938	linear-4	f1: feature/-/- 0.2482; f1_near: feature/-/- 0.02755	f1,f2	0.1387	-
+full_signal_clf_j1 | dupnoise:f1:0.2	27	0.6144	linear-0	f1: feature/-/- 0.2; f1_near: feature/-/- 0.04928	f2,f1	0.1526	-
+full_signal_clf_j1 | dupnoise:f1:0.2	28	0.7815	linear-0	f1: feature/-/- 0.2192; f1_near: feature/-/- 0.07405	f2,f1	0.1106	-
+full_signal_clf_j1 | dupnoise:f1:0.2	29	0.6564	linear-3	f1: feature/-/- 0.08957; f1_near: feature/-/- 0.04602	f2	0.1453	-

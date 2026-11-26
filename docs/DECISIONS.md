@@ -1291,3 +1291,112 @@ Consequence: a legitimately easy table, such as one that scores 0.995,
 carries the warning of point 2. Measurements: `docs\measurements\review-7\`
 and `docs\measurements\CP9\build-on-real-tables\`. After this pass: a
 review, then the repeat screen owed under D60.
+
+## D78 — 2026-11-25 — Rulings on the plan of pass 9 (CP10) (amends D77 points 1, 3, 7 and 9)
+Decision: (1) Every result names what the headline rests on, in plain
+sight and with no threshold on the headline: the headline record and the
+console summary list the columns whose fall is at least 0.05, at most five,
+largest first, with their falls. The warning at 0.98 stays as it is. (2) A
+carrier of the target that lifts the headline without reaching 0.98, and
+that the screen neither excludes nor warns about, is named there and is a
+stated limit of the screen: a coded copy of a regression target under time
+order, and two columns that give the target only together under time order
+and the fast profile, are the measured cases. D77 point 9 gains that
+fourth outcome. (3) Columns that are exact copies of one another are
+shuffled together and share one fall. (4) A coded copy of eight bands or
+fewer is warned about, not excluded: it is the warning tier of D30. (5) In
+the reading by levels, validation rows whose level was not seen in the
+fold's training rows are not scored; the harness pins when too few rows
+are scored for the reading to have a value. (6) A column of codes that
+alone predicts the target at 0.98 is excluded as a suspected leak even
+when it is an undeclared entity; the message says to declare it as
+`group_col` if that is what it is. (7) The harness session's details are
+approved: three keys for each column, five shuffles on a stream of their
+own, the naming rule of 0.05 and five, nulls with a warning when a model
+cannot predict a shuffled matrix; the order reading by pairs of rows
+between neighbouring values; rule 2's reading against the fold's training
+median where too many rows are marked; `holdout_far_above_quarter` at a
+share of 0.5; the code names. (8) The judge-tools tests keep their
+per-pass form: the older files accept exactly the failures the pass owns,
+and the newest pass's file is strict.
+Alternatives considered: for (1) and (2), a warning when one column
+carries most of the headline (rejected: it needs a floor, it would fire on
+a large share of honest tables, which often have one dominant feature, and
+each threshold is the next edge a review probes; the tool cannot know
+whether a column is known before the outcome, and can always say what the
+number depends on). For (5), the baseline's prediction for an unseen
+level, as CP10 worded it (rejected on measurement: 24 battery pairs
+failed). For (8), one test that is strict for good (rejected: both files
+are in the loop's ratchet, so a strict one fails mid-build and reopens
+every finished task).
+Consequence: a carrier below 0.98 is named, not warned about.
+
+## D79 — 2026-11-26 — The CP10 harness session is finished on Opus (one-off)
+Decision: The owner's Fable allowance ran out after the rulings of D77 and
+D78 were given. The CP10 harness session is resumed on `opus` at `xhigh`
+effort, with the harness-stage label, and finishes the judge there. Three
+conditions: the session re-reads the change prompt, D77 and D78 and its own
+measurements before it continues; it stops once more after the prototype
+and both tools are brought up to the rulings, and writes the judge only on
+the lead's go; and the review of pass 9 is run on Fable as the routing has
+it, when the allowance is back.
+Alternatives considered: waiting for the allowance (the owner chose not
+to). Running the review on another model (rejected: the reviewer is the
+independent reader, and with the harness on Opus it is the only stage left
+on a different model).
+Consequence: for this pass the judge, the tests and the build are all
+written on one model. The rules were designed, measured and ruled on Fable
+before the switch; what is left is their execution against proofs that a
+program checks.
+
+## D80 — 2026-11-26 — Rulings on the CP10 prototype (amends D78; extends D79)
+Decision: (1) The rests-on list names a column only when its fall is at
+least 0.05 and at least the half-width of the headline skill's interval;
+where the headline has no interval, the harness proposes the second term
+from measurement. A fall that the headline's own uncertainty could give is
+not a statement about the result. (2) A battery pair that plants a carrier
+of the target holds when it ends in one of the four outcomes of D78, or
+when the headline with the carrier is within that run's floor of the
+headline without it: a carrier that moves the headline by less than its
+uncertainty is not a confident wrong number. Where the headline skill has
+no value (D36), the pair is a stated limit citing D36. Of a carrier made
+of two columns, either one named counts as named. (3) Section 11 states
+the few-band case with the measured numbers: six to eight bands are warned
+about; five sometimes; four or fewer read like an honest column of that
+strength, are not warned about, and are named when they lift the headline
+above the floor; under time order no band count is warned about or
+excluded. (4) Copies are recognised on the matrix the models receive, as
+the harness pinned it, and up to sign: a negated copy is a copy. (5) The
+warning code `shuffled_score_not_computed` is approved. (6) From this
+decision the lead's rulings are also made on Opus, at the owner's choice;
+the review of pass 9 stays on Fable (D79).
+Alternatives considered: for (1), the floor of 0.05 alone (rejected on
+measurement: the list named columns on 13 to 20 of 30 seeds of the gate's
+noise tables, falls of the size the headline's sampling noise gives). For
+(2), the D78 carrier kinds kept as stated limits (rejected: all 11 pairs
+that end in none of the four lifted the headline by at most 0.037, so the
+claim can be checked instead of excused).
+Consequence: the stated-limit list goes back to the four kinds of D76,
+plus D36 where skill has no value.
+
+## D81 — 2026-11-26 — How the carrier claim reads its floor (clarifies D80 point 2)
+Decision: A battery pair that plants a carrier of the target, and ends in
+none of the four outcomes of D78, holds when its headline skill is no more
+than the unperturbed run's rests-on floor above the unperturbed run's
+headline skill. The yardstick is the unperturbed run's, so a carrier cannot
+excuse itself by widening the interval it is measured against; and only a
+rise fails, since the claim exists to catch an inflated headline. A carrier
+that lowers the headline is a sixth outcome, counted and printed apart, and
+spec section 11 says when it happens: a coded copy whose levels the
+holdout rows mostly do not hold, under time order, can pull the headline
+far below the run without it, which then reads as no evidence of
+predictability (the fixed limitation 2). The new key
+`headline.rests_on_floor` and the summary line that prints it are approved.
+Alternatives considered: the pair's own floor, or a fall in either
+direction (rejected on measurement: six pairs failed, five of them coded
+text copies under time order that lowered the headline by 1 to 900 skill
+points, and the sixth a walk whose one extreme holdout cell makes both
+headlines about -1e9, which `extreme_value` and `largest_row_dominates`
+already name).
+Consequence: with this reading every carrier pair holds and the
+stated-limit list is the four kinds of D76 plus D36.

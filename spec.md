@@ -2,7 +2,7 @@
 
 This file is what the application is built from and what the tests are written
 against. It restates the owner's decisions (`docs/DECISIONS.md`, cited as D1 to
-D76) without changing them, pins every value they leave to this stage, and
+D81) without changing them, pins every value they leave to this stage, and
 defines the interface precisely enough to test without seeing the code.
 
 Words used throughout: **pinned** means part of the contract; **open** means
@@ -171,7 +171,13 @@ The summary's wording and layout are open. What it shows is pinned (D39, D46):
 - `p_value` as a number, or, when it is null, the text of
   `headline.p_value_reason`;
 - one line per warning, holding that warning's `code` and, when it has one,
-  its `column`. Two warnings never share a line.
+  its `column`. Two warnings never share a line;
+- **one line for what the headline rests on (step 12a; D78 point 1, D80,
+  D81),** on every finished run. It begins with the words `rests on`; it
+  holds `headline.rests_on_floor` as a number when that is not null; and it
+  names each column of `headline.rests_on`, in the list's order, in quotes
+  as Python's `repr` writes a text, each with its `skill_fall` as a number.
+  When the list is empty it holds the word `none` in their place.
 
 **A value counts as shown when some number printed in the summary agrees with
 it to four significant digits (D46):** the printed number, read as a decimal
@@ -297,8 +303,8 @@ module only; they are always in the output.
 
 | `code` | `column` | Raised when |
 |---|---|---|
-| `suspected_leak` | the column | One per column excluded by the leak rule (D11). |
-| `strong_single_column` | the column | At most one per column, for a column that the leak screen keeps as a feature and names (step 8; D30, D33). By rule 3: rule 2 did not exclude the column, and its single-column skill with every row scored is at least 0.90 (D74). Or, where that skill has a value and is below 0.90, by the second reading of the same tier, for a numeric column of a regression (D76): with the training rows put in the column's order, the target moves the other way between at most 10% of neighbouring rows, and it does not follow its own previous value as closely. A warning only under either reading: the column stays a feature. Never for a column whose single-column skill cannot be computed (D36). |
+| `suspected_leak` | the column | One per column excluded by the leak rule (D11). For a column read by its levels (step 8: every categorical column, and a numeric column of few distinct values) and excluded by rule 2, the message also holds the fixed sentence of 5.4 that says to declare the column as `group_col` if it names the entity each row belongs to (D78 point 6). |
+| `strong_single_column` | the column | At most one per column, for a column that the leak screen keeps as a feature and names (step 8; D30, D33). By rule 3: rule 2 did not exclude the column, and its single-column skill with every row scored is at least 0.90 (D74). Or, where that skill has a value and is below 0.90, by the second reading of the same tier, for a numeric column of a regression (D76): the target moves against the column's order in at most 10% of the comparisons between training rows of neighbouring distinct values, rows of equal value never being put in the target's order (D77 point 4), and it does not follow its own previous value as closely. A warning only under either reading: the column stays a feature. Never for a column whose single-column skill cannot be computed (D36). |
 | `small_holdout` | `null` | Classification: fewer than 50 holdout rows of the rarer class. Regression: fewer than 50 holdout rows (D23). |
 | `date_column_undeclared` | the column | One per column excluded as `datetime` when the caller passed `time_col=False` (D7, D58, D63): a column of a date type, text in a date form, or dates written as whole numbers, with or without a sentinel among them (step 5, rules 2, 2a and 4; D66, D69). It is the tool's doubt about the statement, and changes nothing else. Never under a time column, where every other date column is excluded without a word; and a run with nothing said does not finish. What its message holds is pinned (5.4; D69): the column's name, `time_col=False`, and the caveat of the scheme the run used, so that it never says "random" of a split of whole entities. |
 | `autocorrelated_panel_target` | the target | Regression under time order with repeated timestamps, the caller passed `group_col=False`, and the lag-1 autocorrelation of the per-timestamp mean of the target over the training rows is above 0.5 (D10, D23, D63; section 10). It is the tool's doubt about the statement, and changes nothing else: since D63 this condition never stops a run. Its message names the baseline the run used, in the fixed passage of 5.4 (step 11; D74). With an entity column it does not arise. On a short panel it often does not fire (11, "Known limits"). |
@@ -322,6 +328,9 @@ module only; they are always in the output.
 | `interval_approximate` | `null` | Exactly one whenever `headline.interval_method` is `bootstrap_blocks` (D27): that interval tends to be too narrow (10.3). Never under the random scheme, and never when there is no interval. It does not depend on how long the holdout is or how correlated the errors are, which the tool cannot know (D33). |
 | `selection_not_made` | `null` | Exactly one, under the grouped scheme, when some fold has fewer than 50 training rows and fewer training rows than validation rows (step 9; D74). No choice between configurations is made on such folds: every fold is scored and reported, and the configurations are ranked in configuration order. Never under the random or the time-ordered scheme, and never when no fold is so. What its message holds is in section 11. |
 | `largest_row_dominates` | `null` | Regression only. One for each of these four statements that is above 0.5 (step 11; D74): the share of the chosen configuration's squared error on the holdout that its largest row carries (`headline.largest_row_share`); the same for the headline baseline (`headline.baseline_largest_row_share`); the share that the largest row carries of a configuration's squared error over the selection folds, for at least one configuration (`models[].largest_row_share`), one record however many configurations; and the same for the headline baseline over the selection folds (`cv.baseline_largest_row_share`). So none to four records, and their number follows from those keys (5.3). It is a statement about the result: no number is changed and no row is left out for it. Each message names its row or rows by number (11). |
+| `near_perfect_headline` | `null` | Exactly one when `headline.skill` is 0.98 or more (step 12a; D77 point 2): the level at which one column alone is excluded as a suspected leak. In both tasks and under every scheme. Its message names each column of `headline.rests_on` and asks whether each is known before the outcome; when the list is empty it says that no column's fall reaches the floor. Never otherwise, and never when `skill` is null. It changes nothing: no column is excluded for it. A legitimately easy table carries it too (D77, "Consequence"). |
+| `shuffled_score_not_computed` | the column | One for each feature whose statement could not be made: the chosen configuration raised, or predicted a value that is not finite, when it scored the holdout with that feature's holdout values shuffled (step 12a; D78 point 7). The three keys of its record are null (5.2) and the run goes on. Never otherwise. |
+| `holdout_far_above_quarter` | `null` | Exactly one, under time order, when the holdout holds half of the rows split or more: the training, gap and holdout rows (step 7; D77 point 6, D78 point 7). Whole timestamps made it far more than a quarter. The message holds the holdout rows and the rows split, and the fixed passage of 5.4. Never under the random or the grouped scheme, where `large_group_is_holdout` says the like of one unit. |
 | `extreme_value` | the column | One for each distinct value that lies far outside all the other values of its column: in a numeric feature that reaches the models, and in the target of a regression (step 11; D74, D76). The value is used as it is: no number is changed, no column is excluded and no row is dropped for it. The message holds the value and the number of rows that hold it, in the form section 11 pins. Never for a categorical column, an excluded column, the time column, the entity column or the target of a classification. |
 
 ### 2.6 Seam for tests (D26)
@@ -414,7 +423,7 @@ Section 3 defines what each step does; this table defines only the call.
 |---|---|---|
 | `load_table(data)` | `(frame, info)`. `frame` is the loaded table (step 1, section 6) with a default index 0..n−1, the rows' source positions, and string column names. `info` is `{"kind", "source", "warnings"}` as in `input.kind`, `input.source` and a list of warning records (only `blank_header` arises here). | `InputError`, `DuplicateColumnsError` |
 | `usable_rows(frame, target, time_col=None)` | Step 2 as a count: `{"usable", "dropped_missing_target", "dropped_missing_time"}`. `usable` is an array of the positions of the usable rows in increasing order; the two counts and its length add up to the rows of `frame`. A missing target is a missing cell, an infinite number, or a text cell that holds only white space (step 2; D48). A missing time value is a missing cell (or an infinite number); the time column's form is not checked here. | `ColumnNotFoundError` |
-| `column_roles(frame, target, time_col=None, group_col=None)` | A DataFrame with the eleven columns of `profile.json["columns"]` (5.2), one row per column of `frame` in order, as decided by step 5 alone: `leak_rule` is null and `n_imputed` is 0 throughout, since the leak screen and imputation come later. Usable rows are those with a target and, when `time_col` is given, a time value. `group_col`, when it names a column, gives that column the role `group` (D57). It returns no warnings and never stops for a statement that was not made: the warnings of step 5 (`values_coerced`, `infinite_values`, `numeric_with_separators`, `unsupported_type`) and the errors `time_order_undeclared` and `entities_undeclared` are raised by `profile()` and by the command line, and by no step function (D63). `time_col=None` here means only that no column has the role `time`. | `ColumnNotFoundError` |
+| `column_roles(frame, target, time_col=None, group_col=None)` | A DataFrame with the fourteen columns of `profile.json["columns"]` (5.2), one row per column of `frame` in order, as decided by step 5 alone: `leak_rule`, `shuffled_score`, `shuffled_skill` and `skill_fall` are null and `n_imputed` is 0 throughout, since the leak screen, imputation and the statement of step 12a come later. Usable rows are those with a target and, when `time_col` is given, a time value. `group_col`, when it names a column, gives that column the role `group` (D57). It returns no warnings and never stops for a statement that was not made: the warnings of step 5 (`values_coerced`, `infinite_values`, `numeric_with_separators`, `unsupported_type`) and the errors `time_order_undeclared` and `entities_undeclared` are raised by `profile()` and by the command line, and by no step function (D63). `time_col=None` here means only that no column has the role `time`. | `ColumnNotFoundError` |
 | `decide_task(values, task="auto")` | `{"type", "decided_by", "n_distinct", "classes", "positive_class", "warnings"}` for the target values given. They are read as step 4 reads them: a text value without the white space round it (D46); missing ones are ignored, a text value of only white space among them (D48). `warnings` is a list of warning codes: `["whole_number_regression_target"]` or `[]`. | `TargetConstantError`, `TaskAmbiguousError`, `TaskUnsupportedError`, `InputError` |
 | `read_time(values)` | `(keys, form)`. `keys` is a numpy array, one per value, that sorts in time order: `datetime64[ns]` with `NaT` for a missing value under the `datetime` and `iso8601` forms (in UTC if the values carried a zone), `float64` with NaN for a missing or infinite value under the `numeric` form. One exception under the `numeric` form (D50, D53): for whole numbers held exactly (step 3) of which at least one has a magnitude above 2⁵³, `keys` are exact 64-bit integers, of type `int64`, or `uint64` when the values came in an unsigned type, each equal to its value; as floats two of them could become one key. What `keys` holds for such a column that also has a missing value is open: a caller passes `split_time` the keys of usable rows only. Text of eight digits in which every value reads as a calendar date, `YYYYMMDD` (step 3; D66), gives the form `numeric` and `float64` keys equal to those numbers. A column of such dates, numbers or text, that also holds a value that is no date is not ordered: it raises (step 3; D69). `form` is as in `validation.time_form`. | `TimeColumnError` |
 | `split_random(n_rows, classes=None, seed=0, groups=None)` | `{"training", "holdout", "folds"}`: arrays of positions in 0..`n_rows`−1, each in increasing order; `folds` is a list of five `{"training", "validation"}`. `classes`, when given, is an array of `n_rows` labels with two distinct values and makes the split stratified (step 7); text labels are compared without the white space round them, so `yes` and `yes ` are one label and the split is the one their stripped forms give (D46). `seed` is in the range of 2.1. `groups`, when given, holds one value for each row, none of them empty, read as an entity column is (step 5): the rows of one value stay together, on one side of the holdout and in the validation part of one fold, by the rule of step 7 for whole entities (D57, D64). The split depends on which rows share a value and on nothing else about the values: renaming them changes nothing. With `groups=None` the result is what it was before `groups` existed. | `InputError` for a seed outside 0 to 4,294,967,295 (D45); with `groups`: `GroupColumnError` for an empty value or a number of values other than `n_rows`, `TooFewGroupsError` (step 7) |
@@ -1369,7 +1378,26 @@ For classification, a holdout or a set of training rows with one class raises
 scored for any configuration, and one `fold_not_scored` warning is raised for
 each such fold (D72); if no fold can be scored, `one_class`.
 
-**8. The leak screen (D11, D24, D30, D74, D76), on training rows only.** For
+**A time-ordered holdout far above a quarter is named (D77 point 6, D78 point
+7).** The holdout is the latest whole timestamps that make a quarter, so a
+timestamp that holds many rows can make it far more: when the last date of a
+table holds 60% of the rows, that date alone is the holdout, and the models
+learn from the 40% before it (the seventh review, finding 3). **When the
+holdout holds half of the rows split or more** (the training, gap and holdout
+rows: `rows.training` + `rows.dropped_gap` + `rows.holdout`), one
+`holdout_far_above_quarter` warning says so. Its message holds the holdout
+rows and the rows split as `H of the N rows`, both whole numbers in digits,
+the share as a percentage, the rows of the holdout's earliest timestamp, and
+the fixed passage of 5.4. Nothing else changes: the split is the split, and
+the warning is a statement about it. Under the grouped scheme
+`large_group_is_holdout` says the like of one unit, and was the model. The
+cut-off of one half was measured (10.11): on tables whose last timestamp
+holds from 0.2 to 0.7 of the rows the warning is raised exactly when that
+share is one half or more; on tables of 8 to 40 equal timestamps, whose
+holdouts hold 0.25 to 0.33 of the rows, never; and on no run of the gate
+before this pass.
+
+**8. The leak screen (D11, D24, D30, D74, D76, D77, D78), on training rows only.** For
 each feature column, in file order, the first rule that applies decides:
 
 1. *Filled in for one class and empty for the other* (classification only): on
@@ -1396,9 +1424,9 @@ and predicts its validation rows; the predictions of all folds are pooled,
 fold after fold, and skill is computed over the pooled rows. A fold that is
 not scored (step 7) takes no part.
 
-*The readers (D74).* A column is read by a tree and, beside it, by a second
-reader. The column's skill is that of the better of the two: the higher
-skill.
+*The readers (D74, D77).* A column is read by a tree and, beside it, by one or
+two other readers. The column's skill is that of the best of them: the
+highest skill.
 
 - **The tree,** for every column: a decision tree (`max_depth=6`,
   `min_samples_leaf=5`, `random_state=seed`), a classifier or a regressor by
@@ -1412,18 +1440,57 @@ skill.
   differ by less than about 1e-7 (section 9). With the tree alone an exact
   rescaled copy of a random walk stayed a feature under time order on 30 of
   30 tables, and so did a copy scaled by 1e-9 under every scheme (10.10).
-- **The column read directly,** in a classification. A leaf of at least five
-  rows cannot hold a class that has fewer than five rows among a fold's
-  training rows, so the tree could not follow an exact copy of such a target
-  (section 9). For a numeric column the direct reader is a tree of one split
+- **The column read directly,** for a numeric column of a classification. A
+  leaf of at least five rows cannot hold a class that has fewer than five
+  rows among a fold's training rows, so the tree could not follow an exact
+  copy of such a target (section 9). The direct reader is a tree of one split
   with no minimum leaf, `DecisionTreeClassifier(max_depth=1,
   min_samples_leaf=1, random_state=seed)`, fitted on the column as it is, and
-  its probability of the positive class. For a categorical column it is, for
-  each level, the share of the positive class among the fold's training rows
-  of that level: a validation row is given the share of its level, and a
-  level that the fold's training rows do not hold is given the share of the
-  positive class among all of the fold's training rows.
-- A categorical column of a regression is read by the tree alone.
+  its probability of the positive class.
+- **The column read by its levels (D77 point 3, D78 point 5),** in both
+  tasks, for every categorical column and for a numeric column of few
+  distinct values: one whose training rows of step 7 in which it is not
+  missing number at least five for each distinct value among them. For each
+  validation row, the reader predicts **the mean target of the fold's
+  training rows that hold the row's level**: in a classification the share of
+  the positive class among them. A level is, for a categorical column, the
+  stripped text of step 5, `(missing)` being a level like any other; for a
+  numeric column, the value, a missing cell being no level. **A validation
+  row whose level the fold's training rows do not hold is not scored by this
+  reader:** its skill is measured over the pooled rows it scores, against the
+  same baselines as every reader, the lower counting, and rules 2 and 3 read
+  it as below, over those rows. **The reading has a value only when at least
+  20 pooled validation rows are scored and, in a classification, at least 10
+  of each class are, or every pooled validation row of that class is;** with
+  fewer, or where a baseline's squared error over the rows it scores is zero,
+  it is no reader of that column, and the others decide. A categorical column
+  of a classification was read directly until D77, an unseen level being
+  given its fold's share of the positive class; this reader takes the place
+  of that reading. A categorical column of a regression was read by the tree
+  alone, on codes of its sorted level names.
+
+*Why levels, and why unseen levels are not scored.* A column that is the
+target cut into 24 or 30 bands, with labels in random order, is noise to a
+tree on codes of its sorted labels: it was kept, often in silence, with the
+headline at 0.95 to 1.0 (the seventh review, finding 1), and a numeric code of
+the target likewise, in both tasks. Read by its levels it is excluded on
+every table from 16 bands up under the random scheme, and on most beside
+entities (10.11); coarser bands are weaker columns, and under time order the
+latest rows' levels are not the earlier rows': section 11 says what becomes
+of them (D78 point 4, D80 point 3). An unseen level given the baseline's prediction, as CP10 first
+worded it, scores rows that the reading knows nothing of: 24 battery pairs
+failed so (D78). Leaving them out needs a floor, because a classification
+then reads noise perfectly on a few rows: with one to four scored rows of
+the rarer class a noise column read 1.000; with the floor, none of 16,836
+noise columns was excluded or warned about (10.11).
+
+**A column of codes is judged like any other (D78 point 6).** A column that
+names the entity each row belongs to, where each entity holds one value of
+the target, predicts the target from its levels as a coded copy does, and
+the screen cannot tell the two apart. It is excluded by rule 2 like any
+column that predicts the target at 0.98, and the `suspected_leak` message of
+a column read by its levels holds the fixed sentence of 5.4 that tells the
+caller to declare it as `group_col` if that is what it is.
 
 *The line (D74)* is fitted so that a few rows cannot move it. Take the fold's
 training rows in which the column is not missing, sorted by the column's
@@ -1497,12 +1564,26 @@ rows of step 7, the rows of the final fit. **The rows marked by either are
 set aside when they are at most 1% of the training rows:** at most
 ⌊0.01 × the training rows⌋ of them, and never fewer than one row is allowed.
 A row set aside is in no fold's training rows and in no fold's validation
-rows for the screen: in no mean, no tree, no line, no baseline and no sum. A
-fold that is left with no training row or no validation row by it takes no
-part in the screen. **When more rows are marked than that, none is set aside
-and rule 2 scores every row, as rule 3 does:** that many rows far off are
-the shape of the target and not a stray cell, and the screen is then what it
-was before D74 with the second reader added.
+rows for the screen: in no mean, no tree, no line, no reading by levels, no
+baseline and no sum. A fold that is left with no training row or no
+validation row by it takes no part in the screen. **When more rows are
+marked than that, none is set aside (D77 point 5, D78 point 7):** that many
+rows far off are the shape of the target, a long tail, and not a stray cell.
+Rule 2 still leaves its rows unscored, as above, and **its reading is also
+taken against each fold's training median,** a further baseline that gives
+every validation row the median target of its fold's training rows, the
+lower value counting as against every baseline. Rows far off cannot move a
+median: so a column of noise that fits a few of those rows is not excluded
+for beating a mean that they drag away from every other row, as it was
+beside a target with 1.2% to 1.5% of its cells set to −999 when the median
+was left out (10.11). Rule 3 and the order reading score every row, as
+always. Until D77 rule 2 then scored every row as well: a few changed cells
+of a copy of a long-tailed target were most of the copy's error, and a copy
+with five cells changed by several of the target's daily steps, by a factor
+of 1.5 or to another row's value was warned about and kept on 22 of 24 real
+tables, with headline skill 0.89 to 1.00 (D77 point 5). Such a copy is now
+excluded at every size of change, up to the 1% of rows the rule leaves
+unscored (10.11).
 
 The check of "Numbers that are not finite", rule 2, comes before this: when a
 baseline's squared error over the pooled validation rows, every row in, is
@@ -1538,20 +1619,34 @@ is taken of:
   (D36, above): the order reading is a reading of rule 3, and does not apply
   to it either.
 
-Take the training rows in which the column is not missing, sorted by the
-column's value and, among equal values, by the target. A *pair* is two rows
-next to each other in that order whose values of the column differ. The
-**share against the order** is the smaller of two shares of the pairs: those
-in which the target is higher in the second row, and those in which it is
-lower. It is 0 when the target rises with the column without exception, or
-falls with it without exception. With fewer than 20 pairs it has no value.
+Take the training rows in which the column is not missing. **Rows of equal
+column value are never put in the target's order (D77 point 4, D78 point
+7).** For each two neighbouring distinct values of the column, *v* and the
+next larger *w*, every row that holds *v* is compared with every row that
+holds *w*: the share of those comparisons in which the target is higher in
+the row of *w*, and the share in which it is lower (an equal target counts in
+neither). Each of the two is averaged over the neighbouring pairs of values,
+each pair counting once however many rows it holds, and the **share against
+the order** is the smaller of the two averages. It is 0 when the target rises
+with the column without exception, or falls with it without exception. With
+fewer than 20 neighbouring pairs of values (21 distinct values) it has no
+value. On a column whose values are all distinct it is the reading D76
+built. Until D77 the rows were sorted by the column and, among equal values,
+by the target, and neighbouring rows were compared: inside each run of equal
+values the target then rose, and a column of noise with repeated values
+(`age` and `s6` of scikit-learn's diabetes table; noise rounded to one
+decimal place; a whole number from 1 to 40) read as one the target follows,
+and was warned about (the lead's real-data run of the eighth pass, finding
+1). One point for each distinct value, the mean target of its rows, was
+measured and not adopted: on large tables the means of an honest weak column
+rise with it almost without exception (10.11).
 The column gets the `strong_single_column` warning when both of these hold:
 
 1. its share against the order has a value and is **at most 0.10**;
 2. **the target does not follow its own previous value as closely.** Where the
    previous value is a baseline of the screen, the same share is computed
    with each row's previous value in the column's place, over the training
-   rows that have one: the condition holds when that share is above 0.10, or
+   rows that have one, and read in the same way: the condition holds when that share is above 0.10, or
    has no value. Where there is no previous value (no time column) the
    condition always holds.
 
@@ -2230,6 +2325,91 @@ Nothing is refitted. *R* is 1,000 under `full` and 200 under `fast`.
 
 Also added here: `small_holdout` (2.5).
 
+**12a. State what the headline rests on (D77 points 1 and 2, D78, D80, D81).**
+On every finished run, for each feature, the chosen configuration's score on
+the holdout with that feature's holdout values shuffled among the holdout
+rows. **Nothing is refitted, nothing is chosen by it, and no other number of
+the output changes.** It describes the result: the tool cannot know whether a
+column is known before the outcome, and it can always say what the number
+depends on (D78, "Alternatives considered"). Two columns that give the target
+only together (`a` = the target plus a noise, `b` = that noise) cannot be
+seen by any reading of single columns: such a table scored 1.000 with nothing
+said (the seventh review, finding 2). Now the headline names both.
+
+- **The shuffle.** The holdout matrix of step 10, as the chosen
+  configuration was handed it (imputed, scaled, one-hot encoded), with that
+  feature's part of it (its column, or its block of level columns) moved
+  among the holdout rows by one permutation of the holdout rows; every other
+  part stays where it is. The configuration predicts the shuffled matrix,
+  and the prediction is scored with the headline metric against the holdout
+  targets. **Five shuffles,** each with a permutation of its own; the
+  feature's **`shuffled_score`** is the mean of the five scores. The
+  permutations come from a stream of their own, drawn from the seed and from
+  the position of the feature, that no other step draws from: the result is
+  the same at any `n_jobs` (D17), and which permutations are drawn is open
+  (11). **Each shuffle is one call of the fitted configuration's prediction on
+  every holdout row,** in the holdout's order, handed as the holdout was for
+  the headline: so a model supplied through the seam (2.6) is asked, after
+  the headline's own call, five times for each set of copies, each time on
+  the holdout rows. In which order the sets are taken is open.
+- **Copies are shuffled together (D78 point 3, D80 point 4).** Features
+  whose parts of the final fit's matrix are the same, in every training row
+  and every holdout row, are copies of one another as the models receive
+  them. Their parts are moved by one permutation, and they share one
+  statement: the same three numbers in each record. Two numeric features are
+  copies when their columns agree, or one agrees with the other's negation,
+  within 1e-9; two categorical features when their blocks of level columns
+  hold the same columns, in any order. Features of different kinds are never
+  copies. So `2 × f + 3` and `−f` are copies of `f`, and a text column with
+  its levels renamed is a copy of the column. A set of copies uses the stream
+  of its first member in file order. Shuffled one at a time, each copy would
+  show a part of the fall they share, because the other is still there: a
+  rescaled copy beside its column showed a quarter of the column's fall each
+  (10.11).
+- **The three keys of a column's record (5.2).** `shuffled_score`;
+  `shuffled_skill`, the skill of that score against the headline baseline,
+  as step 11 computes skill (2 × AUC − 1, or 1 − score ÷ `baseline_score`);
+  and `skill_fall`, `headline.skill` − `shuffled_skill`, which may be
+  negative. All three are null for a column that reached no model. When
+  `headline.skill` is null (D36), `shuffled_score` is a number and the other
+  two are null. **When the configuration raises, or predicts a value that is
+  not finite, for a shuffled matrix,** the three keys of that feature (and of
+  its copies) are null, one `shuffled_score_not_computed` warning names each
+  such feature, and the run goes on (D78 point 7): the headline was scored
+  before, and nothing about it is in doubt.
+- **The list, `headline.rests_on` (D78 point 1, D80 point 1).** The features
+  whose `skill_fall` is at least the **floor**, at most five, the largest fall
+  first, ties in file order, each as `{column, skill_fall}`. **The floor,
+  `headline.rests_on_floor`, is the larger of 0.05 and the half-width of the
+  headline skill's interval,** (`skill_high` − `skill_low`) ÷ 2: a fall that
+  the headline's own uncertainty could give is not a statement about the
+  result (D80). Where the skill has no interval (no interval at all, or
+  `no_skill_interval`), the half-width is that of a stand-in: the middle 95%
+  of the skill over a bootstrap of the holdout rows taken as if they were
+  independent, with the resamples of 4.2, on a stream of its own, a resample
+  in which skill cannot be computed being left out; with fewer than half of
+  the resamples left, there is no stand-in and the floor is 0.05. The floor
+  is null when `skill` is null, and the list is then empty. **The list has no
+  threshold on the headline:** it is on every result, and the console
+  summary prints it (2.2). With the floor of 0.05 alone it named columns on
+  up to 21 of 30 seeds of a gate table of noise, and on 10 or more of 30 on
+  seven of them; with the half-width, on at most 2 of 30 (D80; 10.11).
+- **The near-perfect warning (D77 point 2).** When `headline.skill` is 0.98 or
+  more, the level at which one column alone is excluded as a suspected leak,
+  one `near_perfect_headline` warning names each column of the list, with its
+  shuffled skill and its fall, and asks whether each is known before the
+  outcome; with an empty list it says that no column's fall reaches the
+  floor. In both tasks and under every scheme. It excludes nothing and
+  changes no number: a legitimately easy table carries it too, and the
+  caller is the one who knows whether each named column comes before the
+  outcome.
+
+What the statement cannot show, and what it then shows instead, is in
+section 11 ("Known limits"). Its cost was measured at 100,000 rows by 100
+columns under the full profile on all cores: 22 seconds of a run of 218
+(classification) and of 244 (regression), against the budget of 600 (D16;
+10.11).
+
 **13. Assemble the result; write the files** (section 5). Before anything is
 returned or written, every number in every part of the output is checked to be
 finite ("Numbers that are not finite", rule 6). The check is made where the
@@ -2391,7 +2571,9 @@ exactly the grid arguments (`{}` for `tree-0`).
 | holdout share | 25%: ⌈*n*/4⌉ rows (random); the latest timestamps holding at least 25% (time); whole units holding at least 25% and less than 25% plus one unit, the unit of step 7, property 3 (grouped; D64) |
 | folds | 5; six blocks under time order |
 | fast profile row cap | 2,000 |
-| resamples and shuffles | 1,000 (`full`), 200 (`fast`) |
+| resamples and shuffles | 1,000 (`full`), 200 (`fast`): the interval, the p-value, and the stand-in of step 12a's floor |
+| shuffles of each feature, or set of copies, for the statement of step 12a | 5, on a stream of their own (D77, D78 point 7) |
+| columns named in `headline.rests_on` | at most 5 (step 12a; D78 point 1) |
 | interval level | 95%, percentile |
 | too small to profile | fewer than 100 usable rows; fewer than 10 of a class |
 | too few entities to split (grouped scheme) | fewer than 6 units; fewer than 5 left for the folds once the holdout is taken (D57) |
@@ -2402,7 +2584,9 @@ exactly the grid arguments (`{}` for `tree-0`).
 | an entity the fast profile's cap always keeps | one that holds a quarter or more of the usable rows: 4 × its rows ≥ those rows (step 6; D72) |
 | the leak screen: rows left unscored for rule 2 | of the pooled validation rows, the ⌈1%⌉ that the reader misses by most and the ⌈1%⌉ that the baseline misses by most, at least one row each; none when twice that number is not less than the rows (step 8; D74) |
 | the leak screen: training rows set aside (regression) | rows whose target lies more than 10 median deviations from the median target, or more than 10 median steps from its previous value, when they are at most ⌊1%⌋ of the training rows, never fewer than one row being allowed; when they are more, none (step 8; D74) |
-| the leak screen: pairs needed for a share against the order | at least 20 neighbouring pairs whose values of the column differ (step 8; D76) |
+| the leak screen: pairs needed for a share against the order | at least 20 pairs of neighbouring distinct values of the column, so at least 21 distinct values (step 8; D76, D77 point 4) |
+| the leak screen: a numeric column read by its levels | at least 5 training rows, the column not missing, for each distinct value among them (step 8; D77 point 3) |
+| the leak screen: rows the reading by levels must score to have a value | at least 20 pooled validation rows, and in a classification at least 10 of each class, or every one of that class (step 8; D78 point 5) |
 | too few training rows to choose between configurations (grouped scheme) | a fold with fewer than 50 training rows and fewer training rows than validation rows (step 9; D74) |
 | values looked at for one far outside its column | the 3 outermost distinct values at each end, each against the spread of the 10 distinct values after the next one inward; at least 3 distinct values (step 11; D74) |
 | one-hot levels kept per column | 30 |
@@ -2411,13 +2595,17 @@ exactly the grid arguments (`{}` for `tree-0`).
 | digits of a fraction of a second in an ISO 8601 time value | one to nine (D52) |
 | whole-number time keys kept as integers | when the column holds a magnitude above 2⁵³ = 9,007,199,254,740,992 (D50, D53) |
 
-### 4.3 Cut-offs (D23, D28, D30, D33, D34, D48, D74, D76; measurements in section 10)
+### 4.3 Cut-offs (D23, D28, D30, D33, D34, D48, D74, D76, D77, D78, D80; measurements in section 10)
 
 | Cut-off | Value |
 |---|---|
 | leak: single-column cross-validated skill, with the rows of 4.2 left unscored | at least 0.98: excluded |
 | leak warning: the same skill, every row scored | at least 0.90, in a column that is not excluded: kept, with the `strong_single_column` warning |
-| leak warning, second reading: the share against the column's order, for a numeric column of a regression whose skill has a value below 0.90 | at most 0.10, and the same share for the previous value above 0.10 or without a value: kept, with the same warning (step 8; D76) |
+| leak warning, second reading: the share against the column's order, between rows of neighbouring distinct values, for a numeric column of a regression whose skill has a value below 0.90 | at most 0.10, and the same share for the previous value above 0.10 or without a value: kept, with the same warning (step 8; D76, D77 point 4) |
+| the near-perfect warning | a headline skill of 0.98 or more (step 12a; D77 point 2) |
+| a column named in `headline.rests_on` | a fall of at least 0.05 and at least the half-width of the headline skill's interval, or of its stand-in (step 12a; D80 point 1) |
+| two numeric columns of the final fit's matrix that are copies | they agree, or one agrees with the other's negation, within 1e-9 in every training and holdout row (step 12a; D78 point 3, D80 point 4) |
+| a time-ordered holdout that is named | half of the rows split or more: 2 × holdout rows ≥ training + gap + holdout rows (step 7; D77 point 6, D78 point 7) |
 | leak: missing by class | more than 95% of one class and less than 5% of the other |
 | id-like, text column | distinct values more than 95% of the usable rows |
 | id-like, whole-number column | every value distinct, and consecutive or strictly ordered in file order (D19); or more than 95% of the values distinct and the distinct values filling at least half of their range (step 5, rule 8b; D74) |
@@ -2549,6 +2737,9 @@ order: `loaded`, `dropped_missing_target`, `dropped_missing_time`,
 | `n_coerced` | integer | non-missing text cells that did not parse, among all loaded rows, in a column read as numeric by rule 5 of step 5; otherwise 0 |
 | `n_infinite` | integer | among all loaded rows of a numeric feature column, the infinite cells and the finite cells too large for the tree models, a magnitude above 3.4028234663852886e+38 (step 5; D48). For the target and for the time column, in whatever role they hold a number: their infinite cells, each of which is a missing target or a missing time value (steps 2 and 5; D57); for an object target that is not read as numbers, its infinite floats. Otherwise 0, and always 0 for the entity column |
 | `n_imputed` | integer | for a feature, its missing cells (as loaded, coerced or infinite) among the training and holdout rows; otherwise 0 |
+| `shuffled_score` | number or null | for a feature, the chosen configuration's score on the holdout with the feature's holdout values shuffled among the holdout rows, the mean of five shuffles; copies of one another share it (step 12a; D77, D78). Null for a column that reached no model, and for a feature that a `shuffled_score_not_computed` warning names |
+| `shuffled_skill` | number or null | the skill of `shuffled_score` against the headline baseline, as step 11 computes skill. Null where `shuffled_score` is, and when `headline.skill` is null |
+| `skill_fall` | number or null | `headline.skill` − `shuffled_skill`: how far the headline falls with the feature shuffled. It may be negative. Null where `shuffled_skill` is |
 
 **`task`**
 
@@ -2621,6 +2812,8 @@ not written as the nearest float.
 | `largest_row` | integer or null | that row, by its number in the loaded source: a `row` of `predictions.csv`. Null when the share is |
 | `baseline_largest_row_share` | number or null | the same for the headline baseline's squared error on the holdout. Null for classification, and when `baseline_score` is 0 |
 | `baseline_largest_row` | integer or null | that row; null when the share is |
+| `rests_on` | list | what the headline rests on (step 12a; D78 point 1, D80): records `{column, skill_fall}` for the features whose `skill_fall` is at least `rests_on_floor`, at most five, largest first, ties in file order. Empty when no fall reaches the floor, and when `skill` is null |
+| `rests_on_floor` | number or null | the larger of 0.05 and the half-width of the skill interval, or of its stand-in where the skill has no interval (step 12a; D80 point 1). Null exactly when `skill` is null |
 
 **`baselines`**: a list of records `{name, score, used}`. Classification: one,
 `chance`. Regression: `training_mean`, and under time order also
@@ -2715,6 +2908,26 @@ it is the headline baseline. A score of 0 is reported as it was measured.
 16. In a regression under time order `baselines` holds both `training_mean`
     and `previous_value`, whatever `validation.timestamps_unique` and
     `validation.group_col` say (D74).
+17. In every record of `columns` whose `role` is not `feature`,
+    `shuffled_score`, `shuffled_skill` and `skill_fall` are null. For a
+    feature that no `shuffled_score_not_computed` warning names,
+    `shuffled_score` is a number; `shuffled_skill` equals 2 ×
+    `shuffled_score` − 1 (classification) or 1 − `shuffled_score` ÷
+    `headline.baseline_score` (regression), and `skill_fall` equals
+    `headline.skill` − `shuffled_skill`, both null when `headline.skill` is.
+    A feature that such a warning names has all three null (D77, D78).
+18. `headline.rests_on_floor` is null exactly when `headline.skill` is. It is
+    otherwise at least 0.05, and equals the larger of 0.05 and (`skill_high`
+    − `skill_low`) ÷ 2 when those two are numbers (D80).
+19. `headline.rests_on` lists, as `{column, skill_fall}`, exactly the features
+    whose `skill_fall` is at least `headline.rests_on_floor`, at most five, by
+    `skill_fall` from the largest, ties by `position`; each `skill_fall`
+    equals that of the column's record (D78, D80).
+20. `near_perfect_headline` is among the warnings, once, exactly when
+    `headline.skill` is 0.98 or more (D77).
+21. `holdout_far_above_quarter` is among the warnings, once, exactly when
+    `validation.scheme` is `time_ordered` and 2 × `rows.holdout` ≥
+    `rows.training` + `rows.dropped_gap` + `rows.holdout` (D77, D78).
 
 ### 5.4 Fixed texts
 
@@ -2767,6 +2980,18 @@ the run's headline baseline as `headline.baseline` has it, `training_mean` or
 `previous_value`:
 
 > Skill is measured against the baseline NAME. With no entity column the previous value of a row is the mean target of the timestamp before, over every series at once: if the rows are several series, declare group_col, and each series is measured against its own previous value.
+
+Two more were added by the ninth pass (D77 point 6, D78 point 6), held in the
+same way.
+
+In the message of the `holdout_far_above_quarter` warning:
+
+> The models were fitted on the rows before it and the headline is measured on it: fewer rows were learned from than the split usually leaves.
+
+In the message of a `suspected_leak` warning for a column read by its levels
+(step 8) and excluded by rule 2, after the reason:
+
+> If it names the entity each row belongs to, declare it as group_col (--group-col): the rows of one entity are then kept together.
 
 The two caveats and the nine sentences below were read against D63, and none
 of them is false under it: the caveat of the random scheme says what the
@@ -2948,7 +3173,13 @@ None is skipped silently: each raises a named error or is reported in the output
 | a feature whose single-column skill, every row scored, is at least 0.90, and which rule 2 does not exclude | kept as a feature; `strong_single_column` warning |
 | a column that reproduces a regression target (an exact, rescaled or negated copy, one scaled by 1e-9), under any scheme | excluded as a suspected leak: read by the line where the tree cannot follow it (step 8; D74) |
 | the same with one wild cell in the copy, or beside one wild cell in the target | excluded all the same: for rule 2 the rows missed by most are not scored, and a training row whose target is wildly off is set aside from the screen (D74) |
-| more than 1% of the training rows with a target wildly off | none is set aside and every row is scored: the screen as it was before D74, with the second reader |
+| more than 1% of the training rows with a target wildly off | none is set aside; rule 2 still leaves its rows unscored and is read against the fold's training median as well (step 8; D77 point 5, D78 point 7); rule 3 scores every row |
+| the target cut into 16 or more bands, as text with labels in any order or as a numeric code (random scheme) | excluded as a suspected leak: read by its levels (step 8; D77 point 3); beside entities, under time order and with coarser bands, as section 11 says (D80 point 3) |
+| a column of noise with repeated values (rounded to one decimal place; whole numbers from 1 to 40) | a feature with no warning: the order reading never puts rows of equal value in the target's order (step 8; D77 point 4) |
+| a table whose headline skill is 0.98 or more | one `near_perfect_headline` warning naming the columns of `headline.rests_on` (step 12a; D77 point 2) |
+| two features that are the same column as the models receive it (an exact, rescaled or negated copy; a text column with its levels renamed) | one statement for both: the same three keys, one fall (step 12a; D78 point 3, D80 point 4) |
+| the chosen configuration raises on a shuffled matrix | `shuffled_score_not_computed` for each feature concerned, its three keys null; the run finishes (step 12a; D78 point 7) |
+| under time order, a holdout of half of the rows split or more | `holdout_far_above_quarter` (step 7; D77 point 6) |
 | an exact copy of a two-valued target, where a fold's training rows hold fewer than five rows of one class | excluded: read directly, with no minimum leaf (step 8; D74) |
 | a numeric column that follows a regression target's order and predicts it to less than 0.90 (its square, under time order; a copy with 2% of its cells altered) | kept as a feature, with the `strong_single_column` warning by its order (D76) |
 | the same where the target follows its own previous value as closely (a running total and its lag) | no warning by the order |
@@ -3307,6 +3538,29 @@ of its own, a gate run, and one check that names it:
 | F27 | The id-like rule for whole numbers is the clause of D19 alone: an identifier becomes a numeric feature when the rows are shuffled. | `data.identifier_survives_shuffle` | `messy_shuffled` |
 | F28 | Under the grouped scheme the choice between configurations is made however few rows the folds outside one large unit validate on. | `groups.choice_not_made` | `dominant_entity`, as it is |
 
+**The seven failure modes of the ninth pass (D77, D78, D80, D81).** Each is the
+reference with one rule of the pass taken out, with a gate run and one check
+that names it; each new run was added last, so no seed of an older one moved.
+Every check is structural but the first, which reads the gate's
+`random_walk`: a run with one feature, where moving that feature's holdout
+values among the holdout rows moves the predictions with them, whatever the
+model. So the shuffled score is the squared error of the holdout targets
+against a shuffle of `predictions.csv`, whose mean over every shuffle and
+whose variance are exact, and the gate asserts the reported mean of five
+shuffles within five of its standard deviations of that mean (measured, 30
+data seeds: the reference −1.46 to +3.40, and over five one-feature runs,
+150 in all, |z| at most 3.40; F29 −43.1 to −40.3; 10.11).
+
+| Id | The silent failure | Gate check | Run |
+|---|---|---|---|
+| F29 | What the headline rests on is not of a shuffle of the holdout: every feature's holdout values are left where they are, so every fall is zero and the list names nothing. | `result.rests_on_recomputed` | `random_walk`, as it is |
+| F30 | A headline skill of 0.98 or more carries no `near_perfect_headline` warning: two columns that give the target only together make a perfect headline in silence. | `rests_on.near_perfect_named` | `pair_together`: `signal_reg` with `pair_a` (the target plus a noise of its spread) and `pair_b` (that noise) |
+| F31 | Columns that are copies of one another as the models receive them are shuffled one at a time: each shows a part of the fall they share. | `result.copies_share_a_fall` | `signal_reg_copied`: `signal_reg` with `f1_scaled` = 2 × `f1` + 3 |
+| F32 | The leak screen does not read a column by its levels: the target cut into 30 bands, labels in random order, is a feature. | `leak.coded_copy_excluded` | `leak_reg_coded`: `signal_reg` with `amount_band` |
+| F33 | The order reading puts rows of equal column value in the target's order: a column of noise with repeated values is warned about. | `leak.tied_noise_quiet` | `noise_tied`: `signal_reg` with `score` (a whole number from 1 to 40) and `noise_rounded` (to one decimal place) |
+| F34 | Where more training rows are marked than may be set aside, rule 2 scores every row: a copy of a long-tailed target with five cells moved far off is kept. | `leak.changed_cells_excluded` | `skewed_copy`: a log-normal target and `amount_copy` = 1.07 × amount + 3, five cells moved up by 20 times the target's spread |
+| F35 | Under time order a holdout of half of the rows or more is not named. | `time.large_holdout_named` | `last_stamp`: 60% of 1,000 rows on the last date |
+
 What each run must show follows from section 3, and the gate holds it by its
 own count wherever a count can be made:
 
@@ -3361,13 +3615,13 @@ most of the gate's time (section 9; 10.9).
 
 **Every gate check that names a failure mode is seen to fail on that mode's own
 broken copy, in every run of the gate's self-test**, which prints the table
-that proves it and fails if one pair is missing: 51 pairs of a check and the
-mode it names, over 37 broken copies, among 53 checks. The checks that give
+that proves it and fails if one pair is missing: 58 pairs of a check and the
+mode it names, over 44 broken copies, among 60 checks. The checks that give
 a written reason in place of a failure mode are listed in the same output,
 with the copies
 they failed on, for information.
 
-### 8.1 Small faults the gate cannot see (D39, D44, D46, D52, D57, D62 to D66, D69 to D72, D74, D76)
+### 8.1 Small faults the gate cannot see (D39, D44, D46, D52, D57, D62 to D66, D69 to D72, D74, D76 to D78, D80)
 
 The first review found five faults that a build could carry while passing
 every gate check and all 308 tests of the first suite. Three are small forms of
@@ -3431,6 +3685,24 @@ one fault (`verify/mutation_check.py`; the switch is in the reference's
 | M49 | Under time order the rows of a fit are handed over in file order, not in time order (D74 point 4). | `test_fit_order.py::test_every_fit_is_handed_its_rows_in_time_order` |
 | M50 | The identifier's second clause asks for every value to be distinct: one repeated row makes a shuffled identifier a feature (D74). | `test_id_dense.py::test_the_id_like_rule_for_whole_numbers` |
 | M51 | The panel warning names the training mean, whatever baseline the run used (D74). | `test_repeated_stamps.py::test_the_panel_warning_names_the_baseline_the_run_used` |
+| M52 | The shuffles of the statement are drawn from a stream that depends on the number of cores: the result differs at another `n_jobs` (D77; step 12a). | `test_rests_on.py::test_the_statement_is_the_same_at_any_n_jobs`, `test_guard_review8.py::test_m52_the_shuffled_matrices_are_the_same_at_any_n_jobs` |
+| M53 | A column that reached no model is given a statement as well (D77; 5.3 rule 17). | `test_rests_on.py::test_every_feature_has_a_statement_and_no_other_column_has_one`, `test_guard_review8.py::test_m53_under_time_order_no_column_outside_the_models_has_a_statement` |
+| M54 | The list takes the largest falls whatever their size: it has no floor (D78 point 1, D80 point 1). | `test_rests_on.py::test_the_list_holds_the_columns_whose_fall_reaches_the_floor`, `test_guard_review8.py::test_m54_a_classification_of_noise_lists_nothing` |
+| M55 | Among equal falls the list goes by name, not by file order (D78 point 1). | `test_rests_on.py::test_equal_falls_go_in_file_order` |
+| M56 | Copies are columns whose values are the same as loaded: a rescaled copy, the same column as the models receive it, is shuffled alone (D78 point 3). | `test_rests_on.py::test_copies_are_shuffled_together_and_share_one_fall`, `test_guard_review8.py::test_m56_a_relabelled_categorical_copy_shares_one_fall` |
+| M57 | The near-perfect warning is raised in a classification only: a regression's near-perfect headline carries none (D77 point 2). | `test_near_perfect.py::test_two_columns_that_give_the_target_together_are_named` |
+| M58 | In the reading by levels a level that a fold's training rows do not hold is given the baseline's prediction and scored, as CP10 first worded it (D78 point 5). | `test_screen_levels.py::test_rows_whose_level_the_fold_has_not_seen_are_not_scored`, `test_guard_review8.py::test_m58_under_the_grouped_scheme_unseen_levels_are_not_scored` |
+| M59 | The reading by levels has a value on any number of scored rows: noise read on a few rows of a class is excluded (D78 point 5). | `test_screen_levels.py::test_a_reading_by_levels_on_too_few_rows_of_a_class_has_no_value`, `test_guard_review8.py::test_m59_too_few_scored_rows_of_the_negative_class` |
+| M60 | Whether a numeric column is read by its levels is counted over every row split, not over the training rows (D77 point 3). | `test_screen_levels.py::test_few_values_are_counted_over_the_training_rows`, `test_guard_review8.py::test_m60_a_classification_code_of_six_rows_a_value` |
+| M61 | The `suspected_leak` message of a column read by its levels does not say to declare it as `group_col` (D78 point 6). | `test_screen_levels.py::test_a_coded_copy_of_the_target_is_excluded` |
+| M62 | The order reading takes one point for each distinct value, the mean target of its rows, in place of every pair of rows between neighbouring values (D77 point 4, D78 point 7). | `test_order_ties.py::test_a_column_whose_means_rise_with_the_target_is_not_named`, `test_guard_review8.py::test_m62_a_falling_trend_under_the_grouped_scheme` |
+| M63 | Where more training rows are marked than may be set aside, rule 2 leaves its rows unscored and is not read against the fold's training median: noise columns are excluded beside wild target cells (D78 point 7). | `test_screen_marked.py::test_wild_target_cells_beyond_the_share_make_no_column_a_leak`, `test_guard_review8.py::test_m63_a_target_of_noise_with_seven_sentinel_cells` |
+| M64 | Only a time-ordered holdout above one half of the rows is named, not one of one half (D78 point 7). | `test_large_holdout.py::test_a_holdout_of_half_the_rows_or_more_is_named` |
+| M65 | The console summary prints nothing for the list when it is empty (D78 point 1). | `test_rests_on.py::test_the_summary_prints_one_line_for_the_list`, `test_guard_review8.py::test_m65_with_no_skill_the_summary_still_has_its_line` |
+| M66 | A model that cannot predict a shuffled matrix stops the run (D78 point 7). | `test_rests_on.py::test_a_model_that_cannot_predict_a_shuffled_matrix_leaves_that_column_unstated`, `test_guard_review8.py::test_m66_a_model_that_can_predict_no_shuffle_leaves_every_feature_unstated` |
+| M67 | The floor of the list is 0.05 alone, whatever the headline's uncertainty (D80 point 1). | `test_rests_on.py::test_the_floor_is_the_half_width_of_the_skill_interval`, `test_guard_review8.py::test_m67_a_classification_with_a_short_holdout` |
+| M68 | Where the headline skill has no interval, the floor of the list is 0.05 alone: no stand-in (D80 point 1). | `test_rests_on.py::test_where_the_headline_has_no_interval_the_floor_stands_in`, `test_guard_review8.py::test_m68_a_grouped_classification_with_no_interval` |
+| M69 | A negated copy of a column is not a copy of it, and is shuffled alone (D80 point 4). | `test_rests_on.py::test_copies_are_shuffled_together_and_share_one_fall`, `test_guard_review8.py::test_m69_a_negated_copy_is_moved_with_what_it_copies` |
 
 M40 to M51 were added with the eighth pass (D73, D74, D76). Each is the
 plausible half-built form of one new rule: the right timestamp and the wrong
@@ -3446,6 +3718,25 @@ F25 `test_screen_set_aside.py`, F26 `test_largest_row.py`, F27
 `test_id_dense.py`, F28 `test_no_choice.py`. The tests of this pass are
 written by its tests stage, and the mutation check then proves each row of
 the table: until it has, the names for M48 to M50 are those the plan gives.
+
+M52 to M69 were added with the ninth pass (D77, D78, D80). Each is the
+plausible half-built form of one new rule: a stream that is not the
+statement's own (M52); a statement for a column that never reached a model
+(M53); a list with no floor (M54), the wrong order among ties (M55), the
+floor as first proposed (M67) or with no stand-in (M68); copies found by
+their values (M56) or not up to sign (M69); the warning for one task only
+(M57); an unseen level scored as CP10 first worded it (M58), a reading on too
+few rows (M59), "few" counted over the wrong rows (M60) and a message that
+leaves out its advice (M61); the order reading by the form measured and not
+adopted (M62); rule 2 with half of its repair (M63); the cut-off on the wrong
+side (M64); a summary that says nothing of an empty list (M65); and a run
+that stops where it must go on (M66). The seven gate forms of this pass each
+fail tests of the same files: F29 and F31 `test_rests_on.py`, F30
+`test_near_perfect.py`, F32 `test_screen_levels.py`, F33 `test_order_ties.py`,
+F34 `test_screen_marked.py`, F35 `test_large_holdout.py`. The tests of this
+pass are written by its tests stage, and the mutation check then proves each
+row of the table, the names being those the plan gives (each was proved on a
+prototype of the test in the harness session).
 
 
 M31 to M39 were added with the seventh pass (D69 to D72). M31 to M37 are the
@@ -3477,8 +3768,8 @@ guards the application alone.
 M6 and M7 were added with the third pass (D44, D46), for two guards that pass
 against the application as it stood and must go on passing. The forms F6b,
 F6c, F6d, F7b, F7c, F7d, F8b, F12b and F14b above, and F9 to F28, are run
-through the suite in the same way, and each must fail at least one test: 88
-variants in all, the 37 of the gate and M1 to M51.
+through the suite in the same way, and each must fail at least one test: 113
+variants in all, the 44 of the gate and M1 to M69.
 
 M23 to M30 were added with the sixth pass (D62 to D66). M23 and M30 are
 guards: the application as it stood already has the cut-off at 0.5 and already
@@ -3529,7 +3820,7 @@ that passes today and fails on its variant:
 The gate goes on catching the large forms; the fake goes on catching, exactly,
 a model or a seam-supplied step that is handed a row it must not see.
 
-### 8.2 The judge's other tools (D56, D71, D72, D73, D74, D76)
+### 8.2 The judge's other tools (D56, D71, D72, D73, D74, D76, D77, D78, D80, D81)
 
 The last four reviews each found a fault by changing one cell or adding one
 column to a table on which the gate already proved the right conclusion, or
@@ -3563,7 +3854,18 @@ the conclusion still holds, judged by the gate's own arithmetic:
   target; a feature, the target and a role column renamed; the target moved
   to the first column; the two classes respelt, in the same order and
   flipped; white space round cells; whole numbers written as floats; and
-  each other value of `--duplicates` where the run is about repeated rows;
+  each other value of `--duplicates` where the run is about repeated rows.
+  Since the ninth pass (D77 point 8) also: a column of noise rounded to one
+  decimal place, and one of whole numbers from 1 to 40; the target as a
+  code, as text and as numbers (a regression's target cut into bands with
+  labels in random order; for a classification a code of 40 levels each of
+  which holds one class); two columns that give the target only together; a
+  copy of the target with five cells moved by 1, 20 and 1,000 times the
+  target's spread, by a factor of 1.5, and to another row's value; an
+  existing numeric feature put into 40 and into 10 bands; and a numeric
+  feature written twice. Until then every numeric column of the gate and the
+  battery was continuous, every altered-cell pair used one size of change,
+  and no pair added two columns at once;
 - what must hold, for each pair of a run and a change, is one of: the same
   stop with the same code; headline, rows, chosen configuration and
   predictions equal to the unperturbed run of the same build, where the
@@ -3582,9 +3884,28 @@ the conclusion still holds, judged by the gate's own arithmetic:
   are each excluded as a suspected leak or named by a `strong_single_column`
   warning. A copy with noise of 5% is asserted in the same way, fails, and
   is a stated limit;
-- on every run that finishes, the reconciliation rules of 5.3, and the
-  largest row's share of the squared error as the judge counts it from
-  `predictions.csv`.
+- **a carrier of the target (D77 point 9, D78 point 2, D80 point 2, D81).** A
+  pair that plants one (a coded copy, two columns that give the target only
+  together, a copy with cells changed, and the copies above) holds when a
+  planted column ends in one of four outcomes: it is excluded as a suspected
+  leak; a `strong_single_column` warning names it; the headline skill is 0.98
+  or more and the `near_perfect_headline` warning names it; or
+  `headline.rests_on` names it. Of two planted columns, either one named
+  counts. Where none of the four holds, the pair holds when its headline
+  skill is **no more than the unperturbed run's `headline.rests_on_floor`
+  above the unperturbed run's headline skill** (D81): `within` that floor of
+  it, either way, or `lowered` by more. The yardstick is the unperturbed
+  run's, so a carrier cannot excuse itself by widening the interval it is
+  measured against, and only a rise fails, since the claim is there to catch
+  an inflated headline. The tool prints the count of each of the six
+  outcomes, and of the pairs that end in none. A pair whose headline skill
+  has no value is a stated limit (D36, below);
+- a column of noise with repeated values: no new warning, and the run's
+  conclusion; a feature put into bands: the conclusion holds; a feature
+  written twice: the two share one fall (step 12a);
+- on every run that finishes, the reconciliation rules of 5.3, the statement
+  of step 12a among them (rules 17 to 21), and the largest row's share of the
+  squared error as the judge counts it from `predictions.csv`.
 
 **The generated-table test, `verify/generated_tables.py <package folder>`
 (D56).** A generator makes table number *i* from a seed alone: the kinds of
@@ -3607,9 +3928,17 @@ from `predictions.csv`, its null pattern, and one `largest_row_dominates`
 record for each statement above one half; `selection_not_made` exactly when
 step 9 says, and then the first fitted configuration chosen; both baselines
 under time order with no entity column, recomputed from the source; and the
-generator's whole-number identifier `id_like` by rule 8b. **Agreement proves
-neither side right; a disagreement is a finding.** The default is 1,000
-tables from seed 20261122.
+generator's whole-number identifier `id_like` by rule 8b. Since the ninth
+pass the properties include the statement of step 12a, on each side alone
+(5.3, rules 17 to 21), and an exact copy of a feature sharing its fall: the
+shuffled numbers themselves are not compared between the sides, since which
+permutations are drawn is open (11). **Agreement proves neither side right;
+a disagreement is a finding.** The default is 1,000 tables from seed
+20261122 and 200 tables of the ninth pass's series: tables numbered from
+1,000,000 up are the same recipe with columns of that pass's kinds drawn
+from a stream of their own (noise with repeated values, the target as a code,
+two columns that give the target only together, an exact copy of a feature,
+a feature put into 10 or 40 bands), so that no table below 1,000,000 moves.
 
 **Three classes, and a fixed list for two of them (D73).** Each tool reports
 every pair, or table, in one of three classes and prints the count of each:
@@ -3631,7 +3960,7 @@ shows.
 
 | Tool | Stated limits | Open |
 |---|---|---|
-| battery | exactly four kinds, six pairs (D76 point 6). `dup_noise:noise_added` (D60: a copy of a row that differs by an added column is not a copy). `int_stamps:missing_cell_date` (D55: a whole-number time column of a CSV with an empty cell loads as floats, already rounded). `messy:sorted_by_measure` (D31: a distinct whole-number measure in a table sorted by it is called id-like). `copy_noise_5pct` on `random_walk`, `int_stamps` and `panel` (D76 point 2: under time order a copy of the target with noise above 1% of the target's spread) | none |
+| battery | the four kinds of D76 point 6, six pairs, and one pair of D36 (D80 point 2, D81), and nothing else. `dup_noise:noise_added` (D60: a copy of a row that differs by an added column is not a copy). `int_stamps:missing_cell_date` (D55: a whole-number time column of a CSV with an empty cell loads as floats, already rounded). `messy:sorted_by_measure` (D31: a distinct whole-number measure in a table sorted by it is called id-like). `copy_noise_5pct` on `random_walk`, `int_stamps` and `panel` (D76 point 2: under time order a copy of the target with noise above 1% of the target's spread). `flat_tail:two_columns_together` (D36: the headline skill has no value, so nothing can be said of what a carrier does to it, and no fall is computed) | none |
 | generated tables | none | none |
 
 **What became of the open list of D73.** The first run listed 28 pairs of
@@ -3653,8 +3982,15 @@ each script on the application, so from then on both are part of the full
 suite. For the eighth pass that test is loosened under D59 to accept exactly
 the failures the plan of the pass lists, which the application as built by
 the seventh pass must show, and a strict test that asserts exit code 0 for
-both tools is owned by the pass's last task (D74 point 7). The mutation
-check leaves those files out: its
+both tools is owned by the pass's last task (D74 point 7). **Each pass keeps
+that form (D78 point 8):** for the ninth pass the two older files,
+`tests/test_judge_tools.py` and `tests/test_judge_tools_pass8.py`, accept
+exactly the failures the ninth pass's plan lists, which the application as
+built by the eighth pass shows, and the strict test is
+`tests/test_judge_tools_pass9.py`, owned by the pass's last task. One test
+that is strict for good was rejected: every such file is in the loop's
+ratchet, and a strict one fails mid-build and reopens every finished task.
+The mutation check leaves all of those files out: its
 throwaway projects have no `verify/`, and the tools judge the application
 against the reference, not a variant of the reference. The lead runs both by
 hand before a review, with the mutation check, and the generated tables at
@@ -4867,6 +5203,214 @@ D59 has the tests stage loosen them. `tests/test_judge_tools.py` is loosened
 too, to accept exactly the failures the plan of this pass lists, and a
 strict test of the two tools is owned by the pass's last task (D74 point 7).
 
+### 10.11 Measured for the ninth pass (D77, D78, D80, D81)
+
+Measured from 2026-11-25 to 2026-11-26 in the harness session of CP10. The
+scripts, the seeds and a per-seed table for each set are in
+`docs/measurements/CP10/` (D35), with a README that gives each command. Every
+rule was measured first on a prototype, a copy of the reference as it stood
+with one switch for each proposed rule, and then on the reference as changed:
+on every set below the two give the same output, record by record (section 0
+of that README). Data seed *k* of a gate table is the gate's base seed 1115 +
+100 × *k*, *k* = 0 to 29; the tool's seed is 0.
+
+**A. What the headline rests on (step 12a).**
+
+- *The spread over shuffles.* On twenty gate tables with two columns that give
+  the target only together, one shuffle's fall for the weaker of the two had a
+  standard deviation of 0.016 to 0.049 in a classification and 0.04 to 0.24 in
+  a regression, where the falls are 0.22 to 2.0. Five shuffles are the mean of
+  five draws: on none of 6,000 draws per table did the weaker column's mean
+  fall below 0.05 where its fall is above it (D78 point 7).
+- *The cost,* at 100,000 rows by 100 columns, full profile, all 64 cores (D16):
+  classification 194.6 seconds before and 218.2 after, regression 222.0 and
+  243.5; the statement 21.8 and 21.5 seconds of it. A forest predicts on one
+  thread, so a chosen forest's 495 predictions take 214 to 357 seconds one
+  after another and 21 to 34 side by side: they are spread over the cores.
+- *Two columns that give the target only together* (`a` = the target plus a
+  noise of its spread, `b` = that noise), added to the gate's tables, 30 seeds
+  each. Under the random and the grouped scheme, both tasks, the fast and the
+  full profile: skill 1.000, the warning raised and both columns named on 30
+  of 30 seeds of each of fifteen runs, and of `random_walk`, `int_stamps` and
+  `panel` under the full profile. Under time order and the fast profile (D78
+  point 2): skill 0.68 to 0.995, at 0.98 or more on 0 to 2 of 30, and both
+  columns named in the list on 30 of 30 of `random_walk`, `int_stamps`,
+  `panel` and `walk_repeated`. On `imbalanced`, 5% of one class, `a` alone
+  ranks the rare class almost perfectly: it was excluded on 9 of 30 seeds,
+  and on the other 21 skill was 1.000, the warning raised and only `a` named,
+  `b`'s fall being 0.001 to 0.015. On `flat_tail` skill has no value (D36).
+- *The gate runs that gain the warning* (30 seeds): `near_leak` on 27 and the
+  undeclared `time_blocks` on 29; at the gate's own seed, `time_blocks_undeclared`
+  alone. No noise table of the gate reaches 0.98 on any seed.
+- *Copies (D78 point 3, D80 point 4).* Each copy's fall as a share of the
+  column's fall alone, 30 seeds:
+
+  | Copy | Linear | Forest | Boosting |
+  |---|---|---|---|
+  | exact, once or twice | 0.97 to 1.06 | 1.00 to 1.14 | 1.00 |
+  | rescaled, 2 × f + 3 | 0.97 to 1.05 | 1.14 (1 table) | |
+  | negated, −f | 0.97 to 1.05 | 1.00 to 1.11 | 0.99 to 1.00 |
+  | a text column with its levels renamed | 0.78 to 1.63, mean 1.02 | | |
+
+  In every case the copy and its column hold the same three numbers. Found by
+  their loaded values, as first proposed, a rescaled copy was shuffled alone
+  and each of the two showed 0.11 to 0.38 of the fall (mean 0.25).
+  *A column and another that carries the same information,* a copy of `f1`
+  with noise of 5% or 20% of its spread: `f1` fell on average by 0.37 to 0.98
+  of its fall alone, the noisy copy by 0.01 to 0.28; at least one of the two
+  named on 23 to 30 of 30, both on 0 to 27.
+- *The floor of the list (D80 point 1).* Seeds of 30 on which the list names
+  any column:
+
+  | Gate run | at 0.05 alone | at the floor of D80 | the floor |
+  |---|---|---|---|
+  | `noise_clf` | 3 | 0 | 0.091 to 0.143 |
+  | `noise_reg` | 0 | 0 | 0.118 to 0.182 |
+  | `imbalanced` | 13 | 1 | 0.050 to 0.254 |
+  | `time_blocks` | 20 | 0 | 0.157 to 0.261 |
+  | `time_blocks_gap` | 21 | 1 | 0.177 to 0.251 |
+  | `entities` | 17 | 1 | 0.170 to 0.292 |
+  | `full_noise_small` | 18 | 0 | 0.211 to 0.242 |
+  | `few_valued` (no interval) | 5 | 0 | 0.050 to 0.095 |
+  | `day_numbers` | 13 | 2 | 0.082 to 0.117 |
+  | `day_sentinel` | 10 | 1 | 0.078 to 0.115 |
+  | `dominant_entity`, `quarter_entity` | 0 | 0 | 0.050 |
+
+  The lag stays named on 30 of 30 seeds of `random_walk`, `int_stamps`,
+  `panel`, `walk_repeated`, `walk_copy` and `walk_copy_cell`. On
+  `walk_late_cell` it was named on 10 and is now named on none: the one
+  holdout cell of 999999 makes the skill interval about 4e9 wide, and
+  `extreme_value` and `largest_row_dominates` name that cell. *The stand-in*
+  was measured on 12 kinds of noise table with no interval (20 entities of 25
+  rows, fewer than 30 in the holdout; 100 timestamps of 5 rows, 25 in the
+  holdout), both tasks, 30 seeds: a bootstrap of the holdout rows named a
+  column on at most 1 of 30; a fixed 0.10 on up to 9 of 30, 0.15 on up to 5.
+  With signal, and with the two columns of above, every candidate named them
+  on 30 of 30.
+- *The carrier pairs of the battery (8.2; D81).* Of 146: excluded 103, warned
+  about by name 2, named by the near-perfect warning 20, named in the list 7,
+  the headline within the unperturbed run's floor 8, lowered by more than it
+  5, and `flat_tail:two_columns_together`, where skill has no value (D36).
+  The five that lower it are coded copies under time order (text on
+  `random_walk`, `walk_repeated`, `walk_copy`, `walk_copy_cell`; numbers on
+  `walk_copy_cell`), by 1.46 to 907 in skill. Read with each pair's own floor,
+  or in both directions, six pairs failed; read as D81 has it, none. The table
+  of every pair, with its lift and both floors, is in the README.
+- *The one-feature run of the gate* (`result.rests_on_recomputed`): the
+  reported shuffled score of `level_prev` on `random_walk`, in standard
+  deviations of the mean of five shuffles from its exact mean, −1.46 to +3.40
+  over 30 seeds; over five one-feature runs of the gate, 150 in all, |z| at
+  most 3.40 and above 3 once. F29, which shuffles nothing: −43.1 to −40.3.
+
+**B. The reading by levels (step 8).**
+
+- *Coded copies of a regression target,* as text with labels in random order,
+  as text in the target's order, and as a numeric code in random order, 30
+  seeds each, excluded / warned: under the random scheme (three runs) 8 bands
+  0 / 270 and 16, 24, 30, 40 and 60 bands 270 / 0 each; beside a quarter
+  entity, 8 bands warned on 90, 16 bands excluded on 87 and warned on 3, 24
+  and up excluded on 90; beside a dominant entity, 8 bands warned on 78, 16 on
+  33 excluded and 51 named, 24 and 30 bands 69 excluded and 21 named, 40 bands
+  87 and 3, 60 bands 90 excluded. Under time order on the walks
+  (`random_walk`, `int_stamps`, `panel`, 90 tables each count): 8 to 30
+  bands excluded on none and warned about on 0 to 3, named in the list on 130
+  to 150 of 270; 40 bands warned about on 24; 60 bands warned about on 87 and
+  excluded on 3. Wherever a banded copy on a walk was named by nothing it
+  lifted the headline by at most +0.019. On `flat_tail`, a time-ordered
+  target that does not wander, 8 and 16 bands were warned about on 90 of 90
+  and 24 and up excluded on 90 of 90. *Two to eight bands* (D80 point 3), text and numeric code
+  together: under the random scheme (180 tables a count) 2 bands named in the
+  list on 180, 3 on 134, 4 on 172, 5 warned on 58 and named on 122, 6 to 8
+  warned on 180; level readings 0.61 to 0.66 at 2 bands, 0.84 to 0.88 at 4,
+  0.90 to 0.96 at 6 to 8. Beside a quarter entity 5 bands warned on 16 of 60
+  and 6 to 8 on 60; beside a dominant entity 6 to 8 bands warned on 22 to 52
+  of 60, readings 0.39 to 0.97. A banded copy that nothing named lifted the
+  headline by at most +0.037 over about 1,500 tables.
+- *Codes of a class,* text or numeric, of which every level holds one class
+  (10, 40 and 100 levels), under the three schemes: excluded on 1,260 of
+  1,260 tables.
+- *Must not be excluded,* 30 seeds under each of the three schemes (90): an
+  honest column of 10, 24 and 60 levels that explains 50% or 70% of the
+  target, as text or numbers: excluded on none and warned about on none; at
+  90%, warned about on 1 to 37 of 90 and excluded on none. Noise of 10, 60
+  and 300 levels; a column of two to four rows a level at 0%, 50% and 90%;
+  every column of every clean gate dataset (10,110 columns); and
+  `examples/customers.csv` (largest level reading 0.358): excluded and warned
+  about on none. *Where the two meet,* by the rule as written: an honest column
+  that explains 98% is excluded on 7 to 83 of 90 tables and warned about on
+  the rest, and one of 99% on 90 of 90; a text column of two to four rows a
+  level that explains 99% is excluded on 87 of 90.
+- *The floor of the reading (D78 point 5).* With unseen levels not scored and
+  no floor, regression noise columns never read 0.90 or more at any number of
+  scored rows (at most 0.63, at 5 to 9 rows). Classification noise read 1.000
+  when the rarer class had one to four scored rows, at most 0.867 at five to
+  seven, and 0.74 or less from ten. With the floor of 20 rows and 10 of each
+  class, none of 16,836 noise columns was excluded or warned about (largest
+  reading 0.737). An unseen level given the baseline's prediction, as first
+  worded, failed 24 battery pairs.
+- *The smallest changes that defeat the reading:* time order, where the
+  holdout's levels are not the training rows'; four bands or fewer, which read
+  like an honest column of that strength; and a code that names an entity
+  each of whose rows has one target value, which is excluded with the
+  `group_col` sentence (D78 point 6) and is indistinguishable from a coded
+  copy.
+
+**C. The order reading without the tie fault (step 8).** Share against the
+order, 30 tables each, of columns of 25, 40, 100 and 400 distinct values at
+1,125, 20,000 and 100,000 training rows:
+
+- *Noise, and a weak column (5% and 20% of the target):* as built (ties in the
+  target's order) warned about on 30 of 30 wherever values repeat; the pairs
+  form on none, shares 0.475 to 0.500. One point for each distinct value, the
+  mean target, warned about an honest column that explains 5% on 23 of 30 at
+  100,000 rows and 25 values, and on 18 of 30 one that explains 20% at 20,000
+  rows: it was not adopted.
+- *Quiet:* noise of 5, 10, 40, 100 and 400 values and noise rounded to one and
+  two decimal places, beside a target with signal in other columns, on nine
+  regression runs: 0 warnings in 1,890 runs; 10,110 clean gate columns, of
+  which none has both conditions hold (the smallest share 0.457); the CP9
+  small-table cells as before; `age` and `s6` of the diabetes table are no
+  longer named.
+- *Still warned about, under time order (`random_walk`, `int_stamps`,
+  `panel`), 120 tables each, excluded / warned / named in the list / nothing:*
+  a copy with 2% of its cells rotated 33 / 87 / 0 / 0; its square 30 / 90 / 0 /
+  0; its exponential 30 / 90 / 0 / 0. Rounded to 40 distinct values: the
+  square 30 / 90 / 0 / 0, the copy with 2% rotated 30 / 82 / 7 / 1, the
+  exponential 30 / 84 / 5 / 1, the exact copy 30 / 89 / 1 / 0; to 100 values
+  the exponential 33 / 86 / 0 / 1. Under the random and the grouped scheme
+  every one of them is excluded. A copy with noise of 5% of the target's
+  spread is the stated limit of D76, and is now named in the list on 89 of
+  90.
+
+**D. A copy with a handful of cells changed (step 8).** 1, 5 and 15 cells of
+1,500 changed by 0.1, 1, 5, 20 and 1,000 times the target's typical step (time
+order) or spread, by a factor of 1.5, and to another row's value, on the
+gate's regressions and on long-tailed tables, 30 seeds each: under the random
+and the grouped scheme excluded on every table before and after; under time
+order, with 15 cells changed, excluded on 98 to 115 of 120 and warned about on
+the rest, before and after. On long-tailed targets (log-normal, σ 1.0 and
+1.5), where the tail marks more than 1% of the rows: the copy with 5 cells
+changed by 20 spreads was excluded on 0 of 30 before and on 30 of 30 after,
+under the random and the time-ordered scheme alike; with 15 cells, on 20 to 30
+of 30. Without the median baseline, noise columns were excluded beside a
+target with 1.2% to 1.5% of its cells set to −999 or 999999 (186 of 2,430
+tables); with it, on none. No other column was excluded on any table, before
+or after.
+
+**E. A large time-ordered holdout (step 7).** On tables whose last timestamp
+holds 0.2, 0.26, 0.3, 0.34, 0.4, 0.45, 0.5, 0.55, 0.6 and 0.7 of 1,000 rows
+(5 seeds each), the holdout is that timestamp, and the warning was raised on
+every table from 0.5 up and on none below. On 33 tables of 8 to 40 equal
+timestamps of 40 rows the holdout holds 0.25 to 0.33 of the rows, and the
+warning was never raised; nor on any run of the gate before this pass, over
+30 seeds.
+
+**The gate at its own seed.** No value of an older run moved: compared with
+`docs/measurements/CP2/long_rows.py compare` on every recorded value of every
+check, before and after (the README of CP10). The one run that gains a
+warning at the gate's seed is `time_blocks_undeclared`
+(`near_perfect_headline`).
+
 ---
 
 ## 11. What is open
@@ -4877,7 +5421,10 @@ The builder decides these, and no test may pin them:
   surface of 2.1 to 2.7 is a contract; `stages` and `extensions` are facades
   over code that may live anywhere);
 - how the one seed is turned into generator streams for the cap, the split, the
-  folds and the resamples. Two correct implementations will choose different
+  folds and the resamples, and so which permutations the five shuffles of
+  step 12a draw and which resamples its stand-in draws: two correct builds
+  give different shuffled scores, and the gate judges the one it recomputes
+  by the distribution of a shuffle (8). Two correct implementations will choose different
   holdout rows from the same seed, and that is fine: the properties of step 7
   are the contract, not the row numbers. (Within one implementation,
   `profile()` and `stages.split_random` must agree: 2.7.);
@@ -4947,7 +5494,15 @@ The builder decides these, and no test may pin them:
   `selection folds`, the baseline's name, the row and the share in the same
   way; for the configurations over the selection folds: the words `selection
   folds`, and the number of every row that is the largest row of a
-  configuration whose share is above 0.5 (step 11). The message of
+  configuration whose share is above 0.5 (step 11). And, since the ninth
+  pass, three more (D77, D78). The message of `near_perfect_headline` holds
+  `headline.skill` as a number and the name of each column of
+  `headline.rests_on`, in quotes as `repr` writes it (step 12a). The message
+  of `holdout_far_above_quarter` holds `H of the N rows`, H the holdout rows
+  and N the rows split, as whole numbers in digits, and its fixed passage of
+  5.4 (step 7). The message of `suspected_leak` for a column read by its
+  levels and excluded by rule 2 holds the fixed sentence of 5.4 that names
+  `group_col` (step 8). The message of
   `selection_not_made` holds, as a whole number in digits, the training rows
   of the fold that has the fewest among the folds that meet its condition
   (step 9). The message of a `strong_single_column` warning raised by the
@@ -5056,8 +5611,82 @@ the rule for a value far outside its column, its three counts and its
 cut-off (step 11); and the fixed passage of the panel warning (5.4).
 
 **Known limits of this version, stated and not hidden (D56, D60, D66, D72,
-D74, D76).** Nothing is open beside them: what D73 listed as open, and owned
-by pass 8, is built (8.2).
+D74, D76, D77, D78, D80, D81).** Nothing is open beside them: what D73 listed
+as open, and owned by pass 8, is built (8.2).
+
+- **What is a defect of the leak screen, and what is a stated limit (D56,
+  D77 point 9, D78 point 2, D80 point 2, D81).** Four passes each taught the
+  screen one more disguise of a column that carries the target, and each
+  review found the next; two columns that give the target only together
+  cannot be seen by any reading of single columns. So the rule is this. **A
+  column, or columns, that carry the target in a form the screen does not
+  read count as a defect only when the output neither excludes them, nor
+  warns about them by name, nor names them under the `near_perfect_headline`
+  warning, nor names them in `headline.rests_on`,** and the headline rises
+  with them by more than the floor of the list of the run without them. What
+  those statements catch is a stated limit of the screen, and each kind
+  measured is below. On the perturbation battery's 146 pairs that plant a
+  carrier: excluded 103, warned about by name 2, named by the near-perfect
+  warning 20, named in the list 7, the headline within the floor of the run
+  without the carrier 8, lowered by more 5, and one where the headline skill
+  has no value (D36; 8.2).
+- **Coarse bands of the target (D78 point 4, D80 point 3).** A coded copy of
+  a regression target with few bands is a weaker column than one with many,
+  and the screen reads it as what it is. **Six to eight bands are warned
+  about** (`strong_single_column`), at readings of 0.90 to 0.96; **five
+  sometimes,** on 58 of 180 tables under the random scheme and 16 of 60 beside
+  a quarter entity; **four or fewer read like an honest column of that
+  strength,** 0.39 to 0.88, are not warned about, and are named in
+  `headline.rests_on` when they lift the headline above the floor (on 134 to
+  180 of 180 tables under the random scheme). **Under time order, on a target
+  that wanders, no count of eight bands or fewer is warned about or
+  excluded,** since the levels of the latest rows are not those of the
+  earlier ones: on the gate's `random_walk`, `int_stamps` and `panel`, none
+  of 2 to 30 bands was excluded and at most 3 of 90 warned about; at 40 and
+  60 bands some are warned about (up to 51 of 90) and a few excluded (3 of
+  90). On a time-ordered target that does not wander (`flat_tail`) the copy
+  is read as under the random scheme: 8 and 16 bands warned about, 24 and up
+  excluded. Wherever a banded copy was neither excluded, warned about nor
+  named, it lifted the headline by less than 0.05: at most +0.037 over about
+  1,500 tables (10.11). From 16 bands up such a copy is excluded on every
+  table under the random scheme, and beside entities on most: 87 to 90 of 90
+  beside a quarter entity, 33 to 90 of 90 beside a dominant one.
+- **A coded copy whose levels the holdout rows mostly do not hold, under time
+  order, lowers the headline (D81).** The latest rows of a trending target
+  hold bands the earlier rows never did, so a model that leans on the code
+  predicts the holdout badly: the headline falls far below the run without
+  the column, and reads as no evidence of predictability (limitation 9 of
+  5.4). In the battery, coded copies as text on `random_walk`,
+  `walk_repeated`, `walk_copy` and `walk_copy_cell`, and as numbers on
+  `walk_copy_cell`, lowered the headline skill by 1.5 to 907 (10.11). A
+  lowered headline is not a confident wrong number: such a pair holds, and is
+  counted apart (8.2).
+- **Two columns that give the target only together, under time order and the
+  fast profile (D78 point 2).** Neither is excluded or warned about, the
+  headline stays below 0.98, and the list names them: on the battery's
+  `random_walk`, `int_stamps`, `panel`, `walk_repeated` and `walk_copy` the
+  pair lifted skill to 0.78 to 0.97 and `headline.rests_on` named it. Beside
+  one extreme holdout cell (`walk_late_cell`) both headlines are about −1e9,
+  which `extreme_value` and `largest_row_dominates` already name, and the
+  carrier moves it by less than the floor.
+- **What the statement cannot show (D77 point 1).** Two columns that carry the
+  same information, and are not copies of one another as the models receive
+  them, each show less than the fall they share, because the other is still
+  there: beside `f1` and a copy of it with noise of 5% or 20% of its spread,
+  `f1` fell on average by 0.37 to 0.98 of its fall alone and the noisy copy by
+  0.01 to 0.28 of it; at least one of the two was named on 23 to 30 of 30
+  tables, both on 0 to 27 (10.11). Exact copies as the models receive them are shuffled
+  together and share one fall, so a table with two exact copies of a strong
+  legitimate column shows both, each with the fall the column shows alone
+  (0.97 to 1.14 times it under the linear model, a forest and boosting). The
+  statement says what the number depends on, column by column; it says
+  nothing of columns in combination.
+- **A near-perfect headline on an easy table (D77, "Consequence").** A
+  legitimately easy table, such as one that scores 0.995, carries the
+  `near_perfect_headline` warning: so do the gate's `near_leak` (on 27 of 30
+  seeds) and the undeclared `time_blocks` (29 of 30), whose headlines are
+  near perfect for reasons the gate knows. The warning asks a question; the
+  caller is the one who can answer it.
 
 - **A copy that differs.** A copy of a row that differs from it in any feature
   column is not detected (step 8a); the caller's control is `group_col`. A
@@ -5147,13 +5776,14 @@ by pass 8, is built (8.2).
   30 and excluded on none. Under the random scheme each of these is excluded
   on 30 of 30 (10.10).
 - **More than 1% of the training rows with a target wildly off.** The leak
-  screen then sets none aside and scores every row (step 8): it is the
-  screen as it was before D74 with the second reader added, and beside such
-  a target a copy of it can stay a feature. With target cells of −999 beside
-  a rescaled copy: on `leak_reg` the copy is excluded on 30 of 30 tables
-  with 0.5% of the rows so changed, on 14 with 1% and on none with 2%; on
-  `random_walk`, where the row after a wild cell is marked too, on 8 of 30
-  with 0.5% and on none with 1% (10.10).
+  screen then sets none aside (step 8). Rule 2 still leaves unscored the 1%
+  of rows the column misses by most and the 1% the baseline misses by most,
+  and is read against the fold's training median as well (D77 point 5, D78
+  point 7), so a copy of a long-tailed target with up to 1% of its cells
+  changed, by any amount, is excluded (10.11). Beside a target with more of
+  its cells wild than the 1% left unscored, a copy of it can still stay a
+  feature: what those cells do to the copy's error is then more than the
+  rows left out can hold.
 - **An exact copy of the target where a baseline has no error (D36).** A
   column whose single-column skill cannot be computed is named by no rule,
   under either reading of rule 3 (step 8). So where a baseline's squared
@@ -5243,7 +5873,7 @@ figure on real data is believable.
 | D8 models and selection | 3 (step 9), 4.1 |
 | D9 uncertainty | 3 (step 12) |
 | D10 regression baseline under time order | 3 (step 11); its warning for a panel stands beside `group_col=False` (D63: the stop of D58 for a panel is gone, since every call is asked), and an entity column gives a panel its previous value (D57). That the previous value needs unique timestamps is replaced by D74, and so is the text of the warning |
-| D11 leak rule | 3 (step 8), 4.3; the screen is repaired by D74 and its warning tier has a second reading by D76 |
+| D11 leak rule | 3 (step 8), 4.3; the screen is repaired by D74, its warning tier has a second reading by D76, and it reads a column by its levels by D77 |
 | D12 scale and the fast profile | 3 (step 6), 4.2, 9 |
 | D13 failure modes | 8 |
 | D14 predictions in the output | 5.1 |
@@ -5262,10 +5892,10 @@ figure on real data is believable.
 | D27 approximate interval under time order | 2.5, 3 (step 12), 5.4, 7, 10.3 |
 | D28 numbers with thousands separators | 2.5, 3 (step 5), 4.3, 5.2, 6, 7, 10.2; its second warning form is replaced by D34 |
 | D29 negative skill explained | 3 (step 11), 5.4, 7 |
-| D30 warning tier below the leak cut-off | 2.5, 3 (step 8), 4.3, 7, 8, 10.2; it reads every row (D74) and has a second reading, by order (D76) |
+| D30 warning tier below the leak cut-off | 2.5, 3 (step 8), 4.3, 7, 8, 10.2; it reads every row (D74) and has a second reading, by order (D76), which never puts rows of equal value in the target's order (D77); a coded copy of eight bands or fewer is in its tier (D78 point 4, D80 point 3) |
 | D31 accepted limits | 3 (steps 5, 8), 9, 10.1, 10.2, 11 ("Known limits"); limit 1 is mended in part and limit 2 restated by D74 and D76 |
 | D32 venv base path | 9 |
-| D33 warning cut-off approved; three limits accepted | 2.5, 3 (steps 5, 8), 4.3, 10.1, 10.2 |
+| D33 warning cut-off approved; three limits accepted | 2.5, 3 (steps 5, 8), 4.3, 10.1, 10.2; amended by D77: a near-perfect headline always carries a warning of its own (step 12a) |
 | D34 a partly formatted numeric column is excluded | 2.5, 3 (step 5, rule 4a), 4.3, 6, 7, 10.2 |
 | D35 measurements kept in the repo | 10, 10.1; `docs/measurements/CP1/`, `CP2/`, `CP3/` |
 | D36 skill when the baseline's error is zero | 2.5, 2.7 (`skill`), 3 (steps 8, 11, 12), 5.2, 5.3, 7, 10.1; the part about resamples is refined by D40 |
@@ -5288,7 +5918,7 @@ figure on real data is believable.
 | D53 rulings from the CP5 session's plan | (1) the rule needs a share and a count: 3 (step 8a), 4.3, 10.6. (2) no locked test is edited: `plan/test-plan.md`; amended by D54. (3) the message names an undeclared date column: 2.4, 3 (step 8a), 11. (4) the gate's undeclared-date run passes `--duplicates keep`: 8, 10.6; `verify/smoke_test.py`. (5) integer keys only above 2⁵³: 2.7, 3 (step 3), 4.2. (6) a target that cannot be compared; class values as written: 2.4, 3 (step 4), 5.2, 7. (7) a code of its own for the fast profile's row floors: 2.4, 3 (step 6) |
 | D54 one locked test is loosened for the new argument | 2.1 (the ten parameters), 10.6; `plan/test-plan.md` ("Fourth pass"), tasks T32 and T11 in `plan/tasks.json` (the gate check `time.undeclared_warns` moves to T32) |
 | D55 values approved after the CP5 session | (1) the cut-off of D49: 3 (step 8a), 4.3, 10.6. (2) a decimal that holds a whole number: 3 (step 1a). (3) limits accepted: 3 (steps 1a, 5), 9 |
-| D56 phase 1 is not shipped with known defects | 1, 3 (step 8a, "What this step does not see"), 11 ("Known limits"); `docs/BACKLOG.md` |
+| D56 phase 1 is not shipped with known defects | 1, 3 (step 8a, "What this step does not see"), 11 ("Known limits"); `docs/BACKLOG.md`. Its closing rule for the leak screen is amended by D77 point 9, D78 point 2, D80 point 2 and D81 (11, "What is a defect of the leak screen") |
 | D57 entities and repeated rows (part 3 amended by D62; the names of its count and warning by D66) | (1) `group_col`: 2.1, 2.2, 2.4 (`group_column_invalid`, `too_few_groups`), 2.5 (`no_previous_value`), 2.7 (`column_roles`, `split_random`, `previous_value`), 3 (steps 2, 5, 6, 7, 8, 11, 12), 4.2, 5.2, 5.4, 7 (and the entity role of the type matrix), 8 (F10, F8b), 8.1 (M15, M16, M17, M21), 10.1, 10.7. (2) the broader screen: withdrawn by D60. (3) `duplicates="group"`: 2.1, 2.2, 2.4, 2.5 (`same_features_grouped`), 3 (steps 7, 8a), 5.2 (`n_rows_same_features`), 7, 8.1 (M22). (4) the target's infinite cells: 3 (steps 2, 5), 5.2 (`n_infinite`), 7, 8.1 (M20). The fourth review's findings 1, 4, 5 and the three-class message: 2.3, 2.6, 3 (steps 1a, 4, 9, 13 and "Numbers that are not finite", rule 6), 7, 8.1 (M14, M18) |
 | D58 the tool stops and asks where it used to warn | (1) an undeclared date column: 1, 2.1 (`time_col`), 2.2 (`--no-time-order`), 2.4 (`time_order_undeclared`), 2.5 (`date_column_undeclared`), 3 (steps 5, 8a), 5.2 (`input.time_col`), 7, 8 (F7d), 11. (2) the default of D49 stays `"error"`: 2.1, 3 (step 8a). (3) a panel with no entity declared: 2.1 (`group_col`), 2.2 (`--no-entities`), 2.4 (`entities_undeclared`), 2.5 (`autocorrelated_panel_target`), 3 (step 11), 5.2 (`input.group_col`), 7, 8.1 (M19), 11. D7 and D10 are replaced in those parts. Parts (1) and (3) are replaced by D63: the two errors and the two statements stay, and the stops no longer depend on the table |
 | D59 how a locked test follows a changed contract | 10.7; `plan/test-plan.md` ("Fifth pass"), tasks T39 to T47 in `plan/tasks.json` |
@@ -5305,7 +5935,12 @@ figure on real data is believable.
 | D71 how the hardening passes are run | (1) the perturbation battery: 8.2, 10.9; `verify/battery.py`. (2) no new detection rule: 3 (step 5, "What rule 2a does not see"), 11; D74 counts the screen's repair as a repair and makes one exception, the `extreme_value` warning. (3) the scope of pass 7: 8 (F16 to F22), 8.2; amended by D73 |
 | D72 rulings on the plan of pass 7 | (1) the date rule by distinct values, with its second clause: 3 (steps 3 and 5), 4.2, 4.3, 10.9, 11. (2) the stop after a removed leak, with no threshold: 2.4, 3 (step 8a). (3) the two fixed texts: 5.4. (4) the code `fast_profile_group_too_large` and the full profile's own error: 2.4, 3 (step 6). (5) an entity of a quarter or more is always kept; entity columns only: 3 (step 6), 4.2, 5.3, 7, 8 (F15), 10.9, 11. (6) the application's reading pinned: 2.5 (`fold_not_scored`), 5.2 (`duplicate_rows`), 7, 8.1 (M38, M39), 9. (7) the gate's launch settings: 8, 9, 10.9; `verify/smoke_test.py`. (8) who runs the two tools: 8.2; `plan/test-plan.md` ("Seventh pass"), task T60 |
 | D73 what the judge's new tools found, and the order of work | (1) the previous value at repeated timestamps: 3 (step 11). (2) the leak screen: 3 (step 8). (3) one extreme cell: 3 (step 11). (4) the order of the rows of a fit: 2.6, 3 (step 9). (5) the three classes and the open lists, now empty: 8.2, 11. Built in the eighth pass as D74 and D76 rule: 8 (F23 to F28), 8.1 (M40 to M51), 10.10 |
-| D74 rulings on the plan of pass 8 | (1) the previous value at repeated timestamps, and the panel warning naming its baseline: 2.5, 2.7 (`previous_value`), 3 (steps 8, 11), 5.2 (`baselines`), 5.3, 5.4, 7, 8 (F23), 8.1 (M40, M51), 10.10. (2) the leak screen's repair: 2.5, 3 (step 8 and "Numbers that are not finite", rule 2), 4.2, 4.3, 7, 8 (F24, F25), 8.1 (M41, M42, M47), 9, 10.2, 10.10, 11; its fallback reading with the chosen model is replaced by D76. (3) the largest row's share and the `extreme_value` warning: 2.3, 2.5, 3 (steps 9, 11), 4.2, 4.3, 5.2, 5.3, 7, 8 (F26), 8.1 (M45, M46), 8.2 (the claim for one extreme cell), 10.10, 11. (4) the order of the rows of a fit: 2.6, 3 (step 9), 7, 8.1 (M49), 9, 11. (5) the second clause of the id-like rule: 3 (step 5, rule 8b), 4.3, 7, 8 (F27), 8.1 (M50), 10.2, 10.10, 11. (6) no choice where the folds cannot choose: 2.5, 3 (steps 9, 10), 4.2, 5.3, 7, 8 (F28), 8.1 (M48), 10.1, 10.10. (7) the two tests of the judge's tools: 10.10; `plan/test-plan.md`. (8) the names: 8, 8.1 |
+| D74 rulings on the plan of pass 8 | (1) the previous value at repeated timestamps, and the panel warning naming its baseline: 2.5, 2.7 (`previous_value`), 3 (steps 8, 11), 5.2 (`baselines`), 5.3, 5.4, 7, 8 (F23), 8.1 (M40, M51), 10.10. (2) the leak screen's repair: 2.5, 3 (step 8 and "Numbers that are not finite", rule 2), 4.2, 4.3, 7, 8 (F24, F25), 8.1 (M41, M42, M47), 9, 10.2, 10.10, 11; its fallback reading with the chosen model is replaced by D76; a categorical column's direct reading is replaced by the reading by levels, and rule 2 with too many rows marked is amended, by D77 points 3 and 5. (3) the largest row's share and the `extreme_value` warning: 2.3, 2.5, 3 (steps 9, 11), 4.2, 4.3, 5.2, 5.3, 7, 8 (F26), 8.1 (M45, M46), 8.2 (the claim for one extreme cell), 10.10, 11. (4) the order of the rows of a fit: 2.6, 3 (step 9), 7, 8.1 (M49), 9, 11. (5) the second clause of the id-like rule: 3 (step 5, rule 8b), 4.3, 7, 8 (F27), 8.1 (M50), 10.2, 10.10, 11. (6) no choice where the folds cannot choose: 2.5, 3 (steps 9, 10), 4.2, 5.3, 7, 8 (F28), 8.1 (M48), 10.1, 10.10. (7) the two tests of the judge's tools: 10.10; `plan/test-plan.md`. (8) the names: 8, 8.1 |
 | D75 the caller sets the iteration cap | on the roadmap, and not built in this pass: no part of this spec. 4.1 still fixes logistic regression at 1,000 iterations. It is built with the change that adds the neural network family, after the hardening passes |
-| D76 second rulings on the plan of pass 8 | (1) the order reading of the warning tier: 2.5, 3 (step 8), 4.2, 4.3, 7, 8.1 (M43, M44), 10.10, 11. (2) noise on a copy under time order: 7, 8.2, 10.10, 11 ("Known limits"). (3) `extreme_value` and its cut-off: 3 (step 11), 4.3, 10.10, 11. (4) a lag excluded under `time_col=False`: 3 (step 8), 11. (5) a caller's override of column roles, after the hardening passes: 3 (step 8), 11. (6) the battery's four stated limits, and no pair that asserts a wrong outcome counted as holding: 8.2 |
+| D76 second rulings on the plan of pass 8 | (1) the order reading of the warning tier: 2.5, 3 (step 8), 4.2, 4.3, 7, 8.1 (M43, M44), 10.10, 11; read between rows of neighbouring distinct values since D77 point 4. (2) noise on a copy under time order: 7, 8.2, 10.10, 11 ("Known limits"). (3) `extreme_value` and its cut-off: 3 (step 11), 4.3, 10.10, 11. (4) a lag excluded under `time_col=False`: 3 (step 8), 11. (5) a caller's override of column roles, after the hardening passes: 3 (step 8), 11. (6) the battery's four stated limits, and no pair that asserts a wrong outcome counted as holding: 8.2 |
+| D77 seventh review accepted; the headline says what it rests on (amends D11, D30, D33, D56, D74, D76) | (1) the statement of each feature: 2.2, 2.7, 3 (step 12a), 4.2, 5.2, 5.3 (rule 17), 7, 8 (F29, F31), 8.1, 10.11, 11. (2) the near-perfect warning: 2.5, 3 (step 12a), 4.3, 5.3 (rule 20), 7, 8 (F30), 8.1, 10.11, 11. (3) the reading by levels: 2.5, 3 (step 8), 4.2, 7, 8 (F32), 8.1, 10.11, 11. (4) the order reading without the tie fault: 2.5, 3 (step 8), 4.2, 4.3, 7, 8 (F33), 8.1, 10.11. (5) a copy with a handful of cells changed: 3 (step 8), 7, 8 (F34), 8.1, 10.11, 11. (6) a time-ordered holdout far above a quarter: 2.5, 3 (step 7), 4.3, 5.3 (rule 21), 5.4, 7, 8 (F35), 8.1, 10.11. (7) the judge-tools test: 8.2, in the form of D78 point 8. (8) the battery: 8.2, 10.11. (9) what is a limit of the screen: 11, amended by D78, D80 and D81 |
+| D78 rulings on the plan of pass 9 (amends D77 points 1, 3, 7 and 9) | (1) the list in the headline and in the summary: 2.2, 3 (step 12a), 5.2, 5.3 (rule 19). (2) a carrier below 0.98 is named there: 8.2, 11. (3) copies shuffled together: 3 (step 12a), 4.3, 7, 8 (F31). (4) eight bands or fewer warned about: 11, in the words of D80 point 3. (5) unseen levels not scored, and the floor of the reading: 3 (step 8), 4.2. (6) a column of codes excluded, with the `group_col` sentence: 2.5, 3 (step 8), 5.4, 11. (7) the details: 2.5 (`shuffled_score_not_computed`, `holdout_far_above_quarter`), 3 (steps 7, 8, 12a), 4.2, 4.3. (8) each pass's judge-tools test: 8.2; `plan/test-plan.md` ("Ninth pass") |
+| D79 the CP10 harness session finished on Opus | not in this spec: which model ran the session |
+| D80 rulings on the CP10 prototype (amends D78; extends D79) | (1) the floor of the list and its stand-in: 2.2, 3 (step 12a), 4.3, 5.2, 5.3 (rule 18), 8.1, 10.11. (2) the carrier claim, and D36's stated limit: 8.2, 11. (3) the few-band case: 11. (4) copies up to sign: 3 (step 12a), 4.3, 7, 8.1. (5) `shuffled_score_not_computed`: 2.5. (6) who rules: not in this spec |
+| D81 how the carrier claim reads its floor (clarifies D80 point 2) | 8.2 (the unperturbed run's floor, only a rise failing, and the six outcomes), 11 (a coded copy that lowers the headline), 10.11 |
 | D61 three rulings on the CP6 judge | (1) D49's rule whenever there is no time column: 3 (step 8a), 2.4 (`holdout_copies_in_training`), 5.2 (`n_holdout_copies`), 7. (2) `duplicates="group"` with any copy makes the scheme grouped: 3 (steps 7, 12), 5.2 (`scheme`), 7. (3) the scripts and the per-seed values of the fifth pass's bands: 10.7; `docs/measurements/CP6/bands/` |

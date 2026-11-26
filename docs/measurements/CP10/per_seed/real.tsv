@@ -1,0 +1,21 @@
+case	k	skill	model	columns: role/reason/rule fall	rests_on	floor	warnings
+customers	0	0.566	linear-0		support_calls	0.1906	-
+customers	0	0.5738	linear-3		support_calls	0.2003	-
+diabetes variant=clean	1	0.3581	linear-0		s5,bmi,s1	0.1585	-
+diabetes variant=clean	2	0.3581	linear-0		s5,bmi,s1	0.1585	-
+diabetes variant=clean	3	0.3581	linear-0		s5,bmi,s1	0.1585	-
+diabetes variant=clean	1	0.3581	linear-3		bmi,s5	0.1644	-
+diabetes variant=clean	2	0.3581	linear-3		bmi,s5	0.1644	-
+diabetes variant=clean	3	0.3581	linear-3		bmi,s5	0.1644	-
+diabetes variant=bands	1	0.3581	linear-0		s5,bmi	0.1585	suspected_leak[tier]
+diabetes variant=bands	2	0.3581	linear-0		s5,bmi	0.1585	suspected_leak[tier]
+diabetes variant=bands	3	0.3581	linear-0		s5,bmi	0.1585	suspected_leak[tier]
+diabetes variant=bands	1	0.3581	linear-3		bmi,s5	0.1644	suspected_leak[tier]
+diabetes variant=bands	2	0.3581	linear-3		bmi,s5	0.1644	suspected_leak[tier]
+diabetes variant=bands	3	0.3581	linear-3		bmi,s5	0.1644	suspected_leak[tier]
+diabetes variant=two	1	0.9997	linear-0		a,b	0.05	near_perfect_headline[None]
+diabetes variant=two	2	0.9997	linear-0		a,b	0.05	near_perfect_headline[None]
+diabetes variant=two	3	0.9997	linear-0		a,b	0.05	near_perfect_headline[None]
+diabetes variant=two	1	1	linear-1		a,b	0.05	near_perfect_headline[None]
+diabetes variant=two	2	1	linear-1		a,b	0.05	near_perfect_headline[None]
+diabetes variant=two	3	1	linear-1		a,b	0.05	near_perfect_headline[None]

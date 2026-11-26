@@ -1,0 +1,721 @@
+case	k	skill	model	columns: role/reason/rule fall	rests_on	floor	warnings
+no_interval carrier=none classification=False kind=grouped signal=False | grouped	0	0.006065	linear-0	f1: feature/-/- -0.006515	-	0.05	-
+no_interval carrier=none classification=False kind=grouped signal=False | grouped	1	-0.001942	linear-0	f1: feature/-/- 0.0009754	-	0.05	-
+no_interval carrier=none classification=False kind=grouped signal=False | grouped	2	-0.02409	linear-0	f1: feature/-/- -0.003839	-	0.05	-
+no_interval carrier=none classification=False kind=grouped signal=False | grouped	3	-0.02749	linear-0	f1: feature/-/- 0.0006853	-	0.05	-
+no_interval carrier=none classification=False kind=grouped signal=False | grouped	4	-0.006873	linear-0	f1: feature/-/- -0.0009686	-	0.05	-
+no_interval carrier=none classification=False kind=grouped signal=False | grouped	5	-0.002358	linear-0	f1: feature/-/- 0.001633	-	0.05	-
+no_interval carrier=none classification=False kind=grouped signal=False | grouped	6	0.003908	linear-0	f1: feature/-/- -0.0007132	-	0.05	-
+no_interval carrier=none classification=False kind=grouped signal=False | grouped	7	-0.01772	linear-0	f1: feature/-/- 0.005894	-	0.05	-
+no_interval carrier=none classification=False kind=grouped signal=False | grouped	8	0.0001454	linear-0	f1: feature/-/- 0.004473	-	0.05	-
+no_interval carrier=none classification=False kind=grouped signal=False | grouped	9	-0.1039	linear-0	f1: feature/-/- -0.06165	-	0.07387	-
+no_interval carrier=none classification=False kind=grouped signal=False | grouped	10	-0.003682	linear-0	f1: feature/-/- 9.691e-05	-	0.05	-
+no_interval carrier=none classification=False kind=grouped signal=False | grouped	11	-0.004575	linear-0	f1: feature/-/- -0.001901	-	0.05	-
+no_interval carrier=none classification=False kind=grouped signal=False | grouped	12	-0.05031	linear-0	f1: feature/-/- 0.006638	-	0.06716	-
+no_interval carrier=none classification=False kind=grouped signal=False | grouped	13	-0.004022	linear-0	f1: feature/-/- 0.0005215	-	0.05	-
+no_interval carrier=none classification=False kind=grouped signal=False | grouped	14	-0.07876	linear-0	f1: feature/-/- -0.04322	-	0.0723	-
+no_interval carrier=none classification=False kind=grouped signal=False | grouped	15	-0.01508	linear-0	f1: feature/-/- 0.002435	-	0.06085	-
+no_interval carrier=none classification=False kind=grouped signal=False | grouped	16	0.01878	linear-0	f1: feature/-/- 0.03194	-	0.05	-
+no_interval carrier=none classification=False kind=grouped signal=False | grouped	17	0.01919	linear-0	f1: feature/-/- 0.02833	-	0.05311	-
+no_interval carrier=none classification=False kind=grouped signal=False | grouped	18	0.002039	linear-0	f1: feature/-/- -0.0001203	-	0.05	-
+no_interval carrier=none classification=False kind=grouped signal=False | grouped	19	-0.0145	linear-0	f1: feature/-/- -0.0004203	-	0.05	-
+no_interval carrier=none classification=False kind=grouped signal=False | grouped	20	0.007008	linear-0	f1: feature/-/- 0.004092	-	0.05	-
+no_interval carrier=none classification=False kind=grouped signal=False | grouped	21	-0.01855	linear-0	f1: feature/-/- -0.003884	-	0.05	-
+no_interval carrier=none classification=False kind=grouped signal=False | grouped	22	-0.00286	linear-0	f1: feature/-/- -0.0005091	-	0.05	-
+no_interval carrier=none classification=False kind=grouped signal=False | grouped	23	-0.0006637	linear-0	f1: feature/-/- -0.00911	-	0.05	-
+no_interval carrier=none classification=False kind=grouped signal=False | grouped	24	-0.006431	linear-0	f1: feature/-/- 8.918e-05	-	0.05	-
+no_interval carrier=none classification=False kind=grouped signal=False | grouped	25	0.005904	linear-0	f1: feature/-/- 0.002957	-	0.05	-
+no_interval carrier=none classification=False kind=grouped signal=False | grouped	26	-0.01754	linear-0	f1: feature/-/- -0.0007422	-	0.05	-
+no_interval carrier=none classification=False kind=grouped signal=False | grouped	27	-0.006225	linear-0	f1: feature/-/- -0.001302	-	0.05	-
+no_interval carrier=none classification=False kind=grouped signal=False | grouped	28	0.04085	linear-0	f1: feature/-/- 0.01475	n1	0.07371	-
+no_interval carrier=none classification=False kind=grouped signal=False | grouped	29	-0.03386	linear-0	f1: feature/-/- 0.0002205	-	0.05356	-
+no_interval carrier=code classification=False kind=grouped signal=False | grouped	0	-0.0416	linear-0	f1: feature/-/- -0.002269; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=False | grouped	1	-0.01393	linear-0	f1: feature/-/- -0.005517; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=False | grouped	2	-0.007371	linear-0	f1: feature/-/- -0.033; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=False | grouped	3	-0.02548	linear-0	f1: feature/-/- 0.006418; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=False | grouped	4	0.007415	linear-0	f1: feature/-/- -0.003894; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=False | grouped	5	-0.0004572	linear-0	f1: feature/-/- -0.001147; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=False | grouped	6	0.004073	linear-0	f1: feature/-/- 0.0001469; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=False | grouped	7	-0.01249	linear-0	f1: feature/-/- -0.002586; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=False | grouped	8	0.002313	linear-0	f1: feature/-/- -0.006866; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=False | grouped	9	0.005509	linear-0	f1: feature/-/- 0.001773; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=False | grouped	10	0.0002268	linear-0	f1: feature/-/- -0.002487; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=False | grouped	11	-0.0006101	linear-0	f1: feature/-/- 0.02973; target_code: excluded/suspected_leak/predicts_target -	-	0.05873	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=False | grouped	12	-0.004807	linear-0	f1: feature/-/- 0.000951; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=False | grouped	13	-0.01468	linear-0	f1: feature/-/- -0.01204; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=False | grouped	14	-0.003183	linear-0	f1: feature/-/- 0.005582; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=False | grouped	15	0.006087	linear-0	f1: feature/-/- -0.002957; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=False | grouped	16	-0.009062	linear-0	f1: feature/-/- -0.0006033; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=False | grouped	17	-0.02569	linear-0	f1: feature/-/- -0.01512; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=False | grouped	18	-0.04731	linear-0	f1: feature/-/- -0.009715; target_code: excluded/suspected_leak/predicts_target -	-	0.07349	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=False | grouped	19	0.004127	linear-0	f1: feature/-/- 0.005538; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=False | grouped	20	0.006198	linear-0	f1: feature/-/- 0.0005258; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=False | grouped	21	0.02577	linear-0	f1: feature/-/- -0.001803; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=False | grouped	22	0.00963	linear-0	f1: feature/-/- 0.006172; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=False | grouped	23	-0.003259	linear-0	f1: feature/-/- 0.000326; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=False | grouped	24	-0.01032	linear-0	f1: feature/-/- -0.0008518; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=False | grouped	25	-0.002174	linear-0	f1: feature/-/- 0.005847; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=False | grouped	26	0.003548	linear-0	f1: feature/-/- 0.008334; target_code: excluded/suspected_leak/predicts_target -	-	0.0658	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=False | grouped	27	0.007284	linear-0	f1: feature/-/- 0.004788; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=False | grouped	28	-0.0191	linear-0	f1: feature/-/- -0.003168; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=False | grouped	29	-0.03027	linear-0	f1: feature/-/- 0.0002504; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=two classification=False kind=grouped signal=False | grouped	0	0.9999	linear-0	f1: feature/-/- -8.81e-08; pair_a: feature/-/- 3.23; pair_b: feature/-/- 1.707	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=False | grouped	1	0.9999	linear-0	f1: feature/-/- 5.751e-07; pair_a: feature/-/- 4.98; pair_b: feature/-/- 2.875	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=False | grouped	2	0.9999	linear-0	f1: feature/-/- -3.68e-07; pair_a: feature/-/- 5.625; pair_b: feature/-/- 2.805	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=False | grouped	3	0.9999	linear-0	f1: feature/-/- -1.452e-06; pair_a: feature/-/- 3.782; pair_b: feature/-/- 2.88	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=False | grouped	4	1	linear-0	f1: feature/-/- -1.311e-07; pair_a: feature/-/- 4.742; pair_b: feature/-/- 2.221	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=False | grouped	5	0.9999	linear-0	f1: feature/-/- -7.875e-08; pair_a: feature/-/- 3.89; pair_b: feature/-/- 1.203	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=False | grouped	6	0.9999	linear-0	f1: feature/-/- -5.166e-08; pair_a: feature/-/- 1.454; pair_b: feature/-/- 0.9377	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=False | grouped	7	0.9999	linear-0	f1: feature/-/- -1.131e-06; pair_a: feature/-/- 4.09; pair_b: feature/-/- 2.546	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=False | grouped	8	0.9999	linear-0	f1: feature/-/- 6.329e-07; pair_a: feature/-/- 3.67; pair_b: feature/-/- 1.937	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=False | grouped	9	0.9999	linear-0	f1: feature/-/- -5.977e-07; pair_a: feature/-/- 3.954; pair_b: feature/-/- 1.971	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=False | grouped	10	0.9999	linear-0	f1: feature/-/- 2.496e-07; pair_a: feature/-/- 5.009; pair_b: feature/-/- 2.95	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=False | grouped	11	0.9999	linear-0	f1: feature/-/- 2.643e-07; pair_a: feature/-/- 4.481; pair_b: feature/-/- 2.777	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=False | grouped	12	0.9999	linear-0	f1: feature/-/- 3.873e-07; pair_a: feature/-/- 4.221; pair_b: feature/-/- 2.238	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=False | grouped	13	0.9999	linear-0	f1: feature/-/- 3.616e-07; pair_a: feature/-/- 4.368; pair_b: feature/-/- 2.534	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=False | grouped	14	0.9999	linear-0	f1: feature/-/- 2.685e-07; pair_a: feature/-/- 3.693; pair_b: feature/-/- 2.231	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=False | grouped	15	1	linear-0	f1: feature/-/- 1.101e-07; pair_a: feature/-/- 5.139; pair_b: feature/-/- 2.845	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=False | grouped	16	0.9999	linear-0	f1: feature/-/- -1.534e-07; pair_a: feature/-/- 4.951; pair_b: feature/-/- 2.605	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=False | grouped	17	0.9999	linear-0	f1: feature/-/- 3.912e-07; pair_a: feature/-/- 2.87; pair_b: feature/-/- 1.345	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=False | grouped	18	0.9999	linear-0	f1: feature/-/- 4.88e-08; pair_a: feature/-/- 4.144; pair_b: feature/-/- 1.987	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=False | grouped	19	0.9999	linear-0	f1: feature/-/- -3.322e-08; pair_a: feature/-/- 3.044; pair_b: feature/-/- 1.093	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=False | grouped	20	0.9999	linear-0	f1: feature/-/- -2.335e-08; pair_a: feature/-/- 4.573; pair_b: feature/-/- 2.846	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=False | grouped	21	0.9999	linear-0	f1: feature/-/- -5.133e-07; pair_a: feature/-/- 3.346; pair_b: feature/-/- 1.329	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=False | grouped	22	0.9999	linear-0	f1: feature/-/- -4.164e-07; pair_a: feature/-/- 2.449; pair_b: feature/-/- 1.368	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=False | grouped	23	0.9999	linear-0	f1: feature/-/- 6.207e-07; pair_a: feature/-/- 3.845; pair_b: feature/-/- 1.447	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=False | grouped	24	0.9999	linear-0	f1: feature/-/- -1.328e-06; pair_a: feature/-/- 3.087; pair_b: feature/-/- 2.109	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=False | grouped	25	0.9999	linear-0	f1: feature/-/- 1.645e-06; pair_a: feature/-/- 3.818; pair_b: feature/-/- 2.51	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=False | grouped	26	0.9999	linear-0	f1: feature/-/- -3.765e-08; pair_a: feature/-/- 3.237; pair_b: feature/-/- 1.367	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=False | grouped	27	0.9999	linear-0	f1: feature/-/- 7.095e-08; pair_a: feature/-/- 5.254; pair_b: feature/-/- 3.294	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=False | grouped	28	0.9999	linear-0	f1: feature/-/- 2.945e-07; pair_a: feature/-/- 3.079; pair_b: feature/-/- 1.703	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=False | grouped	29	0.9999	linear-0	f1: feature/-/- 1.939e-07; pair_a: feature/-/- 4.261; pair_b: feature/-/- 1.988	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=none classification=False kind=grouped signal=True | grouped	0	0.5858	linear-0	f1: feature/-/- 0.7549	f1,f2	0.1265	-
+no_interval carrier=none classification=False kind=grouped signal=True | grouped	1	0.7613	linear-0	f1: feature/-/- 1.046	f1,f2	0.05633	-
+no_interval carrier=none classification=False kind=grouped signal=True | grouped	2	0.6108	linear-0	f1: feature/-/- 1.001	f1,f2	0.1124	-
+no_interval carrier=none classification=False kind=grouped signal=True | grouped	3	0.7074	linear-0	f1: feature/-/- 0.8425	f1,f2	0.08935	-
+no_interval carrier=none classification=False kind=grouped signal=True | grouped	4	0.7016	linear-0	f1: feature/-/- 1.097	f1,f2	0.1083	-
+no_interval carrier=none classification=False kind=grouped signal=True | grouped	5	0.5952	linear-0	f1: feature/-/- 0.827	f1,f2	0.09777	-
+no_interval carrier=none classification=False kind=grouped signal=True | grouped	6	0.6271	linear-0	f1: feature/-/- 0.938	f1,f2	0.1162	-
+no_interval carrier=none classification=False kind=grouped signal=True | grouped	7	0.5215	linear-0	f1: feature/-/- 0.6683	f1,f2	0.1036	-
+no_interval carrier=none classification=False kind=grouped signal=True | grouped	8	0.6983	linear-0	f1: feature/-/- 1.006	f1,f2	0.08858	-
+no_interval carrier=none classification=False kind=grouped signal=True | grouped	9	0.6542	linear-0	f1: feature/-/- 0.7907	f1,f2	0.07696	-
+no_interval carrier=none classification=False kind=grouped signal=True | grouped	10	0.7606	linear-0	f1: feature/-/- 0.9003	f1,f2	0.07146	-
+no_interval carrier=none classification=False kind=grouped signal=True | grouped	11	0.5764	linear-0	f1: feature/-/- 0.9581	f1,f2	0.1174	-
+no_interval carrier=none classification=False kind=grouped signal=True | grouped	12	0.5365	linear-0	f1: feature/-/- 1.094	f1,f2	0.1086	-
+no_interval carrier=none classification=False kind=grouped signal=True | grouped	13	0.6179	linear-0	f1: feature/-/- 0.6692	f1,f2	0.1015	-
+no_interval carrier=none classification=False kind=grouped signal=True | grouped	14	0.5777	linear-0	f1: feature/-/- 0.8926	f1,f2	0.1625	-
+no_interval carrier=none classification=False kind=grouped signal=True | grouped	15	0.7059	linear-0	f1: feature/-/- 0.8973	f1,f2	0.08048	-
+no_interval carrier=none classification=False kind=grouped signal=True | grouped	16	0.6409	linear-0	f1: feature/-/- 0.9341	f1,f2	0.1251	-
+no_interval carrier=none classification=False kind=grouped signal=True | grouped	17	0.6974	linear-0	f1: feature/-/- 0.7742	f1,f2	0.09754	-
+no_interval carrier=none classification=False kind=grouped signal=True | grouped	18	0.6816	linear-0	f1: feature/-/- 0.9674	f1,f2	0.08882	-
+no_interval carrier=none classification=False kind=grouped signal=True | grouped	19	0.5256	linear-0	f1: feature/-/- 0.6755	f1,f2	0.1388	-
+no_interval carrier=none classification=False kind=grouped signal=True | grouped	20	0.7023	linear-0	f1: feature/-/- 1.118	f1,f2	0.08999	-
+no_interval carrier=none classification=False kind=grouped signal=True | grouped	21	0.5925	linear-0	f1: feature/-/- 0.8304	f1,f2	0.09351	-
+no_interval carrier=none classification=False kind=grouped signal=True | grouped	22	0.6621	linear-0	f1: feature/-/- 0.6911	f1,f2	0.08864	-
+no_interval carrier=none classification=False kind=grouped signal=True | grouped	23	0.72	linear-0	f1: feature/-/- 0.83	f1,f2	0.08511	-
+no_interval carrier=none classification=False kind=grouped signal=True | grouped	24	0.6126	linear-0	f1: feature/-/- 0.7858	f1,f2	0.1107	-
+no_interval carrier=none classification=False kind=grouped signal=True | grouped	25	0.7572	linear-0	f1: feature/-/- 0.6857	f1,f2	0.06906	-
+no_interval carrier=none classification=False kind=grouped signal=True | grouped	26	0.6983	linear-0	f1: feature/-/- 0.7386	f1,f2	0.08106	-
+no_interval carrier=none classification=False kind=grouped signal=True | grouped	27	0.6623	linear-0	f1: feature/-/- 0.8927	f1,f2	0.09298	-
+no_interval carrier=none classification=False kind=grouped signal=True | grouped	28	0.4895	linear-0	f1: feature/-/- 0.9509	f1,f2	0.1176	-
+no_interval carrier=none classification=False kind=grouped signal=True | grouped	29	0.6186	linear-0	f1: feature/-/- 0.831	f1,f2	0.08965	-
+no_interval carrier=code classification=False kind=grouped signal=True | grouped	0	0.5131	linear-0	f1: feature/-/- 0.4314; target_code: excluded/suspected_leak/predicts_target -	f2,f1	0.1158	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=True | grouped	1	0.7121	linear-0	f1: feature/-/- 0.9596; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.08043	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=True | grouped	2	0.7566	linear-0	f1: feature/-/- 0.7791; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.06836	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=True | grouped	3	0.6344	linear-0	f1: feature/-/- 0.9265; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.08255	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=True | grouped	4	0.7643	linear-0	f1: feature/-/- 1.132; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.08248	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=True | grouped	5	0.6221	linear-0	f1: feature/-/- 0.6873; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.07732	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=True | grouped	6	0.6596	linear-0	f1: feature/-/- 0.8183; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.07981	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=True | grouped	7	0.7373	linear-0	f1: feature/-/- 0.8227; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.06722	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=True | grouped	8	0.6706	linear-0	f1: feature/-/- 0.6863; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.09328	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=True | grouped	9	0.7493	linear-0	f1: feature/-/- 0.7979; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.08793	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=True | grouped	10	0.6126	linear-0	f1: feature/-/- 0.775; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.09992	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=True | grouped	11	0.7406	linear-0	f1: feature/-/- 0.9319; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.1009	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=True | grouped	12	0.5902	linear-0	f1: feature/-/- 0.8671; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.09143	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=True | grouped	13	0.6243	linear-0	f1: feature/-/- 0.6173; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.1041	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=True | grouped	14	0.7441	linear-0	f1: feature/-/- 0.8852; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.08482	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=True | grouped	15	0.6873	linear-0	f1: feature/-/- 0.9299; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.0958	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=True | grouped	16	0.6861	linear-0	f1: feature/-/- 1.415; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.1038	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=True | grouped	17	0.6828	linear-0	f1: feature/-/- 1.008; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.1282	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=True | grouped	18	0.6383	linear-0	f1: feature/-/- 0.6961; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.08568	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=True | grouped	19	0.68	linear-0	f1: feature/-/- 0.9989; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.1094	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=True | grouped	20	0.7591	linear-0	f1: feature/-/- 0.8001; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.07236	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=True | grouped	21	0.7035	linear-0	f1: feature/-/- 0.8065; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.1079	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=True | grouped	22	0.7303	linear-0	f1: feature/-/- 0.8906; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.07273	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=True | grouped	23	0.5562	linear-0	f1: feature/-/- 0.756; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.1462	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=True | grouped	24	0.6596	linear-0	f1: feature/-/- 0.9112; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.09802	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=True | grouped	25	0.6663	linear-0	f1: feature/-/- 0.703; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.09308	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=True | grouped	26	0.7249	linear-0	f1: feature/-/- 0.9769; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.08425	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=True | grouped	27	0.712	linear-0	f1: feature/-/- 1.174; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.09692	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=True | grouped	28	0.7948	linear-0	f1: feature/-/- 0.8456; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.06798	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=grouped signal=True | grouped	29	0.6117	linear-0	f1: feature/-/- 0.8434; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.09174	suspected_leak[target_code]
+no_interval carrier=two classification=False kind=grouped signal=True | grouped	0	0.9997	linear-0	f1: feature/-/- 0.000662; pair_a: feature/-/- 3.995; pair_b: feature/-/- 2.124	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=True | grouped	1	0.9999	linear-0	f1: feature/-/- 0.0005587; pair_a: feature/-/- 4.639; pair_b: feature/-/- 2.441	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=True | grouped	2	0.9997	linear-0	f1: feature/-/- 0.0004877; pair_a: feature/-/- 3.229; pair_b: feature/-/- 1.625	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=True | grouped	3	0.9998	linear-0	f1: feature/-/- 0.0003718; pair_a: feature/-/- 3.236; pair_b: feature/-/- 1.776	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=True | grouped	4	0.9998	linear-0	f1: feature/-/- 0.0005473; pair_a: feature/-/- 3.718; pair_b: feature/-/- 2.124	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=True | grouped	5	0.9999	linear-0	f1: feature/-/- 0.0005409; pair_a: feature/-/- 4.092; pair_b: feature/-/- 1.816	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=True | grouped	6	0.9998	linear-0	f1: feature/-/- 0.000454; pair_a: feature/-/- 3.625; pair_b: feature/-/- 1.703	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=True | grouped	7	0.9998	linear-0	f1: feature/-/- 0.0002649; pair_a: feature/-/- 3.759; pair_b: feature/-/- 1.914	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=True | grouped	8	0.9996	linear-0	f1: feature/-/- 0.0008422; pair_a: feature/-/- 3.87; pair_b: feature/-/- 2.191	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=True | grouped	9	0.9998	linear-0	f1: feature/-/- 0.0004863; pair_a: feature/-/- 4.862; pair_b: feature/-/- 2.13	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=True | grouped	10	0.9998	linear-0	f1: feature/-/- 0.0003442; pair_a: feature/-/- 3.759; pair_b: feature/-/- 1.739	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=True | grouped	11	0.9998	linear-0	f1: feature/-/- 0.000439; pair_a: feature/-/- 4.373; pair_b: feature/-/- 1.939	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=True | grouped	12	0.9998	linear-0	f1: feature/-/- 0.0007074; pair_a: feature/-/- 3.166; pair_b: feature/-/- 2.066	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=True | grouped	13	0.9998	linear-0	f1: feature/-/- 0.0004159; pair_a: feature/-/- 3.693; pair_b: feature/-/- 1.773	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=True | grouped	14	0.9999	linear-0	f1: feature/-/- 0.0003442; pair_a: feature/-/- 3.917; pair_b: feature/-/- 1.801	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=True | grouped	15	0.9997	linear-0	f1: feature/-/- 0.000663; pair_a: feature/-/- 4.295; pair_b: feature/-/- 2.493	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=True | grouped	16	0.9999	linear-0	f1: feature/-/- 0.0004427; pair_a: feature/-/- 4.007; pair_b: feature/-/- 2.114	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=True | grouped	17	0.9997	linear-0	f1: feature/-/- 0.0006283; pair_a: feature/-/- 3.961; pair_b: feature/-/- 2.205	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=True | grouped	18	0.9996	linear-0	f1: feature/-/- 0.0005902; pair_a: feature/-/- 4.166; pair_b: feature/-/- 2.074	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=True | grouped	19	0.9999	linear-0	f1: feature/-/- 0.000375; pair_a: feature/-/- 2.924; pair_b: feature/-/- 1.582	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=True | grouped	20	0.9998	linear-0	f1: feature/-/- 0.0004566; pair_a: feature/-/- 3.292; pair_b: feature/-/- 1.472	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=True | grouped	21	0.9998	linear-0	f1: feature/-/- 0.0003671; pair_a: feature/-/- 3.776; pair_b: feature/-/- 2.3	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=True | grouped	22	0.9998	linear-0	f1: feature/-/- 0.0005423; pair_a: feature/-/- 3.798; pair_b: feature/-/- 1.627	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=True | grouped	23	0.9999	linear-0	f1: feature/-/- 0.0006143; pair_a: feature/-/- 3.389; pair_b: feature/-/- 1.971	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=True | grouped	24	0.9998	linear-0	f1: feature/-/- 0.0005511; pair_a: feature/-/- 2.786; pair_b: feature/-/- 1.307	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=True | grouped	25	0.9998	linear-0	f1: feature/-/- 0.0004142; pair_a: feature/-/- 3.939; pair_b: feature/-/- 1.766	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=True | grouped	26	0.9999	linear-0	f1: feature/-/- 0.000313; pair_a: feature/-/- 3.42; pair_b: feature/-/- 1.808	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=True | grouped	27	0.9998	linear-0	f1: feature/-/- 0.0005356; pair_a: feature/-/- 3.308; pair_b: feature/-/- 1.75	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=True | grouped	28	0.9997	linear-0	f1: feature/-/- 0.0003869; pair_a: feature/-/- 2.632; pair_b: feature/-/- 1.157	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=grouped signal=True | grouped	29	0.9998	linear-0	f1: feature/-/- 0.0005205; pair_a: feature/-/- 4.099; pair_b: feature/-/- 2.219	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=none classification=True kind=grouped signal=False | grouped	0	-0.2845	linear-0	f1: feature/-/- -0.01785	-	0.168	-
+no_interval carrier=none classification=True kind=grouped signal=False | grouped	1	-0.01496	linear-0	f1: feature/-/- 0.01068	-	0.1757	-
+no_interval carrier=none classification=True kind=grouped signal=False | grouped	2	-0.05964	linear-0	f1: feature/-/- -0.04507	-	0.1649	-
+no_interval carrier=none classification=True kind=grouped signal=False | grouped	3	-0.117	linear-0	f1: feature/-/- -0.2009	-	0.2042	-
+no_interval carrier=none classification=True kind=grouped signal=False | grouped	4	-0.05851	tree-0	f1: feature/-/- -0.05142	-	0.1811	-
+no_interval carrier=none classification=True kind=grouped signal=False | grouped	5	0.07729	tree-0	f1: feature/-/- 0.04026	-	0.1441	-
+no_interval carrier=none classification=True kind=grouped signal=False | grouped	6	-0.0108	linear-0	f1: feature/-/- -0.008951	-	0.2218	-
+no_interval carrier=none classification=True kind=grouped signal=False | grouped	7	0.1602	tree-0	f1: feature/-/- 0.0151	-	0.1799	-
+no_interval carrier=none classification=True kind=grouped signal=False | grouped	8	0.03932	linear-0	f1: feature/-/- 0.02704	-	0.1854	-
+no_interval carrier=none classification=True kind=grouped signal=False | grouped	9	0.08321	tree-0	f1: feature/-/- 0.07633	-	0.1487	-
+no_interval carrier=none classification=True kind=grouped signal=False | grouped	10	-0.1077	tree-0	f1: feature/-/- -0.08526	-	0.1602	-
+no_interval carrier=none classification=True kind=grouped signal=False | grouped	11	-0.1257	linear-0	f1: feature/-/- 0.01897	-	0.1649	-
+no_interval carrier=none classification=True kind=grouped signal=False | grouped	12	0.08236	tree-0	f1: feature/-/- -0.0706	-	0.1496	-
+no_interval carrier=none classification=True kind=grouped signal=False | grouped	13	-0.0542	tree-0	f1: feature/-/- -0.02895	-	0.1592	-
+no_interval carrier=none classification=True kind=grouped signal=False | grouped	14	0.09444	tree-0	f1: feature/-/- 0.02333	-	0.1288	-
+no_interval carrier=none classification=True kind=grouped signal=False | grouped	15	-0.03704	tree-0	f1: feature/-/- -0.02489	-	0.1529	-
+no_interval carrier=none classification=True kind=grouped signal=False | grouped	16	-0.1138	linear-0	f1: feature/-/- -0.0003556	-	0.1959	-
+no_interval carrier=none classification=True kind=grouped signal=False | grouped	17	-0.03614	linear-0	f1: feature/-/- 0.0005035	-	0.1704	-
+no_interval carrier=none classification=True kind=grouped signal=False | grouped	18	0.1276	linear-0	f1: feature/-/- 0.00136	-	0.2115	-
+no_interval carrier=none classification=True kind=grouped signal=False | grouped	19	0.0583	linear-0	f1: feature/-/- -0.02596	-	0.1606	-
+no_interval carrier=none classification=True kind=grouped signal=False | grouped	20	0.09838	linear-0	f1: feature/-/- 0.02327	-	0.1803	-
+no_interval carrier=none classification=True kind=grouped signal=False | grouped	21	-0.05128	linear-0	f1: feature/-/- 0.00755	-	0.1835	-
+no_interval carrier=none classification=True kind=grouped signal=False | grouped	22	0.1389	tree-0	f1: feature/-/- 0.04111	-	0.1819	-
+no_interval carrier=none classification=True kind=grouped signal=False | grouped	23	0.03085	linear-0	f1: feature/-/- 0.004376	-	0.1638	-
+no_interval carrier=none classification=True kind=grouped signal=False | grouped	24	0.1201	linear-0	f1: feature/-/- -0.006083	-	0.1646	-
+no_interval carrier=none classification=True kind=grouped signal=False | grouped	25	-0.04654	tree-0	f1: feature/-/- -0.08268	-	0.1521	-
+no_interval carrier=none classification=True kind=grouped signal=False | grouped	26	0.1436	tree-0	f1: feature/-/- 0.0741	-	0.1624	-
+no_interval carrier=none classification=True kind=grouped signal=False | grouped	27	-0.09972	linear-0	f1: feature/-/- -0.03098	-	0.1794	-
+no_interval carrier=none classification=True kind=grouped signal=False | grouped	28	-0.04142	linear-0	f1: feature/-/- -0.04204	-	0.1868	-
+no_interval carrier=none classification=True kind=grouped signal=False | grouped	29	0.007174	tree-0	f1: feature/-/- -0.005954	-	0.1532	-
+no_interval carrier=code classification=True kind=grouped signal=False | grouped	0	-0.02	linear-0	f1: feature/-/- -0.04093; target_code: excluded/suspected_leak/predicts_target -	-	0.1814	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=False | grouped	1	-0.144	linear-0	f1: feature/-/- -0.02084; target_code: excluded/suspected_leak/predicts_target -	-	0.1822	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=False | grouped	2	-0.0749	linear-0	f1: feature/-/- -0.00491; target_code: excluded/suspected_leak/predicts_target -	-	0.1884	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=False | grouped	3	-0.0642	linear-0	f1: feature/-/- -0.09046; target_code: excluded/suspected_leak/predicts_target -	-	0.193	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=False | grouped	4	0.01816	tree-0	f1: feature/-/- 0.06474; target_code: excluded/suspected_leak/predicts_target -	-	0.153	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=False | grouped	5	0.004444	linear-0	f1: feature/-/- 0.04046; target_code: excluded/suspected_leak/predicts_target -	-	0.1888	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=False | grouped	6	-0.06607	tree-0	f1: feature/-/- -0.01464; target_code: excluded/suspected_leak/predicts_target -	-	0.158	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=False | grouped	7	0.1093	tree-0	f1: feature/-/- 0.02906; target_code: excluded/suspected_leak/predicts_target -	-	0.1567	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=False | grouped	8	-0.1565	linear-0	f1: feature/-/- -0.08755; target_code: excluded/suspected_leak/predicts_target -	-	0.1795	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=False | grouped	9	0.03788	tree-0	f1: feature/-/- 0.0671; target_code: excluded/suspected_leak/predicts_target -	-	0.1592	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=False | grouped	10	-0.1398	linear-0	f1: feature/-/- 0.01168; target_code: excluded/suspected_leak/predicts_target -	-	0.1858	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=False | grouped	11	-0.1313	linear-0	f1: feature/-/- -0.1417; target_code: excluded/suspected_leak/predicts_target -	-	0.198	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=False | grouped	12	-0.02188	tree-0	f1: feature/-/- 0.05545; target_code: excluded/suspected_leak/predicts_target -	-	0.1523	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=False | grouped	13	-0.04506	linear-0	f1: feature/-/- -0.02146; target_code: excluded/suspected_leak/predicts_target -	-	0.2124	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=False | grouped	14	-0.1392	tree-0	f1: feature/-/- -0.03009; target_code: excluded/suspected_leak/predicts_target -	-	0.1868	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=False | grouped	15	-0.1035	linear-0	f1: feature/-/- -0.06477; target_code: excluded/suspected_leak/predicts_target -	-	0.1881	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=False | grouped	16	-0.01607	tree-0	f1: feature/-/- -0.05179; target_code: excluded/suspected_leak/predicts_target -	-	0.1615	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=False | grouped	17	0.1392	linear-0	f1: feature/-/- -0.0021; target_code: excluded/suspected_leak/predicts_target -	-	0.1849	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=False | grouped	18	0.05632	tree-0	f1: feature/-/- -0.02954; target_code: excluded/suspected_leak/predicts_target -	-	0.1756	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=False | grouped	19	0.1471	tree-0	f1: feature/-/- 0.07461; target_code: excluded/suspected_leak/predicts_target -	-	0.1602	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=False | grouped	20	-0.1597	tree-0	f1: feature/-/- -0.05908; target_code: excluded/suspected_leak/predicts_target -	-	0.1691	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=False | grouped	21	-0.07292	tree-0	f1: feature/-/- -0.07222; target_code: excluded/suspected_leak/predicts_target -	-	0.1774	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=False | grouped	22	0.04	tree-0	f1: feature/-/- 0.08533; target_code: excluded/suspected_leak/predicts_target -	-	0.1719	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=False | grouped	23	-0.07468	tree-0	f1: feature/-/- -0.1017; target_code: excluded/suspected_leak/predicts_target -	-	0.163	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=False | grouped	24	0.05687	tree-0	f1: feature/-/- -0.0159; target_code: excluded/suspected_leak/predicts_target -	-	0.1516	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=False | grouped	25	0.04821	tree-0	f1: feature/-/- -0.04; target_code: excluded/suspected_leak/predicts_target -	-	0.1527	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=False | grouped	26	0.03811	linear-0	f1: feature/-/- 0.09583; target_code: excluded/suspected_leak/predicts_target -	-	0.1978	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=False | grouped	27	-0.1312	linear-0	f1: feature/-/- -0.1834; target_code: excluded/suspected_leak/predicts_target -	-	0.1817	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=False | grouped	28	0.01282	linear-0	f1: feature/-/- 0.003487; target_code: excluded/suspected_leak/predicts_target -	-	0.1991	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=False | grouped	29	-0.1058	tree-0	f1: feature/-/- -0.06132; target_code: excluded/suspected_leak/predicts_target -	-	0.149	suspected_leak[target_code]
+no_interval carrier=two classification=True kind=grouped signal=False | grouped	0	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9766; pair_b: feature/-/- 0.2746	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=False | grouped	1	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9353; pair_b: feature/-/- 0.2979	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=False | grouped	2	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 1.058; pair_b: feature/-/- 0.2903	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=False | grouped	3	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 1.173; pair_b: feature/-/- 0.2455	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=False | grouped	4	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 1.088; pair_b: feature/-/- 0.2514	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=False | grouped	5	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9244; pair_b: feature/-/- 0.3722	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=False | grouped	6	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9978; pair_b: feature/-/- 0.3033	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=False | grouped	7	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9868; pair_b: feature/-/- 0.2723	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=False | grouped	8	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 1.014; pair_b: feature/-/- 0.2919	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=False | grouped	9	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9762; pair_b: feature/-/- 0.284	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=False | grouped	10	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 1.055; pair_b: feature/-/- 0.2258	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=False | grouped	11	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9055; pair_b: feature/-/- 0.3879	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=False | grouped	12	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.888; pair_b: feature/-/- 0.2768	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=False | grouped	13	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 1.009; pair_b: feature/-/- 0.3035	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=False | grouped	14	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 1.021; pair_b: feature/-/- 0.2988	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=False | grouped	15	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 1.083; pair_b: feature/-/- 0.2838	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=False | grouped	16	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 1.104; pair_b: feature/-/- 0.2762	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=False | grouped	17	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 1.06; pair_b: feature/-/- 0.2491	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=False | grouped	18	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 1.051; pair_b: feature/-/- 0.2636	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=False | grouped	19	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9492; pair_b: feature/-/- 0.3765	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=False | grouped	20	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 1.011; pair_b: feature/-/- 0.308	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=False | grouped	21	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9847; pair_b: feature/-/- 0.3619	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=False | grouped	22	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 1.001; pair_b: feature/-/- 0.3256	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=False | grouped	23	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 1.077; pair_b: feature/-/- 0.217	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=False | grouped	24	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9382; pair_b: feature/-/- 0.304	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=False | grouped	25	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9897; pair_b: feature/-/- 0.2395	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=False | grouped	26	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9782; pair_b: feature/-/- 0.3151	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=False | grouped	27	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9075; pair_b: feature/-/- 0.4025	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=False | grouped	28	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 1.07; pair_b: feature/-/- 0.2469	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=False | grouped	29	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 1.004; pair_b: feature/-/- 0.243	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=none classification=True kind=grouped signal=True | grouped	0	0.562	linear-0	f1: feature/-/- 0.3103	f1,f2	0.1439	-
+no_interval carrier=none classification=True kind=grouped signal=True | grouped	1	0.8018	linear-0	f1: feature/-/- 0.527	f1,f2	0.115	-
+no_interval carrier=none classification=True kind=grouped signal=True | grouped	2	0.7811	linear-0	f1: feature/-/- 0.5289	f1,f2	0.09817	-
+no_interval carrier=none classification=True kind=grouped signal=True | grouped	3	0.7687	linear-0	f1: feature/-/- 0.6252	f1,f2	0.09852	-
+no_interval carrier=none classification=True kind=grouped signal=True | grouped	4	0.7592	linear-0	f1: feature/-/- 0.5032	f1,f2	0.09915	-
+no_interval carrier=none classification=True kind=grouped signal=True | grouped	5	0.7964	linear-0	f1: feature/-/- 0.5547	f1,f2	0.09423	-
+no_interval carrier=none classification=True kind=grouped signal=True | grouped	6	0.7528	linear-0	f1: feature/-/- 0.4793	f1,f2	0.1115	-
+no_interval carrier=none classification=True kind=grouped signal=True | grouped	7	0.6861	linear-0	f1: feature/-/- 0.4559	f1,f2	0.1146	-
+no_interval carrier=none classification=True kind=grouped signal=True | grouped	8	0.7993	linear-0	f1: feature/-/- 0.4938	f1,f2	0.1058	-
+no_interval carrier=none classification=True kind=grouped signal=True | grouped	9	0.7735	linear-0	f1: feature/-/- 0.467	f1,f2	0.11	-
+no_interval carrier=none classification=True kind=grouped signal=True | grouped	10	0.7951	linear-0	f1: feature/-/- 0.5471	f1,f2	0.09258	-
+no_interval carrier=none classification=True kind=grouped signal=True | grouped	11	0.7388	linear-0	f1: feature/-/- 0.5235	f1,f2	0.1117	-
+no_interval carrier=none classification=True kind=grouped signal=True | grouped	12	0.89	linear-0	f1: feature/-/- 0.5557	f1,f2	0.0662	-
+no_interval carrier=none classification=True kind=grouped signal=True | grouped	13	0.7774	linear-0	f1: feature/-/- 0.5461	f1,f2	0.1074	-
+no_interval carrier=none classification=True kind=grouped signal=True | grouped	14	0.8777	linear-0	f1: feature/-/- 0.5282	f1,f2	0.0726	-
+no_interval carrier=none classification=True kind=grouped signal=True | grouped	15	0.7751	linear-0	f1: feature/-/- 0.4803	f1,f2	0.09644	-
+no_interval carrier=none classification=True kind=grouped signal=True | grouped	16	0.7955	linear-0	f1: feature/-/- 0.5131	f1,f2	0.0945	-
+no_interval carrier=none classification=True kind=grouped signal=True | grouped	17	0.7162	linear-0	f1: feature/-/- 0.4983	f1,f2	0.1205	-
+no_interval carrier=none classification=True kind=grouped signal=True | grouped	18	0.7893	linear-0	f1: feature/-/- 0.5633	f1,f2	0.09398	-
+no_interval carrier=none classification=True kind=grouped signal=True | grouped	19	0.765	linear-0	f1: feature/-/- 0.4766	f1,f2	0.1006	-
+no_interval carrier=none classification=True kind=grouped signal=True | grouped	20	0.7445	linear-0	f1: feature/-/- 0.4995	f1,f2	0.1053	-
+no_interval carrier=none classification=True kind=grouped signal=True | grouped	21	0.8986	linear-0	f1: feature/-/- 0.5901	f1,f2	0.06446	-
+no_interval carrier=none classification=True kind=grouped signal=True | grouped	22	0.8201	linear-0	f1: feature/-/- 0.4873	f1,f2	0.0911	-
+no_interval carrier=none classification=True kind=grouped signal=True | grouped	23	0.8892	linear-0	f1: feature/-/- 0.6267	f1,f2	0.06818	-
+no_interval carrier=none classification=True kind=grouped signal=True | grouped	24	0.7194	linear-0	f1: feature/-/- 0.4723	f1,f2	0.1134	-
+no_interval carrier=none classification=True kind=grouped signal=True | grouped	25	0.7521	linear-0	f1: feature/-/- 0.5844	f1,f2	0.09264	-
+no_interval carrier=none classification=True kind=grouped signal=True | grouped	26	0.6533	linear-0	f1: feature/-/- 0.4242	f1,f2	0.1172	-
+no_interval carrier=none classification=True kind=grouped signal=True | grouped	27	0.7593	linear-0	f1: feature/-/- 0.4909	f1,f2	0.09732	-
+no_interval carrier=none classification=True kind=grouped signal=True | grouped	28	0.6901	linear-0	f1: feature/-/- 0.5377	f1,f2	0.1278	-
+no_interval carrier=none classification=True kind=grouped signal=True | grouped	29	0.587	linear-0	f1: feature/-/- 0.3678	f1,f2	0.1494	-
+no_interval carrier=code classification=True kind=grouped signal=True | grouped	0	0.7905	linear-0	f1: feature/-/- 0.5351; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.08947	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=True | grouped	1	0.7721	linear-0	f1: feature/-/- 0.49; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.1117	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=True | grouped	2	0.7522	linear-0	f1: feature/-/- 0.5022; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.1077	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=True | grouped	3	0.8013	linear-0	f1: feature/-/- 0.5482; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.09702	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=True | grouped	4	0.894	linear-0	f1: feature/-/- 0.61; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.06395	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=True | grouped	5	0.8328	linear-0	f1: feature/-/- 0.5491; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.0814	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=True | grouped	6	0.8101	linear-0	f1: feature/-/- 0.5123; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.09599	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=True | grouped	7	0.6794	linear-0	f1: feature/-/- 0.4091; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.1232	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=True | grouped	8	0.7464	linear-0	f1: feature/-/- 0.465; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.1094	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=True | grouped	9	0.8092	linear-0	f1: feature/-/- 0.4146; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.09789	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=True | grouped	10	0.7952	linear-0	f1: feature/-/- 0.564; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.1001	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=True | grouped	11	0.8148	linear-0	f1: feature/-/- 0.5843; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.08339	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=True | grouped	12	0.7391	linear-0	f1: feature/-/- 0.5579; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.1182	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=True | grouped	13	0.7435	linear-0	f1: feature/-/- 0.4991; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.1062	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=True | grouped	14	0.7319	linear-0	f1: feature/-/- 0.5004; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.1106	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=True | grouped	15	0.8953	linear-0	f1: feature/-/- 0.6819; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.06019	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=True | grouped	16	0.8123	linear-0	f1: feature/-/- 0.5637; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.08862	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=True | grouped	17	0.8581	linear-0	f1: feature/-/- 0.6171; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.07108	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=True | grouped	18	0.665	linear-0	f1: feature/-/- 0.4619; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.1076	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=True | grouped	19	0.5611	linear-0	f1: feature/-/- 0.3809; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.1375	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=True | grouped	20	0.74	linear-0	f1: feature/-/- 0.3347; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.108	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=True | grouped	21	0.7636	linear-0	f1: feature/-/- 0.4514; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.1257	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=True | grouped	22	0.8832	linear-0	f1: feature/-/- 0.3954; target_code: excluded/suspected_leak/predicts_target -	f2,f1	0.07984	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=True | grouped	23	0.8695	linear-0	f1: feature/-/- 0.5767; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.07182	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=True | grouped	24	0.7729	linear-0	f1: feature/-/- 0.3639; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.1074	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=True | grouped	25	0.5538	linear-0	f1: feature/-/- 0.3243; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.1697	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=True | grouped	26	0.7763	linear-0	f1: feature/-/- 0.4994; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.09576	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=True | grouped	27	0.7983	linear-0	f1: feature/-/- 0.5743; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.09861	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=True | grouped	28	0.8237	linear-0	f1: feature/-/- 0.5447; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.08827	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=grouped signal=True | grouped	29	0.7756	linear-0	f1: feature/-/- 0.5563; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.09441	suspected_leak[target_code]
+no_interval carrier=two classification=True kind=grouped signal=True | grouped	0	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8412; pair_b: feature/-/- 0.2248	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=True | grouped	1	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8383; pair_b: feature/-/- 0.2042	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=True | grouped	2	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8414; pair_b: feature/-/- 0.1855	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=True | grouped	3	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9633; pair_b: feature/-/- 0.172	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=True | grouped	4	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8609; pair_b: feature/-/- 0.2023	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=True | grouped	5	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8612; pair_b: feature/-/- 0.2527	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=True | grouped	6	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9201; pair_b: feature/-/- 0.1551	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=True | grouped	7	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9615; pair_b: feature/-/- 0.1634	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=True | grouped	8	1	linear-0	f1: feature/-/- 0.0002849; pair_a: feature/-/- 0.9554; pair_b: feature/-/- 0.2365	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=True | grouped	9	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8003; pair_b: feature/-/- 0.208	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=True | grouped	10	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8391; pair_b: feature/-/- 0.2123	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=True | grouped	11	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8203; pair_b: feature/-/- 0.2634	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=True | grouped	12	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.7945; pair_b: feature/-/- 0.2416	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=True | grouped	13	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9629; pair_b: feature/-/- 0.154	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=True | grouped	14	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8508; pair_b: feature/-/- 0.2337	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=True | grouped	15	1	linear-0	f1: feature/-/- 0.0002849; pair_a: feature/-/- 0.9421; pair_b: feature/-/- 0.1274	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=True | grouped	16	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.876; pair_b: feature/-/- 0.2764	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=True | grouped	17	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8787; pair_b: feature/-/- 0.1595	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=True | grouped	18	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.7995; pair_b: feature/-/- 0.3002	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=True | grouped	19	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8365; pair_b: feature/-/- 0.2311	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=True | grouped	20	1	linear-0	f1: feature/-/- 0.0002849; pair_a: feature/-/- 0.8459; pair_b: feature/-/- 0.2425	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=True | grouped	21	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8499; pair_b: feature/-/- 0.1726	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=True | grouped	22	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8351; pair_b: feature/-/- 0.1557	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=True | grouped	23	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8282; pair_b: feature/-/- 0.2485	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=True | grouped	24	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9292; pair_b: feature/-/- 0.2384	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=True | grouped	25	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9905; pair_b: feature/-/- 0.1204	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=True | grouped	26	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8048; pair_b: feature/-/- 0.1777	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=True | grouped	27	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.7981; pair_b: feature/-/- 0.1876	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=True | grouped	28	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.801; pair_b: feature/-/- 0.2629	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=grouped signal=True | grouped	29	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9504; pair_b: feature/-/- 0.188	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=none classification=False kind=stamps signal=False | stamps	0	-0.01948	linear-0	f1: feature/-/- -0.002945	-	0.05	-
+no_interval carrier=none classification=False kind=stamps signal=False | stamps	1	-0.04439	linear-0	f1: feature/-/- 0.0002859	-	0.05	-
+no_interval carrier=none classification=False kind=stamps signal=False | stamps	2	-0.03069	linear-0	f1: feature/-/- 0.007979	-	0.06786	-
+no_interval carrier=none classification=False kind=stamps signal=False | stamps	3	-0.02875	linear-0	f1: feature/-/- 0.0008227	-	0.05	-
+no_interval carrier=none classification=False kind=stamps signal=False | stamps	4	0.01128	linear-0	f1: feature/-/- 0.02129	-	0.05031	-
+no_interval carrier=none classification=False kind=stamps signal=False | stamps	5	-0.02029	linear-0	f1: feature/-/- -1.937e-05	-	0.05	-
+no_interval carrier=none classification=False kind=stamps signal=False | stamps	6	-0.007885	linear-0	f1: feature/-/- -0.003742	-	0.05	-
+no_interval carrier=none classification=False kind=stamps signal=False | stamps	7	-0.02665	linear-0	f1: feature/-/- 0.0009748	-	0.05	-
+no_interval carrier=none classification=False kind=stamps signal=False | stamps	8	-0.009609	linear-0	f1: feature/-/- 0.02437	-	0.07106	-
+no_interval carrier=none classification=False kind=stamps signal=False | stamps	9	-0.005066	linear-0	f1: feature/-/- -0.000317	-	0.05	-
+no_interval carrier=none classification=False kind=stamps signal=False | stamps	10	-0.008344	linear-0	f1: feature/-/- -0.001383	-	0.05	-
+no_interval carrier=none classification=False kind=stamps signal=False | stamps	11	-0.003258	linear-0	f1: feature/-/- 0.00292	-	0.05	-
+no_interval carrier=none classification=False kind=stamps signal=False | stamps	12	-0.001595	linear-0	f1: feature/-/- 0.001227	-	0.05	-
+no_interval carrier=none classification=False kind=stamps signal=False | stamps	13	-0.004589	linear-0	f1: feature/-/- 0.001756	-	0.05	-
+no_interval carrier=none classification=False kind=stamps signal=False | stamps	14	-0.02356	linear-0	f1: feature/-/- -0.0007001	-	0.05	-
+no_interval carrier=none classification=False kind=stamps signal=False | stamps	15	-0.01186	linear-0	f1: feature/-/- 0.002238	-	0.05	-
+no_interval carrier=none classification=False kind=stamps signal=False | stamps	16	-0.002555	linear-0	f1: feature/-/- 0.001627	-	0.05	-
+no_interval carrier=none classification=False kind=stamps signal=False | stamps	17	-0.02375	linear-0	f1: feature/-/- -0.005502	-	0.05	-
+no_interval carrier=none classification=False kind=stamps signal=False | stamps	18	-0.01958	linear-0	f1: feature/-/- 0.00472	-	0.05	-
+no_interval carrier=none classification=False kind=stamps signal=False | stamps	19	-0.006318	linear-0	f1: feature/-/- -0.008823	-	0.05	-
+no_interval carrier=none classification=False kind=stamps signal=False | stamps	20	-0.01622	linear-0	f1: feature/-/- -1.277e-05	-	0.05	-
+no_interval carrier=none classification=False kind=stamps signal=False | stamps	21	0.01317	linear-0	f1: feature/-/- 0.003819	-	0.05	-
+no_interval carrier=none classification=False kind=stamps signal=False | stamps	22	0.005425	linear-0	f1: feature/-/- -0.000203	-	0.05	-
+no_interval carrier=none classification=False kind=stamps signal=False | stamps	23	-0.0009349	linear-0	f1: feature/-/- -0.005764	-	0.05	-
+no_interval carrier=none classification=False kind=stamps signal=False | stamps	24	0.0008719	linear-0	f1: feature/-/- -0.007999	-	0.05	-
+no_interval carrier=none classification=False kind=stamps signal=False | stamps	25	-0.01036	linear-0	f1: feature/-/- 8.268e-05	-	0.05	-
+no_interval carrier=none classification=False kind=stamps signal=False | stamps	26	-0.01756	linear-0	f1: feature/-/- -0.0113	-	0.05	-
+no_interval carrier=none classification=False kind=stamps signal=False | stamps	27	0.01276	linear-0	f1: feature/-/- 0.005806	-	0.05	-
+no_interval carrier=none classification=False kind=stamps signal=False | stamps	28	-0.003631	linear-0	f1: feature/-/- -0.002823	-	0.05	-
+no_interval carrier=none classification=False kind=stamps signal=False | stamps	29	-0.01889	linear-0	f1: feature/-/- -0.007021	-	0.05	-
+no_interval carrier=code classification=False kind=stamps signal=False | stamps	0	0.009313	linear-0	f1: feature/-/- 0.001025; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=False | stamps	1	0.01402	linear-0	f1: feature/-/- 0.001348; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=False | stamps	2	-0.03522	linear-0	f1: feature/-/- 0.0009498; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=False | stamps	3	-0.06587	linear-0	f1: feature/-/- -0.008653; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=False | stamps	4	0.005035	linear-0	f1: feature/-/- 0.004538; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=False | stamps	5	-0.003922	linear-0	f1: feature/-/- -0.000357; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=False | stamps	6	-0.03804	linear-0	f1: feature/-/- -0.003867; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=False | stamps	7	-0.01115	linear-0	f1: feature/-/- -4.77e-05; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=False | stamps	8	0.01103	linear-0	f1: feature/-/- 0.001665; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=False | stamps	9	0.008096	linear-0	f1: feature/-/- 0.00692; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=False | stamps	10	-0.01354	linear-0	f1: feature/-/- 0.001008; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=False | stamps	11	-0.006147	linear-0	f1: feature/-/- -0.001928; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=False | stamps	12	0.008825	linear-0	f1: feature/-/- 0.01641; target_code: excluded/suspected_leak/predicts_target -	-	0.06004	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=False | stamps	13	-0.007955	linear-0	f1: feature/-/- 0.0002875; target_code: excluded/suspected_leak/predicts_target -	-	0.05287	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=False | stamps	14	0.005988	linear-0	f1: feature/-/- -0.001093; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=False | stamps	15	-0.03312	linear-0	f1: feature/-/- -0.0038; target_code: excluded/suspected_leak/predicts_target -	-	0.06032	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=False | stamps	16	-0.02149	linear-0	f1: feature/-/- 0.01817; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=False | stamps	17	-0.008651	linear-0	f1: feature/-/- -0.0005582; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=False | stamps	18	-0.01467	linear-0	f1: feature/-/- 0.002777; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=False | stamps	19	-0.01408	linear-0	f1: feature/-/- -0.01784; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=False | stamps	20	-0.01065	linear-0	f1: feature/-/- 0.005777; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=False | stamps	21	-0.02897	linear-0	f1: feature/-/- -0.01048; target_code: excluded/suspected_leak/predicts_target -	-	0.06018	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=False | stamps	22	-0.01809	linear-0	f1: feature/-/- -0.003137; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=False | stamps	23	0.03823	linear-0	f1: feature/-/- 0.000377; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=False | stamps	24	0.01785	linear-0	f1: feature/-/- -0.0005645; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=False | stamps	25	-0.01068	linear-0	f1: feature/-/- -0.01453; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=False | stamps	26	0.01882	linear-0	f1: feature/-/- 0.0007205; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=False | stamps	27	-0.0365	linear-0	f1: feature/-/- -0.006971; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=False | stamps	28	-0.01041	linear-0	f1: feature/-/- 0.002807; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=False | stamps	29	-0.009819	linear-0	f1: feature/-/- 0.0002498; target_code: excluded/suspected_leak/predicts_target -	-	0.05	suspected_leak[target_code]
+no_interval carrier=two classification=False kind=stamps signal=False | stamps	0	0.9999	linear-0	f1: feature/-/- -1.956e-06; pair_a: feature/-/- 3.987; pair_b: feature/-/- 1.783	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=False | stamps	1	0.9999	linear-0	f1: feature/-/- 1.98e-07; pair_a: feature/-/- 5.038; pair_b: feature/-/- 2.69	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=False | stamps	2	0.9999	linear-0	f1: feature/-/- -1.801e-07; pair_a: feature/-/- 3.763; pair_b: feature/-/- 2.046	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=False | stamps	3	0.9999	linear-0	f1: feature/-/- -5.564e-07; pair_a: feature/-/- 4.178; pair_b: feature/-/- 2.056	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=False | stamps	4	0.9999	linear-0	f1: feature/-/- 4.141e-07; pair_a: feature/-/- 4.552; pair_b: feature/-/- 1.914	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=False | stamps	5	0.9999	linear-0	f1: feature/-/- -9.689e-07; pair_a: feature/-/- 3.95; pair_b: feature/-/- 2.209	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=False | stamps	6	0.9999	linear-0	f1: feature/-/- -1.23e-07; pair_a: feature/-/- 3.977; pair_b: feature/-/- 2.271	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=False | stamps	7	0.9999	linear-0	f1: feature/-/- 1.399e-07; pair_a: feature/-/- 3.965; pair_b: feature/-/- 2.139	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=False | stamps	8	0.9999	linear-0	f1: feature/-/- -8.462e-07; pair_a: feature/-/- 4.106; pair_b: feature/-/- 2.038	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=False | stamps	9	0.9999	linear-0	f1: feature/-/- 2.348e-07; pair_a: feature/-/- 3.922; pair_b: feature/-/- 2.126	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=False | stamps	10	0.9999	linear-0	f1: feature/-/- 3.215e-07; pair_a: feature/-/- 4.4; pair_b: feature/-/- 2.441	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=False | stamps	11	0.9999	linear-0	f1: feature/-/- -1.141e-07; pair_a: feature/-/- 3.88; pair_b: feature/-/- 1.729	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=False | stamps	12	0.9999	linear-0	f1: feature/-/- 1.189e-06; pair_a: feature/-/- 4.708; pair_b: feature/-/- 2.316	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=False | stamps	13	0.9999	linear-0	f1: feature/-/- 6.441e-07; pair_a: feature/-/- 3.444; pair_b: feature/-/- 2.024	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=False | stamps	14	0.9999	linear-0	f1: feature/-/- 3.341e-07; pair_a: feature/-/- 3.838; pair_b: feature/-/- 1.909	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=False | stamps	15	0.9999	linear-0	f1: feature/-/- 6.253e-07; pair_a: feature/-/- 4.124; pair_b: feature/-/- 2.309	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=False | stamps	16	0.9999	linear-0	f1: feature/-/- 1.998e-07; pair_a: feature/-/- 3.869; pair_b: feature/-/- 1.916	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=False | stamps	17	0.9999	linear-0	f1: feature/-/- -4.872e-08; pair_a: feature/-/- 3.404; pair_b: feature/-/- 1.678	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=False | stamps	18	0.9999	linear-0	f1: feature/-/- 3.374e-08; pair_a: feature/-/- 3.419; pair_b: feature/-/- 1.85	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=False | stamps	19	0.9999	linear-0	f1: feature/-/- 6.557e-07; pair_a: feature/-/- 3.673; pair_b: feature/-/- 1.666	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=False | stamps	20	0.9999	linear-0	f1: feature/-/- 3.72e-07; pair_a: feature/-/- 3.541; pair_b: feature/-/- 2.036	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=False | stamps	21	0.9999	linear-0	f1: feature/-/- -3.792e-07; pair_a: feature/-/- 3.943; pair_b: feature/-/- 1.952	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=False | stamps	22	0.9999	linear-0	f1: feature/-/- -8.71e-07; pair_a: feature/-/- 3.629; pair_b: feature/-/- 2.067	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=False | stamps	23	0.9999	linear-0	f1: feature/-/- -1.662e-06; pair_a: feature/-/- 3.19; pair_b: feature/-/- 1.448	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=False | stamps	24	0.9999	linear-0	f1: feature/-/- -3.755e-08; pair_a: feature/-/- 3.776; pair_b: feature/-/- 1.851	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=False | stamps	25	0.9999	linear-0	f1: feature/-/- 1.304e-06; pair_a: feature/-/- 4.069; pair_b: feature/-/- 1.921	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=False | stamps	26	0.9999	linear-0	f1: feature/-/- -2.798e-07; pair_a: feature/-/- 4.19; pair_b: feature/-/- 2.644	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=False | stamps	27	0.9999	linear-0	f1: feature/-/- -4.277e-08; pair_a: feature/-/- 4.484; pair_b: feature/-/- 2.501	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=False | stamps	28	0.9999	linear-0	f1: feature/-/- -3.222e-08; pair_a: feature/-/- 2.69; pair_b: feature/-/- 1.305	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=False | stamps	29	0.9999	linear-0	f1: feature/-/- 8.482e-07; pair_a: feature/-/- 4.774; pair_b: feature/-/- 1.779	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=none classification=False kind=stamps signal=True | stamps	0	0.7677	linear-0	f1: feature/-/- 0.9008	f1,f2	0.05384	-
+no_interval carrier=none classification=False kind=stamps signal=True | stamps	1	0.7818	linear-0	f1: feature/-/- 0.8941	f1,f2	0.062	-
+no_interval carrier=none classification=False kind=stamps signal=True | stamps	2	0.8267	linear-0	f1: feature/-/- 0.9941	f1,f2	0.05143	-
+no_interval carrier=none classification=False kind=stamps signal=True | stamps	3	0.7627	linear-0	f1: feature/-/- 1.025	f1,f2	0.07276	-
+no_interval carrier=none classification=False kind=stamps signal=True | stamps	4	0.8298	linear-0	f1: feature/-/- 1.024	f1,f2	0.05898	-
+no_interval carrier=none classification=False kind=stamps signal=True | stamps	5	0.77	linear-0	f1: feature/-/- 1.096	f1,f2	0.07853	-
+no_interval carrier=none classification=False kind=stamps signal=True | stamps	6	0.7941	linear-0	f1: feature/-/- 0.9593	f1,f2	0.05558	-
+no_interval carrier=none classification=False kind=stamps signal=True | stamps	7	0.8489	linear-0	f1: feature/-/- 1.003	f1,f2	0.05251	-
+no_interval carrier=none classification=False kind=stamps signal=True | stamps	8	0.7773	linear-0	f1: feature/-/- 1.244	f1,f2	0.09479	-
+no_interval carrier=none classification=False kind=stamps signal=True | stamps	9	0.8447	linear-0	f1: feature/-/- 0.9678	f1,f2	0.05	-
+no_interval carrier=none classification=False kind=stamps signal=True | stamps	10	0.7968	linear-0	f1: feature/-/- 1.132	f1,f2	0.06569	-
+no_interval carrier=none classification=False kind=stamps signal=True | stamps	11	0.8202	linear-0	f1: feature/-/- 0.8736	f1,f2	0.05302	-
+no_interval carrier=none classification=False kind=stamps signal=True | stamps	12	0.7959	linear-0	f1: feature/-/- 0.9362	f1,f2	0.06082	-
+no_interval carrier=none classification=False kind=stamps signal=True | stamps	13	0.78	linear-0	f1: feature/-/- 1.108	f1,f2	0.06408	-
+no_interval carrier=none classification=False kind=stamps signal=True | stamps	14	0.796	linear-0	f1: feature/-/- 0.8975	f1,f2	0.0569	-
+no_interval carrier=none classification=False kind=stamps signal=True | stamps	15	0.7759	linear-0	f1: feature/-/- 1.072	f1,f2	0.07361	-
+no_interval carrier=none classification=False kind=stamps signal=True | stamps	16	0.8104	linear-0	f1: feature/-/- 0.6883	f2,f1	0.0644	-
+no_interval carrier=none classification=False kind=stamps signal=True | stamps	17	0.7936	linear-0	f1: feature/-/- 0.8753	f1,f2	0.06183	-
+no_interval carrier=none classification=False kind=stamps signal=True | stamps	18	0.7105	linear-0	f1: feature/-/- 0.9488	f1,f2	0.1051	-
+no_interval carrier=none classification=False kind=stamps signal=True | stamps	19	0.8269	linear-0	f1: feature/-/- 0.9484	f1,f2	0.0567	-
+no_interval carrier=none classification=False kind=stamps signal=True | stamps	20	0.8102	linear-0	f1: feature/-/- 0.9872	f1,f2	0.06014	-
+no_interval carrier=none classification=False kind=stamps signal=True | stamps	21	0.7595	linear-0	f1: feature/-/- 1.257	f1,f2	0.07816	-
+no_interval carrier=none classification=False kind=stamps signal=True | stamps	22	0.8076	linear-0	f1: feature/-/- 0.9038	f1,f2	0.05508	-
+no_interval carrier=none classification=False kind=stamps signal=True | stamps	23	0.8544	linear-0	f1: feature/-/- 0.9878	f1,f2	0.05	-
+no_interval carrier=none classification=False kind=stamps signal=True | stamps	24	0.7921	linear-0	f1: feature/-/- 0.9473	f1,f2	0.06194	-
+no_interval carrier=none classification=False kind=stamps signal=True | stamps	25	0.8015	linear-0	f1: feature/-/- 0.9823	f1,f2	0.0709	-
+no_interval carrier=none classification=False kind=stamps signal=True | stamps	26	0.8263	linear-0	f1: feature/-/- 0.9493	f1,f2	0.05702	-
+no_interval carrier=none classification=False kind=stamps signal=True | stamps	27	0.76	linear-0	f1: feature/-/- 1.264	f1,f2	0.06559	-
+no_interval carrier=none classification=False kind=stamps signal=True | stamps	28	0.7321	linear-0	f1: feature/-/- 1.238	f1,f2	0.09087	-
+no_interval carrier=none classification=False kind=stamps signal=True | stamps	29	0.7547	linear-0	f1: feature/-/- 0.9284	f1,f2	0.05903	-
+no_interval carrier=code classification=False kind=stamps signal=True | stamps	0	0.7224	linear-0	f1: feature/-/- 1.157; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.09539	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=True | stamps	1	0.7592	linear-0	f1: feature/-/- 1.13; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.07974	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=True | stamps	2	0.8005	linear-0	f1: feature/-/- 1.251; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.06437	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=True | stamps	3	0.7838	linear-0	f1: feature/-/- 1.092; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.0522	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=True | stamps	4	0.7874	linear-0	f1: feature/-/- 0.8273; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.06416	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=True | stamps	5	0.842	linear-0	f1: feature/-/- 0.8527; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=True | stamps	6	0.7335	linear-0	f1: feature/-/- 0.9351; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.09997	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=True | stamps	7	0.8051	linear-0	f1: feature/-/- 0.9586; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.07156	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=True | stamps	8	0.8211	linear-0	f1: feature/-/- 0.9413; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.05536	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=True | stamps	9	0.7146	linear-0	f1: feature/-/- 0.9435; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.08056	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=True | stamps	10	0.8247	linear-0	f1: feature/-/- 1.024; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.06045	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=True | stamps	11	0.7176	linear-0	f1: feature/-/- 1.195; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.08112	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=True | stamps	12	0.8481	linear-0	f1: feature/-/- 1.061; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=True | stamps	13	0.8219	linear-0	f1: feature/-/- 0.9467; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.06151	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=True | stamps	14	0.8235	linear-0	f1: feature/-/- 1.053; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=True | stamps	15	0.7753	linear-0	f1: feature/-/- 1.054; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.06596	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=True | stamps	16	0.7799	linear-0	f1: feature/-/- 0.8659; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.07291	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=True | stamps	17	0.7936	linear-0	f1: feature/-/- 0.8708; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.07626	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=True | stamps	18	0.8085	linear-0	f1: feature/-/- 0.893; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.06626	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=True | stamps	19	0.8285	linear-0	f1: feature/-/- 0.9937; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.05195	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=True | stamps	20	0.8263	linear-0	f1: feature/-/- 1.032; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.05705	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=True | stamps	21	0.7446	linear-0	f1: feature/-/- 1.017; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.06672	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=True | stamps	22	0.8004	linear-0	f1: feature/-/- 1.017; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.0612	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=True | stamps	23	0.8213	linear-0	f1: feature/-/- 0.8183; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.06359	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=True | stamps	24	0.7518	linear-0	f1: feature/-/- 1.039; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.0663	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=True | stamps	25	0.8209	linear-0	f1: feature/-/- 0.9916; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.05652	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=True | stamps	26	0.7766	linear-0	f1: feature/-/- 1.229; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.07722	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=True | stamps	27	0.7864	linear-0	f1: feature/-/- 0.9849; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.06678	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=True | stamps	28	0.7706	linear-0	f1: feature/-/- 0.9619; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.07113	suspected_leak[target_code]
+no_interval carrier=code classification=False kind=stamps signal=True | stamps	29	0.7696	linear-0	f1: feature/-/- 1.151; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.07647	suspected_leak[target_code]
+no_interval carrier=two classification=False kind=stamps signal=True | stamps	0	0.9995	linear-0	f1: feature/-/- 0.001766; pair_a: feature/-/- 3.916; pair_b: feature/-/- 1.786	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=True | stamps	1	0.9997	linear-0	f1: feature/-/- 0.001185; pair_a: feature/-/- 4.401; pair_b: feature/-/- 1.918	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=True | stamps	2	0.9997	linear-0	f1: feature/-/- 0.0008054; pair_a: feature/-/- 3.817; pair_b: feature/-/- 1.672	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=True | stamps	3	0.9997	linear-0	f1: feature/-/- 0.00152; pair_a: feature/-/- 3.69; pair_b: feature/-/- 1.782	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=True | stamps	4	0.9998	linear-0	f1: feature/-/- 0.001278; pair_a: feature/-/- 3.673; pair_b: feature/-/- 1.649	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=True | stamps	5	0.9997	linear-0	f1: feature/-/- 0.001448; pair_a: feature/-/- 3.89; pair_b: feature/-/- 1.896	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=True | stamps	6	0.9998	linear-0	f1: feature/-/- 0.001128; pair_a: feature/-/- 4.384; pair_b: feature/-/- 1.829	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=True | stamps	7	0.9997	linear-0	f1: feature/-/- 0.001375; pair_a: feature/-/- 3.647; pair_b: feature/-/- 2.072	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=True | stamps	8	0.9997	linear-0	f1: feature/-/- 0.001287; pair_a: feature/-/- 4.798; pair_b: feature/-/- 2.588	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=True | stamps	9	0.9998	linear-0	f1: feature/-/- 0.001228; pair_a: feature/-/- 3.369; pair_b: feature/-/- 1.542	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=True | stamps	10	0.9997	linear-0	f1: feature/-/- 0.001303; pair_a: feature/-/- 3.055; pair_b: feature/-/- 1.479	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=True | stamps	11	0.9997	linear-0	f1: feature/-/- 0.001428; pair_a: feature/-/- 4.242; pair_b: feature/-/- 2.376	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=True | stamps	12	0.9997	linear-0	f1: feature/-/- 0.00166; pair_a: feature/-/- 3.215; pair_b: feature/-/- 1.563	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=True | stamps	13	0.9998	linear-0	f1: feature/-/- 0.001046; pair_a: feature/-/- 3.347; pair_b: feature/-/- 1.794	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=True | stamps	14	0.9997	linear-0	f1: feature/-/- 0.001381; pair_a: feature/-/- 4.107; pair_b: feature/-/- 2.026	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=True | stamps	15	0.9995	linear-0	f1: feature/-/- 0.001661; pair_a: feature/-/- 4.041; pair_b: feature/-/- 2.181	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=True | stamps	16	0.9997	linear-0	f1: feature/-/- 0.001623; pair_a: feature/-/- 4.048; pair_b: feature/-/- 2.225	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=True | stamps	17	0.9998	linear-0	f1: feature/-/- 0.001613; pair_a: feature/-/- 3.686; pair_b: feature/-/- 1.526	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=True | stamps	18	0.9997	linear-0	f1: feature/-/- 0.002376; pair_a: feature/-/- 4.388; pair_b: feature/-/- 2.114	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=True | stamps	19	0.9998	linear-0	f1: feature/-/- 0.001035; pair_a: feature/-/- 3.347; pair_b: feature/-/- 1.466	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=True | stamps	20	0.9997	linear-0	f1: feature/-/- 0.001232; pair_a: feature/-/- 4.474; pair_b: feature/-/- 1.925	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=True | stamps	21	0.9997	linear-0	f1: feature/-/- 0.001679; pair_a: feature/-/- 4.065; pair_b: feature/-/- 1.923	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=True | stamps	22	0.9998	linear-0	f1: feature/-/- 0.001082; pair_a: feature/-/- 5.274; pair_b: feature/-/- 2.35	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=True | stamps	23	0.9997	linear-0	f1: feature/-/- 0.001411; pair_a: feature/-/- 3.645; pair_b: feature/-/- 1.556	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=True | stamps	24	0.9997	linear-0	f1: feature/-/- 0.001651; pair_a: feature/-/- 3.972; pair_b: feature/-/- 1.893	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=True | stamps	25	0.9998	linear-0	f1: feature/-/- 0.001114; pair_a: feature/-/- 4.108; pair_b: feature/-/- 2.102	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=True | stamps	26	0.9997	linear-0	f1: feature/-/- 0.001652; pair_a: feature/-/- 3.752; pair_b: feature/-/- 1.375	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=True | stamps	27	0.9998	linear-0	f1: feature/-/- 0.001168; pair_a: feature/-/- 3.979; pair_b: feature/-/- 1.677	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=True | stamps	28	0.9996	linear-0	f1: feature/-/- 0.001584; pair_a: feature/-/- 4.546; pair_b: feature/-/- 2.56	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=False kind=stamps signal=True | stamps	29	0.9998	linear-0	f1: feature/-/- 0.0007571; pair_a: feature/-/- 4.106; pair_b: feature/-/- 1.824	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=none classification=True kind=stamps signal=False | stamps	0	-0.01061	tree-0	f1: feature/-/- 0.03613	-	0.1715	-
+no_interval carrier=none classification=True kind=stamps signal=False | stamps	1	-0.1366	linear-0	f1: feature/-/- -0.005403	-	0.1992	-
+no_interval carrier=none classification=True kind=stamps signal=False | stamps	2	-0.0903	linear-0	f1: feature/-/- -0.006502	-	0.2332	-
+no_interval carrier=none classification=True kind=stamps signal=False | stamps	3	0.03731	tree-0	f1: feature/-/- 0.03212	-	0.1737	-
+no_interval carrier=none classification=True kind=stamps signal=False | stamps	4	-0.05482	linear-0	f1: feature/-/- -0.0005123	-	0.2052	-
+no_interval carrier=none classification=True kind=stamps signal=False | stamps	5	0.1306	linear-0	f1: feature/-/- -0.02797	-	0.1807	-
+no_interval carrier=none classification=True kind=stamps signal=False | stamps	6	0.03533	linear-0	f1: feature/-/- -0.0008193	-	0.1974	-
+no_interval carrier=none classification=True kind=stamps signal=False | stamps	7	-0.01487	linear-0	f1: feature/-/- 0.01159	-	0.1782	-
+no_interval carrier=none classification=True kind=stamps signal=False | stamps	8	0.201	tree-0	f1: feature/-/- 0.1539	-	0.1628	-
+no_interval carrier=none classification=True kind=stamps signal=False | stamps	9	-0.1934	linear-0	f1: feature/-/- -0.09361	-	0.1945	-
+no_interval carrier=none classification=True kind=stamps signal=False | stamps	10	-0.007937	tree-0	f1: feature/-/- -0.09022	-	0.1757	-
+no_interval carrier=none classification=True kind=stamps signal=False | stamps	11	0.07268	tree-0	f1: feature/-/- 0.008012	-	0.1788	-
+no_interval carrier=none classification=True kind=stamps signal=False | stamps	12	0.1667	linear-0	f1: feature/-/- 0.002154	-	0.1783	-
+no_interval carrier=none classification=True kind=stamps signal=False | stamps	13	0.1363	tree-0	f1: feature/-/- 0.105	-	0.1863	-
+no_interval carrier=none classification=True kind=stamps signal=False | stamps	14	-0.03345	linear-0	f1: feature/-/- 0.03139	-	0.1967	-
+no_interval carrier=none classification=True kind=stamps signal=False | stamps	15	-0.01767	tree-0	f1: feature/-/- -0.04641	-	0.162	-
+no_interval carrier=none classification=True kind=stamps signal=False | stamps	16	0.07338	linear-0	f1: feature/-/- 0.06006	-	0.2015	-
+no_interval carrier=none classification=True kind=stamps signal=False | stamps	17	-0.239	linear-0	f1: feature/-/- 0.02092	-	0.1902	-
+no_interval carrier=none classification=True kind=stamps signal=False | stamps	18	-0.1486	linear-0	f1: feature/-/- -0.04488	-	0.2052	-
+no_interval carrier=none classification=True kind=stamps signal=False | stamps	19	0.03896	tree-0	f1: feature/-/- 0.008571	-	0.1773	-
+no_interval carrier=none classification=True kind=stamps signal=False | stamps	20	0.09317	linear-0	f1: feature/-/- 0.03054	-	0.1876	-
+no_interval carrier=none classification=True kind=stamps signal=False | stamps	21	0.2323	tree-0	f1: feature/-/- 0.03622	f2,n2	0.1763	-
+no_interval carrier=none classification=True kind=stamps signal=False | stamps	22	0.1242	linear-0	f1: feature/-/- 0.03166	-	0.2014	-
+no_interval carrier=none classification=True kind=stamps signal=False | stamps	23	-0.1618	tree-0	f1: feature/-/- -0.1225	-	0.1523	-
+no_interval carrier=none classification=True kind=stamps signal=False | stamps	24	0.008709	linear-0	f1: feature/-/- -0.01127	-	0.2024	-
+no_interval carrier=none classification=True kind=stamps signal=False | stamps	25	0.07764	linear-0	f1: feature/-/- 0.008799	-	0.1859	-
+no_interval carrier=none classification=True kind=stamps signal=False | stamps	26	-0.004128	linear-0	f1: feature/-/- -0.01424	-	0.1916	-
+no_interval carrier=none classification=True kind=stamps signal=False | stamps	27	0.0359	linear-0	f1: feature/-/- -0.01405	-	0.1893	-
+no_interval carrier=none classification=True kind=stamps signal=False | stamps	28	-0.05328	linear-0	f1: feature/-/- -0.03566	-	0.2127	-
+no_interval carrier=none classification=True kind=stamps signal=False | stamps	29	0.1745	tree-0	f1: feature/-/- 0.1438	-	0.1749	-
+no_interval carrier=code classification=True kind=stamps signal=False | stamps	0	0.007172	linear-0	f1: feature/-/- -0.01568; target_code: excluded/suspected_leak/predicts_target -	-	0.1936	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=False | stamps	1	0.09016	tree-0	f1: feature/-/- 0.02157; target_code: excluded/suspected_leak/predicts_target -	-	0.1685	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=False | stamps	2	0.2116	linear-0	f1: feature/-/- -0.007684; target_code: excluded/suspected_leak/predicts_target -	-	0.1835	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=False | stamps	3	0.06605	linear-0	f1: feature/-/- -0.09811; target_code: excluded/suspected_leak/predicts_target -	-	0.1752	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=False | stamps	4	-0.02408	linear-0	f1: feature/-/- -0.01178; target_code: excluded/suspected_leak/predicts_target -	-	0.2076	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=False | stamps	5	0.2084	linear-0	f1: feature/-/- 0.02263; target_code: excluded/suspected_leak/predicts_target -	-	0.1865	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=False | stamps	6	0.1997	linear-0	f1: feature/-/- 0.03201; target_code: excluded/suspected_leak/predicts_target -	-	0.2147	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=False | stamps	7	0.06364	tree-0	f1: feature/-/- 0.01429; target_code: excluded/suspected_leak/predicts_target -	-	0.1798	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=False | stamps	8	0.1211	tree-0	f1: feature/-/- 0.01941; target_code: excluded/suspected_leak/predicts_target -	-	0.1679	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=False | stamps	9	-0.04736	tree-0	f1: feature/-/- -0.05129; target_code: excluded/suspected_leak/predicts_target -	-	0.1664	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=False | stamps	10	-0.004103	linear-0	f1: feature/-/- 0.0241; target_code: excluded/suspected_leak/predicts_target -	-	0.1842	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=False | stamps	11	-0.1548	linear-0	f1: feature/-/- 0.03325; target_code: excluded/suspected_leak/predicts_target -	-	0.1851	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=False | stamps	12	-0.01537	linear-0	f1: feature/-/- -0.02049; target_code: excluded/suspected_leak/predicts_target -	-	0.2045	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=False | stamps	13	0.008705	tree-0	f1: feature/-/- 0.02913; target_code: excluded/suspected_leak/predicts_target -	-	0.1629	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=False | stamps	14	-0.07499	linear-0	f1: feature/-/- 0.03184; target_code: excluded/suspected_leak/predicts_target -	-	0.1906	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=False | stamps	15	-0.05752	tree-0	f1: feature/-/- 0.003903; target_code: excluded/suspected_leak/predicts_target -	-	0.1757	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=False | stamps	16	0.008193	linear-0	f1: feature/-/- -0.01792; target_code: excluded/suspected_leak/predicts_target -	-	0.2054	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=False | stamps	17	-0.1346	tree-0	f1: feature/-/- -0.1336; target_code: excluded/suspected_leak/predicts_target -	-	0.1696	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=False | stamps	18	0.08243	tree-0	f1: feature/-/- 0.07273; target_code: excluded/suspected_leak/predicts_target -	-	0.1564	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=False | stamps	19	-0.03345	linear-0	f1: feature/-/- -0.03891; target_code: excluded/suspected_leak/predicts_target -	-	0.1977	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=False | stamps	20	-0.02517	linear-0	f1: feature/-/- 0.003493; target_code: excluded/suspected_leak/predicts_target -	-	0.201	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=False | stamps	21	-0.06523	linear-0	f1: feature/-/- -0.0115; target_code: excluded/suspected_leak/predicts_target -	-	0.1998	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=False | stamps	22	-0.1765	linear-0	f1: feature/-/- -0.004215; target_code: excluded/suspected_leak/predicts_target -	-	0.1963	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=False | stamps	23	-0.03635	linear-0	f1: feature/-/- 0.1211; target_code: excluded/suspected_leak/predicts_target -	-	0.1797	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=False | stamps	24	-0.04231	linear-0	f1: feature/-/- -0.07678; target_code: excluded/suspected_leak/predicts_target -	-	0.204	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=False | stamps	25	-0.04571	linear-0	f1: feature/-/- -0.07979; target_code: excluded/suspected_leak/predicts_target -	-	0.2109	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=False | stamps	26	-0.06884	linear-0	f1: feature/-/- -0.006418; target_code: excluded/suspected_leak/predicts_target -	-	0.2018	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=False | stamps	27	-0.1528	linear-0	f1: feature/-/- -0.05859; target_code: excluded/suspected_leak/predicts_target -	-	0.2013	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=False | stamps	28	-0.1156	linear-0	f1: feature/-/- 0.001651; target_code: excluded/suspected_leak/predicts_target -	-	0.1767	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=False | stamps	29	0.1071	linear-0	f1: feature/-/- 0.005558; target_code: excluded/suspected_leak/predicts_target -	-	0.1756	suspected_leak[target_code]
+no_interval carrier=two classification=True kind=stamps signal=False | stamps	0	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 1.039; pair_b: feature/-/- 0.2365	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=False | stamps	1	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9905; pair_b: feature/-/- 0.2328	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=False | stamps	2	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9548; pair_b: feature/-/- 0.3685	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=False | stamps	3	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 1.096; pair_b: feature/-/- 0.261	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=False | stamps	4	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 1.044; pair_b: feature/-/- 0.2755	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=False | stamps	5	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 1.059; pair_b: feature/-/- 0.2208	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=False | stamps	6	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9924; pair_b: feature/-/- 0.3264	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=False | stamps	7	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 1.042; pair_b: feature/-/- 0.3428	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=False | stamps	8	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9311; pair_b: feature/-/- 0.3501	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=False | stamps	9	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9986; pair_b: feature/-/- 0.2448	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=False | stamps	10	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 1.001; pair_b: feature/-/- 0.2862	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=False | stamps	11	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9686; pair_b: feature/-/- 0.3198	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=False | stamps	12	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9653; pair_b: feature/-/- 0.4346	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=False | stamps	13	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 1.03; pair_b: feature/-/- 0.2704	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=False | stamps	14	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9479; pair_b: feature/-/- 0.2934	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=False | stamps	15	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9731; pair_b: feature/-/- 0.2881	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=False | stamps	16	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.883; pair_b: feature/-/- 0.3597	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=False | stamps	17	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9445; pair_b: feature/-/- 0.3119	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=False | stamps	18	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9877; pair_b: feature/-/- 0.3203	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=False | stamps	19	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8869; pair_b: feature/-/- 0.4145	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=False | stamps	20	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9986; pair_b: feature/-/- 0.2231	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=False | stamps	21	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9692; pair_b: feature/-/- 0.2924	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=False | stamps	22	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9028; pair_b: feature/-/- 0.413	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=False | stamps	23	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9638; pair_b: feature/-/- 0.2985	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=False | stamps	24	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 1.01; pair_b: feature/-/- 0.2856	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=False | stamps	25	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 1.05; pair_b: feature/-/- 0.2632	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=False | stamps	26	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 1.035; pair_b: feature/-/- 0.2372	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=False | stamps	27	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9429; pair_b: feature/-/- 0.4712	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=False | stamps	28	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.9808; pair_b: feature/-/- 0.2764	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=False | stamps	29	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.923; pair_b: feature/-/- 0.2742	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=none classification=True kind=stamps signal=True | stamps	0	0.8679	linear-0	f1: feature/-/- 0.5672	f1,f2	0.08333	-
+no_interval carrier=none classification=True kind=stamps signal=True | stamps	1	0.8829	linear-0	f1: feature/-/- 0.5457	f1,f2	0.06319	-
+no_interval carrier=none classification=True kind=stamps signal=True | stamps	2	0.8514	linear-0	f1: feature/-/- 0.6194	f1,f2	0.08485	-
+no_interval carrier=none classification=True kind=stamps signal=True | stamps	3	0.8566	linear-0	f1: feature/-/- 0.6665	f1,f2	0.08736	-
+no_interval carrier=none classification=True kind=stamps signal=True | stamps	4	0.8431	linear-0	f1: feature/-/- 0.5345	f1,f2	0.08741	-
+no_interval carrier=none classification=True kind=stamps signal=True | stamps	5	0.7979	linear-0	f1: feature/-/- 0.6107	f1,f2	0.1021	-
+no_interval carrier=none classification=True kind=stamps signal=True | stamps	6	0.8815	linear-0	f1: feature/-/- 0.5973	f1,f2	0.08411	-
+no_interval carrier=none classification=True kind=stamps signal=True | stamps	7	0.8036	linear-0	f1: feature/-/- 0.5614	f1,f2	0.1045	-
+no_interval carrier=none classification=True kind=stamps signal=True | stamps	8	0.9352	linear-0	f1: feature/-/- 0.6045	f1,f2	0.05	-
+no_interval carrier=none classification=True kind=stamps signal=True | stamps	9	0.8557	linear-0	f1: feature/-/- 0.6162	f1,f2	0.07292	-
+no_interval carrier=none classification=True kind=stamps signal=True | stamps	10	0.8371	linear-0	f1: feature/-/- 0.5935	f1,f2	0.08393	-
+no_interval carrier=none classification=True kind=stamps signal=True | stamps	11	0.8769	linear-0	f1: feature/-/- 0.5944	f1,f2	0.07288	-
+no_interval carrier=none classification=True kind=stamps signal=True | stamps	12	0.8202	linear-0	f1: feature/-/- 0.5836	f1,f2	0.1	-
+no_interval carrier=none classification=True kind=stamps signal=True | stamps	13	0.8157	linear-0	f1: feature/-/- 0.519	f1,f2	0.09887	-
+no_interval carrier=none classification=True kind=stamps signal=True | stamps	14	0.8586	linear-0	f1: feature/-/- 0.6225	f1,f2	0.07741	-
+no_interval carrier=none classification=True kind=stamps signal=True | stamps	15	0.9045	linear-0	f1: feature/-/- 0.5935	f1,f2	0.07518	-
+no_interval carrier=none classification=True kind=stamps signal=True | stamps	16	0.9331	linear-0	f1: feature/-/- 0.5184	f1,f2	0.05	-
+no_interval carrier=none classification=True kind=stamps signal=True | stamps	17	0.8446	linear-0	f1: feature/-/- 0.5642	f1,f2	0.0857	-
+no_interval carrier=none classification=True kind=stamps signal=True | stamps	18	0.8857	linear-0	f1: feature/-/- 0.6239	f1,f2	0.07476	-
+no_interval carrier=none classification=True kind=stamps signal=True | stamps	19	0.8981	linear-0	f1: feature/-/- 0.6065	f1,f2	0.06596	-
+no_interval carrier=none classification=True kind=stamps signal=True | stamps	20	0.8157	linear-0	f1: feature/-/- 0.512	f1,f2	0.09815	-
+no_interval carrier=none classification=True kind=stamps signal=True | stamps	21	0.8249	linear-0	f1: feature/-/- 0.5454	f1,f2	0.1026	-
+no_interval carrier=none classification=True kind=stamps signal=True | stamps	22	0.8386	linear-0	f1: feature/-/- 0.5483	f1,f2	0.09038	-
+no_interval carrier=none classification=True kind=stamps signal=True | stamps	23	0.9074	linear-0	f1: feature/-/- 0.5203	f1,f2	0.06405	-
+no_interval carrier=none classification=True kind=stamps signal=True | stamps	24	0.9022	linear-0	f1: feature/-/- 0.5288	f1,f2	0.07071	-
+no_interval carrier=none classification=True kind=stamps signal=True | stamps	25	0.8256	linear-0	f1: feature/-/- 0.5837	f1,f2	0.09123	-
+no_interval carrier=none classification=True kind=stamps signal=True | stamps	26	0.9129	linear-0	f1: feature/-/- 0.6256	f1,f2	0.06539	-
+no_interval carrier=none classification=True kind=stamps signal=True | stamps	27	0.8473	linear-0	f1: feature/-/- 0.5507	f1,f2	0.0961	-
+no_interval carrier=none classification=True kind=stamps signal=True | stamps	28	0.9239	linear-0	f1: feature/-/- 0.6722	f1,f2	0.05	-
+no_interval carrier=none classification=True kind=stamps signal=True | stamps	29	0.876	linear-0	f1: feature/-/- 0.5286	f1,f2	0.06478	-
+no_interval carrier=code classification=True kind=stamps signal=True | stamps	0	0.8148	linear-0	f1: feature/-/- 0.6437; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.08998	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=True | stamps	1	0.8478	linear-0	f1: feature/-/- 0.5564; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.08323	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=True | stamps	2	0.8936	linear-0	f1: feature/-/- 0.6932; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.07686	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=True | stamps	3	0.8868	linear-0	f1: feature/-/- 0.5779; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.06459	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=True | stamps	4	0.8269	linear-0	f1: feature/-/- 0.5188; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.09122	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=True | stamps	5	0.876	linear-0	f1: feature/-/- 0.622; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.08964	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=True | stamps	6	0.9488	linear-0	f1: feature/-/- 0.5469; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=True | stamps	7	0.9329	linear-0	f1: feature/-/- 0.6131; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=True | stamps	8	0.8228	linear-0	f1: feature/-/- 0.5428; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.09081	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=True | stamps	9	0.9002	linear-0	f1: feature/-/- 0.7068; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.06477	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=True | stamps	10	0.9058	linear-0	f1: feature/-/- 0.6311; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.07312	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=True | stamps	11	0.9405	linear-0	f1: feature/-/- 0.6376; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.05	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=True | stamps	12	0.9209	linear-0	f1: feature/-/- 0.4599; target_code: excluded/suspected_leak/predicts_target -	f2,f1	0.05014	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=True | stamps	13	0.85	linear-0	f1: feature/-/- 0.6741; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.08625	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=True | stamps	14	0.8942	linear-0	f1: feature/-/- 0.651; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.0588	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=True | stamps	15	0.823	linear-0	f1: feature/-/- 0.4596; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.09037	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=True | stamps	16	0.8445	linear-0	f1: feature/-/- 0.5483; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.09479	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=True | stamps	17	0.9058	linear-0	f1: feature/-/- 0.5933; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.05977	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=True | stamps	18	0.8511	linear-0	f1: feature/-/- 0.6706; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.09531	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=True | stamps	19	0.8003	linear-0	f1: feature/-/- 0.5357; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.08871	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=True | stamps	20	0.8766	linear-0	f1: feature/-/- 0.5556; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.07641	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=True | stamps	21	0.8901	linear-0	f1: feature/-/- 0.5572; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.06732	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=True | stamps	22	0.8203	linear-0	f1: feature/-/- 0.6921; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.09781	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=True | stamps	23	0.8059	linear-0	f1: feature/-/- 0.5909; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.09867	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=True | stamps	24	0.8438	linear-0	f1: feature/-/- 0.5745; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.09565	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=True | stamps	25	0.8413	linear-0	f1: feature/-/- 0.6502; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.08751	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=True | stamps	26	0.9273	linear-0	f1: feature/-/- 0.5623; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.06576	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=True | stamps	27	0.8405	linear-0	f1: feature/-/- 0.5208; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.09935	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=True | stamps	28	0.861	linear-0	f1: feature/-/- 0.6014; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.08359	suspected_leak[target_code]
+no_interval carrier=code classification=True kind=stamps signal=True | stamps	29	0.8453	linear-0	f1: feature/-/- 0.5585; target_code: excluded/suspected_leak/predicts_target -	f1,f2	0.08419	suspected_leak[target_code]
+no_interval carrier=two classification=True kind=stamps signal=True | stamps	0	1	linear-0	f1: feature/-/- 0.002157; pair_a: feature/-/- 0.7064; pair_b: feature/-/- 0.2467	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=True | stamps	1	1	linear-0	f1: feature/-/- 0.006677; pair_a: feature/-/- 0.7951; pair_b: feature/-/- 0.1534	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=True | stamps	2	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8439; pair_b: feature/-/- 0.1039	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=True | stamps	3	1	linear-0	f1: feature/-/- 0.002355; pair_a: feature/-/- 0.8125; pair_b: feature/-/- 0.1977	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=True | stamps	4	1	linear-0	f1: feature/-/- 0.000207; pair_a: feature/-/- 0.7269; pair_b: feature/-/- 0.1526	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=True | stamps	5	1	linear-0	f1: feature/-/- 0.0007168; pair_a: feature/-/- 0.8486; pair_b: feature/-/- 0.1876	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=True | stamps	6	1	linear-0	f1: feature/-/- 0.0002049; pair_a: feature/-/- 0.8368; pair_b: feature/-/- 0.1972	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=True | stamps	7	1	linear-0	f1: feature/-/- 0.0003082; pair_a: feature/-/- 0.7035; pair_b: feature/-/- 0.1785	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=True | stamps	8	1	linear-0	f1: feature/-/- 0.003893; pair_a: feature/-/- 0.7926; pair_b: feature/-/- 0.2103	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=True | stamps	9	1	linear-0	f1: feature/-/- 0.001029; pair_a: feature/-/- 0.7541; pair_b: feature/-/- 0.1582	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=True | stamps	10	1	linear-0	f1: feature/-/- 0.0008256; pair_a: feature/-/- 0.7903; pair_b: feature/-/- 0.2092	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=True | stamps	11	1	linear-0	f1: feature/-/- 0.0001025; pair_a: feature/-/- 0.8644; pair_b: feature/-/- 0.1455	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=True | stamps	12	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8699; pair_b: feature/-/- 0.1741	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=True | stamps	13	1	linear-0	f1: feature/-/- 0.00175; pair_a: feature/-/- 0.8071; pair_b: feature/-/- 0.163	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=True | stamps	14	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.8167; pair_b: feature/-/- 0.1801	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=True | stamps	15	1	linear-0	f1: feature/-/- 0.001744; pair_a: feature/-/- 0.6897; pair_b: feature/-/- 0.2226	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=True | stamps	16	1	linear-0	f1: feature/-/- 0.0007172; pair_a: feature/-/- 0.7748; pair_b: feature/-/- 0.2119	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=True | stamps	17	1	linear-0	f1: feature/-/- 0.0001032; pair_a: feature/-/- 0.8041; pair_b: feature/-/- 0.1438	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=True | stamps	18	1	linear-0	f1: feature/-/- 0.002664; pair_a: feature/-/- 0.7865; pair_b: feature/-/- 0.1612	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=True | stamps	19	1	linear-0	f1: feature/-/- 0; pair_a: feature/-/- 0.7841; pair_b: feature/-/- 0.2176	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=True | stamps	20	1	linear-0	f1: feature/-/- 0.002573; pair_a: feature/-/- 0.7687; pair_b: feature/-/- 0.1989	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=True | stamps	21	1	linear-0	f1: feature/-/- 0.0008282; pair_a: feature/-/- 0.8414; pair_b: feature/-/- 0.1932	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=True | stamps	22	1	linear-0	f1: feature/-/- 0.0007224; pair_a: feature/-/- 0.772; pair_b: feature/-/- 0.1184	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=True | stamps	23	1	linear-0	f1: feature/-/- 0.001233; pair_a: feature/-/- 0.8406; pair_b: feature/-/- 0.1759	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=True | stamps	24	1	linear-0	f1: feature/-/- 0.002663; pair_a: feature/-/- 0.7608; pair_b: feature/-/- 0.1789	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=True | stamps	25	1	linear-0	f1: feature/-/- 0.002253; pair_a: feature/-/- 0.7372; pair_b: feature/-/- 0.113	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=True | stamps	26	1	linear-0	f1: feature/-/- 0.0003088; pair_a: feature/-/- 1.117; pair_b: feature/-/- 0.1051	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=True | stamps	27	1	linear-0	f1: feature/-/- 0.0002048; pair_a: feature/-/- 0.6884; pair_b: feature/-/- 0.1856	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=True | stamps	28	1	linear-0	f1: feature/-/- 0.002152; pair_a: feature/-/- 0.8779; pair_b: feature/-/- 0.145	pair_a,pair_b	0.05	near_perfect_headline[None]
+no_interval carrier=two classification=True kind=stamps signal=True | stamps	29	1	linear-0	f1: feature/-/- 0.00227; pair_a: feature/-/- 0.7967; pair_b: feature/-/- 0.1941	pair_a,pair_b	0.05	near_perfect_headline[None]

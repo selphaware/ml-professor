@@ -52,6 +52,20 @@ def _split_rows(frame, values):
     return holdout, training
 
 
+def _in_turn(log, hold):
+    """The families whose predict calls hold holdout rows, in call order, with the calls of
+    one family in a row counted once.
+
+    D59, D78 point 7: until the ninth pass the configuration that scored the holdout
+    predicted it once. Since then it predicts it again, five times for each set of
+    columns, to state what the headline rests on; a family's calls in a row are one turn,
+    so what is asserted is still the order in which the holdout reaches configurations.
+    """
+    predicted = [ev["family"] for ev in log.events
+                 if ev["action"] == "predict" and set(ev["rows"]) & hold]
+    return [f for k, f in enumerate(predicted) if k == 0 or f != predicted[k - 1]]
+
+
 @pytest.mark.parametrize("way", ["final_fit", "holdout"])
 def test_failure_after_the_choice_keeps_fold_scores_and_falls_back(way):
     """D38: a chosen configuration that then fails keeps its fold scores; the next best by cv_mean takes its place."""
@@ -125,8 +139,7 @@ def test_holdout_rows_reach_one_configuration_at_a_time():
     log = h.Log()
     result = c.run(frame, families=_families(log, values, order, fail_holdout=["best", "second"],
                                              training=training, holdout=holdout))
-    reached = [ev["family"] for ev in log.events
-               if ev["action"] == "predict" and set(ev["rows"]) & hold]
+    reached = _in_turn(log, hold)
     assert reached == ["best", "second", "third"]
     statuses = {m["family"]: m["status"] for m in h.models_of(result)}
     assert statuses["best"] == "failed" and statuses["second"] == "failed"
@@ -134,8 +147,7 @@ def test_holdout_rows_reach_one_configuration_at_a_time():
 
     log = h.Log()
     c.run(frame, families=_families(log, values, order))
-    reached = [ev["family"] for ev in log.events
-               if ev["action"] == "predict" and set(ev["rows"]) & hold]
+    reached = _in_turn(log, hold)
     assert reached == ["best"]
 
 

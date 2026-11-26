@@ -1,15 +1,17 @@
 """T60: the judge's two other tools run on the application (spec 8.2; D56, D71, D72, D73,
-D74).
+D74, D78 point 8).
 
 Each test runs one script of `verify/` from the repo root in a process of its own, on
 the package `mlprofessor`, with `--json FILE` (FILE in a temporary folder of the
 session). Until D74 each test asserted that its tool exits 0. Since D74 the judge
-asserts rules the application of the seventh pass does not have yet, so each test
-accepts exit 0, or exit 1 when every pair (every table) that fails is one the tasks of
-the eighth pass own (`cp9_helpers.BATTERY_OWNED`, `cp9_helpers.TABLES_OWNED`); any
-other exit code fails, and so does a failure that is not on the list (D59). A tool is
-run once in a session: `run_tool` keeps what the run gave, and the strict form,
-`tests/test_judge_tools_pass8.py` (T68), asks it for the same run. Nothing is imported
+asserts rules the application of the pass before does not have yet, so each test
+accepts exit 0, or exit 1 when every pair (every table) that fails is one the pass
+being built owns: since D78 point 8 the ninth pass, T69 to T76
+(`cp10_helpers.BATTERY_OWNED`, `cp10_helpers.TABLES_OWNED`); any other exit code
+fails, and so does a failure that is not on the list (D59). A tool is run once in a
+session: `run_tool` keeps what the run gave, and the other forms,
+`tests/test_judge_tools_pass8.py` and the strict `tests/test_judge_tools_pass9.py`
+(T76), ask it for the same run. Nothing is imported
 from `verify/`; the scripts write under `verify/artifacts/` only, as the gate does.
 """
 import json
@@ -17,7 +19,7 @@ import os
 import subprocess
 from pathlib import Path
 
-import cp9_helpers as q
+import cp10_helpers as q
 import mlp_helpers as h
 
 BATTERY = ("verify/battery.py", 3600)
@@ -63,7 +65,7 @@ def test_the_perturbation_battery_holds(tmp_path_factory):
                if pair["class"] == "fails"}
     assert failing, "verify/battery.py exited 1 and its report names no failing pair"
     other = sorted(failing - q.BATTERY_OWNED)
-    assert not other, (f"{len(other)} pair(s) fail that the eighth pass does not own "
+    assert not other, (f"{len(other)} pair(s) fail that the ninth pass does not own "
                        f"(of {len(failing)} failing): {other[:20]}")
 
 
@@ -76,5 +78,5 @@ def test_the_generated_tables_agree_with_the_reference(tmp_path_factory):
     assert failing, "verify/generated_tables.py exited 1 and its report names no failing table"
     assert len(failing) == doc["tables_by_class"]["fails"]
     other = sorted(failing - q.TABLES_OWNED)
-    assert not other, (f"{len(other)} table(s) fail that the eighth pass does not own "
+    assert not other, (f"{len(other)} table(s) fail that the ninth pass does not own "
                        f"(of {len(failing)} failing): {other[:20]}")

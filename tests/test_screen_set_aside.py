@@ -5,7 +5,10 @@ A row is marked when its target lies more than 10 median deviations from the med
 target of the training rows or, where the previous value is a baseline, more than 10
 median steps from its previous value. The marked rows are set aside when they are at
 most 1% of the training rows (at least one row allowed); when more are marked, none is
-set aside and every row is scored.
+set aside and as D74 had it, every row is scored. Since the ninth pass (D77 point 5, D78
+point 7) rule 2 then still leaves its rows unscored and is also read against each fold's
+training median: tests/test_screen_marked.py pins that, and this file accepts either
+(D59).
 """
 import math
 
@@ -63,6 +66,21 @@ def _assert_copy_is_kept_and_named(result):
     assert len(q.told(result, "strong_single_column", "copy")) == 1, s.codes(result)
 
 
+def _assert_copy_is_kept_and_named_or_excluded(result):
+    """Where more rows are marked than may be set aside.
+
+    D59, D77 point 5, D78 point 7: as D74 built it every row was then scored, and the copy
+    was kept and named by the order reading. Since the ninth pass rule 2 still leaves its
+    rows unscored and is also read against each fold's training median, and the copy is
+    excluded, the only leak. Either is accepted here; tests/test_screen_marked.py pins the
+    second.
+    """
+    if q.leaks(result):
+        _assert_copy_is_the_only_leak(result)
+    else:
+        _assert_copy_is_kept_and_named(result)
+
+
 @pytest.mark.parametrize("scheme", q.SCHEMES)
 def test_one_wild_target_cell_does_not_hide_a_copy(scheme):
     """F25: one target cell of 999999 among the training rows keeps a copy a feature."""
@@ -102,8 +120,9 @@ def test_a_wild_target_cell_in_the_holdout_changes_nothing_in_the_screen():
 @pytest.mark.parametrize("n,cells,out", [(600, 4, True), (600, 5, False),
                                          (120, 1, True), (120, 2, False)])
 def test_at_most_one_percent_of_the_training_rows_is_set_aside(n, cells, out):
-    """F25 where the rows are set aside; M44 where they are too many and all are scored:
-    the copy is then kept and named by the order reading."""
+    """F25 where the rows are set aside; where they are too many, M44 as D74 built it (all
+    scored, the copy kept and named by the order reading) or the copy excluded as the
+    ninth pass has it (D59)."""
     frame = h.reg_frame(n=n, seed=8431)
     wild, _ = _with_wild_targets(frame, s.SAID, cells)
     result = q.screened(wild, s.SAID)
@@ -112,7 +131,7 @@ def test_at_most_one_percent_of_the_training_rows_is_set_aside(n, cells, out):
     if out:
         _assert_copy_is_the_only_leak(result)
     else:
-        _assert_copy_is_kept_and_named(result)
+        _assert_copy_is_kept_and_named_or_excluded(result)
 
 
 @pytest.mark.parametrize("cells,out", [(2, True), (3, False)])
@@ -128,7 +147,7 @@ def test_under_time_order_the_row_after_a_wild_cell_counts_too(cells, out):
     if out:
         _assert_copy_is_the_only_leak(result)
     else:
-        _assert_copy_is_kept_and_named(result)
+        _assert_copy_is_kept_and_named_or_excluded(result)
 
 
 def test_a_long_tail_of_the_target_is_scored_as_it_is():

@@ -94,7 +94,10 @@ def test_m2_levels_come_from_the_rows_of_each_fit():
 
     # By effect: in the holdout prediction a level unseen in the fit is all zeros.
     holdout_predicts = [p for p in log.calls("model", "predict") if set(p["rows"]) & set(hold)]
-    assert len(holdout_predicts) == 1
+    # D59, D78 point 7: since the ninth pass the chosen configuration predicts the holdout
+    # again, shuffled, to state what the headline rests on. The first call is the
+    # headline's, and it is the one read here.
+    assert len(holdout_predicts) >= 1
     predict = holdout_predicts[0]
     colour_columns = [i for i, name in enumerate(predict["columns"]) if name.startswith("colour=")]
     assert colour_columns

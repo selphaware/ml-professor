@@ -241,6 +241,20 @@ reference agree. See `docs/measurements/CP9/build-on-real-tables/README.md`.
   are started on each edit (now 44 of 49).
 - **Measurements of pass 9 add 11 MB** to the repo, mostly per-seed tables.
 
+## Found in the T71 escalation (ninth-pass build, 2026-11-27)
+
+- **A test asserted a precondition the build cannot influence.**
+  `tests/test_screen_levels.py::test_numeric_bands_with_enough_rows_are_read_by_their_levels`
+  chose its table so that every value kept five training rows on the
+  reference's split. The spec leaves the split's row numbers open (11), and
+  on the build's split one value kept four, so T71 failed on every tier at
+  the same line. Fixed by the owner on 2026-11-27: the test takes the first
+  table of a fixed series (seeds 9311 to 9410) whose precondition holds on
+  the build's own `split_random`; every assertion is unchanged.
+- **To check in the next review:** any other test whose table was picked for
+  a property of the split (training rows per level, what the holdout holds)
+  without computing that property from the build's own split.
+
 ## Notes for the framework (ailoop-engineering), not for this repo
 
 - The tests stage does not lock `tests/`, so on a second pass the existing
@@ -262,3 +276,10 @@ reference agree. See `docs/measurements/CP9/build-on-real-tables/README.md`.
   rebuild a whole project (D53, D54).
 - The driver counts `docs/` as application code, so measurement scripts
   appear as judge-awareness warnings in every build report.
+- A test that is red before the build can be red because of a
+  precondition only the reference's open choices satisfy, not because the
+  behaviour is missing. The tests stage cannot tell the two apart, so the
+  build fails on every tier and only an escalation gets out (T71, pass 9).
+  The test author's prompt could require that a precondition resting on an
+  open choice is computed from the build's own seam, and that it fails with
+  a message naming the precondition.

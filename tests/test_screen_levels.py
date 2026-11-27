@@ -108,15 +108,32 @@ def test_few_values_are_counted_over_the_training_rows():
     assert t.quiet_feature(result, "code"), s.codes(result)
 
 
-def test_numeric_bands_with_enough_rows_are_read_by_their_levels():
-    """F32: ten rows for each value, at least five of each among the training rows: excluded."""
-    rng = np.random.default_rng(9311)
-    n = 600
+def _sixty_bands(seed, n=600):
+    rng = np.random.default_rng(seed)
     x1 = rng.normal(size=n)
     y = x1 + rng.normal(size=n)
     band = t.bands_of(y, 60)
-    frame = pd.DataFrame({"x1": x1, "z1": rng.normal(size=n),
-                          "code": t.coded(band, 60, seed=9311, text=False), "y": y})
+    return pd.DataFrame({"x1": x1, "z1": rng.normal(size=n),
+                         "code": t.coded(band, 60, seed=seed, text=False), "y": y})
+
+
+def test_numeric_bands_with_enough_rows_are_read_by_their_levels():
+    """F32: ten rows for each value, at least five of each among the training rows: excluded.
+
+    Which rows the split holds out is open (spec 11), so the table is the first of a
+    fixed series that has five training rows of every value on this build's own split
+    (2.7: the run's rows are `split_random(n, None, seed)`)."""
+    from mlprofessor import stages
+
+    n = 600
+    held = set(int(r) for r in stages.split_random(n, None, 0)["holdout"])
+    kept = [r for r in range(n) if r not in held]
+    for seed in range(9311, 9411):
+        frame = _sixty_bands(seed, n)
+        if frame.loc[kept, "code"].value_counts().min() >= t.LEVEL_ROWS:
+            break
+    else:
+        pytest.fail("no table of the series has five training rows of every value")
     result = t.run(frame)
     training = t.training_rows_of(result, frame)
     counts = pd.Series(frame.loc[training, "code"]).value_counts()

@@ -6,10 +6,10 @@
   "permission_mode": "auto",
 
   "roles": {
-    "harness":  { "model": "fable", "effort": "xhigh" },
-    "tests":    { "model": "opus",  "effort": "high", "attempts": 2, "max_turns": 150, "max_budget_usd": 15 },
-    "review":   { "model": "fable", "effort": "high", "max_turns": 80,  "max_budget_usd": 10 },
-    "diagnose": { "model": "fable", "effort": "high", "max_turns": 40,  "max_budget_usd": 5 }
+    "harness":  { "model": "opus", "effort": "xhigh" },
+    "tests":    { "model": "opus",  "effort": "xhigh", "attempts": 2, "max_turns": 150, "max_budget_usd": 15 },
+    "review":   { "model": "opus", "effort": "xhigh", "max_turns": 80,  "max_budget_usd": 10 },
+    "diagnose": { "model": "opus", "effort": "xhigh", "max_turns": 40,  "max_budget_usd": 5 }
   },
 
   "tiers": {

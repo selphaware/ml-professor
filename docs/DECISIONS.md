@@ -1400,3 +1400,21 @@ headlines about -1e9, which `extreme_value` and `largest_row_dominates`
 already name).
 Consequence: with this reading every carrier pair holds and the
 stated-limit list is the four kinds of D76 plus D36.
+
+## D82 — 2026-11-27 — Every role on Opus while the Fable allowance is out (extends D79)
+Decision: While the owner's Fable allowance is out, `loop/loop.json` routes
+every role to `opus` at `xhigh` effort: `harness`, `tests`, `review` and
+`diagnose`. The build tiers are unchanged (`haiku`, `sonnet`, `opus` at
+their own efforts). D79's condition stands: the review of pass 9 is run on
+Fable. Before `loop/run_loop.py review` or `go` is run, the owner sets
+`review` back to `fable`, and `diagnose` with it.
+Alternatives considered: `diagnose` alone on Opus (enough to keep the build
+off Fable, but the owner chose to move every role); running the review of
+pass 9 on Opus now and adding a Fable review before phase 1 closes
+(rejected: the reviewer is the one independent reader, and Opus wrote
+T69 to T76).
+Consequence: no stage of the build uses Fable, including a diagnosis on
+escalation; the escalations of T71 and T76 were diagnosed on Fable before
+the switch. The tests stage at `xhigh` may run longer than at `high`
+against the time limits in `loop/loop.json`. Until `review` is set back,
+neither `review` nor `go` is run.

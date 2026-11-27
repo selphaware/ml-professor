@@ -1418,3 +1418,38 @@ escalation; the escalations of T71 and T76 were diagnosed on Fable before
 the switch. The tests stage at `xhigh` may run longer than at `high`
 against the time limits in `loop/loop.json`. Until `review` is set back,
 neither `review` nor `go` is run.
+
+## D83 — 2026-11-27 — Complex build tasks at `xhigh` effort
+Decision: The `complex` tier of `loop/loop.json` runs Opus at `xhigh` effort,
+in place of `high`. Its model, attempts, turns and per-attempt budget are
+unchanged, and so are the `support` and `routine` tiers and the ladder. This
+outlasts D82: when the roles go back to Fable, the tier stays at `xhigh`.
+Alternatives considered: keeping `high`, on which passes 5 to 9 were built
+with every complex task passing first time except T71 and T76, whose
+failures were defects in tests that no effort could have fixed (the owner
+chose `xhigh`).
+Consequence: complex tasks cost more and take longer per attempt. Each
+attempt is still capped at 20 US dollars and 240 minutes, and the loop's
+total budget of 250 dollars (D64) had 151 spent after pass 9, so the total
+is raised by decision when it runs low. The build report's costs and
+minutes from pass 10 on are compared with pass 9's.
+
+## D84 — 2026-11-27 — Fable at `high` effort at most; D82 ends
+Decision: The roles go back to the routing they had before D82, with one
+change: the harness runs Fable at `high` effort, not `xhigh`. No role runs
+Fable above `high`. The `support` and `routine` tiers stay at `medium`,
+and `complex` stays at `xhigh` (D83).
+Alternatives considered: the harness at `xhigh`, as `MODEL-ROUTING.md`
+recommends (the owner chose `high`: at `xhigh` the allowance ran out in the
+middle of the CP10 session, which then had to finish on another model, D79;
+a harness session that finishes on Fable at `high` is worth more than one
+that changes model part-way at `xhigh`). The low tiers at `high` (rejected:
+the framework says a task that needs more thought is in the wrong tier, and
+every `support` and `routine` task of passes 1 to 9 passed first time at
+`medium`).
+Consequence: the judge's design rests a little more on the programs that
+prove it (the self-test, the mutation check, the battery and the generated
+tables) and on the lead's reading of each plan. A harness session whose
+plan the lead finds thin, or a review that finds a fault in the judge's
+design, is a reason to raise that one session to `xhigh` by a new decision.
+D82 ends: the review and the diagnosis are back on Fable.

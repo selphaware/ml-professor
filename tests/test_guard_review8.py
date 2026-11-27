@@ -218,14 +218,34 @@ def test_m60_a_classification_code_of_six_rows_a_value():
     assert t.quiet_feature(result, "code"), s.codes(result)
 
 
-def test_m62_a_falling_trend_under_the_grouped_scheme():
-    """M62: 24 values whose means fall with the target, and the rows not: not named."""
-    rng = np.random.default_rng(9813)
-    who = t.entities(400, 5, seed=9813)
+def _falling(seed):
+    rng = np.random.default_rng(seed)
+    who = t.entities(400, 5, seed=seed)
     n = len(who)
     value = rng.integers(0, 24, size=n)
-    frame = pd.DataFrame({"who": who, "v": value.astype(np.int64),
-                          "z1": rng.normal(size=n), "y": -0.3 * value + rng.normal(size=n)})
+    return pd.DataFrame({"who": who, "v": value.astype(np.int64),
+                         "z1": rng.normal(size=n), "y": -0.3 * value + rng.normal(size=n)})
+
+
+def test_m62_a_falling_trend_under_the_grouped_scheme():
+    """M62: 24 values whose means fall with the target, and the rows not: not named.
+
+    Which entities the split holds out is open (spec 7, 11), so the table is the first
+    of a fixed series whose means are in order on this build's own training rows
+    (2.7: the run's rows are `split_random(n, None, seed, groups=...)`)."""
+    from mlprofessor import stages
+
+    for seed in range(9813, 9913):
+        frame = _falling(seed)
+        held = set(int(r) for r in stages.split_random(
+            len(frame), None, 0, groups=frame["who"].to_numpy())["holdout"])
+        kept = [r for r in range(len(frame)) if r not in held]
+        v, y = frame.loc[kept, "v"].tolist(), frame.loc[kept, "y"].tolist()
+        if (t.against_by_pairs(v, y) > 2 * q.ORDER_AGAINST
+                and t.against_by_means(v, y) <= q.ORDER_AGAINST):
+            break
+    else:
+        pytest.fail("no table of the series has its means in order on the training rows")
     result = t.run(frame, {"time_col": False, "group_col": "who"})
     training = t.training_rows_of(result, frame)
     v, y = frame.loc[training, "v"].tolist(), frame.loc[training, "y"].tolist()

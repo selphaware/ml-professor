@@ -254,6 +254,22 @@ reference agree. See `docs/measurements/CP9/build-on-real-tables/README.md`.
 - **To check in the next review:** any other test whose table was picked for
   a property of the split (training rows per level, what the holdout holds)
   without computing that property from the build's own split.
+- **The same defect stopped T76** (2026-11-27):
+  `tests/test_guard_review8.py::test_m62_a_falling_trend_under_the_grouped_scheme`
+  checked that its column's means were in order on the training rows, which
+  depend on the entities the split holds out; the precondition fails on about
+  one split in eight, on the build and the reference alike. Fixed by the owner
+  the same way: the first table of the series seeds 9813 to 9912 whose
+  precondition holds on the build's own `split_random`.
+- **Known to be built the same way and still to fix:**
+  `tests/test_order_ties.py::test_a_column_whose_means_rise_with_the_target_is_not_named`
+  (seeds 9603, 9605, random scheme). It passes on this build, so it was left
+  for the review's sweep; it would fail on another correct split.
+- **Spec step 8's sentence on a numeric column read by its levels** ("number
+  at least five for each distinct value among them") reads two ways. The
+  reference and, since T76, the build both mean rows ≥ 5 × distinct values,
+  the convention of step 5's *d* ≥ 9 × *x*; the build first read it as five
+  rows of every value. State it as the formula at the next spec edit.
 
 ## Notes for the framework (ailoop-engineering), not for this repo
 

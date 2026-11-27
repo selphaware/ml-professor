@@ -4,9 +4,11 @@ Every fitted step sees training rows only. Selection uses cross-validation
 scores; the headline uses the one holdout score of the chosen configuration,
 refitted on the training rows alone.
 """
+import hashlib
 import os
 import platform
 import time
+from concurrent.futures import ThreadPoolExecutor
 from numbers import Integral
 
 import numpy as np
@@ -21,8 +23,8 @@ from mlprofessor.load import load_table, read_number_columns, usable_rows
 from mlprofessor.preprocess import MISSING_LEVEL, Preprocessor, check_feature_names
 from mlprofessor.result import (GROUPED_CAVEAT, LIMITATIONS, RANDOM_CAVEAT, ROWS_ITEMS,
                                 ProfileResult)
-from mlprofessor.split import (MAX_SEED, N_FOLDS, large_units, read_time, split_random,
-                               split_time, units_of)
+from mlprofessor.split import (MAX_SEED, N_FOLDS, far_above_quarter, large_units, read_time,
+                               split_random, split_time, units_of)
 from mlprofessor.task import TASKS, class_value, decide_task, read_target_values
 
 PROFILES = ("full", "fast")
@@ -186,6 +188,21 @@ def _large_unit_warnings(units, n_rows, classes, holdout):
                 stated + " It is kept among the training rows and the holdout is made of "
                 "smaller units: the headline does not test it."))
     return found
+
+
+def _large_time_holdout_warnings(keys, split):
+    """Step 7 (D77): the statement that whole timestamps made the holdout half or more."""
+    found = far_above_quarter(keys, split)
+    if found is None:
+        return []
+    n_holdout, n_split, n_earliest = found
+    return [_warning(
+        "holdout_far_above_quarter", None,
+        f"The holdout holds {n_holdout} of the {n_split} rows split "
+        f"({n_holdout / n_split:.1%}): it is made of whole timestamps, and the earliest "
+        f"of them holds {n_earliest} rows. The models were fitted on the rows before it "
+        "and the headline is measured on it: fewer rows were learned from than the "
+        "split usually leaves.")]
 
 
 def _column_warnings(roles, time_col):
@@ -580,16 +597,23 @@ class FitData:
             train_x = step.transform(train_x)
             predict_x = step.transform(predict_x)
         preprocessor = Preprocessor(kinds).fit(train_x)
+        self.preprocessor = preprocessor
         self.train_x = preprocessor.transform(train_x)
         self.predict_x = preprocessor.transform(predict_x)
         self.train_y = train_y
         self.predict_y = y[predict_rows]
 
 
-def fit_and_predict(config, task, data, seed, n_jobs):
-    """A fresh estimator of `config`, fitted on the fit's training rows; its predictions."""
+def fit_estimator(config, task, data, seed, n_jobs):
+    """A fresh estimator of `config`, fitted on the fit's training rows."""
     estimator = config["make"](task, dict(config["params"]), seed, n_jobs)
     estimator.fit(data.train_x, data.train_y)
+    return estimator
+
+
+def fit_and_predict(config, task, data, seed, n_jobs):
+    """A fresh estimator of `config`, fitted on the fit's training rows; its predictions."""
+    estimator = fit_estimator(config, task, data, seed, n_jobs)
     return models.predict_values(estimator, data.predict_x, task)
 
 
@@ -769,6 +793,237 @@ def _largest_row_warnings(headline, cv, model_records):
             f"{_percent(share)} of the squared error of the baseline {headline['baseline']}."
             + tail))
     return found
+
+
+# ------------------------------------------- what the headline rests on (step 12a)
+
+STATEMENT_KEYS = ("shuffled_score", "shuffled_skill", "skill_fall")
+REST_SHUFFLES = 5
+REST_FALL = 0.05
+REST_MOST = 5
+# The headline skill at which one column alone is excluded as a suspected leak.
+NEAR_PERFECT = leakage.LEAK_SKILL
+# In the `suspected_leak` message of a column read by its levels (spec 5.4; D78 point 6).
+LEVELS_ENTITY_SENTENCE = (
+    "If it names the entity each row belongs to, declare it as group_col (--group-col): "
+    "the rows of one entity are then kept together.")
+COPY_TOLERANCE = 1e-9
+# The statement's permutations: a stream of their own, from the seed and the position of
+# the feature (of the first member of a set of copies), drawn by no other step.
+_STATEMENT_STREAM = 4
+# At most this many bytes of shuffled matrices are held at once when forests predict
+# side by side.
+_SHUFFLE_BYTES = 4_000_000_000
+
+
+def matrix_parts(preprocessor, name):
+    """The columns of the preprocessed matrix that hold feature `name`."""
+    if preprocessor.kinds[name] == "numeric":
+        return [name]
+    return [f"{name}={level}" for level in preprocessor.levels[name]]
+
+
+def _numeric_copies(a, b):
+    """Two matrix columns agree, or one agrees with the other's negation, within 1e-9."""
+    return bool(np.all(np.abs(a - b) <= COPY_TOLERANCE)
+                or np.all(np.abs(a + b) <= COPY_TOLERANCE))
+
+
+def _block_key(block):
+    """The columns of a block of level columns, as a sorted tuple of digests."""
+    return tuple(sorted(hashlib.blake2b(np.ascontiguousarray(block[:, j]).tobytes(),
+                                        digest_size=16).digest()
+                        for j in range(block.shape[1])))
+
+
+def _same_block(a, b):
+    """Two blocks of level columns hold the same columns, in any order."""
+    if a.shape != b.shape:
+        return False
+    rest = [b[:, j] for j in range(b.shape[1])]
+    for i in range(a.shape[1]):
+        found = next((j for j, col in enumerate(rest) if np.array_equal(a[:, i], col)), None)
+        if found is None:
+            return False
+        rest.pop(found)
+    return True
+
+
+def copy_sets(names, preprocessor, train_x, predict_x):
+    """The features in sets of copies as the models receive them (step 12a): lists of
+    names in file order, the sets in the order of their first member. Two numeric
+    features are copies when their columns of the training and the holdout matrix agree,
+    or one agrees with the other's negation, within 1e-9; two categorical features when
+    their blocks of level columns hold the same columns. Never two of different kinds."""
+    sets, firsts, values_of, keys = [], [], {}, {}
+    for name in names:
+        parts = matrix_parts(preprocessor, name)
+        values = np.concatenate([train_x[parts].to_numpy(dtype=float),
+                                 predict_x[parts].to_numpy(dtype=float)])
+        numeric = preprocessor.kinds[name] == "numeric"
+        home = None
+        if numeric:
+            values = values[:, 0]
+            head = np.abs(values[:16])
+        else:
+            keys[name] = _block_key(values)
+        values_of[name] = values
+        for k, first in enumerate(firsts):
+            if (preprocessor.kinds[first] == "numeric") != numeric:
+                continue
+            other = values_of[first]
+            if numeric:
+                same = (np.all(np.abs(head - np.abs(other[:16])) <= COPY_TOLERANCE)
+                        and _numeric_copies(values, other))
+            else:
+                same = keys[first] == keys[name] and _same_block(values, other)
+            if same:
+                home = k
+                break
+        if home is None:
+            sets.append([name])
+            firsts.append(name)
+        else:
+            sets[home].append(name)
+    return sets
+
+
+def _shuffled_matrix(matrix, columns, permutation):
+    """`matrix` with `columns` moved among its rows by `permutation`; the rest in place."""
+    values = matrix.to_numpy(dtype=float, copy=True)
+    at = [matrix.columns.get_loc(c) for c in columns]
+    values[:, at] = values[np.ix_(permutation, at)]
+    return pd.DataFrame(values, index=matrix.index, columns=matrix.columns)
+
+
+def shuffled_scores(estimator, config, task_type, metric, matrix, y_holdout, sets,
+                    preprocessor, positions, seed, n_jobs):
+    """Step 12a: for each set of copies, the chosen configuration's score with the set's
+    part of the holdout matrix shuffled among the holdout rows, the mean of five
+    shuffles; None for a set on which it raised, or predicted or scored a value that is
+    not finite."""
+    n_rows = len(matrix)
+    shuffles = []
+    for index, members in enumerate(sets):
+        columns = [c for name in members for c in matrix_parts(preprocessor, name)]
+        rng = np.random.default_rng(np.random.SeedSequence(
+            [int(seed), _STATEMENT_STREAM, int(positions[members[0]])]))
+        for _ in range(REST_SHUFFLES):
+            shuffles.append((index, columns, rng.permutation(n_rows)))
+
+    def one(shuffle):
+        _, columns, permutation = shuffle
+        try:
+            values = models.predict_values(
+                estimator, _shuffled_matrix(matrix, columns, permutation), task_type)
+        except errors.ProfileError:
+            raise
+        except Exception:  # that set's statement cannot be made; the run goes on
+            return None
+        value = _score(metric, y_holdout, values)
+        return float(value) if np.isfinite(value) else None
+
+    workers = 1
+    if config["make"] is models.forest_maker() and n_jobs > 1:
+        per_matrix = max(1, matrix.size * 8 * 2)
+        workers = int(max(1, min(n_jobs, len(shuffles), _SHUFFLE_BYTES // per_matrix)))
+    if workers > 1:
+        # Forests predict side by side; each result is kept in its shuffle's place.
+        with ThreadPoolExecutor(max_workers=workers) as pool:
+            values = list(pool.map(one, shuffles))
+    else:
+        values = [one(shuffle) for shuffle in shuffles]
+    scores = [[] for _ in sets]
+    for (index, _, _), value in zip(shuffles, values):
+        scores[index].append(value)
+    means = []
+    for set_scores in scores:
+        if any(v is None for v in set_scores):
+            means.append(None)
+            continue
+        mean = float(np.mean(set_scores))
+        if not np.isfinite(mean):
+            mean = float(np.sum(np.asarray(set_scores) / len(set_scores)))
+        means.append(mean if np.isfinite(mean) else None)
+    return means
+
+
+def rests_on_floor(headline, standin):
+    """Step 12a: the larger of 0.05 and the half-width of the skill interval, or of its
+    stand-in (`standin()`, None when there is none); None when skill is."""
+    if headline["skill"] is None:
+        return None
+    low, high = headline["skill_low"], headline["skill_high"]
+    half = (high - low) / 2.0 if low is not None and high is not None else standin()
+    return REST_FALL if half is None else float(max(REST_FALL, half))
+
+
+def rests_on_list(statements, positions, floor):
+    """Step 12a: `{column, skill_fall}` of the features whose fall is at least the floor,
+    at most five, the largest first, ties in file order."""
+    if floor is None:
+        return []
+    found = sorted((-s["skill_fall"], positions[name], name)
+                   for name, s in statements.items()
+                   if s["skill_fall"] is not None and s["skill_fall"] >= floor)
+    return [{"column": name, "skill_fall": statements[name]["skill_fall"]}
+            for _, _, name in found[:REST_MOST]]
+
+
+def near_perfect_warning(headline, statements):
+    """Step 12a: the `near_perfect_headline` warning when skill is 0.98 or more, else
+    None. It names the columns of `headline.rests_on` and changes nothing."""
+    skill = headline["skill"]
+    if skill is None or skill < NEAR_PERFECT:
+        return None
+    floor = headline["rests_on_floor"]
+    listed = headline["rests_on"]
+    opening = (f"The headline skill is {skill:.4f}, at or above {NEAR_PERFECT}, the level "
+               "at which one column alone is excluded as a suspected leak.")
+    if listed:
+        parts = []
+        for item in listed:
+            name = item["column"]
+            shuffled = statements[name]["shuffled_skill"]
+            parts.append(f"{name!r} (shuffled skill {shuffled:.4f}, fall "
+                         f"{item['skill_fall']:.4f})")
+        body = (f" It rests on {', '.join(parts)}: the fall of skill when the column's "
+                f"holdout values are shuffled is at least {floor:.4f}. Is each of these "
+                "known before the outcome? If one is recorded after it, or derived from "
+                "it, the headline does not hold.")
+    else:
+        body = (f" No column's fall reaches the floor of {floor:.4f}: the headline rests "
+                "on no one column. Is each feature known before the outcome? A table "
+                "that is easy carries this warning too.")
+    return _warning("near_perfect_headline", None,
+                    opening + body + " Nothing was excluded for this warning.")
+
+
+def state_what_the_headline_rests_on(estimator, config, task_type, metric, final,
+                                     y_holdout, headline, positions, seed, n_jobs):
+    """Step 12a: `(statements by feature, features not computed)`. Nothing is refitted
+    and no other number changes."""
+    names = sorted(final.preprocessor.kinds, key=lambda name: positions[name])
+    sets = copy_sets(names, final.preprocessor, final.train_x, final.predict_x)
+    means = shuffled_scores(estimator, config, task_type, metric, final.predict_x,
+                            y_holdout, sets, final.preprocessor, positions, seed, n_jobs)
+    statements, not_computed = {}, []
+    for members, mean in zip(sets, means):
+        shuffled_skill = fall = None
+        if mean is not None and headline["skill"] is not None:
+            shuffled_skill = metrics.skill(metric, mean, headline["baseline_score"])
+            if shuffled_skill is not None:
+                fall = float(headline["skill"] - shuffled_skill)
+            if (shuffled_skill is None or not np.isfinite(shuffled_skill)
+                    or not np.isfinite(fall)):
+                mean = shuffled_skill = fall = None
+        if mean is None:
+            not_computed.extend(members)
+        for name in members:
+            statements[name] = {"shuffled_score": mean, "shuffled_skill": shuffled_skill,
+                                "skill_fall": fall}
+    not_computed.sort(key=lambda name: positions[name])
+    return statements, not_computed
 
 
 # ------------------------------------------------------------ the run
@@ -975,6 +1230,7 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs, dupli
                     f"Under the fast profile's cap of {ROW_CAP} rows: {exc}; use "
                     "profile='full'.") from exc
             raise
+        warnings.extend(_large_time_holdout_warnings(kept_keys, split))
         timestamps_unique = len(np.unique(kept_keys)) == len(kept_keys)
     else:
         classes = target_read.iloc[kept].to_numpy() if task_type == "classification" else None
@@ -1094,10 +1350,13 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs, dupli
             why = ("it is filled in for one class and empty for the other"
                    if record["leak_rule"] == "missing_by_class"
                    else f"on its own it predicts the target with skill {record['skill']:.3f}")
+            entity_advice = (LEVELS_ENTITY_SENTENCE + " "
+                             if record["leak_rule"] == "predicts_target"
+                             and record.get("by_levels") else "")
             warnings.append(_warning(
                 "suspected_leak", name,
                 f"{name!r} is excluded as a suspected leak: {why} on the training rows. "
-                "Check whether it is known before the outcome."))
+                + entity_advice + "Check whether it is known before the outcome."))
         elif record["warn"]:
             warnings.append(_warning(
                 "strong_single_column", name,
@@ -1156,7 +1415,7 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs, dupli
 
     # Steps 10 and 11: refit the chosen one on all training rows; score the holdout once.
     final = FitData(features, kinds, y_all, training_rows, holdout_rows, fit_rank)
-    chosen_index, holdout_pred = None, None
+    chosen_index, holdout_pred, chosen_estimator = None, None, None
     if selection_made:
         ranking = models.ranked_configurations(model_records, greater_is_better)
     else:
@@ -1164,14 +1423,15 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs, dupli
                    if record["status"] == "fitted" and record["cv_mean"] is not None]
     for index in ranking:
         try:
-            holdout_pred = fit_and_predict(configs[index], task_type, final, seed, n_jobs)
+            estimator = fit_estimator(configs[index], task_type, final, seed, n_jobs)
+            holdout_pred = models.predict_values(estimator, final.predict_x, task_type)
         except errors.ProfileError:
             raise
         except Exception as exc:
             # Failing after the choice keeps the fold scores it was chosen on.
             model_records[index].update(status="failed", error=_error_text(exc))
             continue
-        chosen_index = index
+        chosen_index, chosen_estimator = index, estimator
         break
     for record in model_records:
         if record["status"] == "failed":
@@ -1265,10 +1525,35 @@ def _run_profile(data, target, task, time_col, gap, profile, seed, n_jobs, dupli
             "small_holdout", None,
             f"Small holdout: {detail} (fewer than {SMALL_HOLDOUT}); the score is uncertain."))
 
+    # Step 12a: what the headline rests on. Nothing is refitted, and no number above
+    # changes for it.
+    positions = dict(zip(roles["name"], (int(p) for p in roles["position"])))
+    statements, not_computed = state_what_the_headline_rests_on(
+        chosen_estimator, configs[chosen_index], task_type, metric, final, y_holdout,
+        headline, positions, seed, n_jobs)
+    floor = rests_on_floor(headline, lambda: uncertainty.standin_half_width(
+        metric, y_holdout, holdout_pred, baseline_preds[baseline["name"]], profile, seed))
+    headline["rests_on"] = rests_on_list(statements, positions, floor)
+    headline["rests_on_floor"] = floor
+    for name in not_computed:
+        warnings.append(_warning(
+            "shuffled_score_not_computed", name,
+            f"What the headline rests on could not be stated for {name!r}: the chosen "
+            f"configuration {chosen['config']} raised, or predicted a value that is not "
+            "finite, on the holdout with this column's holdout values shuffled. Its "
+            "shuffled_score, shuffled_skill and skill_fall are null; the headline was scored "
+            "before and is unchanged."))
+    near = near_perfect_warning(headline, statements)
+    if near is not None:
+        warnings.append(near)
+
     # Accounting.
     scored_rows = np.concatenate([training_rows, holdout_rows])
     roles["n_imputed"] = [int(feature_missing[name][scored_rows].sum()) if name in kinds else 0
                           for name in roles["name"]]
+    for key in STATEMENT_KEYS:
+        roles[key] = pd.Series([statements[name][key] if name in statements else None
+                                for name in roles["name"]], index=roles.index, dtype=object)
     rows = [
         {"item": "loaded", "count": n_loaded},
         {"item": "dropped_missing_target", "count": counts["dropped_missing_target"]},

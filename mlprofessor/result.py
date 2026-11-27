@@ -16,6 +16,7 @@ ROWS_ITEMS = [
 COLUMN_KEYS = [
     "name", "position", "dtype", "role", "kind", "reason", "leak_rule",
     "n_missing", "n_coerced", "n_infinite", "n_imputed",
+    "shuffled_score", "shuffled_skill", "skill_fall",
 ]
 MODEL_KEYS = [
     "config", "family", "params", "status", "error", "fold_scores",

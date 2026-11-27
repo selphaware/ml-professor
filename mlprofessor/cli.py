@@ -90,6 +90,21 @@ def _number(value):
     return "n/a" if value is None else f"{value:.6g}"
 
 
+def _rests_on_line(headline):
+    """One line for what the headline rests on (step 12a): the floor, and each listed
+    column in quotes with its fall; `none` for an empty list."""
+    floor = headline.get("rests_on_floor")
+    listed = headline.get("rests_on") or []
+    if floor is None:
+        head = "rests on (no floor: skill has no value)"
+    else:
+        head = f"rests on (columns whose skill falls by at least {_number(floor)} shuffled)"
+    if not listed:
+        return f"{head}: none"
+    return f"{head}: " + ", ".join(
+        f"{entry['column']!r} {_number(entry['skill_fall'])}" for entry in listed)
+
+
 def _summary(document, out_dir):
     """Plain lines: the task, the rows, the headline, its spread, each warning, the files."""
     headline = document["headline"]
@@ -124,6 +139,7 @@ def _summary(document, out_dir):
     else:
         lines.append(f"p-value: {_number(headline['p_value'])} "
                      f"({headline['n_permutations']} shuffles)")
+    lines.append(_rests_on_line(headline))
     lines.append(f"warnings: {len(document['warnings'])}")
     for warning in document["warnings"]:
         where = f" [{warning['column']}]" if warning["column"] is not None else ""

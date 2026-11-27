@@ -1,0 +1,30 @@
+====================================================================================================
+diabetes (age 58 values, s4)
+  ref10: {'skill': 0.3581, 'excluded': [], 'warned': [], 'near_perfect': False, 'rests_on': [('s5', 0.25), ('bmi', 0.192), ('s1', 0.175)], 'floor': 0.158}
+====================================================================================================
+mpg (cylinders 5 values, model_year 13)
+  ref10: {'skill': 0.8206, 'excluded': [], 'warned': [], 'near_perfect': False, 'rests_on': [('weight', 1.023), ('model_year', 0.286), ('displacement', 0.193), ('origin', 0.084)], 'floor': 0.05}
+====================================================================================================
+titanic (pclass, sibsp, parch, age)
+  ref10: {'skill': 0.6928, 'excluded': [], 'warned': [], 'near_perfect': False, 'rests_on': [('adult_male', 0.235)], 'floor': 0.118}
+====================================================================================================
+tips (size 6 values)
+  ref10: {'skill': 0.5317, 'excluded': [], 'warned': [], 'near_perfect': False, 'rests_on': [('total_bill', 0.638)], 'floor': 0.157}
+====================================================================================================
+penguins body mass (flipper length)
+  ref10: {'skill': 0.81, 'excluded': [], 'warned': [], 'near_perfect': False, 'rests_on': [('species', 0.63), ('flipper_length_mm', 0.184), ('sex', 0.143), ('bill_depth_mm', 0.079)], 'floor': 0.068}
+====================================================================================================
+penguins sex
+  ref10: {'skill': 0.9138, 'excluded': [], 'warned': [], 'near_perfect': False, 'rests_on': [('body_mass_g', 0.499), ('bill_depth_mm', 0.494), ('bill_length_mm', 0.166), ('species', 0.132)], 'floor': 0.075}
+====================================================================================================
+diamonds price (carat under the fast cap)
+  ref10: {'skill': 0.8624, 'excluded': [], 'warned': [], 'near_perfect': False, 'rests_on': [('y', 1.011), ('carat', 0.394), ('clarity', 0.136)], 'floor': 0.071}
+====================================================================================================
+diamonds price, full profile
+  ref10: {'skill': 0.9811, 'excluded': [], 'warned': [], 'near_perfect': True, 'rests_on': [('carat', 0.872), ('y', 0.439), ('clarity', 0.155), ('color', 0.092)], 'floor': 0.05}
+====================================================================================================
+planets orbital period (number, year)
+  ref10: {'skill': 0.4443, 'excluded': [], 'warned': [], 'near_perfect': False, 'rests_on': [('method', 8.411)], 'floor': 6.235}
+====================================================================================================
+taxis tip (passengers 7 values)
+  ref10: {'skill': 0.6202, 'excluded': [], 'warned': [], 'near_perfect': False, 'rests_on': [('payment', 0.741), ('fare', 0.629), ('distance', 0.306), ('color', 0.274)], 'floor': 0.131}

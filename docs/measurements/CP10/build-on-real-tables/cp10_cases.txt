@@ -1,0 +1,169 @@
+
+##### A. What was open after pass 7 (D73)
+--------------------------------------------------------------------------------------------------------------
+VIX level, clean  [0.6s]
+   expect: 0.023 as before
+   RAN  time_ordered, linear-0, baseline previous_value of ['training_mean', 'previous_value'], skill 0.023 [-0.077, 0.105], largest row share: model 0.155, baseline 0.177
+   warnings ['interval_approximate']; excluded {}
+   rests on (floor 0.091): close_lag1 4.520, close_lag2 0.311, low_lag2 0.096
+--------------------------------------------------------------------------------------------------------------
+VIX level, ONE row repeated  [0.3s]
+   expect: was 0.843; now about the clean figure, previous value still the baseline
+   RAN  time_ordered, linear-0, baseline previous_value of ['training_mean', 'previous_value'], skill 0.024 [-0.077, 0.105], largest row share: model 0.155, baseline 0.177
+   warnings ['autocorrelated_panel_target', 'duplicate_rows', 'interval_approximate']; excluded {}
+   >> autocorrelated_panel_target [close]: The per-timestamp mean of 'close' has lag-1 autocorrelation 0.97 over the training timestamps (above 0.5). Skill is measured against the baseline previous_value. With no entity column the previous val
+   rests on (floor 0.091): close_lag1 4.529, close_lag2 0.314, low_lag2 0.097
+--------------------------------------------------------------------------------------------------------------
+VIX level, 10% of the kept rows repeated  [0.2s]
+   expect: about the clean figure
+   RAN  time_ordered, linear-0, baseline previous_value of ['training_mean', 'previous_value'], skill 0.018 [-0.051, 0.081], largest row share: model 0.153, baseline 0.187
+   warnings ['autocorrelated_panel_target', 'duplicate_rows', 'interval_approximate']; excluded {}
+   >> autocorrelated_panel_target [close]: The per-timestamp mean of 'close' has lag-1 autocorrelation 0.97 over the training timestamps (above 0.5). Skill is measured against the baseline previous_value. With no entity column the previous val
+   rests on (floor 0.066): close_lag1 4.462, low_lag1 0.196, low_lag2 0.096
+--------------------------------------------------------------------------------------------------------------
+VIX level + exact rescaled copy of the target  [0.2s]
+   expect: was 1.000; now the copy is excluded as a suspected leak
+   RAN  time_ordered, linear-0, baseline previous_value of ['training_mean', 'previous_value'], skill 0.023 [-0.077, 0.105], largest row share: model 0.155, baseline 0.177
+   warnings ['interval_approximate', 'suspected_leak']; excluded {'close_in_other_units': 'suspected_leak'}
+   >> suspected_leak [close_in_other_units]: 'close_in_other_units' is excluded as a suspected leak: on its own it predicts the target with skill 1.000 on the training rows. Check whether it is known before the outcome.
+   rests on (floor 0.091): close_lag1 4.520, close_lag2 0.311, low_lag2 0.096
+--------------------------------------------------------------------------------------------------------------
+VIX level + copy with 5 cells changed  [0.2s]
+   expect: excluded (D77 point 5)
+   RAN  time_ordered, linear-0, baseline previous_value of ['training_mean', 'previous_value'], skill 0.023 [-0.077, 0.105], largest row share: model 0.155, baseline 0.177
+   warnings ['interval_approximate', 'suspected_leak']; excluded {'copy_few_changed': 'suspected_leak'}
+   >> suspected_leak [copy_few_changed]: 'copy_few_changed' is excluded as a suspected leak: on its own it predicts the target with skill 1.000 on the training rows. Check whether it is known before the outcome.
+   rests on (floor 0.091): close_lag1 4.520, close_lag2 0.311, low_lag2 0.096
+--------------------------------------------------------------------------------------------------------------
+VIX level + the square of the target  [0.2s]
+   expect: at least warned (order reading)
+   RAN  time_ordered, tree-0, baseline previous_value of ['training_mean', 'previous_value'], skill 0.999 [0.997, 1.000], largest row share: model 0.869, baseline 0.177
+   warnings ['interval_approximate', 'largest_row_dominates', 'near_perfect_headline', 'strong_single_column']; excluded {}
+   >> strong_single_column [close_squared]: 'close_squared' follows the target's order: with the training rows sorted by it, the target moves against that order between 0.00% of neighbouring rows, and does not follow its own previous value as c
+   >> largest_row_dominates [None]: On the holdout, row 8896 carries 86.91% of the squared error of the chosen configuration tree-0. The score, the skill and the choice of model keep that row; if it is an error, remove it and run again.
+   >> near_perfect_headline [None]: The headline skill is 0.9986, at or above 0.98, the level at which one column alone is excluded as a suspected leak. It rests on 'close_squared' (shuffled skill -9.3648, fall 10.3633): the fall of ski
+   rests on (floor 0.050): close_squared 10.363
+--------------------------------------------------------------------------------------------------------------
+VIX level + copy with 5% noise  [0.2s]
+   expect: STATED LIMIT (D76): may pass in silence
+   RAN  time_ordered, linear-0, baseline previous_value of ['training_mean', 'previous_value'], skill 0.967 [0.933, 0.981], largest row share: model 0.020, baseline 0.177
+   warnings ['interval_approximate', 'strong_single_column']; excluded {}
+   >> strong_single_column [noisy_copy]: 'noisy_copy' on its own predicts the target with skill 0.970 on the training rows. It is kept as a feature; check that it is known before the outcome.
+   rests on (floor 0.050): noisy_copy 9.530
+--------------------------------------------------------------------------------------------------------------
+diabetes, one cell 999999 in a feature  [0.1s]
+   expect: was -0.111 with no word; now the value is named
+   RAN  random, tree-0, baseline training_mean of ['training_mean'], skill -0.111 [-0.447, 0.170], largest row share: model 0.079, baseline 0.039
+   warnings ['extreme_value', 'largest_row_dominates', 'whole_number_regression_target']; excluded {}
+   >> extreme_value [bmi]: 'bmi' holds the value 999999.0 in 1 row(s), far outside all its other values (the nearest is 0.17055522598064407). It is used as it is in every fit and every score; if it stands for a missing value, r
+   >> largest_row_dominates [None]: Over the selection folds, one row carries more than half of the squared error of 1 configuration(s): linear-0, row 10 (100.00%). The choice of model, and the model fitted on the training rows, may res
+   rests on (floor 0.308): none
+--------------------------------------------------------------------------------------------------------------
+diabetes, one cell 999999 in the target  [0.1s]
+   expect: the value is named; the largest row's share says the rest
+   RAN  random, tree-0, baseline training_mean of ['training_mean'], skill 0.999 [0.999, 0.999], largest row share: model 0.072, baseline 0.010
+   warnings ['extreme_value', 'largest_row_dominates', 'near_perfect_headline', 'whole_number_regression_target']; excluded {}
+   >> extreme_value [target]: 'target' holds the value 999999.0 in 1 row(s), far outside all its other values (the nearest is 346.0). It is used as it is in every fit and every score; if it stands for a missing value, replace it w
+   >> largest_row_dominates [None]: Over the selection folds, one row carries more than half of the squared error of 2 configuration(s): linear-0, row 10 (93.87%); tree-0, row 10 (100.00%). The choice of model, and the model fitted on t
+   >> largest_row_dominates [None]: Over the selection folds, row 10 carries 99.62% of the squared error of the baseline training_mean. The score, the skill and the choice of model keep that row; if it is an error, remove it and run aga
+   >> near_perfect_headline [None]: The headline skill is 0.9992, at or above 0.98, the level at which one column alone is excluded as a suspected leak. No column's fall reaches the floor of 0.0500: the headline rests on no one column. 
+   rests on (floor 0.050): none
+--------------------------------------------------------------------------------------------------------------
+diabetes, clean  [0.1s]
+   expect: 0.490034; age and s6 no longer warned (order ties, T72)
+   RAN  random, linear-0, baseline training_mean of ['training_mean'], skill 0.490 [0.343, 0.602], largest row share: model 0.052, baseline 0.039
+   warnings ['whole_number_regression_target']; excluded {}
+   rests on (floor 0.130): s5 0.428, s1 0.424, bmi 0.192
+
+##### B. The new readings on real columns that are NOT copies (false alarms would show here)
+--------------------------------------------------------------------------------------------------------------
+VIX close from the same day's open, high, low (time order)  [0.1s]
+   expect: legitimate-looking strong features; what does the tool say?
+   RAN  time_ordered, linear-0, baseline previous_value of ['training_mean', 'previous_value'], skill 0.785 [0.750, 0.836], largest row share: model 0.192, baseline 0.177
+   warnings ['interval_approximate']; excluded {}
+   rests on (floor 0.050): high 5.774, low 2.601, open 0.842
+--------------------------------------------------------------------------------------------------------------
+diamonds price (carat, x, y, z are strong)  [0.6s]
+   expect: 0.933 as before; any strong_single_column is a question, not an exclusion
+   RAN  random, tree-0, baseline training_mean of ['training_mean'], skill 0.933 [0.918, 0.951], largest row share: model 0.077, baseline 0.027
+   warnings ['duplicate_rows', 'whole_number_regression_target']; excluded {}
+   rests on (floor 0.050): carat 1.783, clarity 0.148, z 0.060, color 0.052
+--------------------------------------------------------------------------------------------------------------
+breast cancer  [0.5s]
+   expect: 0.994549; now near_perfect_headline (D77 point 2), naming what it rests on
+   RAN  random, linear-0, baseline chance of ['chance'], skill 0.995 [0.985, 1.000], largest row share: model None, baseline None
+   warnings ['near_perfect_headline']; excluded {}
+   >> near_perfect_headline [None]: The headline skill is 0.9945, at or above 0.98, the level at which one column alone is excluded as a suspected leak. No column's fall reaches the floor of 0.0500: the headline rests on no one column. 
+   rests on (floor 0.050): none
+--------------------------------------------------------------------------------------------------------------
+taxis fare (total and distance are near-copies of fare)  [0.3s]
+   expect: `total` strong; excluded or warned, never silent
+   RAN  random, linear-0, baseline training_mean of ['training_mean'], skill 0.996 [0.994, 0.997], largest row share: model 0.109, baseline 0.165
+   warnings ['duplicate_rows', 'largest_row_dominates', 'near_perfect_headline', 'strong_single_column']; excluded {}
+   >> strong_single_column [total]: 'total' on its own predicts the target with skill 0.945 on the training rows. It is kept as a feature; check that it is known before the outcome.
+   >> largest_row_dominates [None]: Over the selection folds, one row carries more than half of the squared error of 1 configuration(s): tree-0, row 5325 (62.09%). The choice of model, and the model fitted on the training rows, may rest
+   >> near_perfect_headline [None]: The headline skill is 0.9960, at or above 0.98, the level at which one column alone is excluded as a suspected leak. It rests on 'total' (shuffled skill -1.5048, fall 2.5008), 'tip' (shuffled skill 0.
+   rests on (floor 0.050): total 2.501, tip 0.084
+--------------------------------------------------------------------------------------------------------------
+taxis tip (heavy-tailed, many zeros)  [0.3s]
+   expect: runs; extreme_value quiet unless a value truly stands apart
+   RAN  random, tree-0, baseline training_mean of ['training_mean'], skill 0.673 [0.542, 0.780], largest row share: model 0.081, baseline 0.083
+   warnings ['duplicate_rows']; excluded {}
+   rests on (floor 0.119): fare 1.086, payment 0.996, color 0.342
+--------------------------------------------------------------------------------------------------------------
+mpg  [0.1s]
+   expect: 0.822 as before
+   RAN  random, linear-0, baseline training_mean of ['training_mean'], skill 0.822 [0.779, 0.873], largest row share: model 0.089, baseline 0.057
+   warnings []; excluded {'name': 'free_text'}
+   rests on (floor 0.050): weight 0.992, model_year 0.221, displacement 0.124
+
+##### C. Identifier and no-choice rules
+--------------------------------------------------------------------------------------------------------------
+titanic + a consecutive id, rows SHUFFLED, keep  [0.3s]
+   expect: passenger_id excluded as id_like (was a feature when shuffled); 0.745
+   RAN  random, linear-0, baseline chance of ['chance'], skill 0.780 [0.685, 0.874], largest row share: model None, baseline None
+   warnings ['holdout_copies_kept']; excluded {'passenger_id': 'id_like'}
+   rests on (floor 0.094): adult_male 0.191
+--------------------------------------------------------------------------------------------------------------
+mpg, every US car one entity (62.6%)  [0.1s]
+   expect: as before (0.822) unless the folds cannot choose, then selection_not_made
+   RAN  grouped, linear-0, baseline training_mean of ['training_mean'], skill 0.776 [0.715, 0.827], largest row share: model 0.109, baseline 0.062
+   warnings ['large_group_kept_in_training', 'selection_not_made']; excluded {}
+   >> selection_not_made [None]: No choice between configurations was made: under the grouped scheme a selection fold trains on 42 rows, fewer than 50 and fewer than it validates on, so the fold scores cannot choose. Every fold was s
+   rests on (floor 0.056): model_year 0.176, weight 0.170
+
+##### D. Unchanged tables
+--------------------------------------------------------------------------------------------------------------
+penguins sex  [0.1s]
+   expect: 0.937642
+   RAN  random, linear-0, baseline chance of ['chance'], skill 0.938 [0.855, 0.986], largest row share: model None, baseline None
+   warnings ['small_holdout']; excluded {}
+   rests on (floor 0.066): bill_depth_mm 0.501, body_mass_g 0.471, bill_length_mm 0.169, species 0.110
+--------------------------------------------------------------------------------------------------------------
+titanic keep  [0.2s]
+   expect: 0.744865
+   RAN  random, linear-0, baseline chance of ['chance'], skill 0.745 [0.656, 0.829], largest row share: model None, baseline None
+   warnings ['duplicate_rows', 'holdout_copies_kept']; excluded {}
+   rests on (floor 0.087): adult_male 0.196
+--------------------------------------------------------------------------------------------------------------
+titanic group  [0.3s]
+   expect: 0.645030
+   RAN  grouped, linear-0, baseline chance of ['chance'], skill 0.645 [0.514, 0.745], largest row share: model None, baseline None
+   warnings ['duplicate_rows', 'same_features_grouped']; excluded {}
+   rests on (floor 0.116): adult_male 0.247
+--------------------------------------------------------------------------------------------------------------
+stocks level, group_col=symbol  [0.0s]
+   expect: -0.138855
+   RAN  time_ordered, linear-0, baseline previous_value of ['training_mean', 'previous_value'], skill -0.139 [None, None], largest row share: model 0.196, baseline 0.183
+   warnings ['no_interval']; excluded {}
+   rests on (floor 0.174): price_lag1 77.799
+--------------------------------------------------------------------------------------------------------------
+stocks level, group_col=False (a panel, on the caller's word)  [0.0s]
+   expect: was 0.979 against the training mean; now both baselines are scored
+   RAN  time_ordered, tree-0, baseline previous_value of ['training_mean', 'previous_value'], skill 0.726 [None, None], largest row share: model 0.094, baseline 0.061
+   warnings ['autocorrelated_panel_target', 'no_interval', 'suspected_leak']; excluded {'price_lag1': 'suspected_leak'}
+   >> suspected_leak [price_lag1]: 'price_lag1' is excluded as a suspected leak: on its own it predicts the target with skill 0.988 on the training rows. Check whether it is known before the outcome.
+   >> autocorrelated_panel_target [price]: The per-timestamp mean of 'price' has lag-1 autocorrelation 0.94 over the training timestamps (above 0.5). Skill is measured against the baseline previous_value. With no entity column the previous val
+   rests on (floor 0.067): symbol 1.618
+
+SUMMARY: {'ran': 23} | python warnings in 0 runs

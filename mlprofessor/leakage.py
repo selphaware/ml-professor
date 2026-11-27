@@ -8,7 +8,8 @@ rows missed by most left unscored, excludes at 0.98 (`predicts_target`);
 rule 3, every row scored, keeps the column with a `strong_single_column`
 warning at 0.90. In a regression the tier has a second reading, by the
 column's order, which warns and never excludes. Training rows whose target is
-wildly off are set aside from the whole screen when they are few.
+wildly off are set aside from the whole screen when they are few; when they
+are many, none is, and rule 2 is also read against each fold's training median.
 """
 import math
 
@@ -32,6 +33,10 @@ UNSCORED_SHARE = 0.01
 # The order reading.
 ORDER_AGAINST = 0.10
 ORDER_PAIRS = 20
+# The reading by levels: rows a value for a numeric column to be read so, and the floor.
+LEVEL_ROWS = 5
+LEVEL_SCORED = 20
+LEVEL_SCORED_CLASS = 10
 
 
 def missing_by_class(missing, y, training_rows):
@@ -94,6 +99,14 @@ def _scored_folds(folds, scored):
             for fold, is_scored in zip(folds, scored) if is_scored]
 
 
+def _median_predictions(y, fold_rows):
+    """Each validation row given the median target of its fold's training rows, pooled."""
+    y = np.asarray(y, dtype=float)
+    pooled = [np.full(len(validation_rows), float(np.median(y[train_rows])))
+              for train_rows, validation_rows in fold_rows]
+    return np.concatenate(pooled) if pooled else np.zeros(0)
+
+
 def _baseline_predictions(y, fold_rows, previous=None, previous_by_entity=False):
     """Pooled truth and each baseline's pooled predictions over `fold_rows`."""
     y = np.asarray(y, dtype=float)
@@ -143,14 +156,14 @@ def baseline_errors(y, folds, scored, previous=None, previous_by_entity=False):
 
 
 def rows_set_aside(y, training_rows, previous=None):
-    """`(rows, every_row_scored)`: the training rows set aside from the screen.
+    """`(rows, many_marked)`: the training rows set aside from the screen.
 
     A row is marked when its target lies more than 10 median deviations from
     the median target, or more than 10 median steps from its previous value
     (where `previous` is given and the row has one). The marked rows are set
     aside when they are at most 1% of the training rows (one being always
-    allowed). When more are marked, none is, and `every_row_scored` is True:
-    rule 2 then leaves no row unscored either.
+    allowed). When more are marked, none is, and `many_marked` is True: rule 2
+    is then also read against each fold's training median.
     """
     training_rows = np.asarray(training_rows)
     y_train = np.asarray(y, dtype=float)[training_rows]
@@ -261,28 +274,88 @@ def _line_reader(values, y, fold_rows):
     return predicted
 
 
-def _direct_reader(values, kind, y, fold_rows, seed):
-    """A classification's column read directly, with no minimum leaf."""
+def _direct_reader(values, y, fold_rows, seed):
+    """A numeric column of a classification read directly, with no minimum leaf."""
     predicted = []
-    if kind == "numeric":
-        column = feature_numbers(values)
-        for train_rows, validation_rows in fold_rows:
-            tree = _make_tree("classification", seed, DIRECT_TREE_PARAMS)
-            tree.fit(column[train_rows].reshape(-1, 1), y[train_rows])
-            predicted.append(_tree_predictions(
-                tree, column[validation_rows].reshape(-1, 1), "classification"))
-        return np.concatenate(predicted)
-    column = _levels(values)
+    column = feature_numbers(values)
     for train_rows, validation_rows in fold_rows:
-        positive = np.asarray(y[train_rows]) == 1
-        fold_share = float(positive.mean())
-        train_levels = column[train_rows]
-        shares = {}
-        for level in np.unique(train_levels):
-            shares[level] = float(positive[train_levels == level].mean())
-        predicted.append(np.array([shares.get(v, fold_share) for v in column[validation_rows]],
-                                  dtype=float))
+        tree = _make_tree("classification", seed, DIRECT_TREE_PARAMS)
+        tree.fit(column[train_rows].reshape(-1, 1), y[train_rows])
+        predicted.append(_tree_predictions(
+            tree, column[validation_rows].reshape(-1, 1), "classification"))
     return np.concatenate(predicted)
+
+
+def reads_by_levels(values, kind, training_rows):
+    """Whether the column is read by its levels: every categorical column, and a numeric
+    one whose training rows, where it is not missing, number at least five for each
+    distinct value among them (rows >= 5 x distinct values, as d >= 9 x of step 5)."""
+    if kind != "numeric":
+        return True
+    column = feature_numbers(values)[np.asarray(training_rows)]
+    column = column[~np.isnan(column)]
+    if len(column) == 0:
+        return False
+    return len(column) >= LEVEL_ROWS * len(np.unique(column))
+
+
+def _level_codes(values, kind):
+    """One whole-number code per level; -1 for a numeric cell that is missing (no level)."""
+    if kind != "numeric":
+        _, codes = np.unique(_levels(values), return_inverse=True)
+        return np.asarray(codes, dtype=np.int64).ravel()
+    column = feature_numbers(values)
+    codes = np.full(len(column), -1, dtype=np.int64)
+    present = ~np.isnan(column)
+    if present.any():
+        _, inverse = np.unique(column[present], return_inverse=True)
+        codes[present] = np.asarray(inverse).ravel()
+    return codes
+
+
+def _level_reader(values, kind, y, fold_rows, task_type):
+    """(pooled predictions, scored): each validation row is given the mean target of its
+    fold's training rows of its level; a row whose level they do not hold is not scored."""
+    codes = _level_codes(values, kind)
+    n_levels = int(codes.max()) + 1 if len(codes) else 0
+    if task_type == "classification":
+        target = (np.asarray(y) == 1).astype(float)
+    else:
+        target = np.asarray(y, dtype=float)
+    predicted, scored = [], []
+    with np.errstate(over="ignore", invalid="ignore", divide="ignore"):
+        for train_rows, validation_rows in fold_rows:
+            train_codes = codes[train_rows]
+            held = train_codes >= 0
+            counts = np.bincount(train_codes[held], minlength=n_levels)
+            sums = np.bincount(train_codes[held], weights=target[train_rows][held],
+                               minlength=n_levels)
+            valid_codes = codes[validation_rows]
+            is_scored = valid_codes >= 0
+            is_scored[is_scored] = counts[valid_codes[is_scored]] > 0
+            fold_pred = np.zeros(len(validation_rows), dtype=float)
+            at = valid_codes[is_scored]
+            fold_pred[is_scored] = sums[at] / counts[at]
+            predicted.append(fold_pred)
+            scored.append(is_scored)
+    if not predicted:
+        return np.zeros(0), np.zeros(0, dtype=bool)
+    return np.concatenate(predicted), np.concatenate(scored)
+
+
+def _level_floor(truth, scored, task_type):
+    """The floor of the reading by levels: 20 pooled rows scored and, in a classification,
+    10 of each class scored or every pooled row of that class."""
+    if int(scored.sum()) < LEVEL_SCORED:
+        return False
+    if task_type != "classification":
+        return True
+    for label in (0, 1):
+        in_class = truth == label
+        n_scored = int((in_class & scored).sum())
+        if n_scored < LEVEL_SCORED_CLASS and n_scored != int(in_class.sum()):
+            return False
+    return True
 
 
 # ------------------------------------------------------------ skill
@@ -294,12 +367,12 @@ def _ratio_skill(own_sum, base_sum):
         return float(1.0 - np.float64(own_sum) / np.float64(base_sum))
 
 
-def _scored_mask(own_errors, base_errors, every_row=False):
+def _scored_mask(own_errors, base_errors):
     """Rule 2's rows: all but the k missed by most by each of the two (k = ceil 1%)."""
     n = len(own_errors)
     keep = np.ones(n, dtype=bool)
     k = max(1, int(math.ceil(UNSCORED_SHARE * n)))
-    if every_row or 2 * k >= n:
+    if 2 * k >= n:
         return keep
     keep[np.argsort(-own_errors, kind="stable")[:k]] = False
     keep[np.argsort(-base_errors, kind="stable")[:k]] = False
@@ -313,15 +386,20 @@ def _lowest(values):
     return min(values)
 
 
-def _regression_readings(truth, predicted, baselines, every_row=False):
-    """(rule 3's skill, every row scored; rule 2's, the rows missed by most unscored)."""
+def _regression_readings(truth, predicted, baselines, rule2_baselines=None):
+    """(rule 3's skill, every row scored; rule 2's, the rows missed by most unscored).
+
+    Rule 2 is read against `baselines` and against `rule2_baselines` as well.
+    """
     with np.errstate(over="ignore", invalid="ignore"):
         own = (truth - predicted) ** 2
         every, trimmed = [], []
         for base_pred in baselines.values():
             base = (truth - base_pred) ** 2
             every.append(_ratio_skill(own.sum(), base.sum()))
-            keep = _scored_mask(own, base, every_row)
+        for base_pred in list(baselines.values()) + list((rule2_baselines or {}).values()):
+            base = (truth - base_pred) ** 2
+            keep = _scored_mask(own, base)
             trimmed.append(_ratio_skill(own[keep].sum(), base[keep].sum()))
     return _lowest(every), _lowest(trimmed)
 
@@ -339,29 +417,52 @@ def _check_skill(skill, column):
             "to be held.")
 
 
+def _auc_skill(truth, predicted):
+    return metrics.skill("roc_auc", metrics.roc_auc(truth, predicted), 0.5)
+
+
 def column_readings(values, kind, y, fold_rows, task_type, seed, truth, baselines=None,
-                    name=None, every_row=False):
+                    name=None, rule2_baselines=None, by_levels=False):
     """(rule 3's skill, rule 2's skill) of one column over `fold_rows`.
 
-    Each is that of the better reader; None when it has no value. With
-    `every_row`, rule 2 scores every row, as rule 3 does.
+    Each is that of the better reader; None when it has no value. In a
+    regression rule 2 is also read against `rule2_baselines` (pooled
+    predictions in the order of `truth`). With `by_levels` the column is also
+    read by its levels, over the rows that reading scores.
     """
     y = np.asarray(y)
+    truth = np.asarray(truth)
     column = "a column" if name is None else f"column {name!r}"
     tree_pred = _tree_reader(values, kind, y, fold_rows, task_type, seed)
+    level_pred = scored = None
+    if by_levels:
+        level_pred, scored = _level_reader(values, kind, y, fold_rows, task_type)
+        if not _level_floor(truth, scored, task_type):
+            level_pred = None
     if task_type == "classification":
-        readers = [tree_pred, _direct_reader(values, kind, y, fold_rows, seed)]
-        skill = _better([metrics.skill("roc_auc", metrics.roc_auc(truth, pred), 0.5)
-                         for pred in readers])
+        skills = [_auc_skill(truth, tree_pred)]
+        if kind == "numeric":
+            skills.append(_auc_skill(truth, _direct_reader(values, y, fold_rows, seed)))
+        if level_pred is not None and len(np.unique(truth[scored])) == 2:
+            skills.append(_auc_skill(truth[scored], level_pred[scored]))
+        skill = _better(skills)
         return skill, skill
     own_error = metrics.mse(truth, tree_pred)
     if not np.isfinite(own_error):
         raise _not_finite(f"{column}'s own squared error", own_error, TARGET_TOO_LARGE)
-    readings = [_regression_readings(truth, tree_pred, baselines, every_row)]
+    rule2_baselines = rule2_baselines or {}
+    readings = [_regression_readings(truth, tree_pred, baselines, rule2_baselines)]
     if kind == "numeric":
         line_pred = _line_reader(values, np.asarray(y, dtype=float), fold_rows)
         if line_pred is not None and np.isfinite(metrics.mse(truth, line_pred)):
-            readings.append(_regression_readings(truth, line_pred, baselines, every_row))
+            readings.append(_regression_readings(truth, line_pred, baselines, rule2_baselines))
+    if level_pred is not None:
+        own = level_pred[scored]
+        if np.all(np.isfinite(own)) and np.isfinite(metrics.mse(truth[scored], own)):
+            readings.append(_regression_readings(
+                truth[scored], own,
+                {base: pred[scored] for base, pred in baselines.items()},
+                {base: pred[scored] for base, pred in rule2_baselines.items()}))
     every = _better([r[0] for r in readings])
     trimmed = _better([r[1] for r in readings])
     _check_skill(every, column)
@@ -370,10 +471,13 @@ def column_readings(values, kind, y, fold_rows, task_type, seed, truth, baseline
 
 
 def share_against_order(x, y):
-    """The smaller share of rises and falls of `y` between neighbours in `x`'s order.
+    """The smaller average share of rises and falls of `y` between rows of neighbouring
+    distinct values of `x`.
 
-    Rows missing either are left out; ties of `x` are sorted by `y` and are no
-    pair. None with fewer than 20 pairs.
+    Rows missing either are left out. For each two neighbouring distinct values
+    every row of the one is compared with every row of the next (equal targets
+    count in neither share); each pair of values counts once. Rows of equal `x`
+    are never compared. None with fewer than 20 pairs of values.
     """
     x = np.asarray(x, dtype=float)
     y = np.asarray(y, dtype=float)
@@ -381,12 +485,31 @@ def share_against_order(x, y):
     x, y = x[present], y[present]
     order = np.lexsort((y, x))
     x, y = x[order], y[order]
-    pair = np.diff(x) != 0
-    total = int(pair.sum())
-    if total < ORDER_PAIRS:
+    if len(x) == 0:
         return None
-    step = np.diff(y)[pair]
-    return min(int((step > 0).sum()), int((step < 0).sum())) / total
+    starts = np.flatnonzero(np.r_[True, np.diff(x) != 0])
+    ends = np.r_[starts[1:], len(x)]
+    pairs = len(starts) - 1
+    if pairs < ORDER_PAIRS:
+        return None
+    sizes = ends - starts
+    group = np.repeat(np.arange(len(starts), dtype=np.int64), sizes)
+    # Inside each value the targets are sorted, so (value, rank of target) is one
+    # sorted key, and each row's place among the next value's rows is a search.
+    rank = np.unique(y, return_inverse=True)[1].astype(np.int64)
+    width = int(rank.max()) + 1
+    key = group * width + rank
+    low_rows = group < len(starts) - 1
+    probe = (group[low_rows] + 1) * width + rank[low_rows]
+    nxt = group[low_rows] + 1
+    below = np.searchsorted(key, probe, side="left") - starts[nxt]
+    above = ends[nxt] - np.searchsorted(key, probe, side="right")
+    totals = (sizes[:-1] * sizes[1:]).astype(float)
+    rises = np.bincount(group[low_rows], weights=above, minlength=pairs)[:pairs]
+    falls = np.bincount(group[low_rows], weights=below, minlength=pairs)[:pairs]
+    rise_sum = float(np.sum(rises / totals))
+    fall_sum = float(np.sum(falls / totals))
+    return min(rise_sum, fall_sum) / pairs
 
 
 def _order_share(values, y, training_rows, previous_share):
@@ -415,7 +538,7 @@ def screen(features, kinds, missing, y, training_rows, folds, scored, task_type,
     fold_rows = _scored_folds(folds, scored)
     truth = baselines = None
     previous_share = None
-    every_row = False
+    rule2_baselines = None
     if task_type == "classification":
         truth = np.concatenate([np.asarray(y)[v] for _, v in fold_rows])
     else:
@@ -423,23 +546,29 @@ def screen(features, kinds, missing, y, training_rows, folds, scored, task_type,
         # Measured before any column, every row in, so a target too large stops first.
         baseline_errors(y, folds, scored, previous=previous,
                         previous_by_entity=previous_by_entity)
-        set_aside, every_row = rows_set_aside(y, training_rows, previous)
+        set_aside, many_marked = rows_set_aside(y, training_rows, previous)
         fold_rows = _without_rows(fold_rows, set_aside)
         truth, baselines = _baseline_predictions(y, fold_rows, previous, previous_by_entity)
+        if many_marked:
+            # Rows far off cannot move a median: rule 2 is read against it as well.
+            rule2_baselines = {"training_median": _median_predictions(y, fold_rows)}
         if previous is not None:
             previous_share = share_against_order(
                 np.asarray(previous, dtype=float)[training_rows], y[training_rows])
     for name in features.columns:
         kind = kinds[name]
         record = {"name": name, "leak_rule": None, "skill": None, "warn": False,
-                  "order_share": None}
+                  "order_share": None, "by_levels": False}
         records.append(record)
         if task_type == "classification" and missing_by_class(missing[name], y, training_rows):
             record["leak_rule"] = "missing_by_class"
             continue
         values = features[name].to_numpy()
+        record["by_levels"] = reads_by_levels(values, kind, training_rows)
         every, trimmed = column_readings(values, kind, y, fold_rows, task_type, seed, truth,
-                                         baselines, name=name, every_row=every_row)
+                                         baselines, name=name,
+                                         rule2_baselines=rule2_baselines,
+                                         by_levels=record["by_levels"])
         if every is None:
             # A baseline is exact on the rows scored: no skill, so no rule applies.
             continue

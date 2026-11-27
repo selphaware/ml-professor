@@ -20,6 +20,7 @@ RESAMPLES = {"full": 1000, "fast": 200}
 # Generator streams drawn from the one seed, apart from every other stream.
 _BOOTSTRAP_STREAM = 2
 _PERMUTATION_STREAM = 3
+_STANDIN_STREAM = 5
 
 P_VALUE_REASON_TIME = (
     "No p-value under time order: shuffling the holdout targets assumes the rows are "
@@ -252,3 +253,30 @@ def headline_uncertainty(metric, y, pred, baseline_pred, skill, profile, seed,
                                      _stream(seed, _PERMUTATION_STREAM))
         fields["n_permutations"] = n_resamples
     return fields, warnings
+
+
+def standin_half_width(metric, y, pred, baseline_pred, profile, seed):
+    """Half the width of the middle 95% of skill over a bootstrap of the holdout rows,
+    taken as if independent (step 12a): the stand-in for a skill interval where the
+    headline has none. Resamples in which skill cannot be computed are left out; None
+    when fewer than half of them remain.
+    """
+    y = np.asarray(y)
+    n_resamples = RESAMPLES[profile]
+    scorer = _HoldoutScorer(metric, y, pred, baseline_pred)
+    rng = _stream(seed, _STANDIN_STREAM)
+    skills = []
+    for _ in range(n_resamples):
+        weights = _row_weights(len(y), rng)
+        try:
+            result = scorer.score_and_skill(weights)
+        except NonFiniteScoreError:
+            # A resample whose skill cannot be held is one in which it cannot be computed.
+            continue
+        if result is not None and result[1] is not None:
+            skills.append(result[1])
+    if 2 * len(skills) < n_resamples:
+        return None
+    low, high = _percentiles(skills)
+    half = (high - low) / 2.0
+    return float(half) if np.isfinite(half) else None

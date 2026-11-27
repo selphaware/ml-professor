@@ -271,6 +271,20 @@ reference agree. See `docs/measurements/CP9/build-on-real-tables/README.md`.
   the convention of step 5's *d* ≥ 9 × *x*; the build first read it as five
   rows of every value. State it as the formula at the next spec edit.
 
+## Found by the lead's real-data run of the ninth pass (2026-11-27)
+
+`docs/measurements/CP10/build-on-real-tables/`. Both findings of the eighth
+pass's run and both of review 7 now hold; 22 of 23 earlier cases give the
+same skill to every digit.
+
+- **The README does not say that a fall can exceed what a column carries
+  alone.** The fall is the chosen model's dependence on the column, and a
+  linear model can offset correlated columns against each other: on
+  diabetes `s1` falls by 0.424 beside `s2` at 0.062 (the reference, on its
+  own split, 0.175). The README explains only the converse (columns that
+  share information each fall less). One sentence in "What the headline
+  rests on"; Low, documentation.
+
 ## Notes for the framework (ailoop-engineering), not for this repo
 
 - The tests stage does not lock `tests/`, so on a second pass the existing

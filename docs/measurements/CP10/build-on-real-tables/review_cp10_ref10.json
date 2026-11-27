@@ -1,0 +1,77 @@
+{
+ "diabetes clean": {
+  "skill": 0.358,
+  "excluded": [],
+  "strong": []
+ },
+ "pure noise, tied columns, seed 1": {
+  "skill": -0.018,
+  "excluded": [],
+  "strong": []
+ },
+ "pure noise, tied columns, seed 2": {
+  "skill": -0.009,
+  "excluded": [],
+  "strong": []
+ },
+ "pure noise, tied columns, seed 3": {
+  "skill": 0.001,
+  "excluded": [],
+  "strong": []
+ },
+ "diamonds": {
+  "skill": 0.862,
+  "excluded": [],
+  "strong": []
+ },
+ "mpg": {
+  "skill": 0.821,
+  "excluded": [],
+  "strong": []
+ },
+ "taxis tip": {
+  "skill": 0.62,
+  "excluded": [],
+  "strong": []
+ },
+ "VIX + copy, 5 training cells changed (+7.0)": [
+  "excluded",
+  "excluded",
+  "excluded",
+  "excluded",
+  "excluded",
+  "excluded",
+  "excluded",
+  "excluded"
+ ],
+ "VIX + copy, 5 training cells changed (x1.5)": [
+  "excluded",
+  "excluded",
+  "excluded",
+  "excluded",
+  "excluded",
+  "excluded",
+  "excluded",
+  "excluded"
+ ],
+ "VIX + copy, 5 training cells changed (another row's value)": [
+  "excluded",
+  "excluded",
+  "excluded",
+  "excluded",
+  "excluded",
+  "excluded",
+  "excluded",
+  "excluded"
+ ],
+ "VIX + copy, 5 training cells changed (+0.5)": [
+  "excluded",
+  "excluded",
+  "excluded",
+  "excluded",
+  "excluded",
+  "excluded",
+  "excluded",
+  "excluded"
+ ]
+}

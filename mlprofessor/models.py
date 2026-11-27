@@ -46,6 +46,11 @@ def _make_forest(task, params, seed, n_jobs):
     return _Forest(n_estimators=100, random_state=seed, n_jobs=n_jobs, **params)
 
 
+def forest_maker():
+    """The `make` of the built-in forest family: its shuffles are predicted side by side."""
+    return _make_forest
+
+
 def _make_boosting(task, params, seed, n_jobs):
     from sklearn.ensemble import (HistGradientBoostingClassifier,
                                   HistGradientBoostingRegressor)

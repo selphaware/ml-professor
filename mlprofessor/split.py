@@ -408,6 +408,21 @@ def _holdout_stamp_count(counts, n_rows):
     return int(np.argmax(HOLDOUT_SHARE_DENOMINATOR * held_from_latest >= n_rows)) + 1
 
 
+def far_above_quarter(keys, split):
+    """Step 7 (D77, D78): a time-ordered holdout of half of the rows split or more.
+
+    None below one half; otherwise the holdout rows, the rows split (training, gap
+    and holdout) and the rows of the holdout's earliest timestamp.
+    """
+    n_holdout = len(split["holdout"])
+    n_split = len(split["training"]) + len(split["gap"]) + n_holdout
+    if 2 * n_holdout < n_split:
+        return None
+    holdout_keys = np.asarray(keys)[split["holdout"]]
+    n_earliest = int(np.count_nonzero(holdout_keys == holdout_keys.min()))
+    return n_holdout, n_split, n_earliest
+
+
 def split_time(keys, gap=0):
     """The time-ordered scheme: a holdout of the latest whole timestamps, a gap
     before it, and five expanding folds over six contiguous blocks of the

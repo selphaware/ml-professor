@@ -183,10 +183,10 @@ is raised.
 | `meta` | tool, schema version, profile, seed, `n_jobs`, library versions, `timing` |
 | `input` | source, kind, target, the time column and the entity column as passed (a name or `false`), task requested, gap, row and column counts, duplicate rows, the `duplicates` argument |
 | `rows` | seven counts: loaded, four reasons for dropping a row, training, holdout |
-| `columns` | one record per input column: role, kind, reason, leak rule, and counts |
+| `columns` | one record per input column: role, kind, reason, leak rule, counts, and for each feature `shuffled_score`, `shuffled_skill` and `skill_fall` (see "What the headline rests on") |
 | `task` | type, whether it was decided by rule or declared, distinct values, classes, positive class |
 | `validation` | scheme, holdout share, folds, gap, time form, last training and first holdout timestamp, caveat, holdout rows with a copy among the training rows and their share (random scheme); with an entity column, the entity column and the entities on each side; under `duplicates="group"`, `n_rows_same_features` |
-| `headline` | metric, score, chosen model, baseline and its score, skill (null when it has no value), interval on the score and on the skill, p-value, reasons; for a regression, `largest_row_share` and `largest_row` for the model and the baseline |
+| `headline` | metric, score, chosen model, baseline and its score, skill (null when it has no value), interval on the score and on the skill, p-value, reasons; for a regression, `largest_row_share` and `largest_row` for the model and the baseline; `rests_on` and `rests_on_floor` (see "What the headline rests on") |
 | `baselines` | each baseline scored on the holdout, and which one was used; a regression under time order has both `training_mean` and `previous_value` |
 | `cv` | metric, folds scored, configurations, the chosen one, its mean and spread; for a regression, the largest-row keys over the selection folds |
 | `models` | one record per configuration: parameters, status, error, fold scores, mean, spread, chosen; for a regression, `largest_row_share` and `largest_row` over the selection folds |
@@ -297,6 +297,53 @@ Three parts of the output say when one row or one value decides the result.
   score, the skill and the choice keep it. The remedy is to write an empty cell where
   the value means "missing": empty cells are handled inside each fold, and the rows
   are then counted in the usual way.
+
+### What the headline rests on
+
+Every feature is shuffled once on the holdout, to ask how much the headline
+depends on it. On each run that finishes, each feature's record in `columns`
+holds three numbers:
+
+- **`shuffled_score`**: the chosen model's score on the holdout with that
+  feature's holdout values shuffled among the holdout rows. It is the mean of five
+  shuffles, drawn from the seed. Nothing is refitted: the same fitted model scores
+  the shuffled rows.
+- **`shuffled_skill`**: the skill of that score, against the same headline baseline.
+- **`skill_fall`**: `headline.skill` minus `shuffled_skill`, how far the headline
+  falls when the feature's holdout values are shuffled. It can be negative, and it is
+  `null` where `headline.skill` is.
+
+`headline.rests_on` lists the features whose `skill_fall` is at least
+`headline.rests_on_floor`, at most five of them, largest fall first. The floor is the
+larger of 0.05 and the half-width of the skill interval (or of a bootstrap of the holdout
+rows, where the skill has no interval). The console summary prints this list. An empty
+list means that no feature's shuffle lowers the headline by the floor.
+
+Copies of one another share one fall. Two columns are copies when, as the models
+receive them, they are the same column within 1e-9, or one is the other's negation.
+So a column that is a straight-line rescaling of another (`2 × f + 3`) is a copy of it,
+and a text column whose levels are only renamed is a copy of the column. Copies are
+shuffled together, so they show the same three numbers. Two columns that carry the same
+information without being copies each show less than they share: shuffling one leaves
+the other to carry the signal, so each can fall below the floor while together they
+carry the headline.
+
+A model that cannot predict a shuffled matrix leaves that feature's three keys `null`,
+with a `shuffled_score_not_computed` warning naming it, and the run finishes.
+
+**`near_perfect_headline`.** When `headline.skill` is 0.98 or more, the run raises
+one `near_perfect_headline` warning. It changes no number and excludes no column. It
+names each column of `headline.rests_on` and asks whether that column is known before
+the outcome. An easy table carries it too, so a near-perfect headline on an easy table
+should prompt the caller to check each named column: if one is recorded after the
+outcome, or is a copy of it, the headline is not a prediction. When the list is empty,
+the warning says that no column's fall reaches the floor.
+
+**`holdout_far_above_quarter`.** Under time order, when the holdout holds half of the
+rows or more, this warning is raised once. Whole timestamps made the holdout far more
+than a quarter of the rows, so the score rests on a short, late stretch of the table.
+Its message gives the holdout rows and the rows split. The random and grouped schemes
+do not raise it.
 
 ### When the folds cannot choose: `selection_not_made`
 
@@ -564,6 +611,19 @@ These limits are stated plainly. Each one is something the tool does not check.
   8 timestamps raise no warning. A panel that is not warned of may still have one
   entity's rows on both sides of the split. Name the entity column with `group_col`
   whenever one entity has more than one row.
+- **A coded copy of a target with few bands is a weaker column, and is only warned about
+  or named.** A regression target cut into six to eight bands, with the bands as a text
+  or a numeric code, is raised with a `strong_single_column` warning. Four or fewer bands
+  read like an honest column of that strength: they are not warned about, and they appear
+  only in `headline.rests_on` when they lift the headline. Sixteen or more bands are
+  excluded under the random scheme. Beside entities, a coarse copy can be excluded on
+  some tables and only warned about on others.
+- **Under time order a coded copy of a wandering target can be neither excluded nor
+  warned about.** The latest rows hold band codes the earlier rows never did, so the
+  screen sees no level it has learned. On such a target a coded copy of up to eight bands
+  is mostly neither excluded nor warned about. It can still show in `headline.rests_on`, or
+  lower the headline when the holdout's levels differ from the training rows'. Check the
+  `headline` and `rests_on` before trusting the score.
 - **A noisy copy of the target is not always excluded under time order.** Under time
   order a copy of the target with noise of more than about 1% of the target's spread
   is not detected as a leak, so the column can be kept as a feature. A copy with more

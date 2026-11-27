@@ -1,0 +1,25 @@
+==========================================================================================
+diabetes + a = y + z, b = z (full)
+  skill 1.0000 [0.9999999778619703, 0.9999999872873648] model linear-1; floor 0.05; rests_on [('a', 4.707), ('b', 2.277)]
+  excluded []
+  >> near_perfect_headline [None]: The headline skill is 1.0000, at or above 0.98, the level at which one column alone is excluded as a suspected leak. It rests on 'a' (shuffled skill -3.7067, fall 4.7067), 'b' (shuffled skill -1.2769, fall 2.2769): the fall of skill when the column's holdout values are shuffled is at least 0.0500. Is each of these known before t
+  falls of a and b: {'a': (4.706704382026498, -3.706704398935618), 'b': (2.2769260981647483, -1.2769261150738682)}
+==========================================================================================
+diabetes + a = y + z, b = z (fast)
+  skill 0.9998 [0.9997915725789995, 0.9998758275257792] model linear-0; floor 0.05; rests_on [('a', 4.557), ('b', 2.193)]
+  excluded []
+  >> near_perfect_headline [None]: The headline skill is 0.9998, at or above 0.98, the level at which one column alone is excluded as a suspected leak. It rests on 'a' (shuffled skill -3.5574, fall 4.5572), 'b' (shuffled skill -1.1930, fall 2.1928): the fall of skill when the column's holdout values are shuffled is at least 0.0500. Is each of these known before t
+  falls of a and b: {'a': (4.557190706046608, -3.557351821531161), 'b': (2.1928275864706466, -1.1929887019551995)}
+==========================================================================================
+diabetes clean (fast): every fall
+  skill 0.4900 [0.3429073414453271, 0.6022836720838429] model linear-0; floor 0.12968816531925792; rests_on [('s5', 0.428), ('s1', 0.424), ('bmi', 0.192)]
+  excluded []
+   {'age': -0.0, 'sex': 0.043, 'bmi': 0.192, 'bp': 0.055, 's1': 0.424, 's2': 0.062, 's3': 0.002, 's4': 0.01, 's5': 0.428, 's6': -0.0}
+==========================================================================================
+planets orbital period (fast)
+  skill 0.4775 [-21.049766534940208, 0.8774874005601222] model linear-0; floor 10.963626967750164; rests_on []
+  excluded []
+  >> largest_row_dominates [None]: On the holdout, row 89 carries 70.86% of the squared error of the chosen configuration linear-0. The score, the skill and the choice of model keep that row; if it is an error, remove it and run again.
+  >> largest_row_dominates [None]: On the holdout, row 643 carries 95.78% of the squared error of the baseline training_mean. The score, the skill and the choice of model keep that row; if it is an error, remove it and run again.
+  >> largest_row_dominates [None]: Over the selection folds, one row carries more than half of the squared error of 1 configuration(s): linear-0, row 937 (73.25%). The choice of model, and the model fitted on the training rows, may rest on that row. The score, the skill and the choice of model keep that row; if it is an error, remove it and run again.
+  >> largest_row_dominates [None]: Over the selection folds, row 937 carries 82.60% of the squared error of the baseline training_mean. The score, the skill and the choice of model keep that row; if it is an error, remove it and run again.

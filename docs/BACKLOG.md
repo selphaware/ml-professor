@@ -285,6 +285,27 @@ same skill to every digit.
   share information each fall less). One sentence in "What the headline
   rests on"; Low, documentation.
 
+## Found by the BTC experiment, the first real-data study (2026-11-28)
+
+`experiments/crypto/`, runs `a_up_7d` and `a_down_7d` (time order, gap 7,
+full profile, 99 feature columns, 1,264 holdout days).
+
+- **The statement of what the headline rests on names nothing when the
+  skill is spread across a family of near-copies.** On `down_7d` (skill
+  0.147) it reads `none`, with a floor of 0.144. Yet on the holdout the
+  chosen forest's P(down) has a rank correlation of −0.53 with 30-day
+  volatility, and that one column alone reaches an AUC of 0.60. Eleven
+  volatility columns (close-to-close, Parkinson, Garman–Klass,
+  Rogers–Satchell and Yang–Zhang, over 7 to 30 days) carry much the same
+  information, so shuffling any one of them leaves the rest and the fall
+  stays under the floor. The README explains that columns which share
+  information each fall less, but a caller who reads `none` concludes
+  that the skill rests on no column. Remedies to weigh: shuffle groups of
+  strongly correlated columns together, grouped on training rows only,
+  and name the group; or say in the statement when no single column
+  clears the floor while correlated columns exist. Medium: the statement
+  can mislead. For after the hardening passes.
+
 ## Notes for the framework (ailoop-engineering), not for this repo
 
 - The tests stage does not lock `tests/`, so on a second pass the existing

@@ -1488,3 +1488,20 @@ with its own failure modes. A rare class counts as much as a common one,
 so its noise shows in the headline's interval. The list in `spec.md` of
 what phase 1 does not build, which names multiclass, changes when this
 change is written.
+
+## D86 — 2026-11-28 — Real-data experiments live in experiments\, outside the package
+Decision: Studies that run the library on real data, starting with a BTC
+daily study in `experiments\crypto`, live in the repo under `experiments\`.
+They are not part of the package: no `__init__.py`, no file the test run can
+collect, and the packaging change (D68) excludes the folder explicitly.
+Downloaded and built data are not committed (`experiments\crypto\.gitignore`
+holds `data/`); scripts, prompts, reports, run outputs and the README are.
+Each experiment records its own methodology in its README; this log records
+only what touches the library.
+Alternatives considered: the btc-research lab repo (the owner chose this
+repo, as a real-data test of the library); committing the data (rejected:
+third-party data in a repo to be published under MIT, and the scripts
+rebuild it).
+Consequence: the packaging change must exclude `experiments\` and prove the
+built wheel and sdist hold nothing from it. Results from experiments are
+provisional until phase 1 closes.

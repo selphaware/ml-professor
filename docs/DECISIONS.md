@@ -1453,3 +1453,38 @@ tables) and on the lead's reading of each plan. A harness session whose
 plan the lead finds thin, or a review that finds a fault in the judge's
 design, is a reason to raise that one session to `xhigh` by a new decision.
 D82 ends: the review and the diagnosis are back on Fable.
+
+## D85 — 2026-11-28 — Multiclass classification (lifts the deferral in D4; adds to D67)
+Decision: Classification accepts a target of more than two classes. It is
+built with the last changes of phase 1 (D67, D68, D75, D76 point 5), after
+the hardening passes close and before phase 2. (1) The headline is ROC AUC
+on the holdout, each class against the rest, averaged over the classes with
+equal weight (macro); baseline 0.5; skill = 2 x AUC - 1, so skill keeps the
+scale of D5. With two classes this is D5's AUC, and every binary result
+must stay identical to today's. (2) The AUC of each class against the rest
+is reported beside the headline, because the average can be high when one
+class is easy to pick out and the others cannot be told apart. (3) Every
+rule now written for two classes is extended to more: the leak screen and
+its warning tier (D11, D30, D76, D77), the class floors and the
+small-holdout warning (D23), stratification and the grouped holdout's draw
+per class (D6, D66), the fast profile's cap, and the holdout predictions,
+which carry a probability for every class so that the gate can recompute
+the headline (D14). (4) Settled when that change is written, from the
+harness stage's measurements and reported for approval: what `task="auto"`
+does with a target of more than two values, how each reading of the leak
+screen carries over, what happens when a class is below the floor, and the
+run time with many classes.
+Alternatives considered: weighting each class by its share of the rows
+(rejected: the common classes would decide the headline and a rare class
+would hardly count); each pair of classes in turn, averaged (rejected: no
+gain in what it says, and harder to read class by class); skill from log
+loss against the class shares (rejected: a scale unlike the binary one);
+one run per class by the caller, as today (rejected: a headline per class
+and no single measure for the target); a later phase (rejected: the target
+encodings of phase 2 need one encoding per class, so building multiclass
+first means feature engineering is built for it once).
+Consequence: a third task type in the output, the gate and the battery,
+with its own failure modes. A rare class counts as much as a common one,
+so its noise shows in the headline's interval. The list in `spec.md` of
+what phase 1 does not build, which names multiclass, changes when this
+change is written.
